@@ -1,0 +1,192 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Manrope:wght@400;500;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap');
+
+@import "tailwindcss";
+
+@theme {
+  --color-error-container: var(--c-error-container);
+  --color-inverse-on-surface: var(--c-inverse-on-surface);
+  --color-primary-dim: var(--c-primary-dim);
+  --color-surface-container-high: var(--c-surface-container-high);
+  --color-on-tertiary-container: var(--c-on-tertiary-container);
+  --color-surface-dim: var(--c-surface-dim);
+  --color-on-primary: var(--c-on-primary);
+  --color-primary-container: var(--c-primary-container);
+  --color-on-error-container: var(--c-on-error-container);
+  --color-on-surface-variant: var(--c-on-surface-variant);
+  --color-on-error: var(--c-on-error);
+  --color-on-tertiary: var(--c-on-tertiary);
+  --color-outline-variant: var(--c-outline-variant);
+  --color-on-secondary-fixed: var(--c-on-secondary-fixed);
+  --color-error-dim: var(--c-error-dim);
+  --color-secondary-dim: var(--c-secondary-dim);
+  --color-surface-bright: var(--c-surface-bright);
+  --color-on-primary-fixed: var(--c-on-primary-fixed);
+  --color-surface-container-lowest: var(--c-surface-container-lowest);
+  --color-on-tertiary-fixed: var(--c-on-tertiary-fixed);
+  --color-surface-container-low: var(--c-surface-container-low);
+  --color-tertiary-container: var(--c-tertiary-container);
+  --color-secondary: var(--c-secondary);
+  --color-primary: var(--c-primary);
+  --color-background: var(--c-background);
+  --color-on-secondary: var(--c-on-secondary);
+  --color-on-secondary-fixed-variant: var(--c-on-secondary-fixed-variant);
+  --color-primary-fixed-dim: var(--c-primary-fixed-dim);
+  --color-error: var(--c-error);
+  --color-on-primary-fixed-variant: var(--c-on-primary-fixed-variant);
+  --color-surface-variant: var(--c-surface-variant);
+  --color-surface-container: var(--c-surface-container);
+  --color-inverse-primary: var(--c-inverse-primary);
+  --color-tertiary-fixed: var(--c-tertiary-fixed);
+  --color-tertiary: var(--c-tertiary);
+  --color-outline: var(--c-outline);
+  --color-inverse-surface: var(--c-inverse-surface);
+  --color-primary-fixed: var(--c-primary-fixed);
+  --color-secondary-fixed-dim: var(--c-secondary-fixed-dim);
+  --color-surface-tint: var(--c-surface-tint);
+  --color-on-primary-container: var(--c-on-primary-container);
+  --color-secondary-container: var(--c-secondary-container);
+  --color-on-background: var(--c-on-background);
+  --color-on-secondary-container: var(--c-on-secondary-container);
+  --color-surface: var(--c-surface);
+  --color-secondary-fixed: var(--c-secondary-fixed);
+  --color-surface-container-highest: var(--c-surface-container-highest);
+  --color-on-tertiary-fixed-variant: var(--c-on-tertiary-fixed-variant);
+  --color-tertiary-fixed-dim: var(--c-tertiary-fixed-dim);
+  --color-tertiary-dim: var(--c-tertiary-dim);
+  --color-on-surface: var(--c-on-surface);
+
+  --font-headline: "Manrope", sans-serif;
+  --font-body: "Inter", sans-serif;
+  --font-label: "Inter", sans-serif;
+}
+
+@layer base {
+  :root {
+    /* LIGHT THEME VARIABLES - PREMIUM & CRISP */
+    --c-primary: #4f46e5;
+    --c-primary-dim: #4338ca;
+    --c-primary-container: #e0e7ff;
+    --c-on-primary-container: #312e81;
+    --c-background: #f9fafb;
+    --c-on-background: #111827;
+    --c-surface: #ffffff;
+    --c-on-surface: #111827;
+    --c-on-surface-variant: #4b5563;
+    --c-surface-container-lowest: #ffffff;
+    --c-surface-container-low: #f3f4f6;
+    --c-surface-container: #e5e7eb;
+    --c-surface-container-high: #d1d5db;
+    --c-surface-container-highest: #e5e7eb;
+    --c-outline: #9ca3af;
+    --c-outline-variant: #e5e7eb;
+    --c-tertiary: #db2777;
+    --c-on-primary-fixed: #ffffff;
+    --c-surface-variant: #f3f4f6;
+    --c-error-container: #fee2e2;
+    --c-inverse-on-surface: #f9fafb;
+    --c-on-tertiary-container: #831843;
+    --c-surface-dim: #d1d5db;
+    --c-on-primary: #ffffff;
+    --c-on-error-container: #7f1d1d;
+    --c-on-error: #ffffff;
+    --c-on-tertiary: #ffffff;
+    --c-on-secondary-fixed: #1e3a8a;
+    --c-error-dim: #ef4444;
+    --c-secondary-dim: #3b82f6;
+    --c-surface-bright: #ffffff;
+    --c-on-tertiary-fixed: #4c0519;
+    --c-tertiary-container: #fce7f3;
+    --c-secondary: #2563eb;
+    --c-on-secondary: #ffffff;
+    --c-on-secondary-fixed-variant: #1d4ed8;
+    --c-primary-fixed-dim: #6366f1;
+    --c-error: #dc2626;
+    --c-on-primary-fixed-variant: #3730a3;
+    --c-inverse-primary: #a5b4fc;
+    --c-tertiary-fixed: #fbcfe8;
+    --c-inverse-surface: #1f2937;
+    --c-primary-fixed: #e0e7ff;
+    --c-secondary-fixed-dim: #93c5fd;
+    --c-surface-tint: #4f46e5;
+    --c-secondary-container: #dbeafe;
+    --c-on-secondary-container: #1e3a8a;
+    --c-secondary-fixed: #dbeafe;
+    --c-on-tertiary-fixed-variant: #9d174d;
+    --c-tertiary-fixed-dim: #f9a8d4;
+    --c-tertiary-dim: #ec4899;
+  }
+
+  .dark {
+    /* DARK THEME VARIABLES (Original Code.html) */
+    --c-error-container: #a70138;
+    --c-inverse-on-surface: #565556;
+    --c-primary-dim: #6063ee;
+    --c-surface-container-high: #201f21;
+    --c-on-tertiary-container: #63054a;
+    --c-surface-dim: #0e0e0f;
+    --c-on-primary: #0f00a4;
+    --c-primary-container: #9396ff;
+    --c-on-error-container: #ffb2b9;
+    --c-on-surface-variant: #adaaab;
+    --c-on-error: #490013;
+    --c-on-tertiary: #701455;
+    --c-outline-variant: #484849;
+    --c-on-secondary-fixed: #003271;
+    --c-error-dim: #d73357;
+    --c-secondary-dim: #699cff;
+    --c-surface-bright: #2c2c2d;
+    --c-on-primary-fixed: #000000;
+    --c-surface-container-lowest: #000000;
+    --c-on-tertiary-fixed: #3b002b;
+    --c-surface-container-low: #131314;
+    --c-tertiary-container: #ff8ed2;
+    --c-secondary: #699cff;
+    --c-primary: #a3a6ff;
+    --c-background: #0e0e0f;
+    --c-on-secondary: #001e4a;
+    --c-on-secondary-fixed-variant: #004da8;
+    --c-primary-fixed-dim: #8387ff;
+    --c-error: #ff6e84;
+    --c-on-primary-fixed-variant: #0e009d;
+    --c-surface-variant: #262627;
+    --c-surface-container: #1a191b;
+    --c-inverse-primary: #494bd7;
+    --c-tertiary-fixed: #ff8ed2;
+    --c-tertiary: #ffa5d9;
+    --c-outline: #767576;
+    --c-inverse-surface: #fcf8f9;
+    --c-primary-fixed: #9396ff;
+    --c-secondary-fixed-dim: #a9c4ff;
+    --c-surface-tint: #a3a6ff;
+    --c-on-primary-container: #0a0081;
+    --c-secondary-container: #005ac2;
+    --c-on-background: #ffffff;
+    --c-on-secondary-container: #f7f7ff;
+    --c-surface: #0e0e0f;
+    --c-secondary-fixed: #bfd1ff;
+    --c-surface-container-highest: #262627;
+    --c-on-tertiary-fixed-variant: #6e1354;
+    --c-tertiary-fixed-dim: #ef81c4;
+    --c-tertiary-dim: #ef81c4;
+    --c-on-surface: #ffffff;
+  }
+
+  .material-symbols-outlined {
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  }
+  .material-symbols-fill {
+    font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  }
+  body {
+    @apply bg-background text-on-surface font-body min-h-screen flex flex-col antialiased selection:bg-primary-container selection:text-on-primary-container;
+  }
+
+  .scrollbar-hidden {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+  }
+  .scrollbar-hidden::-webkit-scrollbar {
+    display: none; /* Chrome, Safari and Opera */
+  }
+}
