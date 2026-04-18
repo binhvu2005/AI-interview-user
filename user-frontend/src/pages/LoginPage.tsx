@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { API_ENDPOINTS } from '../config';
 import toast, { Toaster } from 'react-hot-toast';
 
 const LoginPage = () => {
@@ -35,7 +36,7 @@ const LoginPage = () => {
     setLoading(true);
     
     try {
-      const res = await fetch('http://localhost:5000/api/auth/login', {
+      const res = await fetch(API_ENDPOINTS.AUTH.LOGIN, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password })
