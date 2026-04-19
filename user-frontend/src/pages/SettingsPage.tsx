@@ -23,8 +23,8 @@ const SettingsPage = () => {
   return (
     <div className="max-w-4xl animate-in fade-in slide-in-from-bottom-4 duration-500">
       <header className="mb-8">
-        <h1 className="text-3xl font-black text-on-surface tracking-tight mb-2">Cài đặt hệ thống</h1>
-        <p className="text-sm text-on-surface-variant font-medium opacity-70">Tùy chỉnh trải nghiệm sử dụng ứng dụng của bạn.</p>
+        <h1 className="text-3xl font-black text-on-surface tracking-tight mb-2">{t('settings.title')}</h1>
+        <p className="text-sm text-on-surface-variant font-medium opacity-70">{t('settings.desc')}</p>
       </header>
 
       <div className="bg-surface-container-low border border-outline-variant/15 rounded-[32px] p-8 shadow-xl space-y-4">
@@ -36,8 +36,8 @@ const SettingsPage = () => {
               <span className="material-symbols-outlined text-2xl">{isDark ? 'dark_mode' : 'light_mode'}</span>
             </div>
             <div>
-              <h4 className="font-bold text-on-surface">Chế độ hiển thị</h4>
-              <p className="text-xs text-on-surface-variant mt-1 font-medium">Chuyển đổi giữa giao diện Sáng và Tối.</p>
+              <h4 className="font-bold text-on-surface">{t('settings.darkmode')}</h4>
+              <p className="text-xs text-on-surface-variant mt-1 font-medium">{t('settings.darkmode_desc')}</p>
             </div>
           </div>
           <button
@@ -55,8 +55,8 @@ const SettingsPage = () => {
               <span className="material-symbols-outlined text-2xl">language</span>
             </div>
             <div>
-              <h4 className="font-bold text-on-surface">Ngôn ngữ</h4>
-              <p className="text-xs text-on-surface-variant mt-1 font-medium">Chọn ngôn ngữ hiển thị cho toàn bộ ứng dụng.</p>
+              <h4 className="font-bold text-on-surface">{t('settings.language')}</h4>
+              <p className="text-xs text-on-surface-variant mt-1 font-medium">{t('settings.language_desc')}</p>
             </div>
           </div>
           <div className="flex gap-2">
@@ -90,8 +90,8 @@ const SettingsPage = () => {
               <span className="material-symbols-outlined text-2xl">notifications</span>
             </div>
             <div>
-              <h4 className="font-bold text-on-surface">Thông báo email</h4>
-              <p className="text-xs text-on-surface-variant mt-1 font-medium">Nhận thông báo về kết quả phỏng vấn qua email.</p>
+              <h4 className="font-bold text-on-surface">{t('settings.email_notif')}</h4>
+              <p className="text-xs text-on-surface-variant mt-1 font-medium">{t('settings.email_notif_desc')}</p>
             </div>
           </div>
           <div className="w-14 h-8 rounded-full bg-surface-container-highest flex items-center px-1">

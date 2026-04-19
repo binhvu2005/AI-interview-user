@@ -35,8 +35,7 @@ const ITEMS_PER_PAGE = 8;
 const ResultsPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { i18n } = useTranslation();
-  const isVi = i18n.language.startsWith('vi');
+  const { t } = useTranslation();
   
   const [interview, setInterview] = useState<Interview | null>(null);
   const [interviews, setInterviews] = useState<Interview[]>([]);
@@ -66,7 +65,7 @@ const ResultsPage = () => {
         const data = await res.json();
         setInterview(data);
       } else {
-        toast.error(isVi ? "Không tìm thấy kết quả" : "Result not found");
+        toast.error(t('notifications.error_generic'));
         navigate('/results');
       }
     } catch (err) {
@@ -88,7 +87,7 @@ const ResultsPage = () => {
         setInterviews(data);
       }
     } catch (err) {
-      toast.error(isVi ? "Lỗi khi tải lịch sử" : "Error loading history");
+      toast.error(t('notifications.error_generic'));
     } finally {
       setLoading(false);
     }
@@ -104,7 +103,7 @@ const ResultsPage = () => {
     <div className="h-screen flex items-center justify-center">
       <div className="flex flex-col items-center gap-4">
         <span className="material-symbols-outlined animate-spin text-5xl text-primary">progress_activity</span>
-        <p className="text-on-surface-variant font-medium">{isVi ? 'Đang tải...' : 'Loading...'}</p>
+        <p className="text-on-surface-variant font-medium">{t('results.loading')}</p>
       </div>
     </div>
   );
@@ -137,10 +136,10 @@ const ResultsPage = () => {
         <header className="mb-10 flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
           <div>
             <h1 className="text-4xl font-black text-on-surface tracking-tighter mb-2">
-              {isVi ? 'Lịch sử Phỏng vấn' : 'Interview History'}
+              {t('results.title')}
             </h1>
             <p className="text-sm text-on-surface-variant font-medium opacity-70">
-              {isVi ? 'Theo dõi và xem lại kết quả đánh giá năng lực của bạn.' : 'Track and review your competency assessment results.'}
+              {t('results.subtitle')}
             </p>
           </div>
 
@@ -150,7 +149,7 @@ const ResultsPage = () => {
                 <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-sm opacity-50">search</span>
                 <input 
                   type="text" 
-                  placeholder={isVi ? "Tìm vị trí hoặc cấp độ..." : "Search position or level..."}
+                  placeholder={t('results.search_placeholder')}
                   className="pl-9 pr-4 py-2.5 bg-surface-container-low border border-outline-variant/20 rounded-xl text-xs font-bold text-on-surface focus:border-primary transition-all outline-none min-w-[240px]"
                   value={searchTerm}
                   onChange={(e) => { setSearchTerm(e.target.value); setPage(1); }}
@@ -163,17 +162,17 @@ const ResultsPage = () => {
                value={sortBy}
                onChange={(e) => { setSortBy(e.target.value as any); setPage(1); }}
              >
-               <option value="date_desc">{isVi ? "Mới nhất" : "Newest"}</option>
-               <option value="date_asc">{isVi ? "Cũ nhất" : "Oldest"}</option>
-               <option value="score_desc">{isVi ? "Điểm cao nhất" : "Highest Score"}</option>
-               <option value="score_asc">{isVi ? "Điểm thấp nhất" : "Lowest Score"}</option>
+               <option value="date_desc">{t('results.sort_newest')}</option>
+               <option value="date_asc">{t('results.sort_oldest')}</option>
+               <option value="score_desc">{t('results.sort_highest')}</option>
+               <option value="score_asc">{t('results.sort_lowest')}</option>
              </select>
 
              {/* Reset */}
              <button 
                onClick={handleReset}
                className="w-10 h-10 rounded-xl bg-surface-container-high text-on-surface-variant border border-outline-variant/10 flex items-center justify-center hover:bg-outline-variant/20 transition-all"
-               title={isVi ? "Làm mới bộ lọc" : "Reset Filters"}
+               title={t('results.sort_newest')}
              >
                <span className="material-symbols-outlined text-[20px]">restart_alt</span>
              </button>
@@ -185,13 +184,13 @@ const ResultsPage = () => {
             <table className="w-full text-left border-collapse">
               <thead>
                 <tr className="bg-surface-container-high/50 text-on-surface-variant text-[10px] font-black uppercase tracking-widest border-b border-outline-variant/10">
-                  <th className="px-8 py-6">{isVi ? 'Vị trí công việc' : 'Job Position'}</th>
-                  <th className="px-6 py-6">{isVi ? 'Cấp độ' : 'Level'}</th>
-                  <th className="px-6 py-6 text-center">{isVi ? 'Khớp CV' : 'CV Match'}</th>
-                  <th className="px-6 py-6 text-center">{isVi ? 'Điểm PV' : 'Int. Score'}</th>
-                  <th className="px-6 py-6 text-center">{isVi ? 'Tổng điểm' : 'Total'}</th>
-                  <th className="px-6 py-6">{isVi ? 'Ngày thực hiện' : 'Date'}</th>
-                  <th className="px-8 py-6 text-right">{isVi ? 'Hành động' : 'Action'}</th>
+                  <th className="px-8 py-6">{t('results.table_pos')}</th>
+                  <th className="px-6 py-6">{t('results.table_level')}</th>
+                  <th className="px-6 py-6 text-center">{t('results.table_cv')}</th>
+                  <th className="px-6 py-6 text-center">{t('results.table_int')}</th>
+                  <th className="px-6 py-6 text-center">{t('results.table_total')}</th>
+                  <th className="px-6 py-6">{t('results.table_date')}</th>
+                  <th className="px-8 py-6 text-right">{t('results.table_action')}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-outline-variant/10">
@@ -230,7 +229,7 @@ const ResultsPage = () => {
                           onClick={() => navigate(`/results/${int._id}`)}
                           className="bg-on-surface text-surface px-5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest hover:scale-105 active:scale-95 transition-all shadow-md"
                         >
-                          {isVi ? 'Xem báo cáo' : 'Report'}
+                          {t('results.view_report')}
                         </button>
                       </td>
                     </tr>
@@ -238,7 +237,7 @@ const ResultsPage = () => {
                 ) : (
                   <tr>
                     <td colSpan={7} className="px-8 py-20 text-center text-on-surface-variant opacity-40 font-bold uppercase tracking-widest text-xs">
-                       {isVi ? 'Chưa có dữ liệu phỏng vấn phù hợp' : 'No matching interviews found'}
+                       {t('results.no_data')}
                     </td>
                   </tr>
                 )}
@@ -257,7 +256,7 @@ const ResultsPage = () => {
             >
               <span className="material-symbols-outlined">chevron_left</span>
             </button>
-            <span className="text-xs font-black tracking-widest uppercase opacity-60">{isVi ? 'Trang' : 'Page'} {page} / {totalPages}</span>
+            <span className="text-xs font-black tracking-widest uppercase opacity-60">{t('results.page')} {page} / {totalPages}</span>
             <button 
               disabled={page === totalPages}
               onClick={() => setPage(p => p + 1)}
@@ -282,17 +281,17 @@ const ResultsPage = () => {
         <div>
           <button onClick={() => navigate('/results')} className="flex items-center gap-2 text-primary text-xs font-black uppercase tracking-widest mb-4 hover:opacity-70 transition-opacity">
             <span className="material-symbols-outlined text-sm">arrow_back</span>
-            {isVi ? 'Quay lại danh sách' : 'Back to history'}
+            {t('results.back')}
           </button>
           <h1 className="text-5xl font-black tracking-tighter mb-2 text-on-surface">
-            {isVi ? 'Báo cáo Phỏng vấn' : 'Interview Report'}
+            {t('results.report_title')}
           </h1>
           <p className="text-on-surface-variant opacity-70">
             {interview.position} • {interview.level} • {new Date(interview.createdAt).toLocaleDateString()}
           </p>
         </div>
         <button onClick={() => navigate('/preparation')} className="bg-surface-container-high text-on-surface px-6 py-3 rounded-full text-xs font-black uppercase tracking-widest hover:bg-outline-variant/20 transition-all">
-          {isVi ? 'Phỏng vấn lại' : 'New Interview'}
+          {t('results.retry')}
         </button>
       </header>
 
@@ -313,8 +312,8 @@ const ResultsPage = () => {
           </div>
 
           <div className="flex-1">
-            <h3 className="text-2xl font-black text-on-surface mb-4">{isVi ? 'Đánh giá tổng quan' : 'Overall Assessment'}</h3>
-            <p className="text-on-surface-variant leading-relaxed italic">"{evaluation?.summary || (isVi ? "Đang cập nhật đánh giá..." : "Assessment pending...")}"</p>
+            <h3 className="text-2xl font-black text-on-surface mb-4">{t('results.overall')}</h3>
+            <p className="text-on-surface-variant leading-relaxed italic">"{evaluation?.summary || t('results.loading')}"</p>
             <div className="mt-6 flex items-center gap-4">
                <div className="px-4 py-2 bg-primary/10 rounded-xl border border-primary/20">
                   <p className="text-[10px] font-black uppercase text-primary mb-1">CV Match</p>
@@ -329,18 +328,18 @@ const ResultsPage = () => {
         </div>
 
         <div className="bg-surface-container-low border border-outline-variant/15 rounded-[40px] p-8 shadow-sm">
-           <h4 className="text-[11px] font-black uppercase tracking-widest text-on-surface-variant mb-6">{isVi ? 'Điểm mấu chốt' : 'Key Highlights'}</h4>
+           <h4 className="text-[11px] font-black uppercase tracking-widest text-on-surface-variant mb-6">{t('results.key_highlights')}</h4>
             <div className="space-y-4">
                <div className="p-4 bg-green-400/5 border border-green-400/10 rounded-2xl">
-                  <p className="text-[10px] font-black text-green-400 uppercase mb-2">{isVi ? 'Ưu điểm' : 'Strengths'}</p>
+                  <p className="text-[10px] font-black text-green-400 uppercase mb-2">{t('results.strengths')}</p>
                   <ul className="text-xs space-y-1 text-on-surface opacity-80">
-                    {evaluation?.pros?.length ? evaluation.pros.map((p, i) => <li key={i}>• {p}</li>) : <li>{isVi ? 'Đang cập nhật...' : 'Updating...'}</li>}
+                    {evaluation?.pros?.length ? evaluation.pros.map((p, i) => <li key={i}>• {p}</li>) : <li>{t('results.loading')}</li>}
                   </ul>
                </div>
                <div className="p-4 bg-amber-400/5 border border-amber-400/10 rounded-2xl">
-                  <p className="text-[10px] font-black text-amber-400 uppercase mb-2">{isVi ? 'Nhược điểm' : 'Weaknesses'}</p>
+                  <p className="text-[10px] font-black text-amber-400 uppercase mb-2">{t('results.weaknesses')}</p>
                   <ul className="text-xs space-y-1 text-on-surface opacity-80">
-                     {evaluation?.cons?.length ? evaluation.cons.map((c, i) => <li key={i}>• {c}</li>) : <li>{isVi ? 'Đang cập nhật...' : 'Updating...'}</li>}
+                     {evaluation?.cons?.length ? evaluation.cons.map((c, i) => <li key={i}>• {c}</li>) : <li>{t('results.loading')}</li>}
                   </ul>
                </div>
             </div>
@@ -351,7 +350,7 @@ const ResultsPage = () => {
       <section className="bg-surface-container-low border border-outline-variant/15 rounded-[40px] p-10 mb-12 shadow-sm">
          <div className="flex items-center gap-3 mb-8">
             <span className="material-symbols-outlined text-primary">tips_and_updates</span>
-            <h3 className="text-2xl font-black text-on-surface">{isVi ? 'Gợi ý cải thiện' : 'Growth Plan'}</h3>
+            <h3 className="text-2xl font-black text-on-surface">{t('results.growth_plan')}</h3>
          </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {evaluation?.improvements?.map((imp, i) => (
@@ -365,12 +364,12 @@ const ResultsPage = () => {
 
       {/* Detailed Chat Analysis */}
       <section className="space-y-6">
-         <h3 className="text-2xl font-black text-on-surface ml-4">{isVi ? 'Phân tích chi tiết câu hỏi' : 'Question Breakdown'}</h3>
+         <h3 className="text-2xl font-black text-on-surface ml-4">{t('results.breakdown')}</h3>
          {evaluation?.detailedFeedback?.map((item, i) => (
             <div key={i} className="bg-surface-container-low border border-outline-variant/15 rounded-[40px] p-8 shadow-sm group hover:border-primary/30 transition-all">
                <div className="flex justify-between items-start mb-6">
                   <div className="max-w-2xl">
-                     <p className="text-[10px] font-black text-primary uppercase tracking-widest mb-2">{isVi ? 'Câu hỏi' : 'Question'} {i+1}</p>
+                     <p className="text-[10px] font-black text-primary uppercase tracking-widest mb-2">{t('results.question')} {i+1}</p>
                      <h4 className="text-lg font-bold text-on-surface leading-tight">{item?.question}</h4>
                   </div>
                   <div className="flex flex-col items-end">
@@ -387,14 +386,14 @@ const ResultsPage = () => {
 
                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-6 border-t border-outline-variant/10">
                   <div>
-                     <p className="text-[11px] font-black text-on-surface-variant uppercase mb-3">{isVi ? 'Câu trả lời của bạn' : 'Your Answer'}</p>
+                     <p className="text-[11px] font-black text-on-surface-variant uppercase mb-3">{t('results.your_answer')}</p>
                      <p className="text-sm text-on-surface opacity-80 leading-relaxed bg-surface-container-high p-4 rounded-2xl italic">
-                       {item?.answer || (isVi ? "[Bỏ qua]" : "[Skipped]")}
+                       {item?.answer || `[${t('results.skipped')}]`}
                      </p>
                      <p className="text-xs text-on-surface-variant mt-4 font-medium">{item?.feedback}</p>
                   </div>
                   <div className="bg-primary/5 p-6 rounded-3xl border border-primary/10">
-                     <p className="text-[11px] font-black text-primary uppercase mb-3">{isVi ? 'Gợi ý câu trả lời chuẩn' : 'Expert Insight'}</p>
+                     <p className="text-[11px] font-black text-primary uppercase mb-3">{t('results.expert_insight')}</p>
                      <div className="text-sm text-on-surface leading-relaxed font-medium">
                         {item?.correctReview}
                      </div>

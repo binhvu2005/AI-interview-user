@@ -59,28 +59,41 @@ const socialLinks = [
   },
 ];
 
-const footerSections = [
-  {
-    title: 'Sản phẩm',
-    links: ['Phỏng vấn AI', 'Phân tích CV', 'Kho lưu trữ', 'Kết quả'],
-  },
-  {
-    title: 'Công ty',
-    links: ['Về chúng tôi', 'Blog', 'Nghề nghiệp', 'Báo chí'],
-  },
-  {
-    title: 'Hỗ trợ',
-    links: ['Trung tâm trợ giúp', 'Liên hệ', 'Trạng thái hệ thống', 'API'],
-  },
-  {
-    title: 'Pháp lý',
-    links: ['Chính sách bảo mật', 'Điều khoản dịch vụ', 'Cookie', 'GDPR'],
-  },
-];
-
 const UserFooter = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
+
+  const footerSections = [
+    {
+      title: t('footer.products'),
+      links: [
+        { label: t('sidebar.start_interview'), path: '/preparation' },
+        { label: t('setup.vault'), path: '/vault' },
+        { label: t('results.title'), path: '/results' }
+      ],
+    },
+    {
+      title: t('footer.company'),
+      links: [
+        { label: 'About', path: '#' },
+        { label: 'Blog', path: '#' }
+      ],
+    },
+    {
+      title: t('footer.support'),
+      links: [
+        { label: t('footer.contact'), path: '#' },
+        { label: t('sidebar.help'), path: '#' }
+      ],
+    },
+    {
+      title: t('footer.legal'),
+      links: [
+        { label: t('footer.privacy'), path: '#' },
+        { label: t('footer.terms'), path: '#' }
+      ],
+    },
+  ];
 
   return (
     <footer className="w-full mt-auto border-t border-outline-variant/10 bg-surface-container-lowest">
@@ -102,7 +115,7 @@ const UserFooter = () => {
 
             {/* Tagline */}
             <p className="text-sm text-on-surface-variant leading-relaxed max-w-xs">
-              Nền tảng phỏng vấn AI thế hệ mới — giúp bạn chuẩn bị tốt hơn, tự tin hơn và chinh phục mọi cơ hội nghề nghiệp.
+              {t('footer.tagline')}
             </p>
 
             {/* Social Icons */}
@@ -125,11 +138,11 @@ const UserFooter = () => {
             <div className="flex gap-2">
               <input
                 type="email"
-                placeholder="Email của bạn..."
+                placeholder={t('footer.email_placeholder')}
                 className="flex-1 bg-surface-container border border-outline-variant/20 rounded-xl px-4 py-2.5 text-sm text-on-surface placeholder:text-on-surface-variant/40 focus:outline-none focus:border-primary/40 transition-colors min-w-0"
               />
               <button className="bg-primary text-on-primary px-4 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider hover:bg-primary/90 transition-colors flex-shrink-0">
-                Theo dõi
+                {t('footer.subscribe')}
               </button>
             </div>
           </div>
@@ -142,13 +155,13 @@ const UserFooter = () => {
               </h4>
               <ul className="space-y-3">
                 {section.links.map((link) => (
-                  <li key={link}>
-                    <a
-                      href="#"
+                  <li key={link.label}>
+                    <button
+                      onClick={() => link.path !== '#' && navigate(link.path)}
                       className="text-sm text-on-surface-variant hover:text-on-surface transition-colors duration-200 hover:translate-x-0.5 inline-block"
                     >
-                      {link}
-                    </a>
+                      {link.label}
+                    </button>
                   </li>
                 ))}
               </ul>
@@ -157,30 +170,27 @@ const UserFooter = () => {
         </div>
       </div>
 
-      {/* Divider */}
+      {/* Divider line */}
       <div className="w-full border-t border-outline-variant/10">
         <div className="w-full max-w-[1600px] mx-auto px-8 py-6 flex flex-col md:flex-row items-center justify-between gap-4">
           {/* Copyright */}
           <p className="text-[11px] text-on-surface-variant/50 uppercase tracking-[0.2em]">
-            © {new Date().getFullYear()} Obsidian AI. All rights reserved.
+            {t('footer.copyright')}
           </p>
 
           {/* Status Badge */}
           <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-surface-container border border-outline-variant/15">
             <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse"></span>
-            <span className="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest">All systems operational</span>
+            <span className="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest">{t('footer.all_systems')}</span>
           </div>
 
-          {/* Language & Legal */}
+          {/* Language & Legal links */}
           <div className="flex items-center gap-6">
             <a href="#" className="text-[11px] text-on-surface-variant/50 hover:text-on-surface-variant transition-colors uppercase tracking-widest">
-              Privacy
+              {t('footer.privacy')}
             </a>
             <a href="#" className="text-[11px] text-on-surface-variant/50 hover:text-on-surface-variant transition-colors uppercase tracking-widest">
-              Terms
-            </a>
-            <a href="#" className="text-[11px] text-on-surface-variant/50 hover:text-on-surface-variant transition-colors uppercase tracking-widest">
-              Cookies
+              {t('footer.terms')}
             </a>
           </div>
         </div>
