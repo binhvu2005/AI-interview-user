@@ -16,7 +16,9 @@ const resources = {
         "hi": "Hi",
         "profile": "Profile",
         "signin": "Sign In",
-        "signup": "Sign Up"
+        "signup": "Sign Up",
+        "greeting": "Hi",
+        "logout": "Logout"
       },
       "sidebar": {
         "title": "Cognitive Sanctuary",
@@ -234,12 +236,6 @@ const resources = {
           "submit": "Update Password"
         }
       },
-      "nav": {
-        "greeting": "Hi",
-        "profile": "Profile",
-        "settings": "Settings",
-        "logout": "Logout"
-      },
       "notifications": {
         "login_success": "Authentication successful. Welcome back!",
         "login_error": "Invalid email or password. Please try again.",
@@ -269,7 +265,9 @@ const resources = {
         "hi": "Chào",
         "profile": "Thông tin cá nhân",
         "signin": "Đăng nhập",
-        "signup": "Đăng ký"
+        "signup": "Đăng ký",
+        "greeting": "Chào",
+        "logout": "Đăng xuất"
       },
       "sidebar": {
         "title": "Thánh địa Nhận thức",
@@ -486,12 +484,6 @@ const resources = {
           "cancel": "Hủy",
           "submit": "Cập nhật mật khẩu"
         }
-      },
-      "nav": {
-        "greeting": "Chào",
-        "profile": "Hồ sơ",
-        "settings": "Cài đặt",
-        "logout": "Đăng xuất"
       },
       "notifications": {
         "login_success": "Đăng nhập thành công. Chào mừng trở lại!",
