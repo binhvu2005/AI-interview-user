@@ -16,39 +16,45 @@ const extractJSON = (text: string): any => {
   try {
     if (!text) return { feedback: "", nextQuestion: "...", isFinished: false };
 
-    // 1. Pre-clean: Remove common AI prefixes/suffixes and markdown
+    // 1. Pre-clean: Remove markdown blocks
     let cleaned = text.replace(/```json/g, '').replace(/```/g, '').trim();
     
-    // Remove potential leading/trailing garbage like "Here is the JSON:"
+    // Find the first { and last }
     const firstBrace = cleaned.indexOf('{');
     const lastBrace = cleaned.lastIndexOf('}');
     
     if (firstBrace !== -1 && lastBrace !== -1) {
       cleaned = cleaned.substring(firstBrace, lastBrace + 1);
-    }
-
-    try {
-      const parsed = JSON.parse(cleaned);
-      // Ensure it has at least one of the expected keys
-      if (parsed.nextQuestion !== undefined || parsed.matchScore !== undefined || parsed.totalScore !== undefined) {
+      try {
+        const parsed = JSON.parse(cleaned);
+        // Ensure matchScore is a number if it exists
+        if (parsed.matchScore !== undefined) parsed.matchScore = Number(parsed.matchScore);
         return parsed;
+      } catch (e) {
+        console.warn('[AI Service] JSON parse failed on extracted block. Trying regex fallback...');
       }
-    } catch (e) {
-      console.warn('[AI Service] Initial JSON parse failed. Trying partial extraction...');
     }
 
-    // 2. Fallback: If no valid object structure, wrap raw text
+    // 2. Regex Fallback: Try to find matchScore in text if JSON fails
+    const scoreMatch = text.match(/matchScore["\s:]+(\d+)/i) || text.match(/score["\s:]+(\d+)/i);
+    const score = scoreMatch ? parseInt(scoreMatch[1]) : 0;
+
     return {
       feedback: "",
-      nextQuestion: text.substring(0, 500), // Safety limit
+      nextQuestion: text.substring(0, 500),
       isFinished: false,
-      summary: text.substring(0, 200),
-      matchScore: 0,
-      totalScore: 0
+      summary: text.substring(0, 500),
+      matchScore: score,
+      totalScore: 0,
+      matchedSkills: [],
+      missingSkills: [],
+      strengths: [],
+      weaknesses: [],
+      improvementSuggestions: []
     };
   } catch (err: any) {
     console.error('[AI Service] Fatal Extraction Error:', err.message);
-    return { feedback: "", nextQuestion: "Hệ thống đang xử lý, bạn hãy tiếp tục câu trả lời nhé.", isFinished: false };
+    return { feedback: "", nextQuestion: "Hệ thống đang xử lý...", isFinished: false, matchScore: 0 };
   }
 };
 
@@ -61,15 +67,15 @@ const callGroq = async (systemPrompt: string, userPrompt: string, label: string)
         { role: 'system', content: systemPrompt },
         { role: 'user', content: userPrompt }
       ],
-      temperature: 0.5,
-      max_tokens: 2000, 
+      temperature: 0.2, // Lower temperature for more consistent JSON
+      max_tokens: 2000,
+      response_format: { type: "json_object" } // Mandatory JSON
     });
 
     const content = response.choices?.[0]?.message?.content;
     if (!content) throw new Error('AI returned empty message');
 
     console.log(`[Groq] ${label} RAW CONTENT:`, content);
-    console.log(`[Groq] ${label} completed. Usage: ${response.usage?.total_tokens} tokens`);
     return extractJSON(content);
   } catch (err: any) {
     console.error(`[Groq] ${label} FAILED:`, err.message);
