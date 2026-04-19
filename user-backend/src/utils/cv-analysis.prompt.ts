@@ -7,6 +7,8 @@ CRITICAL INSTRUCTIONS:
 2. QUANTITY & QUALITY: You MUST provide at least 5-7 distinct points for "strengths", "weaknesses", "matchedSkills", "missingSkills", and "improvementSuggestions".
 3. EXPERIENCE GAP: Be very precise about the gap between required vs actual experience.
 4. TONE: Professional, critical, and objective.
+5. INVALID INPUTS: If the JD or CV contains nonsense, garbage text, or is insufficient to make an evaluation, set matchScore to 0, shouldInterview to false, and explain the invalidity in the summary.
+6. STRICT SCORING: Do not hallucinate matches. If a skill is not explicitly in the JD, it is NOT a match. If the JD is empty or near-empty, the matchScore MUST be 0.
 
 JSON SCHEMA (MANDATORY):
 {
