@@ -3,35 +3,21 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 
 const UserHeader = () => {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const navigate = useNavigate();
-  const [isDark, setIsDark] = useState(() => localStorage.getItem('theme') !== 'light');
-  const [userName, setUserName] = useState<string | null>(null);
-  const [userAvatar, setUserAvatar] = useState<string | null>(null);
+  const [userName, setUserName] = useState<string | null>(localStorage.getItem('userName'));
+  const [userAvatar, setUserAvatar] = useState<string | null>(localStorage.getItem('userAvatar'));
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
   useEffect(() => {
-    const name = localStorage.getItem('userName');
-    const avatar = localStorage.getItem('userAvatar');
-    if (name) setUserName(name);
-    if (avatar) setUserAvatar(avatar);
-
-    if (isDark) {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
-  }, [isDark]);
-
-  const toggleTheme = () => {
-    const next = !isDark;
-    setIsDark(next);
-    localStorage.setItem('theme', next ? 'dark' : 'light');
-  };
-
-  const toggleLanguage = () => {
-    i18n.changeLanguage(i18n.language.startsWith('en') ? 'vi' : 'en');
-  };
+    const handleStorageChange = () => {
+      setUserName(localStorage.getItem('userName'));
+      setUserAvatar(localStorage.getItem('userAvatar'));
+    };
+    window.addEventListener('storage', handleStorageChange);
+    // Also listen for custom events if needed, but storage event works across tabs
+    return () => window.removeEventListener('storage', handleStorageChange);
+  }, []);
 
   const handleLogout = () => {
     localStorage.removeItem('token');
@@ -39,8 +25,6 @@ const UserHeader = () => {
     localStorage.removeItem('userAvatar');
     navigate('/login');
   };
-
-  const firstName = userName ? userName.trim().split(/\s+/).pop() : '';
 
   return (
     <nav className="fixed top-0 w-full z-50 bg-surface/80 backdrop-blur-2xl text-primary font-manrope tracking-tight shadow-md border-b border-outline-variant/15 flex justify-between items-center px-8 h-16">
@@ -52,29 +36,35 @@ const UserHeader = () => {
         </div>
       </div>
       <div className="flex items-center gap-4">
-        <button onClick={toggleTheme} className="text-on-surface-variant hover:text-primary transition-colors duration-300 p-2 rounded-full flex items-center justify-center bg-surface-container-high border border-outline-variant/20 ml-2 w-10 h-10" title="Toggle Theme">
-          <span className="material-symbols-outlined text-[20px]">{isDark ? 'light_mode' : 'dark_mode'}</span>
-        </button>
+        
         <div className="flex items-center gap-4 relative ml-2">
-          <span className="text-on-surface font-medium hidden md:block">
-            {firstName ? `${t('nav.hi')}, ${firstName}` : t('nav.hi')}
+          <span className="text-on-surface font-black text-xs uppercase tracking-widest hidden md:block opacity-60">
+            {userName ? `${t('nav.greeting')}, ${userName}` : t('nav.greeting')}
           </span>
-          <button onClick={() => setDropdownOpen(!dropdownOpen)} className="w-9 h-9 rounded-full overflow-hidden border border-outline-variant/30 hover:border-primary transition-colors focus:outline-none">
+          <button onClick={() => setDropdownOpen(!dropdownOpen)} className="w-10 h-10 rounded-2xl overflow-hidden border border-outline-variant/30 hover:border-primary transition-all focus:outline-none bg-surface-container-high">
             <img src={userAvatar || `https://ui-avatars.com/api/?name=${userName || 'U'}&background=6366f1&color=fff`} alt="avatar" className="w-full h-full object-cover" />
           </button>
+          
           {dropdownOpen && (
-            <div className="absolute top-12 right-0 w-52 bg-surface-container-low border border-outline-variant/15 rounded-xl shadow-lg py-2 flex flex-col z-50 animate-in fade-in slide-in-from-top-2">
-              <a onClick={() => { setDropdownOpen(false); navigate('/profile'); }} className="px-4 py-2.5 text-sm text-on-surface hover:bg-surface-container-highest transition-colors flex items-center gap-2 cursor-pointer font-medium">
-                <span className="material-symbols-outlined text-[18px] text-on-surface-variant">person</span> {t('nav.profile')}
-              </a>
-              <a onClick={() => { setDropdownOpen(false); navigate('/settings'); }} className="px-4 py-2.5 text-sm text-on-surface hover:bg-surface-container-highest transition-colors flex items-center gap-2 cursor-pointer font-medium">
-                <span className="material-symbols-outlined text-[18px] text-on-surface-variant">settings</span> Cài đặt
-              </a>
-              <div className="h-px bg-outline-variant/15 my-1"></div>
-              <button onClick={handleLogout} className="px-4 py-2.5 text-sm text-error hover:bg-error/5 transition-colors flex items-center gap-2 w-full text-left font-medium">
-                <span className="material-symbols-outlined text-[18px]">logout</span> {t('sidebar.logout')}
-              </button>
-            </div>
+            <>
+              <div className="fixed inset-0 z-40" onClick={() => setDropdownOpen(false)}></div>
+              <div className="absolute top-14 right-0 w-56 bg-surface-container-low border border-outline-variant/15 rounded-2xl shadow-2xl py-2 flex flex-col z-50 animate-in fade-in zoom-in-95 duration-200">
+                <div className="px-4 py-3 border-b border-outline-variant/10 mb-1">
+                  <p className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant opacity-50 mb-1">{t('nav.greeting')}</p>
+                  <p className="text-xs font-bold text-on-surface truncate">{userName}</p>
+                </div>
+                <a onClick={() => { setDropdownOpen(false); navigate('/profile'); }} className="px-4 py-2.5 text-xs text-on-surface hover:bg-primary/10 hover:text-primary transition-colors flex items-center gap-3 cursor-pointer font-bold uppercase tracking-widest">
+                  <span className="material-symbols-outlined text-[20px]">account_circle</span> {t('nav.profile')}
+                </a>
+                <a onClick={() => { setDropdownOpen(false); navigate('/settings'); }} className="px-4 py-2.5 text-xs text-on-surface hover:bg-primary/10 hover:text-primary transition-colors flex items-center gap-3 cursor-pointer font-bold uppercase tracking-widest">
+                  <span className="material-symbols-outlined text-[20px]">tune</span> {t('nav.settings')}
+                </a>
+                <div className="h-px bg-outline-variant/10 my-1 mx-4"></div>
+                <button onClick={handleLogout} className="px-4 py-2.5 text-xs text-error hover:bg-error/10 transition-colors flex items-center gap-3 w-full text-left font-bold uppercase tracking-widest">
+                  <span className="material-symbols-outlined text-[20px]">logout</span> {t('nav.logout')}
+                </button>
+              </div>
+            </>
           )}
         </div>
       </div>

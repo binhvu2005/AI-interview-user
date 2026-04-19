@@ -234,6 +234,12 @@ const resources = {
           "submit": "Update Password"
         }
       },
+      "nav": {
+        "greeting": "Hi",
+        "profile": "Profile",
+        "settings": "Settings",
+        "logout": "Logout"
+      },
       "notifications": {
         "login_success": "Authentication successful. Welcome back!",
         "login_error": "Invalid email or password. Please try again.",
@@ -480,6 +486,12 @@ const resources = {
           "cancel": "Hủy",
           "submit": "Cập nhật mật khẩu"
         }
+      },
+      "nav": {
+        "greeting": "Chào",
+        "profile": "Hồ sơ",
+        "settings": "Cài đặt",
+        "logout": "Đăng xuất"
       },
       "notifications": {
         "login_success": "Đăng nhập thành công. Chào mừng trở lại!",
