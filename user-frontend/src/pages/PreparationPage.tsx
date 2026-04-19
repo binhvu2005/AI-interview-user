@@ -90,9 +90,16 @@ const PreparationPage = () => {
     let cvData = '';
     if (cvMode === 'upload' && cvFile) {
       try {
-        cvData = await readFileAsText(cvFile);
+        // If it's a PDF, we try to read it, but since we don't have a PDF library yet,
+        // we'll at least send the filename and some metadata if reading fails.
+        const content = await readFileAsText(cvFile);
+        if (content.includes('\u0000') || content.length < 10) {
+          cvData = `[PDF File: ${cvFile.name}] - Content extraction restricted. Please analyze based on the role and JD.`;
+        } else {
+          cvData = content;
+        }
       } catch {
-        cvData = `CV file: ${cvFile.name}`;
+        cvData = `CV file: ${cvFile.name} (Content could not be read)`;
       }
     } else if (cvMode === 'vault') {
       const selectedCV = savedCVs.find(c => c.id === selectedCVId);

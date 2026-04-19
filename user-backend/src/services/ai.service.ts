@@ -16,7 +16,7 @@ const extractJSON = (text: string): any => {
   try {
     if (!text) return { feedback: "", nextQuestion: "...", isFinished: false };
 
-    // 1. Pre-clean: Remove markdown blocks
+    // 1. Pre-clean: Remove markdown blocks and triple backticks
     let cleaned = text.replace(/```json/g, '').replace(/```/g, '').trim();
     
     // Find the first { and last }
@@ -27,11 +27,27 @@ const extractJSON = (text: string): any => {
       cleaned = cleaned.substring(firstBrace, lastBrace + 1);
       try {
         const parsed = JSON.parse(cleaned);
-        // Ensure matchScore is a number if it exists
+        // Ensure numeric fields
         if (parsed.matchScore !== undefined) parsed.matchScore = Number(parsed.matchScore);
-        return parsed;
+        
+        // Ensure all required fields for CV Analysis display
+        return {
+          matchScore: parsed.matchScore ?? 0,
+          summary: parsed.summary ?? "Phân tích đang được cập nhật...",
+          matchedSkills: parsed.matchedSkills ?? [],
+          missingSkills: parsed.missingSkills ?? [],
+          strengths: parsed.strengths ?? [],
+          weaknesses: parsed.weaknesses ?? [],
+          improvementSuggestions: parsed.improvementSuggestions ?? [],
+          experienceAnalysis: parsed.experienceAnalysis ?? { required: "N/A", candidate: "N/A", gap: "N/A" },
+          interviewRecommendation: parsed.interviewRecommendation ?? { shouldInterview: false, focusAreas: [] },
+          // Keep chat fields if present
+          feedback: parsed.feedback ?? "",
+          nextQuestion: parsed.nextQuestion ?? "",
+          isFinished: !!parsed.isFinished
+        };
       } catch (e) {
-        console.warn('[AI Service] JSON parse failed on extracted block. Trying regex fallback...');
+        console.warn('[AI Service] JSON parse failed on extracted block.');
       }
     }
 
@@ -40,21 +56,22 @@ const extractJSON = (text: string): any => {
     const score = scoreMatch ? parseInt(scoreMatch[1]) : 0;
 
     return {
-      feedback: "",
-      nextQuestion: text.substring(0, 500),
-      isFinished: false,
-      summary: text.substring(0, 500),
       matchScore: score,
-      totalScore: 0,
+      summary: text.substring(0, 500),
       matchedSkills: [],
       missingSkills: [],
       strengths: [],
       weaknesses: [],
-      improvementSuggestions: []
+      improvementSuggestions: [],
+      experienceAnalysis: { required: "...", candidate: "...", gap: "..." },
+      interviewRecommendation: { shouldInterview: false, focusAreas: [] },
+      feedback: "",
+      nextQuestion: text.substring(0, 300),
+      isFinished: false
     };
   } catch (err: any) {
     console.error('[AI Service] Fatal Extraction Error:', err.message);
-    return { feedback: "", nextQuestion: "Hệ thống đang xử lý...", isFinished: false, matchScore: 0 };
+    return { matchScore: 0, summary: "Error processing response", isFinished: false };
   }
 };
 
@@ -67,9 +84,8 @@ const callGroq = async (systemPrompt: string, userPrompt: string, label: string)
         { role: 'system', content: systemPrompt },
         { role: 'user', content: userPrompt }
       ],
-      temperature: 0.2, // Lower temperature for more consistent JSON
-      max_tokens: 2000,
-      response_format: { type: "json_object" } // Mandatory JSON
+      temperature: 0.3, // Slightly higher for better variety
+      max_tokens: 2500,
     });
 
     const content = response.choices?.[0]?.message?.content;
