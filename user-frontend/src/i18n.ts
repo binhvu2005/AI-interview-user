@@ -211,6 +211,29 @@ const resources = {
         "support": "Support",
         "legal": "Legal"
       },
+      "profile_page": {
+        "title": "Personal Profile",
+        "subtitle": "Manage identity information and security settings.",
+        "change_pwd": "Change Password",
+        "save_changes": "Save Changes",
+        "avatar_lbl": "Avatar",
+        "fullname": "Full Name",
+        "email": "Email Address",
+        "phone": "Phone Number",
+        "phone_placeholder": "e.g. 0912 345 678",
+        "role": "Desired Position",
+        "role_placeholder": "e.g. Frontend Developer",
+        "bio": "Short Bio",
+        "bio_placeholder": "Briefly share your experience and goals...",
+        "pwd_modal": {
+          "title": "Change Password",
+          "old_pwd": "Current Password",
+          "new_pwd": "New Password",
+          "confirm_pwd": "Confirm New Password",
+          "cancel": "Cancel",
+          "submit": "Update Password"
+        }
+      },
       "notifications": {
         "login_success": "Authentication successful. Welcome back!",
         "login_error": "Invalid email or password. Please try again.",
@@ -434,6 +457,29 @@ const resources = {
         "company": "Công ty",
         "support": "Hỗ trợ",
         "legal": "Pháp lý"
+      },
+      "profile_page": {
+        "title": "Hồ sơ cá nhân",
+        "subtitle": "Quản lý thông tin định danh và cài đặt bảo mật.",
+        "change_pwd": "Đổi mật khẩu",
+        "save_changes": "Thay đổi thông tin",
+        "avatar_lbl": "Ảnh đại diện",
+        "fullname": "Họ và Tên",
+        "email": "Địa chỉ Email",
+        "phone": "Số điện thoại",
+        "phone_placeholder": "Ví dụ: 0912 345 678",
+        "role": "Vị trí mong muốn",
+        "role_placeholder": "Ví dụ: Frontend Developer",
+        "bio": "Giới thiệu ngắn",
+        "bio_placeholder": "Hãy chia sẻ ngắn gọn về kinh nghiệm và định hướng của bạn...",
+        "pwd_modal": {
+          "title": "Đổi mật khẩu",
+          "old_pwd": "Mật khẩu hiện tại",
+          "new_pwd": "Mật khẩu mới",
+          "confirm_pwd": "Xác nhận mật khẩu mới",
+          "cancel": "Hủy",
+          "submit": "Cập nhật mật khẩu"
+        }
       },
       "notifications": {
         "login_success": "Đăng nhập thành công. Chào mừng trở lại!",

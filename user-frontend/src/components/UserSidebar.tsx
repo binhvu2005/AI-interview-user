@@ -10,28 +10,28 @@ const UserSidebar = () => {
   const menuItems = [
     { 
       id: 'profile', 
-      label: 'Hồ sơ cá nhân', 
+      label: t('nav.profile'), 
       icon: 'account_circle', 
       path: '/profile',
       active: location.pathname === '/profile' 
     },
     { 
       id: 'cv_vault', 
-      label: 'Kho lưu trữ CV', 
+      label: t('setup.vault'), 
       icon: 'inventory_2', 
       path: '/vault', 
       active: location.pathname === '/vault' 
     },
     { 
       id: 'results', 
-      label: 'Kết quả phỏng vấn', 
+      label: t('results.title'), 
       icon: 'fact_check', 
       path: '/results', 
       active: location.pathname === '/results' 
     },
     { 
       id: 'settings', 
-      label: 'Cài đặt hệ thống', 
+      label: t('nav.settings'), 
       icon: 'tune', 
       path: '/settings', 
       active: location.pathname === '/settings' 
@@ -41,7 +41,7 @@ const UserSidebar = () => {
   return (
     <div className="flex flex-col h-full px-4 py-8">
        <div className="px-4 mb-10">
-         <h2 className="text-[10px] font-black uppercase tracking-[0.3em] text-on-surface-variant opacity-40">Danh mục chính</h2>
+         <h2 className="text-[10px] font-black uppercase tracking-[0.3em] text-on-surface-variant opacity-40">{t('sidebar.overview')}</h2>
        </div>
 
        <nav className="space-y-2 flex-1">

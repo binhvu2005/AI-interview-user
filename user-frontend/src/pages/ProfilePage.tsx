@@ -47,7 +47,7 @@ const ProfilePage = () => {
         setUserData(data);
       }
     } catch (err) {
-      toast.error('Không thể tải hồ sơ');
+      toast.error(t('notifications.profile_load_error'));
     } finally {
       setLoading(false);
     }
@@ -87,11 +87,11 @@ const ProfilePage = () => {
         setUserData(updated);
         localStorage.setItem('userName', updated.fullName);
         if (updated.avatar) localStorage.setItem('userAvatar', updated.avatar);
-        toast.success('Đã cập nhật hồ sơ!');
+        toast.success(t('notifications.profile_save_success'));
         setIsEditing(false);
       }
     } catch (err) {
-      toast.error('Lỗi khi lưu');
+      toast.error(t('notifications.profile_save_error'));
     } finally {
       setSaving(false);
     }
@@ -100,7 +100,7 @@ const ProfilePage = () => {
   const handleChangePassword = async (e: React.FormEvent) => {
     e.preventDefault();
     if (pwdForm.newPassword !== pwdForm.confirmPassword) {
-      toast.error('Mật khẩu mới không khớp');
+      toast.error(t('notifications.pwd_mismatch'));
       return;
     }
     setSaving(true);
@@ -119,27 +119,27 @@ const ProfilePage = () => {
       });
       const data = await res.json();
       if (res.ok) {
-        toast.success('Đổi mật khẩu thành công!');
+        toast.success(t('notifications.pwd_success'));
         setShowPasswordForm(false);
         setPwdForm({ oldPassword: '', newPassword: '', confirmPassword: '' });
       } else {
-        toast.error(data.message || 'Lỗi đổi mật khẩu');
+        toast.error(data.message || t('notifications.pwd_error'));
       }
     } catch (err) {
-      toast.error('Lỗi server');
+      toast.error(t('notifications.error_generic'));
     } finally {
       setSaving(false);
     }
   };
 
-  if (loading) return <div className="p-20 text-center font-bold opacity-50 uppercase tracking-widest">Đang tải...</div>;
+  if (loading) return <div className="p-20 text-center font-bold opacity-50 uppercase tracking-widest">{t('results.loading')}</div>;
 
   return (
     <div className="max-w-4xl pb-20 animate-in fade-in slide-in-from-bottom-4 duration-500">
       <header className="mb-8 flex justify-between items-end">
         <div>
-          <h1 className="text-4xl font-black text-on-surface tracking-tighter mb-2">Hồ sơ cá nhân</h1>
-          <p className="text-sm text-on-surface-variant font-medium opacity-70">Quản lý thông tin định danh và cài đặt bảo mật.</p>
+          <h1 className="text-4xl font-black text-on-surface tracking-tighter mb-2">{t('profile_page.title')}</h1>
+          <p className="text-sm text-on-surface-variant font-medium opacity-70">{t('profile_page.subtitle')}</p>
         </div>
         {!isEditing && !showPasswordForm && (
            <div className="flex gap-3">
@@ -147,13 +147,13 @@ const ProfilePage = () => {
                 onClick={() => setShowPasswordForm(true)}
                 className="bg-surface-container-high text-on-surface px-6 py-3 rounded-2xl font-bold text-xs uppercase tracking-widest hover:bg-outline-variant/20 transition-all border border-outline-variant/10"
               >
-                Đổi mật khẩu
+                {t('profile_page.change_pwd')}
               </button>
               <button 
                 onClick={() => setIsEditing(true)}
                 className="bg-primary text-on-primary px-6 py-3 rounded-2xl font-black text-xs uppercase tracking-widest hover:shadow-lg transition-all"
               >
-                Thay đổi thông tin
+                {t('profile_page.save_changes')}
               </button>
            </div>
         )}
@@ -161,10 +161,10 @@ const ProfilePage = () => {
 
       {showPasswordForm ? (
         <div className="bg-surface-container-low border border-outline-variant/15 rounded-[32px] p-10 shadow-xl max-w-md mx-auto animate-in zoom-in-95 duration-300">
-           <h2 className="text-xl font-black text-on-surface mb-6 uppercase tracking-widest">Đổi mật khẩu</h2>
+           <h2 className="text-xl font-black text-on-surface mb-6 uppercase tracking-widest">{t('profile_page.pwd_modal.title')}</h2>
            <form onSubmit={handleChangePassword} className="space-y-6">
               <div className="space-y-2">
-                <label className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant ml-1">Mật khẩu cũ</label>
+                <label className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant ml-1">{t('profile_page.pwd_modal.old_pwd')}</label>
                 <input 
                   type="password" 
                   required
@@ -175,7 +175,7 @@ const ProfilePage = () => {
                 />
               </div>
               <div className="space-y-2">
-                <label className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant ml-1">Mật khẩu mới</label>
+                <label className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant ml-1">{t('profile_page.pwd_modal.new_pwd')}</label>
                 <input 
                   type="password" 
                   required
@@ -186,7 +186,7 @@ const ProfilePage = () => {
                 />
               </div>
               <div className="space-y-2">
-                <label className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant ml-1">Nhập lại mật khẩu mới</label>
+                <label className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant ml-1">{t('profile_page.pwd_modal.confirm_pwd')}</label>
                 <input 
                   type="password" 
                   required
@@ -202,14 +202,14 @@ const ProfilePage = () => {
                    onClick={() => setShowPasswordForm(false)}
                    className="flex-1 bg-surface-container-highest text-on-surface-variant py-4 rounded-2xl font-bold text-xs uppercase tracking-widest"
                  >
-                   Hủy
+                   {t('profile_page.pwd_modal.cancel')}
                  </button>
                  <button 
                    type="submit" 
                    disabled={saving}
                    className="flex-1 bg-primary text-on-primary py-4 rounded-2xl font-black text-xs uppercase tracking-widest shadow-lg shadow-primary/20"
                  >
-                   {saving ? 'Đang xử lý...' : 'Xác nhận'}
+                   {saving ? t('setup.analyzing') : t('profile_page.pwd_modal.submit')}
                  </button>
               </div>
            </form>
@@ -230,52 +230,52 @@ const ProfilePage = () => {
                   )}
                 </div>
                 <input type="file" ref={fileInputRef} onChange={handleFileChange} accept="image/*" className="hidden" />
-                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-on-surface-variant opacity-50">Ảnh đại diện</p>
+                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-on-surface-variant opacity-50">{t('profile_page.avatar_lbl')}</p>
              </div>
 
              <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6 w-full">
                <div className="space-y-2">
-                 <label className="text-[10px] font-black uppercase tracking-[0.2em] text-on-surface-variant ml-1">Họ và tên</label>
+                 <label className="text-[10px] font-black uppercase tracking-[0.2em] text-on-surface-variant ml-1">{t('profile_page.fullname')}</label>
                  <input 
                    type="text" 
                    disabled={!isEditing}
-                   placeholder="Ví dụ: Nguyễn Văn A"
+                   placeholder={t('profile_page.fullname')}
                    value={userData.fullName} 
                    onChange={(e) => setUserData({...userData, fullName: e.target.value})} 
                    className={`w-full bg-surface-container-high border border-outline-variant/20 rounded-2xl px-5 py-4 text-on-surface outline-none transition-all font-medium ${!isEditing ? 'opacity-70 cursor-not-allowed' : 'focus:ring-2 focus:ring-primary/20 focus:border-primary'}`} 
                  />
                </div>
                <div className="space-y-2">
-                 <label className="text-[10px] font-black uppercase tracking-[0.2em] text-on-surface-variant ml-1">Địa chỉ Email</label>
+                 <label className="text-[10px] font-black uppercase tracking-[0.2em] text-on-surface-variant ml-1">{t('profile_page.email')}</label>
                  <input type="email" value={userData.email} readOnly className="w-full bg-surface-container border border-outline-variant/10 rounded-2xl px-5 py-4 text-on-surface-variant cursor-not-allowed font-medium" />
                </div>
                <div className="space-y-2">
-                 <label className="text-[10px] font-black uppercase tracking-[0.2em] text-on-surface-variant ml-1">Số điện thoại</label>
+                 <label className="text-[10px] font-black uppercase tracking-[0.2em] text-on-surface-variant ml-1">{t('profile_page.phone')}</label>
                  <input 
                    type="text" 
                    disabled={!isEditing}
-                   placeholder="Ví dụ: 0912 345 678"
+                   placeholder={t('profile_page.phone_placeholder')}
                    value={userData.phoneNumber} 
                    onChange={(e) => setUserData({...userData, phoneNumber: e.target.value})} 
                    className={`w-full bg-surface-container-high border border-outline-variant/20 rounded-2xl px-5 py-4 text-on-surface outline-none transition-all font-medium ${!isEditing ? 'opacity-70 cursor-not-allowed' : 'focus:ring-2 focus:ring-primary/20 focus:border-primary'}`} 
                  />
                </div>
                <div className="space-y-2">
-                 <label className="text-[10px] font-black uppercase tracking-[0.2em] text-on-surface-variant ml-1">Vị trí mong muốn</label>
+                 <label className="text-[10px] font-black uppercase tracking-[0.2em] text-on-surface-variant ml-1">{t('profile_page.role')}</label>
                  <input 
                    type="text" 
                    disabled={!isEditing}
-                   placeholder="Ví dụ: Frontend Developer"
+                   placeholder={t('profile_page.role_placeholder')}
                    value={userData.targetRole} 
                    onChange={(e) => setUserData({...userData, targetRole: e.target.value})} 
                    className={`w-full bg-surface-container-high border border-outline-variant/20 rounded-2xl px-5 py-4 text-on-surface outline-none transition-all font-medium ${!isEditing ? 'opacity-70 cursor-not-allowed' : 'focus:ring-2 focus:ring-primary/20 focus:border-primary'}`} 
                  />
                </div>
                <div className="md:col-span-2 space-y-2">
-                 <label className="text-[10px] font-black uppercase tracking-[0.2em] text-on-surface-variant ml-1">Giới thiệu ngắn</label>
+                 <label className="text-[10px] font-black uppercase tracking-[0.2em] text-on-surface-variant ml-1">{t('profile_page.bio')}</label>
                  <textarea 
                    disabled={!isEditing}
-                   placeholder="Hãy chia sẻ ngắn gọn về kinh nghiệm và định hướng của bạn..."
+                   placeholder={t('profile_page.bio_placeholder')}
                    value={userData.bio} 
                    onChange={(e) => setUserData({...userData, bio: e.target.value})} 
                    rows={3} 
@@ -292,14 +292,14 @@ const ProfilePage = () => {
                 onClick={() => { setIsEditing(false); fetchProfile(); }}
                 className="bg-surface-container-highest text-on-surface-variant px-8 py-4 rounded-2xl font-bold text-xs uppercase tracking-widest hover:bg-outline-variant/20 transition-all"
               >
-                Hủy
+                {t('profile_page.pwd_modal.cancel')}
               </button>
               <button 
                 onClick={handleSaveProfile}
                 disabled={saving} 
                 className="bg-primary text-on-primary px-10 py-4 rounded-2xl font-black text-sm uppercase tracking-widest hover:shadow-2xl hover:shadow-primary/30 transition-all active:scale-95 disabled:opacity-50 shadow-lg shadow-primary/20"
               >
-                {saving ? 'Đang lưu...' : 'Lưu thay đổi'}
+                {saving ? t('settings.save') + '...' : t('profile_page.save_changes')}
               </button>
             </div>
           )}
