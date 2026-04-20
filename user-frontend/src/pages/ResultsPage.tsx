@@ -14,6 +14,7 @@ interface Evaluation {
     question: string;
     answer: string;
     score: number;
+    status: 'correct' | 'partially_correct' | 'incorrect' | 'skipped';
     pros: string[];
     cons: string[];
     correctReview: string;
@@ -37,7 +38,7 @@ const ResultsPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { t } = useTranslation();
-  
+
   const [interview, setInterview] = useState<Interview | null>(null);
   const [interviews, setInterviews] = useState<Interview[]>([]);
   const [loading, setLoading] = useState(true);
@@ -145,38 +146,38 @@ const ResultsPage = () => {
           </div>
 
           <div className="flex flex-wrap gap-2">
-             {/* Unified Search (Position or Level) */}
-             <div className="relative">
-                <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-sm opacity-50">search</span>
-                <input 
-                  type="text" 
-                  placeholder={t('results.search_placeholder')}
-                  className="pl-9 pr-4 py-2.5 bg-surface-container-low border border-outline-variant/20 rounded-xl text-xs font-bold text-on-surface focus:border-primary transition-all outline-none min-w-[240px]"
-                  value={searchTerm}
-                  onChange={(e) => { setSearchTerm(e.target.value); setPage(1); }}
-                />
-             </div>
-             
-             {/* Sorting */}
-             <select 
-               className="px-4 py-2.5 bg-surface-container-low border border-outline-variant/20 rounded-xl text-xs font-bold text-on-surface focus:border-primary outline-none transition-all cursor-pointer"
-               value={sortBy}
-               onChange={(e) => { setSortBy(e.target.value as any); setPage(1); }}
-             >
-               <option value="date_desc">{t('results.sort_newest')}</option>
-               <option value="date_asc">{t('results.sort_oldest')}</option>
-               <option value="score_desc">{t('results.sort_highest')}</option>
-               <option value="score_asc">{t('results.sort_lowest')}</option>
-             </select>
+            {/* Unified Search (Position or Level) */}
+            <div className="relative">
+              <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-sm opacity-50">search</span>
+              <input
+                type="text"
+                placeholder={t('results.search_placeholder')}
+                className="pl-9 pr-4 py-2.5 bg-surface-container-low border border-outline-variant/20 rounded-xl text-xs font-bold text-on-surface focus:border-primary transition-all outline-none min-w-[240px]"
+                value={searchTerm}
+                onChange={(e) => { setSearchTerm(e.target.value); setPage(1); }}
+              />
+            </div>
 
-             {/* Reset */}
-             <button 
-               onClick={handleReset}
-               className="w-10 h-10 rounded-xl bg-surface-container-high text-on-surface-variant border border-outline-variant/10 flex items-center justify-center hover:bg-outline-variant/20 transition-all"
-               title={t('results.sort_newest')}
-             >
-               <span className="material-symbols-outlined text-[20px]">restart_alt</span>
-             </button>
+            {/* Sorting */}
+            <select
+              className="px-4 py-2.5 bg-surface-container-low border border-outline-variant/20 rounded-xl text-xs font-bold text-on-surface focus:border-primary outline-none transition-all cursor-pointer"
+              value={sortBy}
+              onChange={(e) => { setSortBy(e.target.value as any); setPage(1); }}
+            >
+              <option value="date_desc">{t('results.sort_newest')}</option>
+              <option value="date_asc">{t('results.sort_oldest')}</option>
+              <option value="score_desc">{t('results.sort_highest')}</option>
+              <option value="score_asc">{t('results.sort_lowest')}</option>
+            </select>
+
+            {/* Reset */}
+            <button
+              onClick={handleReset}
+              className="w-10 h-10 rounded-xl bg-surface-container-high text-on-surface-variant border border-outline-variant/10 flex items-center justify-center hover:bg-outline-variant/20 transition-all"
+              title={t('results.sort_newest')}
+            >
+              <span className="material-symbols-outlined text-[20px]">restart_alt</span>
+            </button>
           </div>
         </header>
 
@@ -205,28 +206,28 @@ const ResultsPage = () => {
                         <div className="text-[10px] font-black text-primary uppercase tracking-widest opacity-60">{int.level}</div>
                       </td>
                       <td className="px-6 py-6">
-                         <div className="flex flex-col items-center gap-1">
-                            <span className="text-sm font-black text-secondary">{int.matchScore}%</span>
-                            <div className="w-16 h-1 bg-surface-container-highest rounded-full overflow-hidden">
-                               <div className="h-full bg-secondary" style={{ width: `${int.matchScore}%` }}></div>
-                            </div>
-                         </div>
+                        <div className="flex flex-col items-center gap-1">
+                          <span className="text-sm font-black text-secondary">{int.matchScore}%</span>
+                          <div className="w-16 h-1 bg-surface-container-highest rounded-full overflow-hidden">
+                            <div className="h-full bg-secondary" style={{ width: `${int.matchScore}%` }}></div>
+                          </div>
+                        </div>
                       </td>
                       <td className="px-6 py-6 text-center">
-                         <span className="text-sm font-black text-on-surface">{int.evaluation?.totalScore || 0}</span>
+                        <span className="text-sm font-black text-on-surface">{int.evaluation?.totalScore || 0}</span>
                       </td>
                       <td className="px-6 py-6 text-center">
-                         <div className="inline-flex w-10 h-10 rounded-xl bg-primary/10 items-center justify-center text-primary font-black text-sm">
-                           {Math.round(((int.matchScore + (int.evaluation?.totalScore || 0)) / 2))}
-                         </div>
+                        <div className="inline-flex w-10 h-10 rounded-xl bg-primary/10 items-center justify-center text-primary font-black text-sm">
+                          {Math.round(((int.matchScore + (int.evaluation?.totalScore || 0)) / 2))}
+                        </div>
                       </td>
                       <td className="px-6 py-6">
-                         <span className="text-xs text-on-surface-variant font-medium">
-                           {new Date(int.createdAt).toLocaleDateString()}
-                         </span>
+                        <span className="text-xs text-on-surface-variant font-medium">
+                          {new Date(int.createdAt).toLocaleDateString()}
+                        </span>
                       </td>
                       <td className="px-8 py-6 text-right">
-                        <button 
+                        <button
                           onClick={() => navigate(`/results/${int._id}`)}
                           className="bg-on-surface text-surface px-5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest hover:scale-105 active:scale-95 transition-all shadow-md"
                         >
@@ -238,7 +239,7 @@ const ResultsPage = () => {
                 ) : (
                   <tr>
                     <td colSpan={7} className="px-8 py-20 text-center text-on-surface-variant opacity-40 font-bold uppercase tracking-widest text-xs">
-                       {t('results.no_data')}
+                      {t('results.no_data')}
                     </td>
                   </tr>
                 )}
@@ -250,7 +251,7 @@ const ResultsPage = () => {
         {/* Pagination */}
         {totalPages > 1 && (
           <div className="flex justify-center items-center gap-4 mt-12">
-            <button 
+            <button
               disabled={page === 1}
               onClick={() => setPage(p => p - 1)}
               className="w-12 h-12 rounded-full border border-outline-variant/20 flex items-center justify-center disabled:opacity-30 hover:bg-surface-container-high transition-all"
@@ -258,7 +259,7 @@ const ResultsPage = () => {
               <span className="material-symbols-outlined">chevron_left</span>
             </button>
             <span className="text-xs font-black tracking-widest uppercase opacity-60">{t('results.page')} {page} / {totalPages}</span>
-            <button 
+            <button
               disabled={page === totalPages}
               onClick={() => setPage(p => p + 1)}
               className="w-12 h-12 rounded-full border border-outline-variant/20 flex items-center justify-center disabled:opacity-30 hover:bg-surface-container-high transition-all"
@@ -300,127 +301,126 @@ const ResultsPage = () => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
         <div className="lg:col-span-2 bg-surface-container-low border border-outline-variant/15 rounded-[40px] p-10 shadow-lg flex flex-col md:flex-row items-center gap-10 relative overflow-hidden">
           <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full -translate-y-1/2 translate-x-1/2 blur-3xl"></div>
-          
+
           <div className="relative w-48 h-48 flex items-center justify-center flex-shrink-0">
-             <svg className="w-full h-full transform -rotate-90">
-               <circle cx="96" cy="96" r="85" fill="none" stroke="currentColor" strokeWidth="12" className="text-outline-variant/10" />
-               <circle cx="96" cy="96" r="85" fill="none" stroke="var(--color-primary)" strokeWidth="12" strokeLinecap="round" strokeDasharray={`${(evaluation?.totalScore || 0) * 5.34} 534`} />
-             </svg>
-             <div className="absolute inset-0 flex flex-col items-center justify-center">
-                <span className="text-6xl font-black text-on-surface">{evaluation?.totalScore || 0}</span>
-                <span className="text-[10px] font-black uppercase tracking-widest opacity-40">Total Score</span>
-             </div>
+            <svg className="w-full h-full transform -rotate-90">
+              <circle cx="96" cy="96" r="85" fill="none" stroke="currentColor" strokeWidth="12" className="text-outline-variant/10" />
+              <circle cx="96" cy="96" r="85" fill="none" stroke="var(--color-primary)" strokeWidth="12" strokeLinecap="round" strokeDasharray={`${(evaluation?.totalScore || 0) * 5.34} 534`} />
+            </svg>
+            <div className="absolute inset-0 flex flex-col items-center justify-center">
+              <span className="text-6xl font-black text-on-surface">{evaluation?.totalScore || 0}</span>
+              <span className="text-[10px] font-black uppercase tracking-widest opacity-40">Total Score</span>
+            </div>
           </div>
 
           <div className="flex-1">
             <h3 className="text-2xl font-black text-on-surface mb-4">{t('results.overall')}</h3>
             <p className="text-on-surface-variant leading-relaxed italic">"{evaluation?.summary || t('results.loading')}"</p>
             <div className="mt-6 flex items-center gap-4">
-               <div className="px-4 py-2 bg-primary/10 rounded-xl border border-primary/20">
-                  <p className="text-[10px] font-black uppercase text-primary mb-1">CV Match</p>
-                  <p className="text-xl font-black text-on-surface">{interview?.matchScore || 0}%</p>
-               </div>
-               <div className="px-4 py-2 bg-secondary/10 rounded-xl border border-secondary/20">
-                  <p className="text-[10px] font-black uppercase text-secondary mb-1">Interview</p>
-                  <p className="text-xl font-black text-on-surface">{(evaluation?.totalScore || 0)}/100</p>
-               </div>
+              <div className="px-4 py-2 bg-primary/10 rounded-xl border border-primary/20">
+                <p className="text-[10px] font-black uppercase text-primary mb-1">CV Match</p>
+                <p className="text-xl font-black text-on-surface">{interview?.matchScore || 0}%</p>
+              </div>
+              <div className="px-4 py-2 bg-secondary/10 rounded-xl border border-secondary/20">
+                <p className="text-[10px] font-black uppercase text-secondary mb-1">Interview</p>
+                <p className="text-xl font-black text-on-surface">{(evaluation?.totalScore || 0)}/100</p>
+              </div>
             </div>
           </div>
         </div>
 
         <div className="bg-surface-container-low border border-outline-variant/15 rounded-[40px] p-8 shadow-sm">
-           <h4 className="text-[11px] font-black uppercase tracking-widest text-on-surface-variant mb-6">{t('results.key_highlights')}</h4>
-            <div className="space-y-4">
-               <div className="p-4 bg-green-400/5 border border-green-400/10 rounded-2xl">
-                  <p className="text-[10px] font-black text-green-400 uppercase mb-2">{t('results.strengths')}</p>
-                  <ul className="text-xs space-y-1 text-on-surface opacity-80">
-                    {evaluation?.pros?.length ? evaluation.pros.map((p, i) => <li key={i}>• {p}</li>) : <li>{t('results.loading')}</li>}
-                  </ul>
-               </div>
-               <div className="p-4 bg-amber-400/5 border border-amber-400/10 rounded-2xl">
-                  <p className="text-[10px] font-black text-amber-400 uppercase mb-2">{t('results.weaknesses')}</p>
-                  <ul className="text-xs space-y-1 text-on-surface opacity-80">
-                     {evaluation?.cons?.length ? evaluation.cons.map((c, i) => <li key={i}>• {c}</li>) : <li>{t('results.loading')}</li>}
-                  </ul>
-               </div>
+          <h4 className="text-[11px] font-black uppercase tracking-widest text-on-surface-variant mb-6">{t('results.key_highlights')}</h4>
+          <div className="space-y-4">
+            <div className="p-4 bg-green-400/5 border border-green-400/10 rounded-2xl">
+              <p className="text-[10px] font-black text-green-400 uppercase mb-2">{t('results.strengths')}</p>
+              <ul className="text-xs space-y-1 text-on-surface opacity-80">
+                {evaluation?.pros?.length ? evaluation.pros.map((p, i) => <li key={i}>• {p}</li>) : <li>{t('results.loading')}</li>}
+              </ul>
             </div>
+            <div className="p-4 bg-amber-400/5 border border-amber-400/10 rounded-2xl">
+              <p className="text-[10px] font-black text-amber-400 uppercase mb-2">{t('results.weaknesses')}</p>
+              <ul className="text-xs space-y-1 text-on-surface opacity-80">
+                {evaluation?.cons?.length ? evaluation.cons.map((c, i) => <li key={i}>• {c}</li>) : <li>{t('results.loading')}</li>}
+              </ul>
+            </div>
+          </div>
         </div>
       </div>
 
       {/* Suggestions Section */}
       <section className="bg-surface-container-low border border-outline-variant/15 rounded-[40px] p-10 mb-12 shadow-sm">
-         <div className="flex items-center gap-3 mb-8">
-            <span className="material-symbols-outlined text-primary">tips_and_updates</span>
-            <h3 className="text-2xl font-black text-on-surface">{t('results.growth_plan')}</h3>
-         </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {evaluation?.improvements?.map((imp, i) => (
-              <div key={i} className="bg-surface-container-high p-6 rounded-3xl border border-outline-variant/10">
-                 <span className="text-2xl font-black text-primary opacity-20 block mb-2">0{i+1}</span>
-                 <p className="text-sm font-bold text-on-surface leading-relaxed">{imp}</p>
-              </div>
-            ))}
-          </div>
+        <div className="flex items-center gap-3 mb-8">
+          <span className="material-symbols-outlined text-primary">tips_and_updates</span>
+          <h3 className="text-2xl font-black text-on-surface">{t('results.growth_plan')}</h3>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {evaluation?.improvements?.map((imp, i) => (
+            <div key={i} className="bg-surface-container-high p-6 rounded-3xl border border-outline-variant/10">
+              <span className="text-2xl font-black text-primary opacity-20 block mb-2">0{i + 1}</span>
+              <p className="text-sm font-bold text-on-surface leading-relaxed">{imp}</p>
+            </div>
+          ))}
+        </div>
       </section>
 
       {/* Detailed Chat Analysis */}
       <section className="space-y-6">
-         <h3 className="text-2xl font-black text-on-surface ml-4">{t('results.breakdown')}</h3>
-         {evaluation?.detailedFeedback?.map((item, i) => (
-            <div key={i} className="bg-surface-container-low border border-outline-variant/15 rounded-[40px] p-8 shadow-sm group hover:border-primary/30 transition-all">
-               <div className="flex justify-between items-start mb-6">
-                  <div className="max-w-2xl">
-                     <p className="text-[10px] font-black text-primary uppercase tracking-widest mb-2">{t('results.question')} {i+1}</p>
-                     <h4 className="text-lg font-bold text-on-surface leading-tight">{item?.question}</h4>
-                  </div>
-                  <div className="flex flex-col items-end">
-                     <span className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border mb-2 ${
-                       item?.status === 'correct' ? 'bg-green-400/10 text-green-400 border-green-400/20' :
-                       item?.status === 'partially_correct' ? 'bg-amber-400/10 text-amber-400 border-amber-400/20' :
-                       'bg-red-400/10 text-red-400 border-red-400/20'
-                     }`}>
-                       {item?.status?.replace('_', ' ') || 'N/A'}
-                     </span>
-                     <span className="text-2xl font-black text-on-surface">{item?.score || 0}/10</span>
-                  </div>
-               </div>
-
-               <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-6 border-t border-outline-variant/10">
-                  <div>
-                     <p className="text-[11px] font-black text-on-surface-variant uppercase mb-3">{t('results.your_answer')}</p>
-                     <p className="text-sm text-on-surface opacity-80 leading-relaxed bg-surface-container-high p-4 rounded-2xl italic">
-                       {item?.answer || `[${t('results.skipped')}]`}
-                     </p>
-                     <p className="text-xs text-on-surface-variant mt-4 font-medium">{item?.feedback}</p>
-                     
-                     <div className="mt-4 space-y-3">
-                        {item?.pros && item.pros.length > 0 && (
-                          <div className="p-3 bg-green-400/5 border border-green-400/10 rounded-xl">
-                            <p className="text-[9px] font-black text-green-400 uppercase mb-1">{t('results.strengths')}</p>
-                            <ul className="text-[11px] space-y-0.5 text-on-surface opacity-80">
-                              {item.pros.map((p, idx) => <li key={idx}>• {p}</li>)}
-                            </ul>
-                          </div>
-                        )}
-                        {item?.cons && item.cons.length > 0 && (
-                          <div className="p-3 bg-amber-400/5 border border-amber-400/10 rounded-xl">
-                            <p className="text-[9px] font-black text-amber-400 uppercase mb-1">{t('results.weaknesses')}</p>
-                            <ul className="text-[11px] space-y-0.5 text-on-surface opacity-80">
-                              {item.cons.map((c, idx) => <li key={idx}>• {c}</li>)}
-                            </ul>
-                          </div>
-                        )}
-                     </div>
-                  </div>
-                  <div className="bg-primary/5 p-6 rounded-3xl border border-primary/10">
-                     <p className="text-[11px] font-black text-primary uppercase mb-3">{t('results.expert_insight')}</p>
-                     <div className="text-sm text-on-surface leading-relaxed font-medium">
-                        {item?.correctReview}
-                     </div>
-                  </div>
-               </div>
+        <h3 className="text-2xl font-black text-on-surface ml-4">{t('results.breakdown')}</h3>
+        {evaluation?.detailedFeedback?.map((item, i) => (
+          <div key={i} className="bg-surface-container-low border border-outline-variant/15 rounded-[40px] p-8 shadow-sm group hover:border-primary/30 transition-all">
+            <div className="flex justify-between items-start mb-6">
+              <div className="max-w-2xl">
+                <p className="text-[10px] font-black text-primary uppercase tracking-widest mb-2">{t('results.question')} {i + 1}</p>
+                <h4 className="text-lg font-bold text-on-surface leading-tight">{item?.question}</h4>
+              </div>
+              <div className="flex flex-col items-end">
+                <span className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border mb-2 ${item?.status === 'correct' ? 'bg-green-400/10 text-green-400 border-green-400/20' :
+                    item?.status === 'partially_correct' ? 'bg-amber-400/10 text-amber-400 border-amber-400/20' :
+                      'bg-red-400/10 text-red-400 border-red-400/20'
+                  }`}>
+                  {item?.status?.replace('_', ' ') || 'N/A'}
+                </span>
+                <span className="text-2xl font-black text-on-surface">{item?.score || 0}/10</span>
+              </div>
             </div>
-         ))}
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-6 border-t border-outline-variant/10">
+              <div>
+                <p className="text-[11px] font-black text-on-surface-variant uppercase mb-3">{t('results.your_answer')}</p>
+                <p className="text-sm text-on-surface opacity-80 leading-relaxed bg-surface-container-high p-4 rounded-2xl italic">
+                  {item?.answer || `[${t('results.skipped')}]`}
+                </p>
+                <p className="text-xs text-on-surface-variant mt-4 font-medium">{item?.feedback}</p>
+
+                <div className="mt-4 space-y-3">
+                  {item?.pros && item.pros.length > 0 && (
+                    <div className="p-3 bg-green-400/5 border border-green-400/10 rounded-xl">
+                      <p className="text-[9px] font-black text-green-400 uppercase mb-1">{t('results.strengths')}</p>
+                      <ul className="text-[11px] space-y-0.5 text-on-surface opacity-80">
+                        {item.pros.map((p, idx) => <li key={idx}>• {p}</li>)}
+                      </ul>
+                    </div>
+                  )}
+                  {item?.cons && item.cons.length > 0 && (
+                    <div className="p-3 bg-amber-400/5 border border-amber-400/10 rounded-xl">
+                      <p className="text-[9px] font-black text-amber-400 uppercase mb-1">{t('results.weaknesses')}</p>
+                      <ul className="text-[11px] space-y-0.5 text-on-surface opacity-80">
+                        {item.cons.map((c, idx) => <li key={idx}>• {c}</li>)}
+                      </ul>
+                    </div>
+                  )}
+                </div>
+              </div>
+              <div className="bg-primary/5 p-6 rounded-3xl border border-primary/10">
+                <p className="text-[11px] font-black text-primary uppercase mb-3">{t('results.expert_insight')}</p>
+                <div className="text-sm text-on-surface leading-relaxed font-medium">
+                  {item?.correctReview}
+                </div>
+              </div>
+            </div>
+          </div>
+        ))}
       </section>
     </div>
   );
