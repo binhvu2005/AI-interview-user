@@ -1,6 +1,6 @@
 import OpenAI from 'openai';
 import dotenv from 'dotenv';
-import { CV_ANALYSIS_SYSTEM_PROMPT, getCVAnalysisUserPrompt } from '../utils/cv-analysis.prompt';
+import { CV_ANALYSIS_SYSTEM_PROMPT, getCVAnalysisUserPrompt } from '../utils/cvAnalysisPrompt';
 import { INTERVIEW_SYSTEM_PROMPT, getInterviewQuestionsPrompt } from '../utils/interview.prompt';
 import { INTERVIEW_CHAT_SYSTEM_PROMPT } from '../utils/chat.prompt';
 import { INTERVIEW_EVALUATION_SYSTEM_PROMPT, getEvaluationUserPrompt } from '../utils/evaluation.prompt';
@@ -151,14 +151,20 @@ ${truncatedHistory.map(m => `${m.role.toUpperCase()}: ${m.content}`).join('\n')}
 
 ### TASK
 Respond in ${languageName}. 
+STRICT: Every question MUST follow the "Theory + Practice + Mindset" (T-P-M) structure.
 STRICT TRUTH: If the candidate said "không biết" in HISTORY, do NOT claim they have experience in that area. Prioritize the USER's actual words over previous AI feedback.
 STRICT: Ask a NEW question about a technical area NOT YET DISCUSSED in HISTORY.
 ${isCandidateStruggling ? "FORCED PIVOT: Candidate said they don't know. Briefly explain the previous topic in max 10 words, then IMMEDIATELY switch to a COMPLETELY DIFFERENT skill from the CV/JD." : ""}
 STRICT: DO NOT repeat any topic, technology, or question from the history above.
 STRICT: DO NOT list skills or use introductory fluff.
+STRICT: DO NOT ask "What is X?" or "Can you explain Y?". 
+STRICT: You MUST create a technical scenario and ask the candidate how they would solve it (Practice) and what trade-offs they see (Mindset).
+
+
 If currentTurn is 6, you MUST ask a CODE DEBUGGING question.
 If currentTurn > 6, you MUST set isFinished to true.
 `;
+
   
   return await callAI(INTERVIEW_CHAT_SYSTEM_PROMPT, userPrompt, 'Interview Chat');
 };
