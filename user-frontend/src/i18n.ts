@@ -511,7 +511,7 @@ i18n
     resources,
     fallbackLng: 'vi', // Set Vietnamese as default or fallback
     interpolation: {
-      escapeValue: false 
+      escapeValue: false
     }
   });
 

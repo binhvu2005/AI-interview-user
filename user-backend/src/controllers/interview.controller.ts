@@ -24,18 +24,23 @@ export const saveAndEvaluateInterview = async (req: AuthRequest, res: Response) 
     console.log('[Evaluation] Starting AI analysis...');
     const evaluation = await AIService.evaluateInterview(messages, cvData, jdText, matchScore, lang || 'vi');
 
-    // 2. Create Interview Document
+    // 2. Validate and Clean Data
+    const sanitizedMatchScore = isNaN(parseInt(matchScore)) ? 0 : parseInt(matchScore);
+    const sanitizedDuration = isNaN(parseInt(duration)) ? 15 : parseInt(duration);
+
+    // 3. Create Interview Document
     const newInterview = new Interview({
       userId,
       position,
       level,
-      duration,
-      matchScore,
+      duration: sanitizedDuration,
+      matchScore: sanitizedMatchScore,
       matchAnalysis,
       messages,
       evaluation
     });
 
+    console.log('[Evaluation] Saving interview to database...');
     await newInterview.save();
 
     res.status(201).json({
@@ -44,8 +49,16 @@ export const saveAndEvaluateInterview = async (req: AuthRequest, res: Response) 
       evaluation: newInterview.evaluation
     });
   } catch (err: any) {
-    console.error('[Evaluation Error]:', err.message);
-    res.status(500).json({ message: 'Failed to evaluate interview', error: err.message });
+    console.error('[Evaluation Error Detailed]:', {
+      message: err.message,
+      stack: err.stack,
+      body: req.body ? 'Present' : 'Missing'
+    });
+    res.status(500).json({ 
+      message: 'Failed to evaluate or save interview', 
+      error: err.message,
+      details: process.env.NODE_ENV === 'development' ? err.stack : undefined
+    });
   }
 };
 

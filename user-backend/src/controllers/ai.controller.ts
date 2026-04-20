@@ -10,7 +10,11 @@ export const analyzeCVJD = async (req: AuthRequest, res: Response) => {
     res.json(result);
   } catch (err: any) {
     console.error('AI Analysis Controller Error:', err.message);
-    res.status(500).json({ message: 'CV Analysis failed', error: err.message });
+    res.status(500).json({ 
+      message: 'CV Analysis failed', 
+      error: err.message,
+      suggestion: "Please check your GROQ_API_KEY in .env or your API quota."
+    });
   }
 };
 

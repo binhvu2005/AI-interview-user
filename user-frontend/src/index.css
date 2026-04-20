@@ -189,4 +189,29 @@
   .scrollbar-hidden::-webkit-scrollbar {
     display: none; /* Chrome, Safari and Opera */
   }
+
+  /* Support for pre-formatted text (code snippets) in chat */
+  .chat-message-text {
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+  
+  code {
+    font-family: 'Fira Code', monospace;
+    background: rgba(0, 0, 0, 0.2);
+    padding: 0.2rem 0.4rem;
+    border-radius: 4px;
+    font-size: 0.9em;
+  }
+
+  pre {
+    background: #1e1e1e;
+    color: #d4d4d4;
+    padding: 1rem;
+    border-radius: 8px;
+    margin: 0.5rem 0;
+    overflow-x: auto;
+    font-family: 'Fira Code', monospace;
+    line-height: 1.5;
+  }
 }

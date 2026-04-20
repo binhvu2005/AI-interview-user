@@ -14,7 +14,8 @@ interface Evaluation {
     question: string;
     answer: string;
     score: number;
-    status: 'correct' | 'partially_correct' | 'incorrect' | 'skipped';
+    pros: string[];
+    cons: string[];
     correctReview: string;
     feedback: string;
   }[];
@@ -391,6 +392,25 @@ const ResultsPage = () => {
                        {item?.answer || `[${t('results.skipped')}]`}
                      </p>
                      <p className="text-xs text-on-surface-variant mt-4 font-medium">{item?.feedback}</p>
+                     
+                     <div className="mt-4 space-y-3">
+                        {item?.pros && item.pros.length > 0 && (
+                          <div className="p-3 bg-green-400/5 border border-green-400/10 rounded-xl">
+                            <p className="text-[9px] font-black text-green-400 uppercase mb-1">{t('results.strengths')}</p>
+                            <ul className="text-[11px] space-y-0.5 text-on-surface opacity-80">
+                              {item.pros.map((p, idx) => <li key={idx}>• {p}</li>)}
+                            </ul>
+                          </div>
+                        )}
+                        {item?.cons && item.cons.length > 0 && (
+                          <div className="p-3 bg-amber-400/5 border border-amber-400/10 rounded-xl">
+                            <p className="text-[9px] font-black text-amber-400 uppercase mb-1">{t('results.weaknesses')}</p>
+                            <ul className="text-[11px] space-y-0.5 text-on-surface opacity-80">
+                              {item.cons.map((c, idx) => <li key={idx}>• {c}</li>)}
+                            </ul>
+                          </div>
+                        )}
+                     </div>
                   </div>
                   <div className="bg-primary/5 p-6 rounded-3xl border border-primary/10">
                      <p className="text-[11px] font-black text-primary uppercase mb-3">{t('results.expert_insight')}</p>

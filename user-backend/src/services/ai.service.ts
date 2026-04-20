@@ -14,78 +14,56 @@ const groq = new OpenAI({
 
 const extractJSON = (text: string): any => {
   try {
-    if (!text) return { feedback: "", nextQuestion: "...", isFinished: false };
-
-    // 1. Pre-clean: Remove markdown blocks and triple backticks
+    if (!text) return null;
     let cleaned = text.replace(/```json/g, '').replace(/```/g, '').trim();
-    
-    // Find the first { and last }
-    const firstBrace = cleaned.indexOf('{');
     const lastBrace = cleaned.lastIndexOf('}');
-    
-    if (firstBrace !== -1 && lastBrace !== -1) {
-      cleaned = cleaned.substring(firstBrace, lastBrace + 1);
-      try {
-        const parsed = JSON.parse(cleaned);
-        // Ensure numeric fields
-        if (parsed.matchScore !== undefined) parsed.matchScore = Number(parsed.matchScore);
-        
-        // Ensure all required fields for CV Analysis display
-        return {
-          matchScore: parsed.matchScore ?? 0,
-          summary: parsed.summary ?? "Phân tích đang được cập nhật...",
-          matchedSkills: parsed.matchedSkills ?? [],
-          missingSkills: parsed.missingSkills ?? [],
-          strengths: parsed.strengths ?? [],
-          weaknesses: parsed.weaknesses ?? [],
-          improvementSuggestions: parsed.improvementSuggestions ?? [],
-          experienceAnalysis: parsed.experienceAnalysis ?? { required: "N/A", candidate: "N/A", gap: "N/A" },
-          interviewRecommendation: parsed.interviewRecommendation ?? { shouldInterview: false, focusAreas: [] },
-          // Keep chat fields if present
-          feedback: parsed.feedback ?? "",
-          nextQuestion: parsed.nextQuestion ?? "",
-          isFinished: !!parsed.isFinished
-        };
-      } catch (e) {
-        console.warn('[AI Service] JSON parse failed on extracted block.');
+    if (lastBrace !== -1) {
+      let firstBrace = -1;
+      let depth = 0;
+      for (let i = lastBrace; i >= 0; i--) {
+        if (cleaned[i] === '}') depth++;
+        if (cleaned[i] === '{') depth--;
+        if (depth === 0) { firstBrace = i; break; }
+      }
+      if (firstBrace !== -1) {
+        const potentialJSON = cleaned.substring(firstBrace, lastBrace + 1);
+        try {
+          const parsed = JSON.parse(potentialJSON);
+          Object.keys(parsed).forEach(key => {
+            if (typeof parsed[key] === 'string' && /^\d+$/.test(parsed[key])) parsed[key] = Number(parsed[key]);
+            if (typeof parsed[key] === 'number' && isNaN(parsed[key])) parsed[key] = 0;
+          });
+          return parsed;
+        } catch (e) { }
       }
     }
-
-    // 2. Regex Fallback: Try to find matchScore in text if JSON fails
-    const scoreMatch = text.match(/matchScore["\s:]+(\d+)/i) || text.match(/score["\s:]+(\d+)/i);
-    const score = scoreMatch ? parseInt(scoreMatch[1]) : 0;
-
+    const matchScoreMatch = text.match(/matchScore["\s:]+(\d+)/i) || text.match(/score["\s:]+(\d+)/i);
+    const isFinishedMatch = text.match(/isFinished["\s:]+(true|false)/i);
     return {
-      matchScore: score,
-      summary: text.substring(0, 500),
-      matchedSkills: [],
-      missingSkills: [],
-      strengths: [],
-      weaknesses: [],
-      improvementSuggestions: [],
-      experienceAnalysis: { required: "...", candidate: "...", gap: "..." },
-      interviewRecommendation: { shouldInterview: false, focusAreas: [] },
+      matchScore: matchScoreMatch ? parseInt(matchScoreMatch[1]) : 0,
+      totalScore: matchScoreMatch ? parseInt(matchScoreMatch[1]) : 0,
+      summary: text.substring(0, 2000),
+      isFinished: isFinishedMatch ? isFinishedMatch[1] === 'true' : false,
       feedback: "",
-      nextQuestion: text.substring(0, 300),
-      isFinished: false
+      nextQuestion: text.substring(0, 2000)
     };
-  } catch (err: any) {
-    console.error('[AI Service] Fatal Extraction Error:', err.message);
-    return { matchScore: 0, summary: "Error processing response", isFinished: false };
+  } catch (err) {
+    return { matchScore: 0, summary: "Error processing AI response", isFinished: false, feedback: "Lỗi hệ thống", nextQuestion: "Vui lòng thử lại" };
   }
 };
 
-const callGroq = async (systemPrompt: string, userPrompt: string, label: string): Promise<any> => {
+const callAI = async (systemPrompt: string, userPrompt: string, label: string): Promise<any> => {
   console.log(`[Groq] Calling: ${label}...`);
   try {
     const response = await groq.chat.completions.create({
-      model: 'llama-3.3-70b-versatile', 
+      model: 'llama-3.1-8b-instant', 
       messages: [
         { role: 'system', content: systemPrompt },
         { role: 'user', content: userPrompt }
       ],
-      temperature: 0.3, // Slightly higher for better variety
-      max_tokens: 2500,
+      response_format: { type: 'json_object' },
+      temperature: 0.1,
+      max_tokens: 3000,
     });
 
     const content = response.choices?.[0]?.message?.content;
@@ -109,13 +87,26 @@ const truncateCV = (cvData: string) => {
 export const analyzeCVJDMatch = async (cvData: string, jdText: string, position: string, level: string, lang: string = 'vi') => {
   const truncatedCV = truncateCV(cvData);
   const userPrompt = getCVAnalysisUserPrompt(truncatedCV, jdText, position, level, lang);
-  return await callGroq(CV_ANALYSIS_SYSTEM_PROMPT, userPrompt, 'CV Analysis');
+  const result = await callAI(CV_ANALYSIS_SYSTEM_PROMPT, userPrompt, 'CV Analysis');
+  
+  // Ensure CV analysis defaults
+  return {
+    matchScore: result.matchScore ?? 0,
+    summary: result.summary ?? "Phân tích đang được cập nhật...",
+    matchedSkills: result.matchedSkills ?? [],
+    missingSkills: result.missingSkills ?? [],
+    strengths: result.strengths ?? [],
+    weaknesses: result.weaknesses ?? [],
+    improvementSuggestions: result.improvementSuggestions ?? [],
+    experienceAnalysis: result.experienceAnalysis ?? { required: "N/A", candidate: "N/A", gap: "N/A" },
+    interviewRecommendation: result.interviewRecommendation ?? { shouldInterview: false, focusAreas: [] }
+  };
 };
 
 export const generateInterviewQuestions = async (cvData: string, jdText: string, position: string, level: string, lang: string = 'vi') => {
   const truncatedCV = truncateCV(cvData);
   const userPrompt = getInterviewQuestionsPrompt(truncatedCV, jdText, position, level, lang);
-  return await callGroq(INTERVIEW_SYSTEM_PROMPT, userPrompt, 'Interview Questions');
+  return await callAI(INTERVIEW_SYSTEM_PROMPT, userPrompt, 'Interview Questions');
 };
 
 export const processInterviewChat = async (history: any[], cvData: string, jdText: string, position: string, level: string, lang: string = 'vi', duration: string = '15') => {
@@ -124,11 +115,28 @@ export const processInterviewChat = async (history: any[], cvData: string, jdTex
   // Truncate history to stay within token limits (last 10 messages)
   const truncatedHistory = history.slice(-10);
 
+  // Calculate actual technical questions asked (excluding intro and hints)
+  const hasIntro = history.some(m => 
+    m.role === 'ai' && 
+    (m.content.toLowerCase().includes("giới thiệu") || m.content.toLowerCase().includes("bản thân"))
+  );
+
+  const technicalQuestionsCount = history.filter(m => 
+    m.role === 'ai' && 
+    !m.content.includes("Chào mừng bạn") && 
+    !m.content.toLowerCase().includes("giới thiệu") &&
+    !m.content.toLowerCase().includes("bản thân") &&
+    !m.content.toLowerCase().includes("gợi ý")
+  ).length;
+
+  // Turn 0 if no intro yet, otherwise 1-6
+  const currentTurn = !hasIntro ? 0 : Math.min(technicalQuestionsCount + 1, 6);
+
   const userPrompt = `
 ### CONTEXT
 - POSITION: ${position} (${level})
 - DURATION: ${duration} mins
-- ROUND: ${history.length / 2}
+- CURRENT_TURN: ${currentTurn} of 6
 - JD: ${jdText.substring(0, 1000)}
 - CV: ${cvData.substring(0, 3000)}
 
@@ -137,18 +145,22 @@ ${truncatedHistory.map(m => `${m.role.toUpperCase()}: ${m.content}`).join('\n')}
 
 ### TASK
 Respond in ${languageName}. 
-STRICT: DO NOT repeat any project names or technical topics already mentioned in HISTORY.
-If candidate said "don't know", pivot to a COMPLETELY NEW technical domain.
+STRICT: Ask questions based on the INTERSECTION of the CV and JD above.
+STRICT: DO NOT list skills or start with "Dựa trên CV của bạn...". GO STRAIGHT TO THE QUESTION.
+STRICT: DO NOT repeat any technical topics already mentioned in HISTORY.
+PIVOTING: If candidate says "không biết", provide a 1-sentence answer then ask a NEW question about a DIFFERENT technical area.
+If currentTurn is 6, you MUST ask a CODE DEBUGGING question.
+If currentTurn > 6, you MUST set isFinished to true.
 `;
   console.log('--- DEBUG: SYSTEM PROMPT ---');
   console.log(INTERVIEW_CHAT_SYSTEM_PROMPT);
   console.log('--- DEBUG: USER PROMPT ---');
   console.log(userPrompt);
   
-  return await callGroq(INTERVIEW_CHAT_SYSTEM_PROMPT, userPrompt, 'Interview Chat');
+  return await callAI(INTERVIEW_CHAT_SYSTEM_PROMPT, userPrompt, 'Interview Chat');
 };
 
 export const evaluateInterview = async (history: any[], cvData: string, jdText: string, matchScore: number, lang: string = 'vi') => {
   const userPrompt = getEvaluationUserPrompt(history, cvData, jdText, matchScore, lang);
-  return await callGroq(INTERVIEW_EVALUATION_SYSTEM_PROMPT, userPrompt, 'Interview Evaluation');
+  return await callAI(INTERVIEW_EVALUATION_SYSTEM_PROMPT, userPrompt, 'Interview Evaluation');
 };

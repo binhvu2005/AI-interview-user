@@ -6,7 +6,8 @@ const AdminPage = () => {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const [isDark, setIsDark] = useState(true);
-  const [userName, setUserName] = useState<string | null>(null);
+  const [userName, setUserName] = useState<string | null>(localStorage.getItem('userName'));
+  const [userAvatar, setUserAvatar] = useState<string | null>(localStorage.getItem('userAvatar'));
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
   // Admin Data State
@@ -17,12 +18,19 @@ const AdminPage = () => {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    const name = localStorage.getItem('userName');
-    if (token && name) {
-      setUserName(name);
-    }
+    const handleUpdate = () => {
+      setUserName(localStorage.getItem('userName'));
+      setUserAvatar(localStorage.getItem('userAvatar'));
+    };
+    window.addEventListener('storage', handleUpdate);
+    window.addEventListener('userUpdate', handleUpdate);
+    
     fetchQuestions();
+
+    return () => {
+      window.removeEventListener('storage', handleUpdate);
+      window.removeEventListener('userUpdate', handleUpdate);
+    };
   }, []);
 
   const fetchQuestions = async () => {
@@ -117,7 +125,7 @@ const AdminPage = () => {
             <div className="flex items-center gap-4 relative">
               <span className="text-on-surface font-medium">{t('nav.hi')}, {firstName}</span>
               <button onClick={() => setDropdownOpen(!dropdownOpen)} className="w-8 h-8 rounded-full overflow-hidden border border-outline-variant/30 hover:border-primary transition-colors focus:outline-none">
-                <img alt="User profile" className="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCyPz5x4PBhVYD5STvbLUInbycvf3EdIahvnESGHsxcPGIF9PHdXIIIBJvfxOqHtDcZzIlJv2cA_6kyzGlHRQSY5qTvUpeZYggo3oEKTThgygxp6ENEjUQZnHFVveDB2F2GwYuw35Wm6bu_2vVzRvsJ9CJNgOCA8f1pQxGt3GTiFc6R6_krBDrEeW79qWCq6Az9RfjVah7lfgRr_EJTMkwz5cHVwNlksNcZbu9ATdvBnbshnw57luJiGy1HbKg-0vqi7Qq3F-IhvqbK" />
+                <img alt="User profile" className="w-full h-full object-cover" src={userAvatar || `https://ui-avatars.com/api/?name=${userName || 'U'}&background=6366f1&color=fff`} />
               </button>
               {dropdownOpen && (
                 <div className="absolute top-12 right-0 w-48 bg-surface-container-low border border-outline-variant/15 rounded-xl shadow-lg py-2 flex flex-col z-50">

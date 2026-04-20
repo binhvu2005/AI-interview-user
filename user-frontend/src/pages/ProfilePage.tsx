@@ -65,7 +65,13 @@ const ProfilePage = () => {
         return;
       }
       const reader = new FileReader();
-      reader.onloadend = () => setUserData({ ...userData, avatar: reader.result as string });
+      reader.onloadend = () => {
+        const base64 = reader.result as string;
+        setUserData({ ...userData, avatar: base64 });
+        // Optional: Update localStorage immediately for instant feedback across header
+        localStorage.setItem('userAvatar', base64);
+        window.dispatchEvent(new Event('userUpdate'));
+      };
       reader.readAsDataURL(file);
     }
   };
@@ -87,6 +93,7 @@ const ProfilePage = () => {
         setUserData(updated);
         localStorage.setItem('userName', updated.fullName);
         if (updated.avatar) localStorage.setItem('userAvatar', updated.avatar);
+        window.dispatchEvent(new Event('userUpdate'));
         toast.success(t('notifications.profile_save_success'));
         setIsEditing(false);
       }

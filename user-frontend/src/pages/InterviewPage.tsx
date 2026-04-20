@@ -44,7 +44,7 @@ const InterviewPage = () => {
     window.speechSynthesis.cancel();
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.lang = isVi ? 'vi-VN' : 'en-US';
-    utterance.rate = 0.95;
+    utterance.rate = 1.15;
     const voices = window.speechSynthesis.getVoices();
     const selectedVoice = voices.find(v => v.lang.startsWith(isVi ? 'vi' : 'en') && (v.name.includes('Google') || v.name.includes('Online') || v.name.includes('Natural')));
     if (selectedVoice) utterance.voice = selectedVoice;
@@ -177,7 +177,7 @@ const InterviewPage = () => {
   const startRecording = () => { if (recognitionRef.current) { setIsRecording(true); recognitionRef.current.start(); } };
   const stopRecording = () => { if (recognitionRef.current) { setIsRecording(false); recognitionRef.current.stop(); } };
 
-  const endInterview = async () => {
+    const endInterview = async () => {
     if (stream) stream.getTracks().forEach(t => t.stop());
     window.speechSynthesis.cancel();
     
@@ -185,11 +185,14 @@ const InterviewPage = () => {
     
     try {
       const token = localStorage.getItem('token');
+      const rawMatchScore = localStorage.getItem('last_match_score');
+      const rawDuration = localStorage.getItem('interview_duration');
+      
       const payload = {
         position: localStorage.getItem('interview_position') || "Software Engineer",
         level: localStorage.getItem('interview_level') || "Senior",
-        duration: parseInt(localStorage.getItem('interview_duration') || '15'),
-        matchScore: parseInt(localStorage.getItem('last_match_score') || '0'),
+        duration: parseInt(rawDuration || '15') || 15,
+        matchScore: parseInt(rawMatchScore || '0') || 0,
         matchAnalysis: localStorage.getItem('last_match_analysis') || "",
         messages,
         cvData: localStorage.getItem('last_cv_content') || "",
@@ -203,17 +206,19 @@ const InterviewPage = () => {
         body: JSON.stringify(payload)
       });
 
+      const data = await res.json().catch(() => ({ message: "Unknown Error" }));
+
       if (res.ok) {
-        const data = await res.json();
         toast.success(isVi ? "Buổi phỏng vấn đã kết thúc" : "Interview finished", { id: loadingToast });
         navigate(`/results/${data.interviewId}`);
       } else {
-        throw new Error("Failed to save interview");
+        console.error("Save Interview Error Response:", data);
+        throw new Error(data.message || "Failed to save interview");
       }
-    } catch (err) {
-      console.error("End Interview Error:", err);
-      toast.error(isVi ? "Không thể lưu kết quả" : "Failed to save results", { id: loadingToast });
-      navigate('/dashboard');
+    } catch (err: any) {
+      console.error("End Interview Fatal Error:", err);
+      toast.error(isVi ? `Lỗi: ${err.message}` : `Error: ${err.message}`, { id: loadingToast });
+      // Don't navigate away so user can see the error
     }
   };
 
@@ -244,7 +249,7 @@ const InterviewPage = () => {
               <div key={idx} className={`flex ${msg.role === 'ai' ? 'justify-start' : 'justify-end'}`}>
                 <div className={`max-w-[80%] p-5 rounded-[28px] ${msg.role === 'ai' ? 'bg-primary/10 text-on-surface rounded-bl-none border border-primary/10' : 'bg-primary text-on-primary rounded-br-none shadow-lg shadow-primary/20'}`}>
                   <p className="text-[10px] font-black opacity-50 mb-1 uppercase tracking-widest">{msg.role === 'ai' ? 'Obsidian AI' : 'You'}</p>
-                  <p className="text-lg leading-relaxed">{msg.content}</p>
+                  <p className="text-lg leading-relaxed chat-message-text">{msg.content}</p>
                 </div>
               </div>
             ))}

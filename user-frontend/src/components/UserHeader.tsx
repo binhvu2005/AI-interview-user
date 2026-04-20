@@ -15,8 +15,11 @@ const UserHeader = () => {
       setUserAvatar(localStorage.getItem('userAvatar'));
     };
     window.addEventListener('storage', handleStorageChange);
-    // Also listen for custom events if needed, but storage event works across tabs
-    return () => window.removeEventListener('storage', handleStorageChange);
+    window.addEventListener('userUpdate', handleStorageChange);
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('userUpdate', handleStorageChange);
+    };
   }, []);
 
   const handleLogout = () => {
