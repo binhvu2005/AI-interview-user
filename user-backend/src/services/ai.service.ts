@@ -151,8 +151,9 @@ ${truncatedHistory.map(m => `${m.role.toUpperCase()}: ${m.content}`).join('\n')}
 
 ### TASK
 Respond in ${languageName}. 
+STRICT TRUTH: If the candidate said "không biết" in HISTORY, do NOT claim they have experience in that area. Prioritize the USER's actual words over previous AI feedback.
 STRICT: Ask a NEW question about a technical area NOT YET DISCUSSED in HISTORY.
-${isCandidateStruggling ? "FORCED PIVOT: Candidate said they don't know. Briefly explain the previous topic in 1 sentence, then IMMEDIATELY switch to a COMPLETELY DIFFERENT skill from the CV/JD." : ""}
+${isCandidateStruggling ? "FORCED PIVOT: Candidate said they don't know. Briefly explain the previous topic in max 10 words, then IMMEDIATELY switch to a COMPLETELY DIFFERENT skill from the CV/JD." : ""}
 STRICT: DO NOT repeat any topic, technology, or question from the history above.
 STRICT: DO NOT list skills or use introductory fluff.
 If currentTurn is 6, you MUST ask a CODE DEBUGGING question.
