@@ -115,7 +115,14 @@ export const processInterviewChat = async (history: any[], cvData: string, jdTex
   // Truncate history to stay within token limits (last 10 messages)
   const truncatedHistory = history.slice(-10);
 
-  // Calculate actual technical questions asked (excluding intro and hints)
+  // Check for "không biết" in the latest user response
+  const lastUserMessage = [...history].reverse().find(m => m.role === 'user')?.content?.toLowerCase() || "";
+  const isCandidateStruggling = lastUserMessage.includes("không biết") || 
+                               lastUserMessage.includes("chưa rõ") || 
+                               lastUserMessage.includes("không có kinh nghiệm") ||
+                               lastUserMessage.length < 5;
+
+  // Calculate actual technical questions asked
   const hasIntro = history.some(m => 
     m.role === 'ai' && 
     (m.content.toLowerCase().includes("giới thiệu") || m.content.toLowerCase().includes("bản thân"))
@@ -129,7 +136,6 @@ export const processInterviewChat = async (history: any[], cvData: string, jdTex
     !m.content.toLowerCase().includes("gợi ý")
   ).length;
 
-  // Turn 0 if no intro yet, otherwise 1-6
   const currentTurn = !hasIntro ? 0 : Math.min(technicalQuestionsCount + 1, 6);
 
   const userPrompt = `
@@ -145,17 +151,13 @@ ${truncatedHistory.map(m => `${m.role.toUpperCase()}: ${m.content}`).join('\n')}
 
 ### TASK
 Respond in ${languageName}. 
-STRICT: Ask questions based on the INTERSECTION of the CV and JD above.
-STRICT: DO NOT list skills or start with "Dựa trên CV của bạn...". GO STRAIGHT TO THE QUESTION.
-STRICT: DO NOT repeat any technical topics already mentioned in HISTORY.
-PIVOTING: If candidate says "không biết", provide a 1-sentence answer then ask a NEW question about a DIFFERENT technical area.
+STRICT: Ask a NEW question about a technical area NOT YET DISCUSSED in HISTORY.
+${isCandidateStruggling ? "FORCED PIVOT: Candidate said they don't know. Briefly explain the previous topic in 1 sentence, then IMMEDIATELY switch to a COMPLETELY DIFFERENT skill from the CV/JD." : ""}
+STRICT: DO NOT repeat any topic, technology, or question from the history above.
+STRICT: DO NOT list skills or use introductory fluff.
 If currentTurn is 6, you MUST ask a CODE DEBUGGING question.
 If currentTurn > 6, you MUST set isFinished to true.
 `;
-  console.log('--- DEBUG: SYSTEM PROMPT ---');
-  console.log(INTERVIEW_CHAT_SYSTEM_PROMPT);
-  console.log('--- DEBUG: USER PROMPT ---');
-  console.log(userPrompt);
   
   return await callAI(INTERVIEW_CHAT_SYSTEM_PROMPT, userPrompt, 'Interview Chat');
 };
