@@ -43,11 +43,16 @@ const UserHeader = () => {
       </div>
       <div className="flex items-center gap-4">
         
-        <div className="flex items-center gap-4 relative ml-2">
-          <span className="text-on-surface font-black text-xs uppercase tracking-widest hidden md:block opacity-60">
-            {userName ? `${t('nav.greeting')}, ${userName}` : t('nav.greeting')}
-          </span>
-          <button onClick={() => setDropdownOpen(!dropdownOpen)} className="w-10 h-10 rounded-2xl overflow-hidden border border-outline-variant/30 hover:border-primary transition-all focus:outline-none bg-surface-container-high">
+        <div className="flex items-center gap-3 relative ml-4">
+          <div className="hidden sm:flex flex-col items-end mr-1">
+            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-on-surface-variant opacity-50 leading-none mb-1">
+              {t('nav.greeting')}
+            </span>
+            <span className="text-sm font-bold text-on-surface leading-none max-w-[120px] truncate">
+              {userName || 'User'}
+            </span>
+          </div>
+          <button onClick={() => setDropdownOpen(!dropdownOpen)} className="w-10 h-10 rounded-2xl overflow-hidden border border-outline-variant/30 hover:border-primary transition-all focus:outline-none bg-surface-container-high ring-2 ring-transparent hover:ring-primary/20 shadow-lg">
             <img src={userAvatar || `https://ui-avatars.com/api/?name=${userName || 'U'}&background=6366f1&color=fff`} alt="avatar" className="w-full h-full object-cover" />
           </button>
           

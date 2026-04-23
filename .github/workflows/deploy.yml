@@ -35,9 +35,12 @@ jobs:
             echo "--- UPDATING USER FRONTEND ---"
             cd /var/www/ai-interview-user/user-frontend
             git pull origin main
-            # Dùng trực tiếp cổng 5000 vì bạn đã mở tường lửa thành công
             echo "VITE_API_URL=http://${{ secrets.HOST }}:5000" > .env
             npm install
+            rm -rf dist
             npm run build
+            
+            # Cung cấp lệnh để Nginx nhận diện file mới nếu cần (tùy cấu hình)
+            # sudo systemctl restart nginx
             
             echo "--- DEPLOY SUCCESSFUL ---"
