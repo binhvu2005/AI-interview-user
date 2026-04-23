@@ -35,7 +35,8 @@ jobs:
             echo "--- UPDATING USER FRONTEND ---"
             cd /var/www/ai-interview-user/user-frontend
             git pull origin main
-            echo "VITE_API_URL=http://${{ secrets.HOST }}:5000" > .env
+            # Quay lại dùng Proxy /api/user để không cần mở port 5000 trên VPS
+            echo "VITE_API_URL=http://${{ secrets.HOST }}/api/user" > .env
             npm install
             npm run build
             
