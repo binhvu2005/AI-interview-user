@@ -87,7 +87,7 @@ const truncateCV = (cvData: string) => {
 export const analyzeCVJDMatch = async (cvData: string, jdText: string, position: string, level: string, lang: string = 'vi') => {
   const truncatedCV = truncateCV(cvData);
   const userPrompt = getCVAnalysisUserPrompt(truncatedCV, jdText, position, level, lang);
-  const result = await callAI(CV_ANALYSIS_SYSTEM_PROMPT(lang), userPrompt, 'CV Analysis');
+  const result = await callAI(CV_ANALYSIS_SYSTEM_PROMPT, userPrompt, 'CV Analysis');
   
   // Ensure CV analysis defaults
   return {
@@ -181,34 +181,19 @@ ${truncatedHistory.map(m => `${m.role.toUpperCase()}: ${m.content}`).join('\n')}
 
 ### TASK
 Respond in ${languageName}. 
-<<<<<<< HEAD
-STRICT: Every question MUST follow the "Theory + Practice + Mindset" (T-P-M) structure.
-STRICT TRUTH: If the candidate said "không biết" in HISTORY, do NOT claim they have experience in that area. Prioritize the USER's actual words over previous AI feedback.
-STRICT: Ask a NEW question about a technical area NOT YET DISCUSSED in HISTORY.
-${isCandidateStruggling ? "FORCED PIVOT: Candidate said they don't know. Briefly explain the previous topic in max 10 words, then IMMEDIATELY switch to a COMPLETELY DIFFERENT skill from the CV/JD." : ""}
-STRICT: DO NOT repeat any topic, technology, or question from the history above.
-STRICT: DO NOT list skills or use introductory fluff.
-STRICT: DO NOT ask "What is X?" or "Can you explain Y?". 
-STRICT: You MUST create a technical scenario and ask the candidate how they would solve it (Practice) and what trade-offs they see (Mindset).
-
-
-If currentTurn is 6, you MUST ask a CODE DEBUGGING question.
-If currentTurn > 6, you MUST set isFinished to true.
-`;
-
-  
-=======
 ${turnTask}
 
-STRICT: NEVER repeat greetings, "Welcome", or social filler after Turn 0.
-STRICT: All questions MUST follow "Theory + Practice + Mindset" (Scenario-based).
-${isCandidateStruggling ? "FORCED PIVOT: Candidate doesn't know. 1. Explain the previous topic briefly (< 10 words). 2. IMMEDIATELY switch to a COMPLETELY DIFFERENT skill from the CV/JD. 3. Ask a NEW technical scenario-based question (T-P-M). DO NOT ask 'Have you used X?', instead ask 'How would you handle Scenario Y using X?'." : ""}
+STRICT: Every question MUST follow the "Theory + Practice + Mindset" (T-P-M) structure.
+STRICT TRUTH: If the candidate said "không biết" in HISTORY, do NOT claim they have experience in that area.
+STRICT: Ask a NEW question about a technical area NOT YET DISCUSSED in HISTORY.
+${isCandidateStruggling ? "FORCED PIVOT: Candidate said they don't know. 1. Briefly explain the previous topic (< 10 words). 2. IMMEDIATELY switch to a COMPLETELY DIFFERENT skill from the CV/JD. 3. Ask a NEW technical scenario-based question (T-P-M)." : ""}
 STRICT: DO NOT repeat any topic, technology, or question from the history above.
 STRICT: DO NOT list skills or use introductory fluff.
+STRICT: DO NOT ask generic questions like "What is X?". You MUST create a technical scenario.
+
+If currentTurn is ${maxTechQuestions - 1}, you MUST ask a CODE DEBUGGING question.
+If currentTurn >= ${maxTechQuestions}, you MUST set isFinished to true.
 `;
-
-
->>>>>>> 3048a86 (Update: sửa lỗi gọi API và CORS)
   return await callAI(INTERVIEW_CHAT_SYSTEM_PROMPT, userPrompt, 'Interview Chat');
 
 

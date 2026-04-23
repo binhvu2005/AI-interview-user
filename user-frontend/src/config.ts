@@ -3,24 +3,24 @@ export const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:50
 
 export const API_ENDPOINTS = {
   AUTH: {
-    LOGIN: `${API_BASE_URL}/api/auth/login`,
-    REGISTER: `${API_BASE_URL}/api/auth/register`,
-    ME: `${API_BASE_URL}/api/auth/me`,
-    PROFILE: `${API_BASE_URL}/api/auth/profile`,
-    CHANGE_PASSWORD: `${API_BASE_URL}/api/auth/change-password`,
-    CV: `${API_BASE_URL}/api/auth/cv`,
+    LOGIN: `${API_BASE_URL}/auth/login`,
+    REGISTER: `${API_BASE_URL}/auth/register`,
+    ME: `${API_BASE_URL}/auth/me`,
+    PROFILE: `${API_BASE_URL}/auth/profile`,
+    CHANGE_PASSWORD: `${API_BASE_URL}/auth/change-password`,
+    CV: `${API_BASE_URL}/auth/cv`,
   },
   AI: {
-    ANALYZE_CV: `${API_BASE_URL}/api/ai/analyze-cv`,
-    GENERATE_QUESTIONS: `${API_BASE_URL}/api/ai/generate-questions`,
-    CHAT: `${API_BASE_URL}/api/ai/chat`,
+    ANALYZE_CV: `${API_BASE_URL}/ai/analyze-cv`,
+    GENERATE_QUESTIONS: `${API_BASE_URL}/ai/generate-questions`,
+    CHAT: `${API_BASE_URL}/ai/chat`,
   },
   INTERVIEWS: {
-    SAVE: `${API_BASE_URL}/api/interviews/save`,
-    GET_ALL: `${API_BASE_URL}/api/interviews`,
-    GET_ONE: (id: string) => `${API_BASE_URL}/api/interviews/${id}`,
+    SAVE: `${API_BASE_URL}/interviews/save`,
+    GET_ALL: `${API_BASE_URL}/interviews`,
+    GET_ONE: (id: string) => `${API_BASE_URL}/interviews/${id}`,
   },
   DATA: {
-    SETUP_OPTIONS: `${API_BASE_URL}/api/data/setup-options`,
+    SETUP_OPTIONS: `${API_BASE_URL}/data/setup-options`,
   }
 };

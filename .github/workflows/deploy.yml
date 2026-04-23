@@ -1,0 +1,35 @@
+name: Deploy to VPS
+
+on:
+  push:
+    branches:
+      - main # Chạy khi push vào branch main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploying to VPS via SSH
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            echo "--- UPDATING USER BACKEND ---"
+            cd /var/www/ai-interview-user/user-backend
+            git pull origin main
+            npm install
+            npm run build
+            pm2 restart user-api || pm2 start dist/server.js --name "user-api"
+
+            echo "--- UPDATING USER FRONTEND ---"
+            cd /var/www/ai-interview-user/user-frontend
+            git pull origin main
+            # Tạo file .env nếu chưa có (để tránh lỗi localhost)
+            # Lưu ý: Cấu hình này khớp với file config.ts đã được tinh chỉnh
+            echo "VITE_API_URL=http://${{ secrets.HOST }}/api/user" > .env
+            npm install
+            npm run build
+            
+            echo "--- DEPLOY SUCCESSFUL ---"
