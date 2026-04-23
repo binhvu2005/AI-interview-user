@@ -16,13 +16,19 @@ app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
 // Routes
-// Routes with /api prefix (Standard)
+// 1. Standard Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/ai', aiRoutes);
 app.use('/api/data', dataRoutes);
 app.use('/api/interviews', interviewRoutes);
 
-// Routes without /api prefix (Fallback for proxy issues)
+// 2. Proxy Fallback (When Nginx sends the full /api/user/api path)
+app.use('/api/user/api/auth', authRoutes);
+app.use('/api/user/api/ai', aiRoutes);
+app.use('/api/user/api/data', dataRoutes);
+app.use('/api/user/api/interviews', interviewRoutes);
+
+// 3. Simple Fallback (When Nginx strips /api but keep /auth)
 app.use('/auth', authRoutes);
 app.use('/ai', aiRoutes);
 app.use('/data', dataRoutes);
