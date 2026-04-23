@@ -19,14 +19,22 @@ jobs:
             echo "--- UPDATING USER BACKEND ---"
             cd /var/www/ai-interview-user/user-backend
             git pull origin main
+            
+            # Tạo file .env cho Backend
+            echo "PORT=5000" > .env
+            echo "MONGODB_URI=${{ secrets.MONGODB_URI }}" >> .env
+            echo "GROQ_API_KEY=${{ secrets.GROQ_API_KEY }}" >> .env
+            echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> .env
+            echo "NODE_ENV=production" >> .env
+            
             npm install
             npm run build
-            pm2 restart user-api || pm2 start dist/server.js --name "user-api"
+            pm2 delete user-api || true
+            pm2 start dist/server.js --name "user-api"
 
             echo "--- UPDATING USER FRONTEND ---"
             cd /var/www/ai-interview-user/user-frontend
             git pull origin main
-            # Dùng thẳng port 5000/api để chắc chắn nhất, tránh qua Nginx bị lỗi 404
             echo "VITE_API_URL=http://${{ secrets.HOST }}:5000" > .env
             npm install
             npm run build
