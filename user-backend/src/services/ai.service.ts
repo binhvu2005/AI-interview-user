@@ -56,7 +56,7 @@ const callAI = async (systemPrompt: string, userPrompt: string, label: string): 
   console.log(`[Groq] Calling: ${label}...`);
   try {
     const response = await groq.chat.completions.create({
-      model: 'llama-3.1-8b-instant', 
+      model: 'llama-3.1-8b-instant',
       messages: [
         { role: 'system', content: systemPrompt },
         { role: 'user', content: userPrompt }
@@ -88,7 +88,7 @@ export const analyzeCVJDMatch = async (cvData: string, jdText: string, position:
   const truncatedCV = truncateCV(cvData);
   const userPrompt = getCVAnalysisUserPrompt(truncatedCV, jdText, position, level, lang);
   const result = await callAI(CV_ANALYSIS_SYSTEM_PROMPT, userPrompt, 'CV Analysis');
-  
+
   // Ensure CV analysis defaults
   return {
     matchScore: result.matchScore ?? 0,
@@ -111,19 +111,19 @@ export const generateInterviewQuestions = async (cvData: string, jdText: string,
 
 export const processInterviewChat = async (history: any[], cvData: string, jdText: string, position: string, level: string, lang: string = 'vi', duration: string = '15') => {
   const languageName = lang === 'vi' ? 'Vietnamese' : 'English';
-  
+
   // Truncate history to stay within token limits (last 10 messages)
   const truncatedHistory = history.slice(-10);
 
   // Check for "không biết" in the latest user response
   const lastUserMessage = [...history].reverse().find(m => m.role === 'user')?.content?.toLowerCase() || "";
-  const isCandidateStruggling = lastUserMessage === "không" || 
-                               lastUserMessage.includes("không biết") || 
-                               lastUserMessage.includes("chưa rõ") || 
-                               lastUserMessage.includes("không có kinh nghiệm") ||
-                               lastUserMessage.includes("don't know") ||
-                               lastUserMessage.includes("not sure") ||
-                               (lastUserMessage.length < 5 && lastUserMessage.length > 0);
+  const isCandidateStruggling = lastUserMessage === "không" ||
+    lastUserMessage.includes("không biết") ||
+    lastUserMessage.includes("chưa rõ") ||
+    lastUserMessage.includes("không có kinh nghiệm") ||
+    lastUserMessage.includes("don't know") ||
+    lastUserMessage.includes("not sure") ||
+    (lastUserMessage.length < 5 && lastUserMessage.length > 0);
 
 
   const aiMessages = history.filter(m => m.role === 'ai');
@@ -143,7 +143,7 @@ export const processInterviewChat = async (history: any[], cvData: string, jdTex
 
   let turnTask = "";
   if (currentTurn === 0) {
-    turnTask = lang === 'vi' 
+    turnTask = lang === 'vi'
       ? "Chào mừng ứng viên bằng tư cách Obsidian AI. Yêu cầu ứng viên giới thiệu bản thân ngắn gọn. Tuyệt đối chưa hỏi kiến thức chuyên môn ở Turn 0."
       : "Welcome the candidate as Obsidian AI. Ask for a brief self-introduction. DO NOT ask technical questions yet.";
   } else if (currentTurn <= theoryEnd) {
@@ -183,17 +183,14 @@ ${truncatedHistory.map(m => `${m.role.toUpperCase()}: ${m.content}`).join('\n')}
 Respond in ${languageName}. 
 ${turnTask}
 
-STRICT: Every question MUST follow the "Theory + Practice + Mindset" (T-P-M) structure.
-STRICT TRUTH: If the candidate said "không biết" in HISTORY, do NOT claim they have experience in that area.
-STRICT: Ask a NEW question about a technical area NOT YET DISCUSSED in HISTORY.
-${isCandidateStruggling ? "FORCED PIVOT: Candidate said they don't know. 1. Briefly explain the previous topic (< 10 words). 2. IMMEDIATELY switch to a COMPLETELY DIFFERENT skill from the CV/JD. 3. Ask a NEW technical scenario-based question (T-P-M)." : ""}
+STRICT: NEVER repeat greetings, "Welcome", or social filler after Turn 0.
+STRICT: All questions MUST follow "Theory + Practice + Mindset" (Scenario-based).
+${isCandidateStruggling ? "FORCED PIVOT: Candidate doesn't know. 1. Explain the previous topic briefly (< 10 words). 2. IMMEDIATELY switch to a COMPLETELY DIFFERENT skill from the CV/JD. 3. Ask a NEW technical scenario-based question (T-P-M). DO NOT ask 'Have you used X?', instead ask 'How would you handle Scenario Y using X?'." : ""}
 STRICT: DO NOT repeat any topic, technology, or question from the history above.
 STRICT: DO NOT list skills or use introductory fluff.
-STRICT: DO NOT ask generic questions like "What is X?". You MUST create a technical scenario.
-
-If currentTurn is ${maxTechQuestions - 1}, you MUST ask a CODE DEBUGGING question.
-If currentTurn >= ${maxTechQuestions}, you MUST set isFinished to true.
 `;
+
+
   return await callAI(INTERVIEW_CHAT_SYSTEM_PROMPT, userPrompt, 'Interview Chat');
 
 
