@@ -22,11 +22,16 @@ app.use('/api/ai', aiRoutes);
 app.use('/api/data', dataRoutes);
 app.use('/api/interviews', interviewRoutes);
 
-// 2. Proxy Fallback (When Nginx sends the full /api/user/api path)
+// 2. Proxy Fallback (When Nginx sends the full /api/user/api or /api/user path)
 app.use('/api/user/api/auth', authRoutes);
 app.use('/api/user/api/ai', aiRoutes);
 app.use('/api/user/api/data', dataRoutes);
 app.use('/api/user/api/interviews', interviewRoutes);
+
+app.use('/api/user/auth', authRoutes);
+app.use('/api/user/ai', aiRoutes);
+app.use('/api/user/data', dataRoutes);
+app.use('/api/user/interviews', interviewRoutes);
 
 // 3. Simple Fallback (When Nginx strips /api but keep /auth)
 app.use('/auth', authRoutes);
