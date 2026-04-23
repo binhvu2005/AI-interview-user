@@ -16,10 +16,17 @@ app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
 // Routes
+// Routes with /api prefix (Standard)
 app.use('/api/auth', authRoutes);
 app.use('/api/ai', aiRoutes);
 app.use('/api/data', dataRoutes);
 app.use('/api/interviews', interviewRoutes);
+
+// Routes without /api prefix (Fallback for proxy issues)
+app.use('/auth', authRoutes);
+app.use('/ai', aiRoutes);
+app.use('/data', dataRoutes);
+app.use('/interviews', interviewRoutes);
 
 // Error Handler
 app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
