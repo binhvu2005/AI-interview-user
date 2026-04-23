@@ -3,7 +3,7 @@ name: Deploy to VPS
 on:
   push:
     branches:
-      - main # Chạy khi push vào branch main
+      - main
 
 jobs:
   deploy:
@@ -26,9 +26,8 @@ jobs:
             echo "--- UPDATING USER FRONTEND ---"
             cd /var/www/ai-interview-user/user-frontend
             git pull origin main
-            # Tạo file .env nếu chưa có (để tránh lỗi localhost)
-            # Lưu ý: Cấu hình này khớp với file config.ts đã được tinh chỉnh
-            echo "VITE_API_URL=http://${{ secrets.HOST }}/api/user" > .env
+            # Dùng thẳng port 5000/api để chắc chắn nhất, tránh qua Nginx bị lỗi 404
+            echo "VITE_API_URL=http://${{ secrets.HOST }}:5000" > .env
             npm install
             npm run build
             
