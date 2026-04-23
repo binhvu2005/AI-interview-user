@@ -73,22 +73,24 @@ const DashboardPage = () => {
         ctx.beginPath();
         ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
         ctx.fillStyle = this.color;
-        ctx.globalAlpha = 0.4;
+        ctx.globalAlpha = 0.6;
         ctx.fill();
       }
     }
 
     const init = () => {
+      if (!container || !canvas) return;
       const width = container.offsetWidth;
       const height = container.offsetHeight;
       canvas.width = width;
       canvas.height = height;
       particles = [];
-      for (let i = 0; i < 450; i++) {
-        particles.push(new Particle(canvas.width, canvas.height));
+      for (let i = 0; i < 200; i++) {
+        particles.push(new Particle(width, height));
       }
-
     };
+
+    init();
 
     const animate = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -133,7 +135,7 @@ const DashboardPage = () => {
 
 
   return (
-    <div className="relative min-h-screen overflow-hidden">
+    <div className="relative min-h-screen overflow-x-hidden">
       {/* Global Particle Background (Top Area) */}
       <div
         ref={containerRef}

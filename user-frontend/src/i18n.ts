@@ -69,7 +69,9 @@ const resources = {
       "analysis": {
         "title": "AI Match Analysis",
         "recommended": "Recommended",
+        "consider": "Consider",
         "caution": "Caution",
+        "not_recommended": "Not Recommended",
         "score": "Score",
         "summary_placeholder": "Analysis summary will appear here..."
       },
@@ -323,9 +325,11 @@ const resources = {
         "analyzing": "Đang phân tích..."
       },
       "analysis": {
-        "title": "Kết quả Phân tích AI",
-        "recommended": "KHUYÊN DÙNG",
+        "title": "Phân tích Độ khớp AI",
+        "recommended": "ĐỀ XUẤT",
+        "consider": "CÂN NHẮC",
         "caution": "CẦN LƯU Ý",
+        "not_recommended": "KHÔNG KHUYÊN DÙNG",
         "score": "ĐIỂM SỐ",
         "summary_placeholder": "Tóm tắt phân tích sẽ hiển thị ở đây..."
       },

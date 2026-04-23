@@ -138,30 +138,25 @@ export const processInterviewChat = async (history: any[], cvData: string, jdTex
   const practiceCount = totalTech - theoryCount - debugCount;
 
 
-  const theoryEnd = theoryCount;
-  const practiceEnd = theoryCount + practiceCount;
+  const phase = currentTurn === 0 ? 'INTRO' : 
+                currentTurn <= Math.floor(maxTechQuestions * 0.4) ? 'CORE_TECH' :
+                currentTurn <= Math.floor(maxTechQuestions * 0.7) ? 'SCENARIO_PRACTICE' :
+                currentTurn < maxTechQuestions ? 'ARCHITECTURE_MINDSET' : 'WRAP_UP';
 
   let turnTask = "";
   if (currentTurn === 0) {
-    turnTask = lang === 'vi'
-      ? "Chào mừng ứng viên bằng tư cách Obsidian AI. Yêu cầu ứng viên giới thiệu bản thân ngắn gọn. Tuyệt đối chưa hỏi kiến thức chuyên môn ở Turn 0."
-      : "Welcome the candidate as Obsidian AI. Ask for a brief self-introduction. DO NOT ask technical questions yet.";
-  } else if (currentTurn <= theoryEnd) {
-    turnTask = lang === 'vi'
-      ? "GIAI ĐOẠN 1: KIẾN THỨC NỀN TẢNG. Phản hồi tự nhiên (ví dụ: 'Tôi đã rõ', 'Cảm ơn bạn') rồi hỏi 1 câu hỏi lý thuyết chuyên sâu. Cấm dùng câu 'Câu trả lời ngắn gọn và rõ ràng'."
-      : "PHASE 1: FUNDAMENTALS. Provide a natural human-like reaction, then ask a deep theoretical question. AVOID repetitive robotic phrases.";
-  } else if (currentTurn <= practiceEnd) {
-    turnTask = lang === 'vi'
-      ? "GIAI ĐOẠN 2: TÌNH HUỐNG THỰC TẾ. Phản hồi như một người phỏng vấn thật, sau đó đưa ra một kịch bản dự án phức tạp liên quan đến CV/JD và hỏi cách giải quyết."
-      : "PHASE 2: PRACTICAL SCENARIOS. React naturally, then present a complex project scenario from the CV/JD and ask for a solution.";
-  } else if (currentTurn <= totalTech) {
-    turnTask = lang === 'vi'
-      ? "GIAI ĐOẠN 3: TƯ DUY KIẾN TRÚC & DEBUG. Đưa ra một đoạn mã có lỗi hoặc một vấn đề hệ thống hóc búa để ứng viên tìm lỗi và tối ưu hóa."
-      : "PHASE 3: ARCHITECTURE & DEBUGGING. Provide a buggy code snippet or a tough system issue for the candidate to fix and optimize.";
+    turnTask = "PHASE: INTRO. Giới thiệu Obsidian AI, chào mừng Bạn và yêu cầu giới thiệu bản thân NGẮN GỌN (dưới 2 phút).";
+  } else if (phase === 'CORE_TECH') {
+    turnTask = `PHASE: CORE TECH. Đặt câu hỏi số ${currentTurn}/${maxTechQuestions}. Tập trung vào KIẾN THỨC CỐT LÕI của vị trí ${position}.`;
+  } else if (phase === 'SCENARIO_PRACTICE') {
+    turnTask = `PHASE: SCENARIO & DEBUGGING. Đặt câu hỏi số ${currentTurn}/${maxTechQuestions}. Đưa ra một ĐOẠN MÃ CÓ LỖI (buggy code) hoặc một TÌNH HUỐNG THỰC TẾ cần tìm lỗi logic liên quan đến ${position}.`;
+  } else if (phase === 'ARCHITECTURE_MINDSET') {
+    turnTask = `PHASE: ARCHITECTURE. Đặt câu hỏi số ${currentTurn}/${maxTechQuestions}. 
+      - Nếu Level là Junior: Hỏi về Clean Code, cách tổ chức file/component.
+      - Nếu Level là Mid: Hỏi về Design Patterns, tối ưu Performance hoặc API Design.
+      - Nếu Level là Senior: Hỏi về System Design, Scalability, High Availability hoặc Security.`;
   } else {
-    turnTask = lang === 'vi'
-      ? "KẾT THÚC. Tổng kết ngắn gọn buổi phỏng vấn và chào tạm biệt. Đặt 'isFinished' là true."
-      : "CONCLUSION. Briefly summarize and say goodbye. Set 'isFinished' to true.";
+    turnTask = "PHASE: WRAP_UP. Đưa ra một câu hỏi thử thách cuối cùng (Edge case) và kết thúc phỏng vấn. Đặt isFinished: true.";
   }
 
 
@@ -183,11 +178,23 @@ ${truncatedHistory.map(m => `${m.role.toUpperCase()}: ${m.content}`).join('\n')}
 Respond in ${languageName}. 
 ${turnTask}
 
-STRICT: NEVER repeat greetings, "Welcome", or social filler after Turn 0.
-STRICT: All questions MUST follow "Theory + Practice + Mindset" (Scenario-based).
-${isCandidateStruggling ? "FORCED PIVOT: Candidate doesn't know. 1. Explain the previous topic briefly (< 10 words). 2. IMMEDIATELY switch to a COMPLETELY DIFFERENT skill from the CV/JD. 3. Ask a NEW technical scenario-based question (T-P-M). DO NOT ask 'Have you used X?', instead ask 'How would you handle Scenario Y using X?'." : ""}
-STRICT: DO NOT repeat any topic, technology, or question from the history above.
-STRICT: DO NOT list skills or use introductory fluff.
+STRICT TECHNICAL STEERING:
+1. ANALYZE the LAST CANDIDATE RESPONSE in HISTORY.
+2. IF score would be > 7: DO NOT ask follow-ups. Transition to a NEW technical domain from CV/JD immediately.
+3. IF score would be 4-7 (Vague/Mediocre): Ask ONE professional probing question (xoáy) to test depth. (Max 2 probing per topic).
+4. IF score would be < 4 or "don't know": 
+   - Briefly explain the concept (< 10 words).
+   - IMMEDIATELY PIVOT to a COMPLETELY DIFFERENT skill/technology.
+   - DO NOT stay on the failed topic.
+
+STRICT RULES:
+- Every question MUST follow "Theory + Practice + Mindset" (Scenario-based).
+- NO HALLUCINATION: If candidate says "don't know", do NOT assume they have that experience.
+- NO SOCIAL FILLER: No "Great", "I understand", "Interesting". Use professional reactions like "I see", "Cảm ơn bạn", "Ghi nhận".
+- NO REPETITION: Do not repeat any question or topic from the history above.
+
+If currentTurn is ${maxTechQuestions - 1}, you MUST ask a REAL-WORLD ARCHITECTURE/DEBUGGING scenario.
+If currentTurn >= ${maxTechQuestions}, set isFinished: true.
 `;
 
 
