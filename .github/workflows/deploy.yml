@@ -35,8 +35,8 @@ jobs:
             echo "--- UPDATING USER FRONTEND ---"
             cd /var/www/ai-interview-user/user-frontend
             git pull origin main
-            # Dùng lại cổng 80 (Proxy) vì Backend đã được cấu hình để tự nhận diện đường dẫn /api/user
-            echo "VITE_API_URL=http://${{ secrets.HOST }}/api/user" > .env
+            # Dùng trực tiếp cổng 5000 vì bạn đã mở tường lửa thành công
+            echo "VITE_API_URL=http://${{ secrets.HOST }}:5000" > .env
             npm install
             npm run build
             
