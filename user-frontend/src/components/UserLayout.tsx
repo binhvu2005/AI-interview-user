@@ -35,7 +35,7 @@ const UserLayout = () => {
           )}
 
           {/* Main Content */}
-          <main className={`flex-1 py-8 min-w-0 ${!showSidebar ? '' : ''}`}>
+          <main className={`flex-1 py-0 min-w-0 ${!showSidebar ? '' : ''}`}>
             <Outlet />
           </main>
         </div>

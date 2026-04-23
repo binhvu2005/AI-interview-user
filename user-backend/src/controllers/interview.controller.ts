@@ -22,7 +22,7 @@ export const saveAndEvaluateInterview = async (req: AuthRequest, res: Response) 
 
     // 1. Get AI Evaluation
     console.log('[Evaluation] Starting AI analysis...');
-    const evaluation = await AIService.evaluateInterview(messages, cvData, jdText, matchScore, lang || 'vi');
+    const evaluation = await AIService.evaluateInterview(messages, cvData, jdText, matchScore, lang || 'vi', position, level);
 
     // 2. Validate and Clean Data
     const sanitizedMatchScore = isNaN(parseInt(matchScore)) ? 0 : parseInt(matchScore);

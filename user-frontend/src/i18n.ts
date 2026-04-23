@@ -66,6 +66,13 @@ const resources = {
         "analyze_btn": "Analyze Match",
         "analyzing": "Analyzing..."
       },
+      "analysis": {
+        "title": "AI Match Analysis",
+        "recommended": "Recommended",
+        "caution": "Caution",
+        "score": "Score",
+        "summary_placeholder": "Analysis summary will appear here..."
+      },
       "login": {
         "title": "Welcome Back",
         "subtitle": "Sign in to continue to Obsidian AI",
@@ -314,6 +321,13 @@ const resources = {
         "job_desc_placeholder": "Dán mô tả công việc (JD) vào đây. AI sẽ trích xuất các kỹ năng trọng tâm và cá nhân hóa câu hỏi phỏng vấn để bám sát yêu cầu công việc...",
         "analyze_btn": "Phân tích Phù hợp",
         "analyzing": "Đang phân tích..."
+      },
+      "analysis": {
+        "title": "Kết quả Phân tích AI",
+        "recommended": "KHUYÊN DÙNG",
+        "caution": "CẦN LƯU Ý",
+        "score": "ĐIỂM SỐ",
+        "summary_placeholder": "Tóm tắt phân tích sẽ hiển thị ở đây..."
       },
       "login": {
         "title": "Chào mừng Trở lại",

@@ -362,16 +362,16 @@ const PreparationPage = () => {
                    </svg>
                    <div className="absolute inset-0 flex flex-col items-center justify-center">
                       <span className="text-5xl font-black text-on-surface">{analysisResult.matchScore}%</span>
-                      <span className="text-[10px] font-black uppercase tracking-widest opacity-40">Score</span>
+                      <span className="text-[10px] font-black uppercase tracking-widest opacity-40">{t('analysis.score')}</span>
                    </div>
                 </div>
                 <div className="flex-1">
                   <div className="flex items-center gap-3 mb-4">
-                    <h2 className="text-3xl font-black text-on-surface tracking-tighter">AI Match Analysis</h2>
+                    <h2 className="text-3xl font-black text-on-surface tracking-tighter">{t('analysis.title')}</h2>
                     {analysisResult?.interviewRecommendation?.shouldInterview ? (
-                      <span className="px-3 py-1 bg-green-400/10 text-green-400 text-[10px] font-black uppercase tracking-widest border border-green-400/20 rounded-full">Recommended</span>
+                      <span className="px-3 py-1 bg-green-400/10 text-green-400 text-[10px] font-black uppercase tracking-widest border border-green-400/20 rounded-full">{t('analysis.recommended')}</span>
                     ) : (
-                      <span className="px-3 py-1 bg-amber-400/10 text-amber-400 text-[10px] font-black uppercase tracking-widest border border-amber-400/20 rounded-full">Caution</span>
+                      <span className="px-3 py-1 bg-amber-400/10 text-amber-400 text-[10px] font-black uppercase tracking-widest border border-amber-400/20 rounded-full">{t('analysis.caution')}</span>
                     )}
                   </div>
                   <p className="text-on-surface-variant leading-relaxed text-base italic mb-6">"{analysisResult?.summary}"</p>

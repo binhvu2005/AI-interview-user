@@ -6,6 +6,14 @@ import { API_ENDPOINTS } from '../config';
 
 interface Evaluation {
   totalScore: number;
+  decision: string;
+  breakdown: {
+    technical: number;
+    problemSolving: number;
+    coding: number;
+    communication: number;
+    architectureAndFit: number;
+  };
   summary: string;
   pros: string[];
   cons: string[];
@@ -309,12 +317,23 @@ const ResultsPage = () => {
             </svg>
             <div className="absolute inset-0 flex flex-col items-center justify-center">
               <span className="text-6xl font-black text-on-surface">{evaluation?.totalScore || 0}</span>
-              <span className="text-[10px] font-black uppercase tracking-widest opacity-40">Total Score</span>
+              <span className="text-[10px] font-black uppercase tracking-widest opacity-40">{evaluation?.decision || 'Evaluation'}</span>
             </div>
           </div>
 
           <div className="flex-1">
-            <h3 className="text-2xl font-black text-on-surface mb-4">{t('results.overall')}</h3>
+            <div className="flex items-center gap-3 mb-2">
+              <h3 className="text-2xl font-black text-on-surface">{t('results.overall')}</h3>
+              {evaluation?.decision && (
+                <span className={`px-3 py-1 rounded-full text-[10px] font-black tracking-widest border ${
+                  evaluation.decision.includes('STRONG') ? 'bg-green-400/20 text-green-400 border-green-400/30' :
+                  evaluation.decision.includes('REJECT') ? 'bg-red-400/20 text-red-400 border-red-400/30' :
+                  'bg-primary/20 text-primary border-primary/30'
+                }`}>
+                  {evaluation.decision}
+                </span>
+              )}
+            </div>
             <p className="text-on-surface-variant leading-relaxed italic">"{evaluation?.summary || t('results.loading')}"</p>
             <div className="mt-6 flex items-center gap-4">
               <div className="px-4 py-2 bg-primary/10 rounded-xl border border-primary/20">
@@ -345,6 +364,25 @@ const ResultsPage = () => {
               </ul>
             </div>
           </div>
+          {evaluation?.breakdown && (
+            <div className="mt-6 pt-6 border-t border-outline-variant/10 grid grid-cols-2 gap-4">
+              {Object.entries(evaluation.breakdown).map(([key, val]) => {
+                const labels: Record<string, string> = {
+                  technical: 'Technical Skills',
+                  problemSolving: 'Problem Solving',
+                  coding: 'Coding Ability',
+                  communication: 'Communication',
+                  architectureAndFit: 'Architecture & Potential'
+                };
+                return (
+                  <div key={key} className="flex justify-between items-center bg-surface-container-high/50 p-3 rounded-xl border border-outline-variant/5">
+                    <span className="text-[9px] font-bold uppercase opacity-50">{labels[key] || key}</span>
+                    <span className="text-xs font-black text-primary">{val}/10</span>
+                  </div>
+                );
+              })}
+            </div>
+          )}
         </div>
       </div>
 
