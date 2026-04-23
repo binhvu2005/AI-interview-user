@@ -40,7 +40,8 @@ jobs:
             rm -rf dist
             npm run build
             
-            # Cung cấp lệnh để Nginx nhận diện file mới nếu cần (tùy cấu hình)
-            # sudo systemctl restart nginx
+            # Copy vào thư mục mặc định của Nginx để chắc chắn hiện giao diện mới
+            sudo cp -r dist/* /var/www/html/
+            sudo systemctl restart nginx
             
             echo "--- DEPLOY SUCCESSFUL ---"
