@@ -139,11 +139,11 @@ const DashboardPage = () => {
       {/* Global Particle Background (Top Area) */}
       <div
         ref={containerRef}
-        className="absolute top-0 left-0 w-full h-[800px] pointer-events-none z-0"
+        className="absolute top-0 left-0 w-full h-[800px] pointer-events-none z-0 overflow-hidden"
       >
         <canvas
           ref={canvasRef}
-          className="w-full h-full opacity-60"
+          className="block w-full h-full opacity-60"
         />
       </div>
 
@@ -334,53 +334,6 @@ const DashboardPage = () => {
         </div>
       </div>
 
-      <style>{`
-        .animate-fade-in { animation: fadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-        .animate-float { animation: float 6s ease-in-out infinite; }
-        .animate-pulse-slow { animation: pulseSlow 4s ease-in-out infinite; }
-        .animate-glow { animation: glow 4s ease-in-out infinite; }
-        .delay-1 { animation-delay: 0.1s; }
-        .delay-2 { animation-delay: 0.2s; }
-        .delay-3 { animation-delay: 0.3s; }
-        .delay-4 { animation-delay: 0.4s; }
-
-        @keyframes textGlow { 0%, 100% { text-shadow: 0 0 15px rgba(163, 166, 255, 0.3); } 50% { text-shadow: 0 0 30px rgba(163, 166, 255, 0.6); } }
-        .animate-text-glow { animation: textGlow 4s ease-in-out infinite; }
-
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
-
-        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
-        @keyframes pulseSlow { 0%, 100% { opacity: 0.3; transform: scale(1); } 50% { opacity: 0.6; transform: scale(1.1); } }
-        @keyframes glow { 0%, 100% { box-shadow: 0 0 20px rgba(163, 166, 255, 0.1); } 50% { box-shadow: 0 0 40px rgba(163, 166, 255, 0.3); } }
-
-        .mesh-gradient {
-          position: absolute;
-          top: -20%;
-          left: -10%;
-          width: 140%;
-          height: 140%;
-          background-image: 
-            radial-gradient(at 0% 0%, rgba(163, 166, 255, 0.15) 0px, transparent 50%),
-            radial-gradient(at 100% 0%, rgba(186, 255, 201, 0.1) 0px, transparent 50%),
-            radial-gradient(at 100% 100%, rgba(163, 166, 255, 0.1) 0px, transparent 50%),
-            radial-gradient(at 0% 100%, rgba(186, 255, 201, 0.15) 0px, transparent 50%);
-          filter: blur(80px);
-          z-index: -1;
-          pointer-events: none;
-          animation: rotateMesh 20s linear infinite;
-        }
-
-        @keyframes rotateMesh {
-          0% { transform: rotate(0deg); }
-          100% { transform: rotate(360deg); }
-        }
-
-        .glass-card {
-          backdrop-filter: blur(12px);
-          background: rgba(255, 255, 255, 0.02);
-          border: 1px solid rgba(255, 255, 255, 0.05);
-        }
-      `}</style>
     </div>
   );
 };
