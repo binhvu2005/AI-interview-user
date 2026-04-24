@@ -67,10 +67,14 @@ const RegisterPage = () => {
       {/* Navbar for Auth pages */}
       <nav className="w-full bg-surface/80 backdrop-blur-2xl border-b border-outline-variant/15 flex justify-between items-center px-8 h-16">
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-[8px] bg-[#1a1a1e] border border-white/10 flex items-center justify-center">
-            <span className="material-symbols-outlined text-[#a3a6ff] text-lg">seedling</span>
-          </div>
-          <span className="text-lg font-bold tracking-tight text-white">Obsidian AI</span>
+         <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center">
+                <span className="material-symbols-outlined text-primary text-[20px]">psychiatry</span>
+              </div>
+              <span className="text-xl font-black tracking-tighter text-on-surface">
+                {t('app_name') || 'Obsidian AI'}
+              </span>
+            </div>
         </div>
         <div className="flex items-center gap-2">
           <button onClick={toggleLanguage} className="text-on-surface-variant hover:text-primary font-bold transition-colors duration-300 p-2 rounded-full flex items-center justify-center bg-surface-container-high border border-outline-variant/20 uppercase text-xs w-10 h-10" title="Toggle Language">
