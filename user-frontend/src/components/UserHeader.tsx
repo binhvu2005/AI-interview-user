@@ -30,7 +30,7 @@ const UserHeader = () => {
   };
 
   return (
-    <nav className="fixed top-0 w-full z-50 bg-surface/80 backdrop-blur-2xl text-primary font-manrope tracking-tight shadow-md border-b border-outline-variant/15 flex justify-between items-center px-8 h-16">
+    <nav className="fixed top-0 w-full z-50 bg-surface/80 backdrop-blur-2xl text-primary font-manrope tracking-tight shadow-sm border-b border-outline-variant/5 flex justify-between items-center px-8 h-16">
       <div className="flex items-center gap-8">
         <div className="flex items-center gap-2 cursor-pointer group" onClick={() => navigate('/')}>
           <span className="material-symbols-outlined text-primary text-2xl group-hover:rotate-12 transition-transform duration-300">seedling</span>

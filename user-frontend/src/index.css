@@ -118,6 +118,7 @@
   }
 
   .dark {
+    color-scheme: dark;
     /* DARK THEME VARIABLES (Original Code.html) */
     --c-error-container: #a70138;
     --c-inverse-on-surface: #565556;
@@ -180,6 +181,17 @@
   }
   body {
     @apply bg-background text-on-surface font-body min-h-screen flex flex-col antialiased selection:bg-primary-container selection:text-on-primary-container;
+  }
+  /* HIDE SCROLLBAR GLOBALLY ON ALL ELEMENTS */
+  * {
+    scrollbar-width: none !important;
+    -ms-overflow-style: none !important;
+  }
+
+  *::-webkit-scrollbar {
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
   }
 
   .scrollbar-hidden {

@@ -1,6 +1,6 @@
 import OpenAI from 'openai';
 import dotenv from 'dotenv';
-import { CV_ANALYSIS_SYSTEM_PROMPT, getCVAnalysisUserPrompt } from '../utils/cvAnalysisPrompt';
+import { CV_ANALYSIS_SYSTEM_PROMPT, getCVAnalysisUserPrompt } from '../utils/cv-analysis.prompt';
 import { INTERVIEW_SYSTEM_PROMPT, getInterviewQuestionsPrompt } from '../utils/interview.prompt';
 import { INTERVIEW_CHAT_SYSTEM_PROMPT } from '../utils/chat.prompt';
 import { INTERVIEW_EVALUATION_SYSTEM_PROMPT, getEvaluationUserPrompt } from '../utils/evaluation.prompt';
@@ -145,18 +145,18 @@ export const processInterviewChat = async (history: any[], cvData: string, jdTex
 
   let turnTask = "";
   if (currentTurn === 0) {
-    turnTask = "PHASE: INTRO. Giới thiệu Obsidian AI, chào mừng Bạn và yêu cầu giới thiệu bản thân NGẮN GỌN (dưới 2 phút).";
+    turnTask = "PHASE: INTRO. Introduce Obsidian AI, welcome the candidate and ask for a BRIEF self-introduction (under 2 minutes).";
   } else if (phase === 'CORE_TECH') {
-    turnTask = `PHASE: CORE TECH. Đặt câu hỏi số ${currentTurn}/${maxTechQuestions}. Tập trung vào KIẾN THỨC CỐT LÕI của vị trí ${position}.`;
+    turnTask = `PHASE: CORE TECH. Ask question number ${currentTurn}/${maxTechQuestions}. Focus on CORE KNOWLEDGE of the ${position} position.`;
   } else if (phase === 'SCENARIO_PRACTICE') {
-    turnTask = `PHASE: SCENARIO & DEBUGGING. Đặt câu hỏi số ${currentTurn}/${maxTechQuestions}. Đưa ra một ĐOẠN MÃ CÓ LỖI (buggy code) hoặc một TÌNH HUỐNG THỰC TẾ cần tìm lỗi logic liên quan đến ${position}.`;
+    turnTask = `PHASE: SCENARIO & DEBUGGING. Ask question number ${currentTurn}/${maxTechQuestions}. Provide a BUGGY CODE snippet or a REAL-WORLD SCENARIO needing logic error identification related to ${position}.`;
   } else if (phase === 'ARCHITECTURE_MINDSET') {
-    turnTask = `PHASE: ARCHITECTURE. Đặt câu hỏi số ${currentTurn}/${maxTechQuestions}. 
-      - Nếu Level là Junior: Hỏi về Clean Code, cách tổ chức file/component.
-      - Nếu Level là Mid: Hỏi về Design Patterns, tối ưu Performance hoặc API Design.
-      - Nếu Level là Senior: Hỏi về System Design, Scalability, High Availability hoặc Security.`;
+    turnTask = `PHASE: ARCHITECTURE. Ask question number ${currentTurn}/${maxTechQuestions}. 
+      - If Level is Junior: Ask about Clean Code, file/component organization.
+      - If Level is Mid: Ask about Design Patterns, performance optimization, or API Design.
+      - If Level is Senior: Ask about System Design, Scalability, High Availability, or Security.`;
   } else {
-    turnTask = "PHASE: WRAP_UP. Đưa ra một câu hỏi thử thách cuối cùng (Edge case) và kết thúc phỏng vấn. Đặt isFinished: true.";
+    turnTask = "PHASE: WRAP_UP. Ask a final challenge question (Edge case) and conclude the interview. Set isFinished: true.";
   }
 
 
@@ -178,19 +178,20 @@ ${truncatedHistory.map(m => `${m.role.toUpperCase()}: ${m.content}`).join('\n')}
 Respond in ${languageName}. 
 ${turnTask}
 
-STRICT TECHNICAL STEERING:
+STRICT TECHNICAL STEERING (THE IRON RULES):
 1. ANALYZE the LAST CANDIDATE RESPONSE in HISTORY.
-2. IF score would be > 7: DO NOT ask follow-ups. Transition to a NEW technical domain from CV/JD immediately.
-3. IF score would be 4-7 (Vague/Mediocre): Ask ONE professional probing question (xoáy) to test depth. (Max 2 probing per topic).
-4. IF score would be < 4 or "don't know": 
-   - Briefly explain the concept (< 10 words).
-   - IMMEDIATELY PIVOT to a COMPLETELY DIFFERENT skill/technology.
-   - DO NOT stay on the failed topic.
+2. IF score would be > 7 (Excellent): DO NOT ask follow-ups. Transition to a NEW technical domain from CV/JD immediately to save time.
+3. IF score would be 4-7 (Vague/Mediocre): Ask ONE professional probing question (drill-down) to test depth. (Max 2 probing per topic).
+4. IF score would be < 4 (Poor) or "don't know": 
+   - Briefly explain the answer/concept (< 15 words) to maintain flow.
+   - AGGRESSIVE PIVOT: IMMEDIATELY move to a COMPLETELY DIFFERENT skill/technology from CV/JD to give them a fresh chance.
+   - DO NOT linger on failed topics.
+5. ANTI-VAGUE PENALTY: If answer is < 10 words or generic, apply a max cap of 4/10 for this turn in your internal evaluation.
 
 STRICT RULES:
 - Every question MUST follow "Theory + Practice + Mindset" (Scenario-based).
 - NO HALLUCINATION: If candidate says "don't know", do NOT assume they have that experience.
-- NO SOCIAL FILLER: No "Great", "I understand", "Interesting". Use professional reactions like "I see", "Cảm ơn bạn", "Ghi nhận".
+- NO SOCIAL FILLER: No "Great", "I understand", "Interesting". Use professional reactions like "I see", "Thank you", "Acknowledged".
 - NO REPETITION: Do not repeat any question or topic from the history above.
 
 If currentTurn is ${maxTechQuestions - 1}, you MUST ask a REAL-WORLD ARCHITECTURE/DEBUGGING scenario.

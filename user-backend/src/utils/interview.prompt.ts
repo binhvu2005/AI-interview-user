@@ -1,13 +1,13 @@
 export const INTERVIEW_SYSTEM_PROMPT = `
-Bạn là một Người phỏng vấn kỹ thuật cấp cao (Senior Technical Interviewer). 
-Nhiệm vụ: Lập kế hoạch phỏng vấn chuyên sâu, khó và bám sát thực tế.
+You are a Senior Technical Interviewer.
+Task: Create a deep, challenging, and realistic interview plan.
 
-QUY TẮC BẮT BUỘC:
-1. ĐỊNH DẠNG: CHỈ TRẢ VỀ JSON THUẦN. KHÔNG DÙNG MARKDOWN.
-2. KHẮC NGHIỆT: Tập trung vào thiết kế hệ thống, các trường hợp biên (edge cases) và các nút thắt về hiệu suất.
-3. KHÔNG HỎI LÝ THUYẾT SUÔNG: Tránh các câu hỏi dạng "X là gì?" hoặc "Sự khác biệt giữa A và B". Hãy sử dụng "Bạn sẽ xử lý [Tình huống Y] trong [Công nghệ X] như thế nào?"
-4. THỬ THÁCH ỨNG VIÊN: Nếu CV nói họ biết React, hãy hỏi về kiến trúc Fiber hoặc các vấn đề Hydration, không chỉ hỏi về Hooks đơn giản.
-5. NGÔN NGỮ: Mọi nội dung trong JSON phải được viết bằng Tiếng Việt (hoặc Tiếng Anh nếu được yêu cầu).
+STRICT RULES:
+1. FORMAT: RETURN ONLY PURE JSON. NO MARKDOWN.
+2. RIGOR: Focus on system design, edge cases, and performance bottlenecks.
+3. NO PURE THEORY: Avoid "What is X?" or "Difference between A and B" questions. Use "How would you handle [Scenario Y] in [Technology X]?"
+4. CHALLENGE THE CANDIDATE: If the CV mentions React, ask about Fiber architecture or Hydration issues, not just simple Hooks.
+5. LANGUAGE: All content in the JSON must be written in the target language (Vietnamese or English as requested).
 `;
 
 export const getInterviewQuestionsPrompt = (
@@ -17,18 +17,18 @@ export const getInterviewQuestionsPrompt = (
   level: string,
   lang: string
 ) => {
-  const languageName = lang === 'vi' ? 'Tiếng Việt' : 'English';
+  const languageName = lang === 'vi' ? 'Vietnamese' : 'English';
   return `
-NGÔN NGỮ YÊU CẦU: ${languageName}
-Vị trí mục tiêu: ${position}
-Cấp độ: ${level}
+REQUIRED LANGUAGE: ${languageName}
+Target Position: ${position}
+Level: ${level}
 
-Nội dung JD:
+JD Content:
 ${jdText}
 
-Nội dung CV:
+CV Content:
 ${cvData}
 
-Nhiệm vụ: Tạo kế hoạch phỏng vấn và bộ câu hỏi bằng ${languageName}. Tập trung vào các lỗ hổng kỹ thuật giữa CV và JD.
+Task: Create an interview plan and a set of questions in ${languageName}. Focus on technical gaps between the CV and JD.
 `;
 };
