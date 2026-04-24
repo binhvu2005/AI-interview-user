@@ -45,11 +45,11 @@ const RegisterPage = () => {
       if (!res.ok) {
         throw new Error(data.message || t('notifications.register_error'));
       }
-      
+
       toast.success(t('notifications.register_success'));
       localStorage.setItem('token', data.token);
       localStorage.setItem('userName', data.user.fullName);
-      
+
       setTimeout(() => {
         navigate('/');
       }, 1000);
@@ -63,10 +63,15 @@ const RegisterPage = () => {
   return (
     <div className="bg-background text-on-surface font-body min-h-screen flex flex-col antialiased selection:bg-primary-container selection:text-on-primary-container">
       <Toaster position="top-right" />
-      
+
       {/* Navbar for Auth pages */}
-      <nav className="w-full bg-surface/80 backdrop-blur-2xl text-primary font-manrope tracking-tight shadow-sm border-b border-outline-variant/15 flex justify-between items-center px-8 h-16">
-        <span className="text-xl font-bold tracking-tighter text-on-surface">{t('app_name')}</span>
+      <nav className="w-full bg-surface/80 backdrop-blur-2xl border-b border-outline-variant/15 flex justify-between items-center px-8 h-16">
+        <div className="flex items-center gap-3">
+          <div className="w-8 h-8 rounded-[8px] bg-[#1a1a1e] border border-white/10 flex items-center justify-center">
+            <span className="material-symbols-outlined text-[#a3a6ff] text-lg">seedling</span>
+          </div>
+          <span className="text-lg font-bold tracking-tight text-white">Obsidian AI</span>
+        </div>
         <div className="flex items-center gap-2">
           <button onClick={toggleLanguage} className="text-on-surface-variant hover:text-primary font-bold transition-colors duration-300 p-2 rounded-full flex items-center justify-center bg-surface-container-high border border-outline-variant/20 uppercase text-xs w-10 h-10" title="Toggle Language">
             {i18n.language === 'en' ? 'EN' : 'VI'}
@@ -79,66 +84,66 @@ const RegisterPage = () => {
 
       <div className="flex-1 flex items-center justify-center p-4">
         <div className="w-full max-w-md bg-surface-container-low rounded-3xl p-8 shadow-xl border border-outline-variant/15 relative overflow-hidden">
-        {/* Decorative background element */}
-        <div className="absolute -top-24 -right-24 w-48 h-48 bg-primary/20 blur-3xl rounded-full pointer-events-none"></div>
-        <div className="absolute -bottom-24 -left-24 w-48 h-48 bg-primary-dim/20 blur-3xl rounded-full pointer-events-none"></div>
+          {/* Decorative background element */}
+          <div className="absolute -top-24 -right-24 w-48 h-48 bg-primary/20 blur-3xl rounded-full pointer-events-none"></div>
+          <div className="absolute -bottom-24 -left-24 w-48 h-48 bg-primary-dim/20 blur-3xl rounded-full pointer-events-none"></div>
 
-        <div className="relative z-10 text-center mb-8">
-          <div className="w-14 h-14 mx-auto rounded-2xl bg-surface-container-high border border-outline-variant/20 flex items-center justify-center mb-4 shadow-lg">
-            <span className="material-symbols-outlined text-primary text-3xl">person_add</span>
+          <div className="relative z-10 text-center mb-8">
+            <div className="w-16 h-16 mx-auto rounded-[16px] bg-[#1a1a1e] border border-white/10 flex items-center justify-center mb-6 shadow-xl">
+              <span className="material-symbols-outlined text-[#a3a6ff] text-3xl">seedling</span>
+            </div>
+            <h2 className="text-3xl font-black text-on-surface tracking-tight font-headline">{t('register.title')}</h2>
+            <p className="text-on-surface-variant text-sm mt-2">{t('register.subtitle')}</p>
           </div>
-          <h2 className="text-3xl font-black text-on-surface tracking-tight font-headline">{t('register.title')}</h2>
-          <p className="text-on-surface-variant text-sm mt-2">{t('register.subtitle')}</p>
+
+          <form onSubmit={handleRegister} className="relative z-10 space-y-5">
+            <div>
+              <label className="font-headline text-sm font-semibold text-on-surface-variant mb-2 block">{t('register.fullname')}</label>
+              <div className="relative group">
+                <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant/50 text-[20px] group-focus-within:text-primary transition-colors">badge</span>
+                <input value={fullName} onChange={(e) => setFullName(e.target.value)} type="text" required className="w-full bg-surface-container-lowest border border-outline-variant/15 text-on-surface text-sm rounded-xl pl-12 pr-4 py-4 focus:border-primary/50 focus:ring-1 focus:ring-primary/20 focus:bg-primary/5 transition-all outline-none placeholder:text-on-surface-variant/30" placeholder={t('register.fullname_placeholder')} />
+              </div>
+            </div>
+
+            <div>
+              <label className="font-headline text-sm font-semibold text-on-surface-variant mb-2 block">{t('register.email')}</label>
+              <div className="relative group">
+                <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant/50 text-[20px] group-focus-within:text-primary transition-colors">mail</span>
+                <input value={email} onChange={(e) => setEmail(e.target.value)} type="email" required className="w-full bg-surface-container-lowest border border-outline-variant/15 text-on-surface text-sm rounded-xl pl-12 pr-4 py-4 focus:border-primary/50 focus:ring-1 focus:ring-primary/20 focus:bg-primary/5 transition-all outline-none placeholder:text-on-surface-variant/30" placeholder={t('register.email_placeholder')} />
+              </div>
+            </div>
+
+            <div>
+              <label className="font-headline text-sm font-semibold text-on-surface-variant mb-2 block">{t('register.password')}</label>
+              <div className="relative group">
+                <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant/50 text-[20px] group-focus-within:text-primary transition-colors">lock</span>
+                <input value={password} onChange={(e) => setPassword(e.target.value)} type={showPassword ? "text" : "password"} required className="w-full bg-surface-container-lowest border border-outline-variant/15 text-on-surface text-sm rounded-xl pl-12 pr-12 py-4 focus:border-primary/50 focus:ring-1 focus:ring-primary/20 focus:bg-primary/5 transition-all outline-none placeholder:text-on-surface-variant/30" placeholder="••••••••" />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-on-surface-variant/50 hover:text-on-surface transition-colors focus:outline-none"
+                >
+                  <span className="material-symbols-outlined text-[20px]">
+                    {showPassword ? 'visibility_off' : 'visibility'}
+                  </span>
+                </button>
+              </div>
+            </div>
+
+            <button type="submit" disabled={loading} className="w-full bg-gradient-to-r from-primary-dim to-primary text-white font-headline font-bold text-base px-6 py-4 rounded-xl hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 shadow-lg flex items-center justify-center gap-2 mt-4 disabled:opacity-70">
+              {loading ? <span className="material-symbols-outlined animate-spin">refresh</span> : (
+                <>
+                  {t('register.btn')}
+                  <span className="material-symbols-outlined text-[20px]">person_add</span>
+                </>
+              )}
+            </button>
+          </form>
+
+          <p className="relative z-10 text-center text-sm text-on-surface-variant mt-8">
+            {t('register.has_account')} <Link to="/login" className="text-primary hover:underline font-semibold transition-colors ml-1">{t('register.signin')}</Link>
+          </p>
         </div>
-
-        <form onSubmit={handleRegister} className="relative z-10 space-y-5">
-          <div>
-            <label className="font-headline text-sm font-semibold text-on-surface-variant mb-2 block">{t('register.fullname')}</label>
-            <div className="relative group">
-              <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant/50 text-[20px] group-focus-within:text-primary transition-colors">badge</span>
-              <input value={fullName} onChange={(e) => setFullName(e.target.value)} type="text" required className="w-full bg-surface-container-lowest border border-outline-variant/15 text-on-surface text-sm rounded-xl pl-12 pr-4 py-4 focus:border-primary/50 focus:ring-1 focus:ring-primary/20 focus:bg-primary/5 transition-all outline-none placeholder:text-on-surface-variant/30" placeholder={t('register.fullname_placeholder')} />
-            </div>
-          </div>
-
-          <div>
-            <label className="font-headline text-sm font-semibold text-on-surface-variant mb-2 block">{t('register.email')}</label>
-            <div className="relative group">
-              <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant/50 text-[20px] group-focus-within:text-primary transition-colors">mail</span>
-              <input value={email} onChange={(e) => setEmail(e.target.value)} type="email" required className="w-full bg-surface-container-lowest border border-outline-variant/15 text-on-surface text-sm rounded-xl pl-12 pr-4 py-4 focus:border-primary/50 focus:ring-1 focus:ring-primary/20 focus:bg-primary/5 transition-all outline-none placeholder:text-on-surface-variant/30" placeholder={t('register.email_placeholder')} />
-            </div>
-          </div>
-
-          <div>
-            <label className="font-headline text-sm font-semibold text-on-surface-variant mb-2 block">{t('register.password')}</label>
-            <div className="relative group">
-              <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant/50 text-[20px] group-focus-within:text-primary transition-colors">lock</span>
-              <input value={password} onChange={(e) => setPassword(e.target.value)} type={showPassword ? "text" : "password"} required className="w-full bg-surface-container-lowest border border-outline-variant/15 text-on-surface text-sm rounded-xl pl-12 pr-12 py-4 focus:border-primary/50 focus:ring-1 focus:ring-primary/20 focus:bg-primary/5 transition-all outline-none placeholder:text-on-surface-variant/30" placeholder="••••••••" />
-              <button 
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-4 top-1/2 -translate-y-1/2 text-on-surface-variant/50 hover:text-on-surface transition-colors focus:outline-none"
-              >
-                <span className="material-symbols-outlined text-[20px]">
-                  {showPassword ? 'visibility_off' : 'visibility'}
-                </span>
-              </button>
-            </div>
-          </div>
-
-          <button type="submit" disabled={loading} className="w-full bg-gradient-to-r from-primary-dim to-primary text-white font-headline font-bold text-base px-6 py-4 rounded-xl hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 shadow-lg flex items-center justify-center gap-2 mt-4 disabled:opacity-70">
-            {loading ? <span className="material-symbols-outlined animate-spin">refresh</span> : (
-              <>
-                {t('register.btn')}
-                <span className="material-symbols-outlined text-[20px]">person_add</span>
-              </>
-            )}
-          </button>
-        </form>
-
-        <p className="relative z-10 text-center text-sm text-on-surface-variant mt-8">
-          {t('register.has_account')} <Link to="/login" className="text-primary hover:underline font-semibold transition-colors ml-1">{t('register.signin')}</Link>
-        </p>
-      </div>
       </div>
     </div>
   );

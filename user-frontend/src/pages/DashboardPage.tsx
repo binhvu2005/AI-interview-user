@@ -19,7 +19,6 @@ const DashboardPage = () => {
 
     let animationFrameId: number;
     let particles: Particle[] = [];
-    const particleCount = 120;
     const mouse = { x: 0, y: 0, active: false };
 
     class Particle {
@@ -135,7 +134,7 @@ const DashboardPage = () => {
 
 
   return (
-    <div className="relative min-h-screen overflow-x-hidden">
+    <div className="relative flex-1 overflow-x-hidden">
       {/* Global Particle Background (Top Area) */}
       <div
         ref={containerRef}
@@ -181,7 +180,7 @@ const DashboardPage = () => {
           </div>
 
           {/* Image Side */}
-          <div className="relative lg:h-[500px] animate-float">
+          <div className="relative lg:h-[500px]">
             {/* Glow behind image */}
             <div className="absolute inset-0 bg-gradient-to-tr from-primary/20 to-secondary/20 blur-[80px] rounded-full z-0 pointer-events-none animate-pulse-slow"></div>
             <div className="relative z-10 w-full h-full bg-surface-container-lowest/50 backdrop-blur-sm border border-outline-variant/15 rounded-3xl shadow-2xl overflow-hidden p-2">
@@ -202,7 +201,7 @@ const DashboardPage = () => {
             </div>
 
             {/* Floating Badge */}
-            <div className="absolute -bottom-6 -left-6 bg-surface-container-high/90 backdrop-blur-md border border-outline-variant/20 rounded-2xl p-4 shadow-xl flex items-center gap-4 z-20 animate-float delay-2">
+            <div className="absolute -bottom-6 -left-6 bg-surface-container-high/90 backdrop-blur-md border border-outline-variant/20 rounded-2xl p-4 shadow-xl flex items-center gap-4 z-20">
               <div className="w-12 h-12 rounded-full bg-primary/20 text-primary flex items-center justify-center">
                 <span className="material-symbols-outlined">mic</span>
               </div>

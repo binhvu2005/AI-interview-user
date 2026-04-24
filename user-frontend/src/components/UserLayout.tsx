@@ -19,13 +19,11 @@ const UserLayout = () => {
       {/* Fixed Header */}
       <UserHeader />
 
-      {/* Content Area below header */}
-      <div className="flex flex-1 pt-20">
+      {/* Main Content Area */}
+      <div className="flex-1 flex flex-col">
+        <div className={`flex-1 flex px-6 lg:px-8 mx-auto w-full gap-8 max-w-[1600px] pt-20`}>
 
-        {/* Inner layout: sidebar + main, constrained width */}
-        <div className={`flex flex-1 px-6 lg:px-8 mx-auto w-full gap-8 max-w-[1600px]`}>
-
-          {/* Sticky Sidebar — only on profile pages */}
+          {/* Sticky Sidebar */}
           {showSidebar && (
             <aside className="w-72 flex-shrink-0 sticky top-24 self-start mt-4 h-[calc(100vh-104px)]">
               <div className="h-full bg-surface-container-low border border-outline-variant/15 rounded-[32px] shadow-xl overflow-hidden">
@@ -34,16 +32,14 @@ const UserLayout = () => {
             </aside>
           )}
 
-          {/* Main Content */}
-          <main className={`flex-1 py-0 min-w-0 ${!showSidebar ? '' : ''}`}>
+          {/* Page Content */}
+          <main className="flex-1 flex flex-col min-w-0">
             <Outlet />
           </main>
         </div>
       </div>
 
-      {/* Full-width Footer */}
       <UserFooter />
-
     </div>
   );
 };
