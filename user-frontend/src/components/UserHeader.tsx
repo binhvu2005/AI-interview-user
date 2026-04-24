@@ -33,8 +33,14 @@ const UserHeader = () => {
     <nav className="fixed top-0 w-full z-50 bg-surface/80 backdrop-blur-2xl text-primary font-manrope tracking-tight shadow-sm border-b border-outline-variant/5 flex justify-between items-center px-8 h-16">
       <div className="flex items-center gap-8">
         <div className="flex items-center gap-2 cursor-pointer group" onClick={() => navigate('/')}>
-          <span className="material-symbols-outlined text-primary text-2xl group-hover:rotate-12 transition-transform duration-300">seedling</span>
-          <span className="text-xl font-bold tracking-tighter text-on-surface">AI Interview</span>
+          <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center">
+                <span className="material-symbols-outlined text-primary text-[20px]">psychiatry</span>
+              </div>
+              <span className="text-xl font-black tracking-tighter text-on-surface">
+                {t('app_name') || 'Obsidian AI'}
+              </span>
+            </div>
         </div>
         <div className="flex gap-6 items-center">
           <a onClick={() => navigate('/dashboard')} className="text-on-surface-variant hover:text-on-surface transition-colors duration-300 cursor-pointer">{t('nav.dashboard')}</a>
