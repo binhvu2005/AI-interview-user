@@ -249,7 +249,7 @@ const PreparationPage = () => {
          </p>
       </header>
 
-      <div className="space-y-8 pb-20">
+      <div className="space-y-8 pb-8">
         {/* Step 1: Selection Grid */}
         <section className="bg-surface-container-low border border-outline-variant/15 rounded-[40px] p-10 shadow-sm">
            <div className="flex items-center gap-3 mb-10">

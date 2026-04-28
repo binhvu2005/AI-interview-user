@@ -142,7 +142,7 @@ const ResultsPage = () => {
     const totalPages = Math.ceil(processed.length / ITEMS_PER_PAGE);
 
     return (
-      <div className="max-w-6xl mx-auto pb-20 animate-in fade-in slide-in-from-bottom-4 duration-500">
+      <div className="max-w-6xl mx-auto pb-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
         <header className="mb-10 flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
           <div>
             <h1 className="text-4xl font-black text-on-surface tracking-tighter mb-2">
@@ -285,7 +285,7 @@ const ResultsPage = () => {
   const { evaluation } = interview;
 
   return (
-    <div className="max-w-6xl mx-auto pb-20 animate-in fade-in duration-700">
+    <div className="max-w-6xl mx-auto pb-8 animate-in fade-in duration-700">
       {/* Header Section */}
       <header className="mb-12 flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
         <div>

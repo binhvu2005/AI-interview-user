@@ -142,7 +142,7 @@ const ProfilePage = () => {
   if (loading) return <div className="p-20 text-center font-bold opacity-50 uppercase tracking-widest">{t('results.loading')}</div>;
 
   return (
-    <div className="max-w-4xl pb-20 animate-in fade-in slide-in-from-bottom-4 duration-500">
+    <div className="max-w-4xl pb-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
       <header className="mb-8 flex justify-between items-end">
         <div>
           <h1 className="text-4xl font-black text-on-surface tracking-tighter mb-2">{t('profile_page.title')}</h1>

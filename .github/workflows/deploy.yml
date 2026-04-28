@@ -16,32 +16,24 @@ jobs:
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.SSH_KEY }}
           script: |
-            echo "--- UPDATING USER BACKEND ---"
-            cd /var/www/ai-interview-user/user-backend
+            echo "--- UPDATING REPOSITORY ---"
+            cd /var/www/ai-interview-user
             git pull origin main
             
-            # Tạo file .env cho Backend
+            # Tạo file .env chung cho Docker Compose
             echo "PORT=5000" > .env
             echo "MONGODB_URI=${{ secrets.MONGODB_URI }}" >> .env
             echo "GROQ_API_KEY=${{ secrets.GROQ_API_KEY }}" >> .env
             echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> .env
-            echo "NODE_ENV=production" >> .env
+            echo "VITE_API_URL=http://${{ secrets.HOST }}:5000" >> .env
             
-            npm install
-            npm run build
+            echo "--- REBUILDING & RESTARTING DOCKER CONTAINERS ---"
+            # Tắt các service cũ đang chiếm port (nếu trước đó dùng pm2/nginx thuần)
             pm2 delete user-api || true
-            pm2 start dist/server.js --name "user-api"
-
-            echo "--- UPDATING USER FRONTEND ---"
-            cd /var/www/ai-interview-user/user-frontend
-            git pull origin main
-            echo "VITE_API_URL=http://${{ secrets.HOST }}:5000" > .env
-            npm install
-            rm -rf dist
-            npm run build
+            sudo systemctl stop nginx || true
             
-            # Copy vào thư mục mặc định của Nginx để chắc chắn hiện giao diện mới
-            sudo cp -r dist/* /var/www/html/
-            sudo systemctl restart nginx
+            # Sử dụng docker compose để build và chạy
+            docker compose down || docker-compose down || true
+            docker compose up -d --build || docker-compose up -d --build
             
             echo "--- DEPLOY SUCCESSFUL ---"

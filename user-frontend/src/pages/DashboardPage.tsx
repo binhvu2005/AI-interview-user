@@ -134,7 +134,7 @@ const DashboardPage = () => {
 
 
   return (
-    <div className="relative flex-1 overflow-x-hidden">
+    <div className="relative flex-1 overflow-hidden">
       {/* Global Particle Background (Top Area) */}
       <div
         ref={containerRef}
@@ -276,7 +276,7 @@ const DashboardPage = () => {
         </div>
 
         {/* Social Proof & Stats Section (Bento Style) */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-24 animate-fade-in delay-4">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8 animate-fade-in delay-4">
           {/* Large Card: Success Stories */}
           <div className="lg:col-span-2 bg-surface-container-low/50 backdrop-blur-sm rounded-[32px] p-10 border border-outline-variant/15 flex flex-col justify-between relative overflow-hidden group hover:border-primary/30 transition-all hover:shadow-2xl">
             <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 blur-[100px] -mr-32 -mt-32 group-hover:bg-primary/10 transition-colors"></div>

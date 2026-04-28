@@ -1,0 +1,23 @@
+services:
+  backend:
+    build:
+      context: ./user-backend
+    ports:
+      - "5000:5000"
+    environment:
+      - MONGODB_URI=${MONGODB_URI}
+      - PORT=${PORT}
+      - GROQ_API_KEY=${GROQ_API_KEY}
+      - JWT_SECRET=${JWT_SECRET}
+    restart: always
+
+  frontend:
+    build:
+      context: ./user-frontend
+      args:
+        - VITE_API_URL=${VITE_API_URL}
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    restart: always
