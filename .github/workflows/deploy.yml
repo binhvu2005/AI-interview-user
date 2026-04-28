@@ -16,10 +16,22 @@ jobs:
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.SSH_KEY }}
           script: |
-            echo "--- UPDATING REPOSITORY ---"
+            set -e
+            echo "--- ENSURING DIRECTORY STRUCTURE ---"
+            sudo mkdir -p /var/www/ai-interview-user
+            sudo chown -R $USER:$USER /var/www/ai-interview-user
             cd /var/www/ai-interview-user
-            git pull origin main
             
+            echo "--- UPDATING CODE FROM GITHUB ---"
+            if [ ! -d ".git" ]; then
+              echo "Repository not found. Cloning for the first time..."
+              git clone https://github.com/binhvu2005/AI-interview-user.git .
+            else
+              echo "Repository found. Pulling latest changes..."
+              git pull origin main
+            fi
+            
+            echo "--- PREPARING ENVIRONMENT ---"
             # Tạo file .env chung cho Docker Compose
             echo "PORT=5000" > .env
             echo "MONGODB_URI=${{ secrets.MONGODB_URI }}" >> .env
@@ -28,12 +40,19 @@ jobs:
             echo "VITE_API_URL=http://${{ secrets.HOST }}:5000" >> .env
             
             echo "--- REBUILDING & RESTARTING DOCKER CONTAINERS ---"
-            # Tắt các service cũ đang chiếm port (nếu trước đó dùng pm2/nginx thuần)
+            # Dọn dẹp các service cũ (nếu có)
             pm2 delete user-api || true
             sudo systemctl stop nginx || true
             
-            # Sử dụng docker compose để build và chạy
-            docker compose down || docker-compose down || true
-            docker compose up -d --build || docker-compose up -d --build
+            # Khởi chạy Docker Compose
+            # Kiểm tra xem docker compose hay docker-compose được cài đặt
+            if docker compose version > /dev/null 2>&1; then
+              DOCKER_CMD="docker compose"
+            else
+              DOCKER_CMD="docker-compose"
+            fi
+            
+            $DOCKER_CMD down || true
+            $DOCKER_CMD up -d --build
             
             echo "--- DEPLOY SUCCESSFUL ---"
