@@ -88,17 +88,23 @@ const InterviewPage = () => {
 
     const startMedia = async () => {
       try {
-        const userStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-        setStream(userStream);
-        if (videoRef.current) videoRef.current.srcObject = userStream;
-
+        if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+          const userStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+          setStream(userStream);
+          if (videoRef.current) videoRef.current.srcObject = userStream;
+        } else {
+          toast.error(isVi ? "Trình duyệt không hỗ trợ camera/mic" : "Browser does not support camera/mic");
+        }
+      } catch (err) { 
+        toast.error(isVi ? "Không thể truy cập Camera/Mic" : "Camera access denied"); 
+      } finally {
         setTimeout(() => {
           const intro = isVi
             ? "Chào mừng bạn đến với buổi phỏng vấn giả định. Tôi là Obsidian AI. Hãy giới thiệu ngắn gọn về bản thân bạn."
             : "Welcome to your mock interview. I am Obsidian AI. Please introduce yourself briefly.";
           addMessage('ai', intro);
         }, 1000);
-      } catch (err) { toast.error("Camera access denied"); }
+      }
     };
 
     startMedia();
