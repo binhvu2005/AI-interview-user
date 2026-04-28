@@ -22,7 +22,24 @@ export const saveAndEvaluateInterview = async (req: AuthRequest, res: Response) 
 
     // 1. Get AI Evaluation
     console.log('[Evaluation] Starting AI analysis...');
-    const evaluation = await AIService.evaluateInterview(messages, cvData, jdText, matchScore, lang || 'vi', position, level);
+    const userMessages = messages.filter((m: any) => m.role === 'user');
+    let evaluation;
+    
+    if (userMessages.length === 0) {
+      console.log('[Evaluation] No user messages found, skipping AI evaluation to prevent hallucination.');
+      evaluation = {
+        totalScore: 0,
+        decision: "REJECT",
+        breakdown: { technical: 0, problemSolving: 0, coding: 0, communication: 0, architectureAndFit: 0 },
+        summary: lang === 'vi' ? "Ứng viên đã kết thúc phỏng vấn sớm mà không có bất kỳ tương tác nào." : "The candidate ended the interview early without any interaction.",
+        pros: [lang === 'vi' ? "Không có dữ liệu" : "No data", lang === 'vi' ? "Không có dữ liệu" : "No data", lang === 'vi' ? "Không có dữ liệu" : "No data", lang === 'vi' ? "Không có dữ liệu" : "No data", lang === 'vi' ? "Không có dữ liệu" : "No data"],
+        cons: [lang === 'vi' ? "Từ bỏ phỏng vấn" : "Abandoned interview", lang === 'vi' ? "Không có dữ liệu" : "No data", lang === 'vi' ? "Không có dữ liệu" : "No data", lang === 'vi' ? "Không có dữ liệu" : "No data", lang === 'vi' ? "Không có dữ liệu" : "No data"],
+        improvements: [lang === 'vi' ? "Cần hoàn thành bài phỏng vấn để hệ thống có thể đánh giá" : "Need to complete the interview for evaluation", lang === 'vi' ? "Không có dữ liệu" : "No data", lang === 'vi' ? "Không có dữ liệu" : "No data", lang === 'vi' ? "Không có dữ liệu" : "No data", lang === 'vi' ? "Không có dữ liệu" : "No data"],
+        detailedFeedback: []
+      };
+    } else {
+      evaluation = await AIService.evaluateInterview(messages, cvData, jdText, matchScore, lang || 'vi', position, level);
+    }
 
     // 2. Validate and Clean Data
     const sanitizedMatchScore = isNaN(parseInt(matchScore)) ? 0 : parseInt(matchScore);
