@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import toast from 'react-hot-toast';
-import { API_ENDPOINTS } from '../config';
+import { API_ENDPOINTS } from '../../services/api.config';
 
 interface SavedCV {
   id: string;
@@ -20,10 +20,6 @@ const VaultPage = () => {
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  useEffect(() => {
-    fetchVault();
-  }, []);
-
   const fetchVault = async () => {
     try {
       const token = localStorage.getItem('token');
@@ -34,12 +30,17 @@ const VaultPage = () => {
         const data = await res.json();
         setSavedCVs(data.savedCVs || []);
       }
-    } catch (err) {
+    } catch (error) {
+      console.error('Fetch vault error:', error);
       toast.error(t('notifications.profile_load_error'));
     } finally {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    fetchVault();
+  }, []);
 
   const handleAddClick = () => fileInputRef.current?.click();
 
@@ -66,7 +67,8 @@ const VaultPage = () => {
         } else {
           toast.error(data.message || t('vault_page.upload_error'));
         }
-      } catch (err: any) {
+      } catch (error) {
+        console.error('File upload error:', error);
         toast.error(t('notifications.error_generic'));
       } finally {
         setUploading(false);
@@ -90,7 +92,8 @@ const VaultPage = () => {
       } else {
         toast.error(t('vault_page.delete_error'));
       }
-    } catch (err) {
+    } catch (error) {
+      console.error('Delete CV error:', error);
       toast.error(t('notifications.error_generic'));
     } finally {
       setDeleteConfirmId(null);

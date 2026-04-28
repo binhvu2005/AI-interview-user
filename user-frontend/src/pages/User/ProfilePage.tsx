@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
-import { API_ENDPOINTS } from '../config';
+import { API_ENDPOINTS } from '../../services/api.config';
 
 const ProfilePage = () => {
   const { t } = useTranslation();
@@ -28,10 +28,6 @@ const ProfilePage = () => {
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  useEffect(() => {
-    fetchProfile();
-  }, []);
-
   const fetchProfile = async () => {
     try {
       const token = localStorage.getItem('token');
@@ -46,12 +42,17 @@ const ProfilePage = () => {
         const data = await res.json();
         setUserData(data);
       }
-    } catch (err) {
+    } catch (error) {
+      console.error('Fetch profile error:', error);
       toast.error(t('notifications.profile_load_error'));
     } finally {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    fetchProfile();
+  }, []);
 
   const handleAvatarClick = () => {
     if (isEditing) fileInputRef.current?.click();
@@ -97,7 +98,8 @@ const ProfilePage = () => {
         toast.success(t('notifications.profile_save_success'));
         setIsEditing(false);
       }
-    } catch (err) {
+    } catch (error) {
+      console.error('Profile save error:', error);
       toast.error(t('notifications.profile_save_error'));
     } finally {
       setSaving(false);
@@ -132,7 +134,8 @@ const ProfilePage = () => {
       } else {
         toast.error(data.message || t('notifications.pwd_error'));
       }
-    } catch (err) {
+    } catch (error) {
+      console.error('Change password error:', error);
       toast.error(t('notifications.error_generic'));
     } finally {
       setSaving(false);

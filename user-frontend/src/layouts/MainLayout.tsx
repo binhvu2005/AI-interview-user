@@ -8,7 +8,7 @@ import { Toaster } from 'react-hot-toast';
 // Routes where the sidebar should appear (profile-related pages)
 const SIDEBAR_ROUTES = ['/profile', '/vault', '/results', '/settings'];
 
-const UserLayout = () => {
+const MainLayout = () => {
   const location = useLocation();
   const showSidebar = SIDEBAR_ROUTES.some(route => location.pathname.startsWith(route));
 
@@ -44,4 +44,4 @@ const UserLayout = () => {
   );
 };
 
-export default UserLayout;
+export default MainLayout;
