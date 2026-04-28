@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import toast from 'react-hot-toast';
@@ -134,7 +134,7 @@ const ForumDetailPage = () => {
 
         <div className="relative z-10 mb-8">
           <div className="flex gap-2 mb-4">
-            {post.tags.map(tag => (
+            {post.tags.map((tag: string) => (
               <span key={tag} className="px-3 py-1 rounded-lg bg-surface-container-highest text-on-surface-variant text-[10px] font-black uppercase tracking-widest border border-outline-variant/20">
                 {tag}
               </span>
@@ -202,7 +202,7 @@ const ForumDetailPage = () => {
 
       {/* Reply List */}
       <div className="space-y-6">
-        {post.replies.map((reply) => (
+        {post.replies.map((reply: any) => (
           <div key={reply.id} className="space-y-4">
             <div className="bg-surface-container-lowest border border-outline-variant/15 rounded-[32px] p-8 shadow-sm hover:border-primary/20 transition-colors">
               <header className="flex items-center justify-between mb-4">
@@ -234,7 +234,7 @@ const ForumDetailPage = () => {
             </div>
             
             {/* Nested Replies */}
-            {reply.replies && reply.replies.map(sub => (
+            {reply.replies && reply.replies.map((sub: any) => (
               <div key={sub.id} className="ml-16 bg-surface-container-low/50 border border-outline-variant/10 rounded-[24px] p-6 shadow-sm border-l-4 border-l-primary/30 animate-in slide-in-from-left-4 duration-500">
                 <header className="flex items-center justify-between mb-3">
                   <div className="flex items-center gap-2">

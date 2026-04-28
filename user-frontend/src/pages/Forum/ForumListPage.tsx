@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import RichTextEditor from '../../components/base/RichTextEditor';
+import { API_ENDPOINTS } from '../../services/api.config';
 
 const ForumListPage = () => {
   const { t } = useTranslation();
@@ -135,7 +136,7 @@ const ForumListPage = () => {
               
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 mb-3">
-                  {post.tags.map(tag => (
+                  {post.tags?.map((tag: string) => (
                     <span key={tag} className="px-2.5 py-0.5 rounded-md bg-secondary/10 text-secondary text-[10px] font-black uppercase tracking-widest border border-secondary/20">
                       {tag}
                     </span>
