@@ -35,6 +35,13 @@ const UserSidebar = () => {
       icon: 'tune', 
       path: '/settings', 
       active: location.pathname === '/settings' 
+    },
+    { 
+      id: 'forum', 
+      label: t('forum.title'), 
+      icon: 'forum', 
+      path: '/forum', 
+      active: location.pathname.startsWith('/forum') 
     }
   ];
 

@@ -22,5 +22,13 @@ export const API_ENDPOINTS = {
   },
   DATA: {
     SETUP_OPTIONS: `${API_BASE_URL}/data/setup-options`,
+  },
+  FORUM: {
+    GET_POSTS: `${API_BASE_URL}/forum/posts`,
+    CREATE_POST: `${API_BASE_URL}/forum/posts`,
+    GET_POST: (id: string) => `${API_BASE_URL}/forum/posts/${id}`,
+    LIKE_POST: (id: string) => `${API_BASE_URL}/forum/posts/${id}/like`,
+    REPLY: (id: string) => `${API_BASE_URL}/forum/posts/${id}/replies`,
+    LIKE_REPLY: (postId: string, replyId: string) => `${API_BASE_URL}/forum/posts/${postId}/replies/${replyId}/like`,
   }
 };

@@ -5,6 +5,7 @@ import authRoutes from './routes/auth.routes';
 import aiRoutes from './routes/ai.routes';
 import dataRoutes from './routes/data.routes';
 import interviewRoutes from './routes/interview.routes';
+import forumRoutes from './routes/forum.routes';
 
 dotenv.config();
 
@@ -21,23 +22,27 @@ app.use('/api/auth', authRoutes);
 app.use('/api/ai', aiRoutes);
 app.use('/api/data', dataRoutes);
 app.use('/api/interviews', interviewRoutes);
+app.use('/api/forum', forumRoutes);
 
 // 2. Proxy Fallback (When Nginx sends the full /api/user/api or /api/user path)
 app.use('/api/user/api/auth', authRoutes);
 app.use('/api/user/api/ai', aiRoutes);
 app.use('/api/user/api/data', dataRoutes);
 app.use('/api/user/api/interviews', interviewRoutes);
+app.use('/api/user/api/forum', forumRoutes);
 
 app.use('/api/user/auth', authRoutes);
 app.use('/api/user/ai', aiRoutes);
 app.use('/api/user/data', dataRoutes);
 app.use('/api/user/interviews', interviewRoutes);
+app.use('/api/user/forum', forumRoutes);
 
 // 3. Simple Fallback (When Nginx strips /api but keep /auth)
 app.use('/auth', authRoutes);
 app.use('/ai', aiRoutes);
 app.use('/data', dataRoutes);
 app.use('/interviews', interviewRoutes);
+app.use('/forum', forumRoutes);
 
 // Error Handler
 app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {

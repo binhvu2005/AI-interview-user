@@ -9,6 +9,8 @@ import SettingsPage from '../pages/User/SettingsPage';
 import ProfilePage from '../pages/User/ProfilePage';
 import VaultPage from '../pages/User/VaultPage';
 import UpgradePage from '../pages/User/UpgradePage';
+import ForumListPage from '../pages/Forum/ForumListPage';
+import ForumDetailPage from '../pages/Forum/ForumDetailPage';
 import ResultsPage from '../pages/Result/ResultsPage';
 import ProtectedRoute from './ProtectedRoute';
 import MainLayout from '../layouts/MainLayout';
@@ -33,6 +35,8 @@ export const AppRoutes = [
       { path: '/vault', element: <VaultPage /> },
       { path: '/settings', element: <SettingsPage /> },
       { path: '/upgrade', element: <UpgradePage /> },
+      { path: '/forum', element: <ForumListPage /> },
+      { path: '/forum/:id', element: <ForumDetailPage /> },
       { path: '/results', element: <ResultsPage /> },
       { path: '/results/:id', element: <ResultsPage /> },
     ]

@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { API_ENDPOINTS } from '../../services/api.config';
 import toast from 'react-hot-toast';
+import RichTextEditor from '../../components/base/RichTextEditor';
 
 interface AnalysisResult {
   matchScore: number;
@@ -325,7 +326,11 @@ const PreparationPage = () => {
 
            <section className="bg-surface-container-low border border-outline-variant/15 rounded-[40px] p-10 flex flex-col shadow-sm">
               <h3 className="text-xl font-bold tracking-tight text-on-surface mb-8">Job Description</h3>
-              <textarea value={jdText} onChange={(e) => setJdText(e.target.value)} placeholder={isVi ? 'Dán mô tả công việc vào đây...' : 'Paste JD here...'} className="w-full h-40 bg-surface-container-high border border-outline-variant/20 rounded-2xl p-4 text-on-surface text-sm focus:border-primary/50 transition-all resize-none" />
+              <RichTextEditor 
+                value={jdText}
+                onChange={setJdText}
+                placeholder={isVi ? 'Dán mô tả công việc vào đây...' : 'Paste JD here...'}
+              />
            </section>
         </div>
 
