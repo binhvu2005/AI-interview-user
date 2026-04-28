@@ -40,11 +40,17 @@ jobs:
             echo "VITE_API_URL=http://${{ secrets.HOST }}:5000" >> .env
             
             echo "--- REBUILDING & RESTARTING DOCKER CONTAINERS ---"
-            # Dọn dẹp các service cũ và giải phóng cổng 5000, 80
+            # Giải phóng cổng 5000 và 80 triệt để
             pm2 delete user-api || true
             sudo systemctl stop nginx || true
-            sudo fuser -k 5000/tcp || true
-            sudo fuser -k 80/tcp || true
+            
+            # Kill các tiến trình đang chiếm port (dùng lsof cho chắc chắn)
+            sudo lsof -t -i:5000 | xargs -r sudo kill -9 || true
+            sudo lsof -t -i:80 | xargs -r sudo kill -9 || true
+            
+            # Dừng các Docker container đang chiếm port (kể cả từ project khác)
+            docker ps -q --filter "publish=5000" | xargs -r docker stop || true
+            docker ps -q --filter "publish=80" | xargs -r docker stop || true
             
             # Khởi chạy Docker Compose
             # Kiểm tra xem docker compose hay docker-compose được cài đặt
