@@ -259,6 +259,29 @@ const resources = {
         "pwd_mismatch": "New passwords do not match",
         "pwd_success": "Password changed successfully!",
         "pwd_error": "Error changing password"
+      },
+      "upgrade_page": {
+        "tag": "Premium Access",
+        "title": "Upgrade to",
+        "title_highlight": "VIP Status",
+        "subtitle": "Unlock the full potential of Obsidian AI and gain an unfair advantage in your career search.",
+        "plan_free_name": "Standard",
+        "plan_free_price": "Free",
+        "plan_free_desc": "Fundamental preparation tools for casual applicants.",
+        "plan_vip_name": "Premium VIP",
+        "plan_vip_price": "$19",
+        "plan_vip_period": "/month",
+        "plan_vip_desc": "The ultimate arsenal for serious professionals seeking top-tier roles.",
+        "feature_unlimited": "Unlimited AI Interviews",
+        "feature_advanced_ai": "Advanced AI Model (GPT-4o)",
+        "feature_cv_export": "Premium CV Export & Analysis",
+        "feature_priority": "Priority Support",
+        "feature_no_ads": "Ad-free Experience",
+        "feature_custom_roles": "Unlimited Custom Roles",
+        "feature_voice": "Voice-to-Voice Real-time Interaction",
+        "current_plan": "Your Current Plan",
+        "upgrade_btn": "Upgrade to VIP Now",
+        "popular_badge": "Most Popular"
       }
     }
   },
@@ -517,6 +540,29 @@ const resources = {
         "pwd_mismatch": "Mật khẩu mới không khớp",
         "pwd_success": "Đổi mật khẩu thành công!",
         "pwd_error": "Lỗi khi đổi mật khẩu"
+      },
+      "upgrade_page": {
+        "tag": "Quyền truy cập Cao cấp",
+        "title": "Nâng cấp tài khoản",
+        "title_highlight": "VIP",
+        "subtitle": "Khai phá toàn bộ tiềm năng của Obsidian AI và tạo lợi thế vượt trội trong hành trình tìm kiếm sự nghiệp.",
+        "plan_free_name": "Cơ bản",
+        "plan_free_price": "Miễn phí",
+        "plan_free_desc": "Các công cụ chuẩn bị cơ bản cho ứng viên thông thường.",
+        "plan_vip_name": "Premium VIP",
+        "plan_vip_price": "499k",
+        "plan_vip_period": "/tháng",
+        "plan_vip_desc": "Kho vũ khí tối thượng cho các chuyên gia nghiêm túc đang tìm kiếm vị trí cao cấp.",
+        "feature_unlimited": "Phỏng vấn AI không giới hạn",
+        "feature_advanced_ai": "Mô hình AI cao cấp (GPT-4o)",
+        "feature_cv_export": "Xuất & Phân tích CV Cao cấp",
+        "feature_priority": "Hỗ trợ Ưu tiên",
+        "feature_no_ads": "Trải nghiệm không quảng cáo",
+        "feature_custom_roles": "Vị trí tùy chỉnh không giới hạn",
+        "feature_voice": "Tương tác giọng nói thời gian thực",
+        "current_plan": "Gói hiện tại của bạn",
+        "upgrade_btn": "Nâng cấp lên VIP ngay",
+        "popular_badge": "Phổ biến nhất"
       }
     }
   }

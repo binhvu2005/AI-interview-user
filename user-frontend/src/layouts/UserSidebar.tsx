@@ -62,9 +62,23 @@ const UserSidebar = () => {
                {item.active && <div className="ml-auto w-1.5 h-1.5 rounded-full bg-on-primary"></div>}
             </button>
           ))}
-       </nav>
-       
-    </div>
+        </nav>
+        
+        <div className="mt-8 px-2">
+           <div className="bg-gradient-to-br from-primary/10 to-secondary/10 border border-primary/20 rounded-[32px] p-6 relative overflow-hidden group cursor-pointer" onClick={() => navigate('/upgrade')}>
+              <div className="absolute top-0 right-0 w-20 h-20 bg-primary/10 blur-2xl -mr-10 -mt-10 group-hover:bg-primary/20 transition-colors"></div>
+              <div className="relative z-10">
+                <div className="w-10 h-10 rounded-xl bg-primary/20 flex items-center justify-center text-primary mb-4 group-hover:scale-110 transition-transform">
+                  <span className="material-symbols-outlined font-bold">workspace_premium</span>
+                </div>
+                <h4 className="font-black text-xs uppercase tracking-widest text-on-surface mb-1">{t('nav.upgrade')}</h4>
+                <p className="text-[10px] font-bold text-on-surface-variant opacity-60 leading-tight">
+                  {t('upgrade_page.tag')}
+                </p>
+              </div>
+           </div>
+        </div>
+     </div>
   );
 };
 

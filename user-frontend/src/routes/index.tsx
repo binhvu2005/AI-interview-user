@@ -8,6 +8,7 @@ import DashboardPage from '../pages/Dashboard/DashboardPage';
 import SettingsPage from '../pages/User/SettingsPage';
 import ProfilePage from '../pages/User/ProfilePage';
 import VaultPage from '../pages/User/VaultPage';
+import UpgradePage from '../pages/User/UpgradePage';
 import ResultsPage from '../pages/Result/ResultsPage';
 import ProtectedRoute from './ProtectedRoute';
 import MainLayout from '../layouts/MainLayout';
@@ -31,6 +32,7 @@ export const AppRoutes = [
       { path: '/profile', element: <ProfilePage /> },
       { path: '/vault', element: <VaultPage /> },
       { path: '/settings', element: <SettingsPage /> },
+      { path: '/upgrade', element: <UpgradePage /> },
       { path: '/results', element: <ResultsPage /> },
       { path: '/results/:id', element: <ResultsPage /> },
     ]
