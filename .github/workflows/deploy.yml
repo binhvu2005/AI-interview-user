@@ -40,9 +40,11 @@ jobs:
             echo "VITE_API_URL=http://${{ secrets.HOST }}:5000" >> .env
             
             echo "--- REBUILDING & RESTARTING DOCKER CONTAINERS ---"
-            # Dọn dẹp các service cũ (nếu có)
+            # Dọn dẹp các service cũ và giải phóng cổng 5000, 80
             pm2 delete user-api || true
             sudo systemctl stop nginx || true
+            sudo fuser -k 5000/tcp || true
+            sudo fuser -k 80/tcp || true
             
             # Khởi chạy Docker Compose
             # Kiểm tra xem docker compose hay docker-compose được cài đặt
