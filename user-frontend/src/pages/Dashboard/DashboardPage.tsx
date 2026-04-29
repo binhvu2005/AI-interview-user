@@ -194,7 +194,7 @@ const DashboardPage = () => {
                   </div>
                   <div className="flex-1 flex items-center justify-center relative overflow-hidden">
                     <div className="absolute inset-0 bg-primary/5"></div>
-                    <img alt="App Interface Demo" className="w-[120%] opacity-80" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD32B3zsG7GlRzewrExD_1b0nFeHX8LOCFNWFWhyXhMQ9H-ZgG4l_fjlUIFHoCZo4PHeZKmPhBKU4-cRKl6nYxpfXaFxK2YM9Q-7zsCBvm_CTT-1vZLMrAFpievj5nGDc7FarPZDMF1fcR4HJuazMmJrHiTJZDpZpdX2uEra0sSZWPlNC34-8VIXlYfY6g8lQ-JC77jcRcckAMqvbfFpVY3nkcRpB1oYWqiA0tDgcv3xWbCUudreSOGbVn24EYDRqLN1Wi13_UabU57" />
+                    <img alt="App Interface Demo" className="w-[120%] opacity-80" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBGpU5MncpskOFGzorI3omSYIf3aBd_3paG35MlxaEvx7kyOT2Xs4mqKnKwnAmfm0xUXIsM630XU26H6czWwW76gBe4IXeoin1fS2NEUS1K-s5Rusu9H4FSebw6LugJpQhEx80Xtn7Sz1w1WYRX-ITQjkVp9BXPuiehAeeoAjg_Yoj3NmhfO6n30UZj-9a0IqYXxTcgWagJEYb1r9ueuy2VFUnrQgqdHMdrpdJHaChEBL0Gn_qPjofY8Mo-YgtCSpnIoCz-tLFRGbzT" />
                   </div>
                 </div>
               </div>

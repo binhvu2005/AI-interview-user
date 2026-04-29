@@ -228,12 +228,12 @@ const PreparationPage = () => {
         
         {/* LEFT COLUMN: Header & Visuals */}
         <div className="lg:col-span-5 flex flex-col justify-start">
-          <div className="mb-6 inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#1A1A24] border border-outline-variant/10 text-[10px] font-black uppercase tracking-widest text-[#A78BFA] w-max">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#A78BFA]"></span>
+          <div className="mb-6 inline-flex items-center gap-2 px-3 py-1 rounded-full bg-surface-container-high border border-outline-variant/20 text-[10px] font-black uppercase tracking-widest text-[#818CF8] w-max">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#818CF8]"></span>
             SESSION CONFIG
           </div>
           
-          <h1 className="text-5xl md:text-6xl font-black tracking-tighter mb-6 text-white leading-[1.1]">
+          <h1 className="text-5xl md:text-6xl font-black tracking-tighter mb-6 text-on-surface leading-[1.1]">
             {isVi ? (
               <>Thiết lập<br/><span className="text-[#818CF8]">Thử thách.</span></>
             ) : (
@@ -241,20 +241,19 @@ const PreparationPage = () => {
             )}
           </h1>
           
-          <p className="text-[#9CA3AF] max-w-sm leading-relaxed text-sm font-medium mb-12">
+          <p className="text-on-surface-variant max-w-sm leading-relaxed text-sm font-medium mb-12">
             {isVi 
               ? 'Hiệu chỉnh các thông số cho phiên mô phỏng sắp tới. Chọn vai trò, cấp độ và cung cấp CV/JD để đảm bảo bài phỏng vấn sát với thực tế nhất.' 
               : 'Calibrate the parameters of your upcoming simulation. Select role specifics, target skills, and provide context to ensure maximum cognitive adaptation.'}
           </p>
 
-          {/* Abstract Portal Visual (CSS Only) */}
-          <div className="relative w-full max-w-[320px] aspect-video rounded-3xl overflow-hidden border border-outline-variant/10 bg-[#0B0B10] flex items-center justify-center">
-            {/* Glowing orb layers */}
-            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-[#38BDF8]/20 via-[#0B0B10] to-[#0B0B10]"></div>
-            <div className="w-full h-full absolute border-[1px] border-[#38BDF8]/10 rounded-[100%] scale-[2] animate-pulse"></div>
-            <div className="w-full h-full absolute border-[1px] border-[#38BDF8]/20 rounded-[100%] scale-[1.5] rotate-45"></div>
-            <div className="w-full h-full absolute border-[1px] border-[#818CF8]/30 rounded-[100%] scale-110 -rotate-12"></div>
-            <div className="w-12 h-12 bg-white rounded-full blur-xl opacity-80 z-10"></div>
+          {/* Portal Visual / Image */}
+          <div className="relative w-full max-w-[320px] aspect-video rounded-3xl overflow-hidden border border-outline-variant/20 bg-surface flex items-center justify-center">
+            <img 
+              src="https://lh3.googleusercontent.com/aida-public/AB6AXuD32B3zsG7GlRzewrExD_1b0nFeHX8LOCFNWFWhyXhMQ9H-ZgG4l_fjlUIFHoCZo4PHeZKmPhBKU4-cRKl6nYxpfXaFxK2YM9Q-7zsCBvm_CTT-1vZLMrAFpievj5nGDc7FarPZDMF1fcR4HJuazMmJrHiTJZDpZpdX2uEra0sSZWPlNC34-8VIXlYfY6g8lQ-JC77jcRcckAMqvbfFpVY3nkcRpB1oYWqiA0tDgcv3xWbCUudreSOGbVn24EYDRqLN1Wi13_UabU57" 
+              alt="Preparation Graphic" 
+              className="w-full h-full object-cover opacity-80" 
+            />
           </div>
         </div>
 
@@ -262,23 +261,23 @@ const PreparationPage = () => {
         <div className="lg:col-span-7 flex flex-col gap-6">
           
           {/* Section: CV Mode (Toggle) */}
-          <section className="bg-[#111115] border border-outline-variant/10 rounded-[32px] p-8 shadow-sm">
+          <section className="bg-surface-container-low border border-outline-variant/20 rounded-[32px] p-8 shadow-sm">
             <div className="flex items-center gap-3 mb-6">
               <span className="material-symbols-outlined text-[#818CF8] text-[20px]">badge</span>
-              <h3 className="text-base font-bold text-white tracking-tight">{isVi ? 'Hồ sơ Ứng viên (CV)' : 'Candidate Profile (CV)'}</h3>
+              <h3 className="text-base font-bold text-on-surface tracking-tight">{isVi ? 'Hồ sơ Ứng viên (CV)' : 'Candidate Profile (CV)'}</h3>
             </div>
             
-            <div className="bg-[#19181E] p-1.5 rounded-2xl flex border border-outline-variant/5 mb-6">
+            <div className="bg-surface-container border border-outline-variant/20 p-1.5 rounded-2xl flex mb-6">
               <button 
                 onClick={() => setCvMode('upload')} 
-                className={`flex-1 py-3 text-xs font-bold rounded-xl transition-all flex items-center justify-center gap-2 ${cvMode === 'upload' ? 'bg-[#2A2B3D] text-white shadow-sm border border-outline-variant/10' : 'text-[#9CA3AF] hover:text-white'}`}
+                className={`flex-1 py-3 text-xs font-bold rounded-xl transition-all flex items-center justify-center gap-2 ${cvMode === 'upload' ? 'bg-surface-container-highest text-on-surface shadow-sm border border-outline-variant/20' : 'text-on-surface-variant hover:text-on-surface'}`}
               >
                 <span className="material-symbols-outlined text-[16px]">upload_file</span>
                 {isVi ? 'Tải lên CV' : 'Upload CV'}
               </button>
               <button 
                 onClick={() => setCvMode('vault')} 
-                className={`flex-1 py-3 text-xs font-bold rounded-xl transition-all flex items-center justify-center gap-2 ${cvMode === 'vault' ? 'bg-[#2A2B3D] text-white shadow-sm border border-outline-variant/10' : 'text-[#9CA3AF] hover:text-white'}`}
+                className={`flex-1 py-3 text-xs font-bold rounded-xl transition-all flex items-center justify-center gap-2 ${cvMode === 'vault' ? 'bg-surface-container-highest text-on-surface shadow-sm border border-outline-variant/20' : 'text-on-surface-variant hover:text-on-surface'}`}
               >
                 <span className="material-symbols-outlined text-[16px]">folder_shared</span>
                 {isVi ? 'Chọn từ Kho (Vault)' : 'Select from Vault'}
@@ -288,16 +287,16 @@ const PreparationPage = () => {
             <div className="min-h-[100px] flex flex-col justify-center">
               {cvMode === 'vault' ? (
                 <div className="relative group">
-                  <select className="w-full bg-[#0B0B10] border border-outline-variant/10 rounded-xl px-5 py-4 text-white appearance-none text-sm font-medium focus:border-[#818CF8]/50 transition-all outline-none" onChange={(e) => setSelectedCVId(e.target.value)} value={selectedCVId}>
+                  <select className="w-full bg-surface border border-outline-variant/20 rounded-xl px-5 py-4 text-on-surface appearance-none text-sm font-medium focus:border-[#818CF8]/50 transition-all outline-none" onChange={(e) => setSelectedCVId(e.target.value)} value={selectedCVId}>
                     <option value="" disabled>{isVi ? 'Chọn CV từ kho...' : 'Select CV from vault...'}</option>
                     {savedCVs.map(cv => <option key={cv.id} value={cv.id}>{cv.name}</option>)}
                   </select>
-                  <span className="material-symbols-outlined absolute right-5 top-1/2 -translate-y-1/2 text-[#9CA3AF] pointer-events-none text-[20px]">expand_more</span>
+                  <span className="material-symbols-outlined absolute right-5 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none text-[20px]">expand_more</span>
                 </div>
               ) : (
-                <label className={`flex flex-col items-center justify-center border-2 border-dashed rounded-2xl p-6 cursor-pointer transition-all ${cvFile ? 'border-[#818CF8] bg-[#818CF8]/5' : 'border-outline-variant/20 bg-[#0B0B10] hover:border-[#818CF8]/50'}`}>
-                  <span className={`material-symbols-outlined text-3xl mb-2 ${cvFile ? 'text-[#818CF8]' : 'text-[#9CA3AF]'}`}>{cvFile ? 'check_circle' : 'cloud_upload'}</span>
-                  <p className="text-sm font-bold text-white">{cvFile ? cvFile.name : (isVi ? 'Kéo thả PDF hoặc bấm để chọn' : 'Drop PDF or click to browse')}</p>
+                <label className={`flex flex-col items-center justify-center border-2 border-dashed rounded-2xl p-6 cursor-pointer transition-all ${cvFile ? 'border-primary bg-primary/5' : 'border-outline-variant/30 bg-surface hover:border-primary/50'}`}>
+                  <span className={`material-symbols-outlined text-3xl mb-2 ${cvFile ? 'text-primary' : 'text-on-surface-variant'}`}>{cvFile ? 'check_circle' : 'cloud_upload'}</span>
+                  <p className="text-sm font-bold text-on-surface">{cvFile ? cvFile.name : (isVi ? 'Kéo thả PDF hoặc bấm để chọn' : 'Drop PDF or click to browse')}</p>
                   <input type="file" className="hidden" accept=".pdf" onChange={(e) => setCvFile(e.target.files?.[0] || null)} />
                 </label>
               )}
@@ -307,13 +306,13 @@ const PreparationPage = () => {
           {/* Section: Role, Level, Duration */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             {/* Target Role & Level */}
-            <section className="bg-[#111115] border border-outline-variant/10 rounded-[32px] p-8 shadow-sm flex flex-col justify-between">
+            <section className="bg-surface-container-low border border-outline-variant/20 rounded-[32px] p-8 shadow-sm flex flex-col justify-between">
               <div className="space-y-6">
                 <div>
-                  <label className="text-[11px] font-bold text-[#9CA3AF] mb-2 block">{isVi ? 'Vị trí Mục tiêu' : 'Target Role'}</label>
+                  <label className="text-[11px] font-bold text-on-surface-variant mb-2 block">{isVi ? 'Vị trí Mục tiêu' : 'Target Role'}</label>
                   <div className="relative group">
-                    <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-[#9CA3AF] text-[18px]">work</span>
-                    <select value={selectedPosition} onChange={(e) => setSelectedPosition(e.target.value)} className="w-full bg-[#0B0B10] border border-outline-variant/10 rounded-xl pl-12 pr-4 py-3.5 text-white appearance-none text-sm font-medium focus:border-[#818CF8]/50 transition-all outline-none">
+                    <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant text-[18px]">work</span>
+                    <select value={selectedPosition} onChange={(e) => setSelectedPosition(e.target.value)} className="w-full bg-surface border border-outline-variant/20 rounded-xl pl-12 pr-4 py-3.5 text-on-surface appearance-none text-sm font-medium focus:border-primary/50 transition-all outline-none">
                         <option value="" disabled>{isVi ? 'VD: Frontend Developer' : 'e.g. Senior Product Designer'}</option>
                         {positions.map(p => <option key={p} value={p}>{p}</option>)}
                     </select>
@@ -321,50 +320,49 @@ const PreparationPage = () => {
                 </div>
 
                 <div>
-                  <label className="text-[11px] font-bold text-[#9CA3AF] mb-2 block">{isVi ? 'Cấp độ' : 'Seniority'}</label>
+                  <label className="text-[11px] font-bold text-on-surface-variant mb-2 block">{isVi ? 'Cấp độ' : 'Seniority'}</label>
                   <div className="relative group">
-                    <select value={selectedLevel} onChange={(e) => setSelectedLevel(e.target.value)} className="w-full bg-[#0B0B10] border border-outline-variant/10 rounded-xl px-5 py-3.5 text-white appearance-none text-sm font-medium focus:border-[#818CF8]/50 transition-all outline-none">
+                    <select value={selectedLevel} onChange={(e) => setSelectedLevel(e.target.value)} className="w-full bg-surface border border-outline-variant/20 rounded-xl px-5 py-3.5 text-on-surface appearance-none text-sm font-medium focus:border-primary/50 transition-all outline-none">
                       <option value="" disabled>{isVi ? 'Chọn cấp độ...' : 'Select level'}</option>
                       {levels.map(l => <option key={l} value={l}>{l}</option>)}
                     </select>
-                    <span className="material-symbols-outlined absolute right-5 top-1/2 -translate-y-1/2 text-[#9CA3AF] pointer-events-none text-[20px]">expand_more</span>
+                    <span className="material-symbols-outlined absolute right-5 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none text-[20px]">expand_more</span>
                   </div>
                 </div>
               </div>
             </section>
 
             {/* Duration */}
-            <section className="bg-[#111115] border border-outline-variant/10 rounded-[32px] p-8 shadow-sm flex flex-col justify-center">
+            <section className="bg-surface-container-low border border-outline-variant/20 rounded-[32px] p-8 shadow-sm flex flex-col justify-center">
                <div className="text-center mb-6">
-                 <div className="w-12 h-12 rounded-2xl bg-[#2A2B3D] flex items-center justify-center mx-auto mb-4 border border-outline-variant/10 shadow-inner">
+                 <div className="w-12 h-12 rounded-2xl bg-surface-container-highest flex items-center justify-center mx-auto mb-4 border border-outline-variant/10 shadow-inner">
                     <span className="material-symbols-outlined text-[#818CF8] text-[24px]">hourglass_empty</span>
                  </div>
-                 <h3 className="text-sm font-bold text-white tracking-tight">{isVi ? 'Thời lượng Phỏng vấn' : 'Interview Duration'}</h3>
-                 <p className="text-xs text-[#9CA3AF] mt-1">{isVi ? 'Chọn thời gian làm bài' : 'Set session length'}</p>
+                 <h3 className="text-sm font-bold text-on-surface tracking-tight">{isVi ? 'Thời lượng Phỏng vấn' : 'Interview Duration'}</h3>
+                 <p className="text-xs text-on-surface-variant mt-1">{isVi ? 'Chọn thời gian làm bài' : 'Set session length'}</p>
                </div>
                
                <div className="relative group">
                   <select 
                     value={localStorage.getItem('interview_duration') || '15'} 
                     onChange={(e) => localStorage.setItem('interview_duration', e.target.value)} 
-                    className="w-full bg-[#0B0B10] border border-outline-variant/10 rounded-xl px-5 py-3.5 text-white appearance-none text-sm font-medium focus:border-[#818CF8]/50 transition-all outline-none text-center"
+                    className="w-full bg-surface border border-outline-variant/20 rounded-xl px-5 py-3.5 text-on-surface appearance-none text-sm font-medium focus:border-primary/50 transition-all outline-none text-center"
                   >
                     {[15, 20, 25, 30, 45, 60].map(m => <option key={m} value={m}>{m} {isVi ? 'Phút' : 'Minutes'}</option>)}
                   </select>
-                  <span className="material-symbols-outlined absolute right-5 top-1/2 -translate-y-1/2 text-[#9CA3AF] pointer-events-none text-[20px]">expand_more</span>
+                  <span className="material-symbols-outlined absolute right-5 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none text-[20px]">expand_more</span>
                </div>
             </section>
           </div>
 
           {/* Section: Job Description */}
-          <section className="bg-[#111115] border border-outline-variant/10 rounded-[32px] p-8 shadow-sm flex flex-col">
+          <section className="bg-surface-container-low border border-outline-variant/20 rounded-[32px] p-8 shadow-sm flex flex-col">
             <div className="flex items-center justify-between mb-4">
-              <label className="text-[11px] font-bold text-[#9CA3AF] block">{isVi ? 'Mô tả Công việc (JD)' : 'Job Description'}</label>
-              <span className="text-[10px] text-[#6B7280]">Rich Text</span>
+              <label className="text-[11px] font-bold text-on-surface-variant block">{isVi ? 'Mô tả Công việc (JD)' : 'Job Description'}</label>
+              <span className="text-[10px] text-on-surface-variant opacity-60">Rich Text</span>
             </div>
             
-            {/* The RichTextEditor might be styled differently, we will wrap it to enforce dark theme look */}
-            <div className="bg-[#0B0B10] rounded-2xl border border-outline-variant/10 overflow-hidden">
+            <div className="bg-surface rounded-2xl border border-outline-variant/20 overflow-hidden">
               <RichTextEditor 
                 value={jdText}
                 onChange={setJdText}
@@ -385,7 +383,7 @@ const PreparationPage = () => {
             </button>
             <button 
               onClick={handleQuickTest}
-              className="text-[10px] font-bold uppercase tracking-widest text-[#9CA3AF] opacity-40 hover:opacity-100 transition-opacity mt-4 mr-4"
+              className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant opacity-40 hover:opacity-100 transition-opacity mt-4 mr-4"
             >
               [ Quick Test - Bypass AI ]
             </button>
