@@ -187,7 +187,15 @@ const resources = {
         "your_answer": "Your Answer",
         "skipped": "Skipped",
         "expert_insight": "Expert Insight",
-        "loading": "Loading results..."
+        "loading": "Loading results...",
+        "total_interviews": "Total Interviews",
+        "this_week": "this week",
+        "average_score": "Average Score",
+        "match_rate": "Match Rate (CV vs JD)",
+        "congrats_title": "Outstanding!",
+        "congrats_desc": "You scored {{score}}, placing you among top candidates. Would you like to share this achievement on the Hall of Fame Showcase?",
+        "congrats_later": "Maybe Later",
+        "congrats_share": "Share Now"
       },
       "vault_page": {
         "title": "CV Vault",
@@ -312,6 +320,22 @@ const resources = {
         "create_guidelines": "Community Guidelines apply",
         "user_role_premium": "Premium User",
         "views_count": "{{count}} views"
+      },
+      "showcase": {
+        "title": "Hall of Fame",
+        "subtitle": "Discover top-rated interviews from the community. Learn from the best responses across various roles and levels.",
+        "all_positions": "All Positions",
+        "all_levels": "All Levels",
+        "clear_filters": "Clear Filters",
+        "loading": "Loading...",
+        "no_data": "No Interviews Found",
+        "no_data_desc": "No interviews match your criteria.",
+        "anonymous": "Anonymous",
+        "view_details": "View Details",
+        "share": "Share to Showcase",
+        "unshare": "Remove from Showcase",
+        "shared_success": "Interview shared to Showcase!",
+        "unshared_success": "Interview removed from Showcase!"
       }
     }
   },
@@ -498,7 +522,15 @@ const resources = {
         "your_answer": "Câu trả lời của bạn",
         "skipped": "Bỏ qua",
         "expert_insight": "Gợi ý câu trả lời chuẩn",
-        "loading": "Đang tải kết quả..."
+        "loading": "Đang tải kết quả...",
+        "total_interviews": "Tổng số bài thi",
+        "this_week": "tuần này",
+        "average_score": "Điểm trung bình",
+        "match_rate": "Độ khớp (CV với JD)",
+        "congrats_title": "Tuyệt vời!",
+        "congrats_desc": "Bạn đã đạt {{score}} điểm, thuộc top ứng viên xuất sắc. Bạn có muốn vinh danh kết quả này lên Hội Trường Danh Vọng (Showcase) để mọi người cùng học hỏi không?",
+        "congrats_later": "Để sau",
+        "congrats_share": "Vinh danh ngay"
       },
       "vault_page": {
         "title": "Kho lưu trữ CV",
@@ -623,6 +655,22 @@ const resources = {
         "create_guidelines": "Áp dụng quy tắc cộng đồng",
         "user_role_premium": "Thành viên VIP",
         "views_count": "{{count}} lượt xem"
+      },
+      "showcase": {
+        "title": "Hội Trường Danh Vọng",
+        "subtitle": "Khám phá những bài phỏng vấn xuất sắc nhất từ cộng đồng. Học hỏi từ cách trả lời của các ứng viên hàng đầu theo từng vị trí và cấp độ.",
+        "all_positions": "Tất cả vị trí",
+        "all_levels": "Tất cả cấp độ",
+        "clear_filters": "Xóa bộ lọc",
+        "loading": "Đang tải...",
+        "no_data": "Chưa có dữ liệu",
+        "no_data_desc": "Chưa có bài phỏng vấn nào phù hợp với tiêu chí lọc.",
+        "anonymous": "Ứng viên ẩn danh",
+        "view_details": "Xem chi tiết",
+        "share": "Chia sẻ lên Showcase",
+        "unshare": "Gỡ khỏi Showcase",
+        "shared_success": "Đã chia sẻ bài phỏng vấn lên Showcase!",
+        "unshared_success": "Đã gỡ bài phỏng vấn khỏi Showcase!"
       }
     }
   }

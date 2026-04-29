@@ -4,41 +4,7 @@ import { useTranslation } from 'react-i18next';
 import toast from 'react-hot-toast';
 import { API_ENDPOINTS } from '../../services/api.config';
 
-interface Evaluation {
-  totalScore: number;
-  decision: string;
-  breakdown: {
-    technical: number;
-    problemSolving: number;
-    coding: number;
-    communication: number;
-    architectureAndFit: number;
-  };
-  summary: string;
-  pros: string[];
-  cons: string[];
-  improvements: string[];
-  detailedFeedback: {
-    question: string;
-    answer: string;
-    score: number;
-    status: 'correct' | 'partially_correct' | 'incorrect' | 'skipped';
-    pros: string[];
-    cons: string[];
-    correctReview: string;
-    feedback: string;
-  }[];
-}
-
-interface Interview {
-  _id: string;
-  position: string;
-  level: string;
-  matchScore: number;
-  matchAnalysis: string;
-  evaluation: Evaluation;
-  createdAt: string;
-}
+import type { Evaluation, Interview } from '../../types';
 
 const ITEMS_PER_PAGE = 8;
 
@@ -50,6 +16,8 @@ const ResultsPage = () => {
   const [interview, setInterview] = useState<Interview | null>(null);
   const [interviews, setInterviews] = useState<Interview[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isSharing, setIsSharing] = useState(false);
+  const [showCongrats, setShowCongrats] = useState(false);
   const [page, setPage] = useState(1);
 
   // Filters & Sorting
@@ -74,6 +42,14 @@ const ResultsPage = () => {
       if (res.ok) {
         const data = await res.json();
         setInterview(data);
+
+        // Check if we should show congrats modal
+        if (data.evaluation?.totalScore >= 80 && !data.isPublic) {
+          const shownKey = `congrats_shown_${data._id}`;
+          if (!localStorage.getItem(shownKey)) {
+            setShowCongrats(true);
+          }
+        }
       } else {
         toast.error(t('notifications.error_generic'));
         navigate('/results');
@@ -101,6 +77,41 @@ const ResultsPage = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleShare = async () => {
+    if (!interview) return;
+    setIsSharing(true);
+    try {
+      const token = localStorage.getItem('token');
+      const baseUrl = API_ENDPOINTS.INTERVIEWS.GET_ALL; 
+      const res = await fetch(`${baseUrl}/${interview._id}/share`, {
+        method: 'PATCH',
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      
+      if (res.ok) {
+        const data = await res.json();
+        setInterview({ ...interview, isPublic: data.isPublic });
+        toast.success(data.isPublic 
+          ? (t('showcase.shared_success') || 'Đã chia sẻ bài phỏng vấn lên Showcase!') 
+          : (t('showcase.unshared_success') || 'Đã gỡ bài phỏng vấn khỏi Showcase!'));
+      } else {
+        toast.error('Failed to update share status');
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error('Error sharing interview');
+    } finally {
+      setIsSharing(false);
+    }
+  };
+
+  const closeCongratsModal = () => {
+    if (interview) {
+      localStorage.setItem(`congrats_shown_${interview._id}`, 'true');
+    }
+    setShowCongrats(false);
   };
 
   const handleReset = () => {
@@ -141,9 +152,24 @@ const ResultsPage = () => {
     const paginated = processed.slice((page - 1) * ITEMS_PER_PAGE, page * ITEMS_PER_PAGE);
     const totalPages = Math.ceil(processed.length / ITEMS_PER_PAGE);
 
+    // Compute Metrics
+    const totalInterviewsCount = interviews.length;
+    const avgScore = totalInterviewsCount > 0 
+      ? Math.round(interviews.reduce((acc, curr) => acc + (curr.evaluation?.totalScore || 0), 0) / totalInterviewsCount)
+      : 0;
+    const avgMatchRate = totalInterviewsCount > 0
+      ? Math.round(interviews.reduce((acc, curr) => acc + curr.matchScore, 0) / totalInterviewsCount)
+      : 0;
+
+    // Dummy values for +x this week or percentile, can be made real later if there's backend logic.
+    // For now we just check if there's anything this week to simulate it.
+    const oneWeekAgo = new Date();
+    oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+    const recentCount = interviews.filter(i => new Date(i.createdAt) > oneWeekAgo).length;
+
     return (
       <div className="max-w-6xl mx-auto pb-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-        <header className="mb-10 flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
+        <header className="mb-8 flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
           <div>
             <h1 className="text-4xl font-black text-on-surface tracking-tighter mb-2">
               {t('results.title')}
@@ -188,6 +214,67 @@ const ResultsPage = () => {
             </button>
           </div>
         </header>
+
+        {/* Dashboard Metrics Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+          {/* Card 1: Total Interviews */}
+          <div className="bg-[#111115] border border-outline-variant/10 rounded-2xl p-6 shadow-sm flex flex-col justify-between">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-8 h-8 rounded-lg bg-[#2A2B3D] text-[#818CF8] flex items-center justify-center">
+                <span className="material-symbols-outlined text-[18px]">bar_chart</span>
+              </div>
+              <span className="text-[#9CA3AF] text-sm font-medium">{t('results.total_interviews') || 'Total Interviews'}</span>
+            </div>
+            <div>
+              <div className="text-4xl font-black text-white mb-2">{totalInterviewsCount}</div>
+              <div className="flex items-center gap-1 text-[#F472B6] text-xs font-bold">
+                <span className="material-symbols-outlined text-[14px]">trending_up</span>
+                +{recentCount} {t('results.this_week') || 'this week'}
+              </div>
+            </div>
+          </div>
+
+          {/* Card 2: Average Score */}
+          <div className="bg-[#111115] border border-outline-variant/10 rounded-2xl p-6 shadow-sm flex flex-col justify-between">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-8 h-8 rounded-lg bg-[#2A2B3D] text-[#60A5FA] flex items-center justify-center">
+                <span className="material-symbols-outlined text-[18px]">psychiatry</span>
+              </div>
+              <span className="text-[#9CA3AF] text-sm font-medium">{t('results.average_score') || 'Average Score'}</span>
+            </div>
+            <div>
+              <div className="text-4xl font-black text-white mb-2">{avgScore} <span className="text-xl text-[#6B7280]">/100</span></div>
+              <div className="flex items-center gap-1 text-[#60A5FA] text-xs font-bold">
+                <span className="material-symbols-outlined text-[14px]">show_chart</span>
+                {avgScore >= 80 ? 'Top 15% of cohort' : 'Average range'}
+              </div>
+            </div>
+          </div>
+
+          {/* Card 3: Match Rate */}
+          <div className="bg-[#19181E] border border-outline-variant/10 rounded-2xl p-6 shadow-sm flex flex-col justify-between">
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-lg bg-[#2D2A43] text-[#A78BFA] flex items-center justify-center">
+                  <span className="material-symbols-outlined text-[18px]">fact_check</span>
+                </div>
+                <span className="text-[#9CA3AF] text-sm font-medium">{t('results.match_rate') || 'Match Rate (CV vs JD)'}</span>
+              </div>
+              <span className="bg-[#2D2A43] text-[#A78BFA] text-[9px] font-black uppercase tracking-widest px-2 py-1 rounded-md">
+                CURRENT TARGET
+              </span>
+            </div>
+            <div>
+              <div className="text-4xl font-black text-white mb-3">{avgMatchRate}%</div>
+              <div className="w-full h-1.5 bg-[#2A2B3D] rounded-full overflow-hidden">
+                <div 
+                  className="h-full bg-gradient-to-r from-[#6366f1] to-[#A78BFA] rounded-full" 
+                  style={{ width: `${avgMatchRate}%` }}
+                ></div>
+              </div>
+            </div>
+          </div>
+        </div>
 
         <div className="bg-surface-container-low border border-outline-variant/15 rounded-[32px] overflow-hidden shadow-sm">
           <div className="overflow-x-auto">
@@ -300,9 +387,23 @@ const ResultsPage = () => {
             {interview.position} • {interview.level} • {new Date(interview.createdAt).toLocaleDateString()}
           </p>
         </div>
-        <button onClick={() => navigate('/preparation')} className="bg-surface-container-high text-on-surface px-6 py-3 rounded-full text-xs font-black uppercase tracking-widest hover:bg-outline-variant/20 transition-all">
-          {t('results.retry')}
-        </button>
+        <div className="flex gap-4">
+          <button 
+            onClick={handleShare} 
+            disabled={isSharing}
+            className={`px-6 py-3 rounded-full text-xs font-black uppercase tracking-widest flex items-center gap-2 transition-all shadow-md active:scale-95 disabled:opacity-50 ${
+              interview.isPublic 
+                ? 'bg-surface-container-high text-on-surface-variant border border-outline-variant/20 hover:bg-outline-variant/10'
+                : 'bg-gradient-to-r from-secondary to-primary text-on-primary hover:shadow-primary/30'
+            }`}
+          >
+            {isSharing ? <span className="material-symbols-outlined animate-spin text-sm">progress_activity</span> : <span className="material-symbols-outlined text-sm">{interview.isPublic ? 'visibility_off' : 'military_tech'}</span>}
+            {interview.isPublic ? (t('showcase.unshare') || 'Gỡ khỏi Showcase') : (t('showcase.share') || 'Chia sẻ lên Showcase')}
+          </button>
+          <button onClick={() => navigate('/preparation')} className="bg-surface-container-high text-on-surface px-6 py-3 rounded-full text-xs font-black uppercase tracking-widest hover:bg-outline-variant/20 transition-all border border-outline-variant/10 shadow-sm active:scale-95">
+            {t('results.retry')}
+          </button>
+        </div>
       </header>
 
       {/* Hero Score Section */}
@@ -460,6 +561,52 @@ const ResultsPage = () => {
           </div>
         ))}
       </section>
+
+      {/* Congratulations Modal */}
+      {showCongrats && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-surface/80 backdrop-blur-md animate-in fade-in duration-300">
+          <div className="bg-surface-container-low border border-outline-variant/20 rounded-[32px] p-8 max-w-md w-full shadow-2xl relative overflow-hidden text-center animate-in zoom-in-95 duration-500">
+            {/* Simple CSS Confetti Background Effect */}
+            <div className="absolute top-0 left-0 w-full h-full pointer-events-none overflow-hidden opacity-30">
+              <div className="absolute top-[-10%] left-[20%] w-3 h-3 bg-primary rounded-full animate-bounce" style={{ animationDelay: '0.1s', animationDuration: '2s' }}></div>
+              <div className="absolute top-[-10%] left-[50%] w-4 h-4 bg-secondary rotate-45 animate-bounce" style={{ animationDelay: '0.5s', animationDuration: '2.5s' }}></div>
+              <div className="absolute top-[-10%] left-[80%] w-3 h-3 bg-green-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s', animationDuration: '2.2s' }}></div>
+              <div className="absolute top-[20%] left-[-10%] w-4 h-4 bg-amber-400 rotate-12 animate-pulse" style={{ animationDelay: '0.7s', animationDuration: '3s' }}></div>
+            </div>
+
+            <div className="w-20 h-20 mx-auto bg-gradient-to-tr from-primary to-secondary rounded-2xl flex items-center justify-center mb-6 shadow-lg shadow-primary/20">
+              <span className="material-symbols-outlined text-4xl text-on-primary">military_tech</span>
+            </div>
+            
+            <h3 className="text-3xl font-black text-on-surface tracking-tighter mb-2">
+              {t('results.congrats_title')}
+            </h3>
+            <p className="text-on-surface-variant font-medium text-sm leading-relaxed mb-8">
+              {t('results.congrats_desc', { score: interview?.evaluation?.totalScore })}
+            </p>
+
+            <div className="flex gap-4">
+              <button 
+                onClick={closeCongratsModal}
+                className="flex-1 py-3.5 rounded-xl bg-surface-container-high text-on-surface font-bold text-xs uppercase tracking-widest hover:bg-outline-variant/20 transition-colors"
+              >
+                {t('results.congrats_later')}
+              </button>
+              <button 
+                onClick={() => {
+                  handleShare();
+                  closeCongratsModal();
+                }}
+                disabled={isSharing}
+                className="flex-1 py-3.5 rounded-xl bg-primary text-on-primary font-bold text-xs uppercase tracking-widest hover:bg-primary/90 transition-colors shadow-lg shadow-primary/20 flex justify-center items-center gap-2"
+              >
+                {isSharing ? <span className="material-symbols-outlined animate-spin text-sm">progress_activity</span> : <span className="material-symbols-outlined text-sm">rocket_launch</span>}
+                {t('results.congrats_share')}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

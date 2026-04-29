@@ -107,3 +107,51 @@ export const getUserInterviews = async (req: AuthRequest, res: Response) => {
     res.status(500).json({ message: 'Server error', error: err.message });
   }
 };
+
+export const toggleShareInterview = async (req: AuthRequest, res: Response) => {
+  try {
+    const { id } = req.params;
+    const userId = req.user?.id;
+    
+    if (!userId) return res.status(401).json({ message: 'Unauthorized' });
+
+    const interview = await Interview.findOne({ _id: id, userId });
+    if (!interview) return res.status(404).json({ message: 'Interview not found' });
+
+    interview.isPublic = !interview.isPublic;
+    await interview.save();
+
+    res.json({ message: 'Cập nhật trạng thái chia sẻ thành công', isPublic: interview.isPublic });
+  } catch (err: any) {
+    res.status(500).json({ message: 'Server error', error: err.message });
+  }
+};
+
+export const getShowcaseInterviews = async (req: AuthRequest, res: Response) => {
+  try {
+    const { position, level, page = 1, limit = 10 } = req.query;
+    const query: any = { isPublic: true };
+    
+    if (position) query.position = position;
+    if (level) query.level = level;
+
+    const skip = (Number(page) - 1) * Number(limit);
+
+    const interviews = await Interview.find(query)
+      .select('position level duration evaluation.totalScore createdAt userId') 
+      .populate({ path: 'userId', select: 'fullName targetRole avatar' }) 
+      .sort({ 'evaluation.totalScore': -1, createdAt: -1 })
+      .skip(skip)
+      .limit(Number(limit));
+
+    const total = await Interview.countDocuments(query);
+
+    res.json({
+      data: interviews,
+      totalPages: Math.ceil(total / Number(limit)),
+      currentPage: Number(page)
+    });
+  } catch (err: any) {
+    res.status(500).json({ message: 'Server error', error: err.message });
+  }
+};

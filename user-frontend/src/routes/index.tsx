@@ -12,6 +12,7 @@ import UpgradePage from '../pages/User/UpgradePage';
 import ForumListPage from '../pages/Forum/ForumListPage';
 import ForumDetailPage from '../pages/Forum/ForumDetailPage';
 import ResultsPage from '../pages/Result/ResultsPage';
+import ShowcasePage from '../pages/Showcase/ShowcasePage';
 import ProtectedRoute from './ProtectedRoute';
 import MainLayout from '../layouts/MainLayout';
 
@@ -39,6 +40,7 @@ export const AppRoutes = [
       { path: '/forum/:id', element: <ForumDetailPage /> },
       { path: '/results', element: <ResultsPage /> },
       { path: '/results/:id', element: <ResultsPage /> },
+      { path: '/showcase', element: <ShowcasePage /> },
     ]
   },
   {

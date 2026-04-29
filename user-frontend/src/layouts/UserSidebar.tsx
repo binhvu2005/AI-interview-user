@@ -42,6 +42,13 @@ const UserSidebar = () => {
       icon: 'forum', 
       path: '/forum', 
       active: location.pathname.startsWith('/forum') 
+    },
+    { 
+      id: 'showcase', 
+      label: 'Showcase', // Using fallback if translation missing, ideally use t('nav.showcase')
+      icon: 'military_tech', 
+      path: '/showcase', 
+      active: location.pathname === '/showcase' 
     }
   ];
 

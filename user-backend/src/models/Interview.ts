@@ -30,6 +30,7 @@ const InterviewSchema = new mongoose.Schema({
     }]
   },
   
+  isPublic: { type: Boolean, default: false }, // Cho phép hiển thị trên Showcase
   createdAt: { type: Date, default: Date.now }
 });
 
