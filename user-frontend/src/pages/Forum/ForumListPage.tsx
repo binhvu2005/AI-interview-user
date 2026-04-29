@@ -165,7 +165,12 @@ const ForumListPage = () => {
                   
                   <div className="ml-auto flex items-center gap-2">
                     <span className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant opacity-50">{t('forum.posted_by')}</span>
-                    <span className="text-xs font-bold text-on-surface">{post.author.name}</span>
+                    <div className="flex items-center gap-1">
+                      <span className="text-xs font-bold text-on-surface">{post.author.name}</span>
+                      {post.author.isVip && (
+                        <span className="material-symbols-outlined text-[14px] text-[#ffc107]" title="VIP Member">workspace_premium</span>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>

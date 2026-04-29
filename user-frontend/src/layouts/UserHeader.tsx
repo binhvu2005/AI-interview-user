@@ -7,12 +7,14 @@ const UserHeader = () => {
   const navigate = useNavigate();
   const [userName, setUserName] = useState<string | null>(localStorage.getItem('userName'));
   const [userAvatar, setUserAvatar] = useState<string | null>(localStorage.getItem('userAvatar'));
+  const [isVip, setIsVip] = useState<boolean>(localStorage.getItem('isVip') === 'true');
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
   useEffect(() => {
     const handleStorageChange = () => {
       setUserName(localStorage.getItem('userName'));
       setUserAvatar(localStorage.getItem('userAvatar'));
+      setIsVip(localStorage.getItem('isVip') === 'true');
     };
     window.addEventListener('storage', handleStorageChange);
     window.addEventListener('userUpdate', handleStorageChange);
@@ -26,6 +28,7 @@ const UserHeader = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('userName');
     localStorage.removeItem('userAvatar');
+    localStorage.removeItem('isVip');
     navigate('/login');
   };
 
@@ -56,13 +59,19 @@ const UserHeader = () => {
       <div className="flex items-center gap-4">
 
         <div className="flex items-center gap-3 relative ml-4">
-          <div className="hidden sm:flex flex-col items-end mr-1">
-            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-on-surface-variant opacity-50 leading-none mb-1">
-              {t('nav.greeting')}
-            </span>
-            <span className="text-sm font-bold text-on-surface leading-none max-w-[120px] truncate">
+          <div className="hidden sm:flex flex-col items-end mr-1 justify-center">
+            <span className="text-sm font-bold text-on-surface leading-tight max-w-[120px] truncate mb-1">
               {userName || 'User'}
             </span>
+            {isVip ? (
+              <span className="text-[9px] font-black uppercase tracking-widest text-[#ffc107] bg-[#ffc107]/10 px-1.5 py-0.5 rounded flex items-center gap-0.5 leading-none">
+                <span className="material-symbols-outlined text-[10px]">workspace_premium</span> VIP
+              </span>
+            ) : (
+              <span className="text-[9px] font-black uppercase tracking-widest text-on-surface-variant/60 bg-surface-container-highest px-1.5 py-0.5 rounded leading-none">
+                NORMAL
+              </span>
+            )}
           </div>
           <button onClick={() => setDropdownOpen(!dropdownOpen)} className="w-10 h-10 rounded-2xl overflow-hidden border border-outline-variant/30 hover:border-primary transition-all focus:outline-none bg-surface-container-high ring-2 ring-transparent hover:ring-primary/20 shadow-lg">
             <img src={userAvatar || `https://ui-avatars.com/api/?name=${userName || 'U'}&background=6366f1&color=fff`} alt="avatar" className="w-full h-full object-cover" />
@@ -73,8 +82,16 @@ const UserHeader = () => {
               <div className="fixed inset-0 z-40" onClick={() => setDropdownOpen(false)}></div>
               <div className="absolute top-14 right-0 w-56 bg-surface-container-low border border-outline-variant/15 rounded-2xl shadow-2xl py-2 flex flex-col z-50 animate-in fade-in zoom-in-95 duration-200">
                 <div className="px-4 py-3 border-b border-outline-variant/10 mb-1">
-                  <p className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant opacity-50 mb-1">{t('nav.greeting')}</p>
-                  <p className="text-xs font-bold text-on-surface truncate">{userName}</p>
+                  <p className="text-xs font-bold text-on-surface truncate mb-1">{userName}</p>
+                  {isVip ? (
+                    <span className="text-[9px] font-black uppercase tracking-widest text-[#ffc107] bg-[#ffc107]/10 px-1.5 py-0.5 rounded inline-flex items-center gap-0.5 leading-none">
+                      <span className="material-symbols-outlined text-[10px]">workspace_premium</span> VIP
+                    </span>
+                  ) : (
+                    <span className="text-[9px] font-black uppercase tracking-widest text-on-surface-variant/60 bg-surface-container-highest px-1.5 py-0.5 rounded inline-flex leading-none">
+                      NORMAL
+                    </span>
+                  )}
                 </div>
                 <a onClick={() => { setDropdownOpen(false); navigate('/profile'); }} className="px-4 py-2.5 text-xs text-on-surface hover:bg-primary/10 hover:text-primary transition-colors flex items-center gap-3 cursor-pointer font-bold uppercase tracking-widest">
                   <span className="material-symbols-outlined text-[20px]">account_circle</span> {t('nav.profile')}

@@ -9,6 +9,7 @@ export const getPosts = async (req: Request, res: Response) => {
     else if (sort === 'popular') sortQuery = { likesCount: -1 };
 
     const posts = await ForumPost.aggregate([
+      { $match: { isHidden: { $ne: true } } },
       {
         $addFields: {
           likesCount: { $size: "$likes" },
@@ -35,7 +36,8 @@ export const getPosts = async (req: Request, res: Response) => {
           likes: { $size: "$likes" },
           replies: { $size: "$replies" },
           'author.fullName': 1,
-          'author.avatar': 1
+          'author.avatar': 1,
+          'author.isVip': 1
         }
       }
     ]);
@@ -43,7 +45,7 @@ export const getPosts = async (req: Request, res: Response) => {
     // Map to match frontend expectations
     const formattedPosts = posts.map(p => ({
       ...p,
-      author: { name: p.author.fullName, avatar: p.author.avatar }
+      author: { name: p.author.fullName, avatar: p.author.avatar, isVip: p.author.isVip }
     }));
 
     res.json(formattedPosts);
@@ -54,10 +56,10 @@ export const getPosts = async (req: Request, res: Response) => {
 
 export const getPostDetail = async (req: Request, res: Response) => {
   try {
-    const post = await ForumPost.findById(req.params.id)
-      .populate('author', 'fullName avatar')
-      .populate('replies.author', 'fullName avatar')
-      .populate('replies.replies.author', 'fullName avatar');
+    const post = await ForumPost.findOne({ _id: req.params.id, isHidden: { $ne: true } })
+      .populate('author', 'fullName avatar isVip')
+      .populate('replies.author', 'fullName avatar isVip')
+      .populate('replies.replies.author', 'fullName avatar isVip');
 
     if (!post) return res.status(404).json({ message: 'Post not found' });
 
@@ -77,7 +79,8 @@ export const getPostDetail = async (req: Request, res: Response) => {
       author: { 
         name: (post.author as any).fullName, 
         avatar: (post.author as any).avatar,
-        role: 'Premium User' // Can be dynamic if you add roles to User model
+        role: (post.author as any).isVip ? 'VIP' : 'Member',
+        isVip: (post.author as any).isVip
       },
       replies: post.replies.map((r: any) => ({
         id: r._id,

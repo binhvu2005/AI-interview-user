@@ -9,6 +9,7 @@ const UserSchema = new mongoose.Schema({
   bio: { type: String, default: '' },
   avatar: { type: String, default: '' },
   isBlocked: { type: Boolean, default: false },
+  isVip: { type: Boolean, default: false },
   savedCVs: [{
     id: { type: String, required: true },
     name: { type: String, required: true },

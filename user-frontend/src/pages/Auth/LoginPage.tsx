@@ -33,6 +33,7 @@ const LoginPage = () => {
       localStorage.setItem('token', data.token);
       localStorage.setItem('userName', data.user.fullName);
       if (data.user.avatar) localStorage.setItem('userAvatar', data.user.avatar);
+      localStorage.setItem('isVip', data.user.isVip ? 'true' : 'false');
 
       // Short delay for user to see the success toast
       setTimeout(() => {

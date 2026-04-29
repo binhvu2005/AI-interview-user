@@ -25,6 +25,7 @@ export interface IForumPost extends Document {
   likes: mongoose.Types.ObjectId[];
   views: number;
   replies: IReply[];
+  isHidden: boolean;
 }
 
 const ForumPostSchema: Schema = new Schema({
@@ -35,7 +36,8 @@ const ForumPostSchema: Schema = new Schema({
   date: { type: Date, default: Date.now },
   likes: [{ type: Schema.Types.ObjectId, ref: 'User' }],
   views: { type: Number, default: 0 },
-  replies: [ReplySchema]
+  replies: [ReplySchema],
+  isHidden: { type: Boolean, default: false }
 });
 
 export default mongoose.model<IForumPost>('ForumPost', ForumPostSchema);
