@@ -92,7 +92,7 @@ const ForumListPage = () => {
       </div>
 
       {/* Search & Filter */}
-      <div className="flex flex-col md:flex-row gap-4 mb-8 bg-surface-container-low p-4 rounded-3xl border border-outline-variant/15 shadow-sm">
+      <div className="flex flex-col lg:flex-row gap-4 mb-8 bg-surface-container-low p-4 rounded-3xl border border-outline-variant/15 shadow-sm">
         <div className="relative flex-1 group">
           <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant opacity-40 group-focus-within:text-primary transition-colors">search</span>
           <input 
@@ -103,16 +103,16 @@ const ForumListPage = () => {
             className="w-full bg-surface-container-high border border-outline-variant/10 rounded-2xl pl-12 pr-4 py-3.5 text-on-surface focus:ring-2 focus:ring-primary/20 outline-none transition-all font-medium"
           />
         </div>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           <button 
             onClick={() => setSortBy('newest')}
-            className={`px-6 py-3.5 rounded-2xl font-bold text-xs uppercase tracking-widest transition-all ${sortBy === 'newest' ? 'bg-primary text-on-primary shadow-lg' : 'bg-surface-container-highest text-on-surface-variant hover:bg-outline-variant/20'}`}
+            className={`flex-1 sm:flex-none px-6 py-3.5 rounded-2xl font-bold text-xs uppercase tracking-widest transition-all ${sortBy === 'newest' ? 'bg-primary text-on-primary shadow-lg' : 'bg-surface-container-highest text-on-surface-variant hover:bg-outline-variant/20'}`}
           >
             {t('forum.sort_newest')}
           </button>
           <button 
             onClick={() => setSortBy('popular')}
-            className={`px-6 py-3.5 rounded-2xl font-bold text-xs uppercase tracking-widest transition-all ${sortBy === 'popular' ? 'bg-primary text-on-primary shadow-lg' : 'bg-surface-container-highest text-on-surface-variant hover:bg-outline-variant/20'}`}
+            className={`flex-1 sm:flex-none px-6 py-3.5 rounded-2xl font-bold text-xs uppercase tracking-widest transition-all ${sortBy === 'popular' ? 'bg-primary text-on-primary shadow-lg' : 'bg-surface-container-highest text-on-surface-variant hover:bg-outline-variant/20'}`}
           >
             {t('forum.sort_popular')}
           </button>
@@ -126,7 +126,7 @@ const ForumListPage = () => {
             <div 
               key={post.id}
               onClick={() => navigate(`/forum/${post.id}`)}
-              className="bg-surface-container-lowest border border-outline-variant/15 rounded-[32px] p-8 flex flex-col md:flex-row gap-8 hover:border-primary/40 transition-all duration-300 group cursor-pointer shadow-sm hover:shadow-xl hover:-translate-y-1"
+              className="bg-surface-container-lowest border border-outline-variant/15 rounded-[32px] p-6 sm:p-8 flex flex-col md:flex-row gap-6 sm:gap-8 hover:border-primary/40 transition-all duration-300 group cursor-pointer shadow-sm hover:shadow-xl hover:-translate-y-1"
             >
               <div className="flex flex-col items-center gap-2 shrink-0">
                 <div className="w-14 h-14 rounded-2xl overflow-hidden border border-outline-variant/20 group-hover:scale-105 transition-transform">

@@ -449,7 +449,8 @@ const ResultsPage = () => {
           </div>
         </div>
 
-        <div className="bg-surface-container-low border border-outline-variant/15 rounded-[40px] p-8 shadow-sm">
+
+        <div className="bg-surface-container-low border border-outline-variant/15 rounded-[32px] sm:rounded-[40px] p-6 sm:p-8 shadow-sm">
           <h4 className="text-[11px] font-black uppercase tracking-widest text-on-surface-variant mb-6">{t('results.key_highlights')}</h4>
           <div className="space-y-4">
             <div className="p-4 bg-green-400/5 border border-green-400/10 rounded-2xl">
@@ -508,19 +509,19 @@ const ResultsPage = () => {
         <h3 className="text-2xl font-black text-on-surface ml-4">{t('results.breakdown')}</h3>
         {evaluation?.detailedFeedback?.map((item, i) => (
           <div key={i} className="bg-surface-container-low border border-outline-variant/15 rounded-[40px] p-8 shadow-sm group hover:border-primary/30 transition-all">
-            <div className="flex justify-between items-start mb-6">
+            <div className="flex flex-col sm:flex-row justify-between items-start mb-6 gap-4">
               <div className="max-w-2xl">
                 <p className="text-[10px] font-black text-primary uppercase tracking-widest mb-2">{t('results.question')} {i + 1}</p>
                 <h4 className="text-lg font-bold text-on-surface leading-tight">{item?.question}</h4>
               </div>
-              <div className="flex flex-col items-end">
-                <span className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border mb-2 ${item?.status === 'correct' ? 'bg-green-400/10 text-green-400 border-green-400/20' :
+              <div className="flex flex-row sm:flex-col items-center sm:items-end justify-between w-full sm:w-auto">
+                <span className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border ${item?.status === 'correct' ? 'bg-green-400/10 text-green-400 border-green-400/20' :
                     item?.status === 'partially_correct' ? 'bg-amber-400/10 text-amber-400 border-amber-400/20' :
                       'bg-red-400/10 text-red-400 border-red-400/20'
                   }`}>
                   {item?.status?.replace('_', ' ') || 'N/A'}
                 </span>
-                <span className="text-2xl font-black text-on-surface">{item?.score || 0}/10</span>
+                <span className="text-2xl font-black text-on-surface sm:mt-2">{item?.score || 0}/10</span>
               </div>
             </div>
 

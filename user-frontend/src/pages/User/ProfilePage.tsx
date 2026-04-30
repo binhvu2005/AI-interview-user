@@ -147,22 +147,22 @@ const ProfilePage = () => {
 
   return (
     <div className="max-w-4xl pb-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-      <header className="mb-8 flex justify-between items-end">
+      <header className="mb-8 flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
         <div>
           <h1 className="text-4xl font-black text-on-surface tracking-tighter mb-2">{t('profile_page.title')}</h1>
           <p className="text-sm text-on-surface-variant font-medium opacity-70">{t('profile_page.subtitle')}</p>
         </div>
         {!isEditing && !showPasswordForm && (
-           <div className="flex gap-3">
+           <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
               <button 
                 onClick={() => setShowPasswordForm(true)}
-                className="bg-surface-container-high text-on-surface px-6 py-3 rounded-2xl font-bold text-xs uppercase tracking-widest hover:bg-outline-variant/20 transition-all border border-outline-variant/10"
+                className="bg-surface-container-high text-on-surface px-6 py-3 rounded-2xl font-bold text-xs uppercase tracking-widest hover:bg-outline-variant/20 transition-all border border-outline-variant/10 w-full sm:w-auto"
               >
                 {t('profile_page.change_pwd')}
               </button>
               <button 
                 onClick={() => setIsEditing(true)}
-                className="bg-primary text-on-primary px-6 py-3 rounded-2xl font-black text-xs uppercase tracking-widest hover:shadow-lg transition-all"
+                className="bg-primary text-on-primary px-6 py-3 rounded-2xl font-black text-xs uppercase tracking-widest hover:shadow-lg transition-all w-full sm:w-auto"
               >
                 {t('profile_page.save_changes')}
               </button>
@@ -226,8 +226,8 @@ const ProfilePage = () => {
            </form>
         </div>
       ) : (
-        <div className="bg-surface-container-low border border-outline-variant/15 rounded-[32px] p-10 shadow-xl">
-          <div className="flex flex-col md:flex-row gap-12 items-start">
+        <div className="bg-surface-container-low border border-outline-variant/15 rounded-[32px] p-6 md:p-10 shadow-xl">
+          <div className="flex flex-col lg:flex-row gap-12 items-center lg:items-start">
              <div className="flex flex-col items-center gap-4 shrink-0">
                 <div 
                   onClick={handleAvatarClick}

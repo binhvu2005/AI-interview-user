@@ -9,6 +9,7 @@ const UserHeader = () => {
   const [userAvatar, setUserAvatar] = useState<string | null>(localStorage.getItem('userAvatar'));
   const [isVip, setIsVip] = useState<boolean>(localStorage.getItem('isVip') === 'true');
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     const handleStorageChange = () => {
@@ -37,15 +38,15 @@ const UserHeader = () => {
       <div className="flex items-center gap-8">
         <div className="flex items-center gap-2 cursor-pointer group" onClick={() => navigate('/')}>
           <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center">
-                <span className="material-symbols-outlined text-primary text-[20px]">psychiatry</span>
-              </div>
-              <span className="text-xl font-black tracking-tighter text-on-surface">
-                {t('app_name') || 'Obsidian AI'}
-              </span>
+            <div className="w-9 h-9 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center">
+              <span className="material-symbols-outlined text-primary text-[20px]">psychiatry</span>
             </div>
+            <span className="text-xl font-black tracking-tighter text-on-surface">
+              {t('app_name') || 'Obsidian AI'}
+            </span>
+          </div>
         </div>
-        <div className="flex gap-6 items-center">
+        <div className="hidden md:flex gap-6 items-center">
           <a onClick={() => navigate('/dashboard')} className="text-on-surface-variant hover:text-on-surface transition-colors duration-300 cursor-pointer font-bold">{t('nav.dashboard')}</a>
           <a onClick={() => navigate('/preparation')} className="text-on-surface-variant hover:text-on-surface transition-colors duration-300 cursor-pointer font-bold">{t('nav.preparation')}</a>
           <a onClick={() => navigate('/forum')} className="text-on-surface-variant hover:text-on-surface transition-colors duration-300 cursor-pointer font-bold">{t('forum.title')}</a>
@@ -56,9 +57,15 @@ const UserHeader = () => {
           </a>
         </div>
       </div>
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-2 md:gap-4">
+        <button
+          className="md:hidden w-10 h-10 flex items-center justify-center text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high rounded-xl transition-all focus:outline-none"
+          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+        >
+          <span className="material-symbols-outlined text-[24px]">{mobileMenuOpen ? 'close' : 'menu'}</span>
+        </button>
 
-        <div className="flex items-center gap-3 relative ml-4">
+        <div className="flex items-center gap-3 relative md:ml-4">
           <div className="hidden sm:flex flex-col items-end mr-1 justify-center">
             <span className="text-sm font-bold text-on-surface leading-tight max-w-[120px] truncate mb-1">
               {userName || 'User'}
@@ -108,6 +115,23 @@ const UserHeader = () => {
           )}
         </div>
       </div>
+
+      {/* Mobile Menu Dropdown */}
+      {mobileMenuOpen && (
+        <>
+          <div className="fixed inset-0 top-16 bg-black/60 backdrop-blur-sm z-40 md:hidden" onClick={() => setMobileMenuOpen(false)}></div>
+          <div className="absolute top-16 left-0 w-full bg-surface-container-low border-b border-outline-variant/15 flex flex-col p-4 z-50 md:hidden animate-in slide-in-from-top duration-200">
+            <a onClick={() => { navigate('/dashboard'); setMobileMenuOpen(false); }} className="py-4 px-4 text-on-surface hover:bg-surface-container-high rounded-xl font-bold cursor-pointer">{t('nav.dashboard')}</a>
+            <a onClick={() => { navigate('/preparation'); setMobileMenuOpen(false); }} className="py-4 px-4 text-on-surface hover:bg-surface-container-high rounded-xl font-bold cursor-pointer">{t('nav.preparation')}</a>
+            <a onClick={() => { navigate('/forum'); setMobileMenuOpen(false); }} className="py-4 px-4 text-on-surface hover:bg-surface-container-high rounded-xl font-bold cursor-pointer">{t('forum.title')}</a>
+            <a onClick={() => { navigate('/showcase'); setMobileMenuOpen(false); }} className="py-4 px-4 text-on-surface hover:bg-surface-container-high rounded-xl font-bold cursor-pointer">{t('showcase.title')}</a>
+            <a onClick={() => { navigate('/upgrade'); setMobileMenuOpen(false); }} className="py-4 px-4 text-primary hover:bg-primary/10 rounded-xl font-black uppercase tracking-widest flex items-center gap-2 cursor-pointer mt-2">
+              <span className="material-symbols-outlined text-[20px]">workspace_premium</span>
+              {t('nav.upgrade')}
+            </a>
+          </div>
+        </>
+      )}
     </nav>
   );
 };

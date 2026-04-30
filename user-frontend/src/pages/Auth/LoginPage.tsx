@@ -48,7 +48,7 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="w-full max-w-md bg-surface-container-low rounded-3xl p-8 shadow-xl border border-outline-variant/15 relative overflow-hidden animate-in zoom-in-95 duration-300">
+    <div className="w-full max-w-md bg-surface-container-low rounded-3xl p-6 sm:p-8 shadow-xl border border-outline-variant/15 relative overflow-hidden animate-in zoom-in-95 duration-300">
       {/* Decorative background element */}
       <div className="absolute -top-24 -right-24 w-48 h-48 bg-primary/20 blur-3xl rounded-full pointer-events-none"></div>
       <div className="absolute -bottom-24 -left-24 w-48 h-48 bg-primary-dim/20 blur-3xl rounded-full pointer-events-none"></div>

@@ -168,12 +168,12 @@ const DashboardPage = () => {
             <p className="text-on-surface-variant text-lg max-w-md leading-relaxed mb-8">
               {t('dashboard.desc')}
             </p>
-            <div className="flex gap-4">
-              <button onClick={() => navigate('/preparation')} className="bg-primary text-on-primary font-bold px-8 py-4 rounded-xl hover:bg-primary-dim transition-all hover:scale-105 active:scale-95 shadow-[0_0_20px_rgba(163,166,255,0.3)] flex items-center gap-2 group">
+            <div className="flex flex-col sm:flex-row gap-4">
+              <button onClick={() => navigate('/preparation')} className="bg-primary text-on-primary font-bold px-8 py-4 rounded-xl hover:bg-primary-dim transition-all hover:scale-105 active:scale-95 shadow-[0_0_20px_rgba(163,166,255,0.3)] flex items-center justify-center gap-2 group w-full sm:w-auto">
                 {t('dashboard.btn_start')}
                 <span className="material-symbols-outlined text-[18px] group-hover:translate-x-1 transition-transform">arrow_forward</span>
               </button>
-              <button className="bg-surface-container-high text-on-surface border border-outline-variant/20 font-bold px-8 py-4 rounded-xl hover:bg-surface-container-highest transition-all hover:border-primary/30">
+              <button className="bg-surface-container-high text-on-surface border border-outline-variant/20 font-bold px-8 py-4 rounded-xl hover:bg-surface-container-highest transition-all hover:border-primary/30 w-full sm:w-auto">
                 {t('dashboard.btn_demo')}
               </button>
             </div>

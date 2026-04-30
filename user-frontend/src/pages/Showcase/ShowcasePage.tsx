@@ -100,9 +100,9 @@ const ShowcasePage = () => {
       </header>
 
       {/* Filter Section */}
-      <section className="bg-surface-container border border-outline-variant/15 rounded-3xl p-6 shadow-sm mb-10 flex flex-col md:flex-row gap-4 items-center justify-between">
+      <section className="bg-surface-container border border-outline-variant/15 rounded-3xl p-4 sm:p-6 shadow-sm mb-10 flex flex-col md:flex-row gap-4 items-center justify-between">
         <div className="flex flex-col md:flex-row gap-4 w-full md:w-auto">
-          <div className="relative group min-w-[200px]">
+          <div className="relative group w-full md:min-w-[200px]">
             <select 
               value={selectedPosition} 
               onChange={(e) => setSelectedPosition(e.target.value)} 
@@ -114,7 +114,7 @@ const ShowcasePage = () => {
             <span className="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none text-sm">expand_more</span>
           </div>
           
-          <div className="relative group min-w-[200px]">
+          <div className="relative group w-full md:min-w-[200px]">
             <select 
               value={selectedLevel} 
               onChange={(e) => setSelectedLevel(e.target.value)} 

@@ -53,17 +53,17 @@ const UserSidebar = () => {
   ];
 
   return (
-    <div className="flex flex-col h-full px-4 py-8">
-       <div className="px-4 mb-10">
+    <div className="flex flex-col h-full px-4 py-8 gap-2 overflow-y-auto hide-scrollbar">
+       <div className="hidden lg:block px-4 mb-10">
          <h2 className="text-[10px] font-black uppercase tracking-[0.3em] text-on-surface-variant opacity-40">{t('sidebar.overview')}</h2>
        </div>
 
-       <nav className="space-y-2 flex-1">
+       <nav className="flex flex-col gap-2 flex-1">
           {menuItems.map((item) => (
             <button 
               key={item.id}
               onClick={() => navigate(item.path)} 
-              className={`w-full flex items-center gap-3 px-4 py-3.5 rounded-2xl transition-all duration-500 group ${
+              className={`flex items-center gap-3 px-4 py-3.5 rounded-2xl transition-all duration-300 group w-full ${
                 item.active 
                   ? 'bg-primary text-on-primary shadow-lg shadow-primary/20' 
                   : 'text-on-surface-variant hover:bg-surface-container-highest hover:text-on-surface'
@@ -72,7 +72,7 @@ const UserSidebar = () => {
                <span className={`material-symbols-outlined text-[22px] transition-transform duration-500 ${item.active ? 'material-symbols-fill scale-110' : 'group-hover:scale-110'}`}>
                  {item.icon}
                </span>
-               <span className="font-bold text-sm tracking-tight">{item.label}</span>
+               <span className="font-bold text-sm tracking-tight whitespace-nowrap">{item.label}</span>
                {item.active && <div className="ml-auto w-1.5 h-1.5 rounded-full bg-on-primary"></div>}
             </button>
           ))}
