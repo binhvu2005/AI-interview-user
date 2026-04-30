@@ -243,8 +243,8 @@ const ProfilePage = () => {
                 <input type="file" ref={fileInputRef} onChange={handleFileChange} accept="image/*" className="hidden" />
                 <p className="text-[10px] font-black uppercase tracking-[0.2em] text-on-surface-variant opacity-50">{t('profile_page.avatar_lbl')}</p>
                 {userData.isVip && (
-                  <div className="mt-2 flex items-center justify-center gap-1.5 bg-[#ffc107]/10 text-[#ffc107] px-4 py-2 rounded-xl border border-[#ffc107]/20 shadow-[0_0_15px_rgba(255,193,7,0.2)]">
-                    <span className="material-symbols-outlined text-[18px]">workspace_premium</span>
+                  <div className="mt-2 flex items-center justify-center gap-1.5 badge-vip-animated px-5 py-2.5 rounded-2xl shadow-lg shadow-yellow-500/20 border-none">
+                    <span className="material-symbols-outlined text-[18px] material-symbols-fill">workspace_premium</span>
                     <span className="text-xs font-black uppercase tracking-widest">VIP Member</span>
                   </div>
                 )}

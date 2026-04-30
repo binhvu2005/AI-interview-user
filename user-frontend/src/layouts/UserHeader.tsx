@@ -46,36 +46,36 @@ const UserHeader = () => {
             </span>
           </div>
         </div>
-        <div className="hidden md:flex gap-6 items-center">
-          <a onClick={() => navigate('/dashboard')} className="text-on-surface-variant hover:text-on-surface transition-colors duration-300 cursor-pointer font-bold">{t('nav.dashboard')}</a>
-          <a onClick={() => navigate('/preparation')} className="text-on-surface-variant hover:text-on-surface transition-colors duration-300 cursor-pointer font-bold">{t('nav.preparation')}</a>
-          <a onClick={() => navigate('/forum')} className="text-on-surface-variant hover:text-on-surface transition-colors duration-300 cursor-pointer font-bold">{t('forum.title')}</a>
-          <a onClick={() => navigate('/showcase')} className="text-on-surface-variant hover:text-on-surface transition-colors duration-300 cursor-pointer font-bold">{t('showcase.title')}</a>
+        <div className="flex gap-8 items-center ml-4">
+          <a onClick={() => navigate('/dashboard')} className="text-on-surface-variant hover:text-on-surface transition-colors duration-300 cursor-pointer font-bold text-sm uppercase tracking-widest">{t('nav.dashboard')}</a>
+          <a onClick={() => navigate('/preparation')} className="text-on-surface-variant hover:text-on-surface transition-colors duration-300 cursor-pointer font-bold text-sm uppercase tracking-widest">{t('nav.preparation')}</a>
+          <a onClick={() => navigate('/forum')} className="text-on-surface-variant hover:text-on-surface transition-colors duration-300 cursor-pointer font-bold text-sm uppercase tracking-widest">{t('forum.title')}</a>
+          <a onClick={() => navigate('/showcase')} className="text-on-surface-variant hover:text-on-surface transition-colors duration-300 cursor-pointer font-bold text-sm uppercase tracking-widest">{t('showcase.title')}</a>
           <a onClick={() => navigate('/upgrade')} className="bg-primary/10 text-primary px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border border-primary/20 hover:bg-primary hover:text-on-primary transition-all duration-300 flex items-center gap-1.5 group cursor-pointer">
             <span className="material-symbols-outlined text-[16px] animate-pulse">workspace_premium</span>
             {t('nav.upgrade')}
           </a>
         </div>
       </div>
-      <div className="flex items-center gap-2 md:gap-4">
+      <div className="flex items-center gap-2 sm:gap-4">
         <button
-          className="md:hidden w-10 h-10 flex items-center justify-center text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high rounded-xl transition-all focus:outline-none"
+          className="sm:hidden w-10 h-10 flex items-center justify-center text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high rounded-xl transition-all focus:outline-none"
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
         >
           <span className="material-symbols-outlined text-[24px]">{mobileMenuOpen ? 'close' : 'menu'}</span>
         </button>
 
-        <div className="flex items-center gap-3 relative md:ml-4">
-          <div className="hidden sm:flex flex-col items-end mr-1 justify-center">
+        <div className="flex items-center gap-3 relative">
+          <div className="flex flex-col items-end mr-1 justify-center">
             <span className="text-sm font-bold text-on-surface leading-tight max-w-[120px] truncate mb-1">
               {userName || 'User'}
             </span>
             {isVip ? (
-              <span className="text-[9px] font-black uppercase tracking-widest text-[#ffc107] bg-[#ffc107]/10 px-1.5 py-0.5 rounded flex items-center gap-0.5 leading-none">
-                <span className="material-symbols-outlined text-[10px]">workspace_premium</span> VIP
+              <span className="text-[9px] uppercase tracking-widest badge-vip-animated px-2 py-0.5 rounded-full flex items-center gap-0.5 leading-none shadow-sm shadow-yellow-500/20">
+                <span className="material-symbols-outlined text-[10px] material-symbols-fill">workspace_premium</span> VIP MEMBER
               </span>
             ) : (
-              <span className="text-[9px] font-black uppercase tracking-widest text-on-surface-variant/60 bg-surface-container-highest px-1.5 py-0.5 rounded leading-none">
+              <span className="text-[9px] uppercase tracking-widest badge-normal-animated px-2 py-0.5 rounded-full flex items-center leading-none shadow-sm">
                 NORMAL
               </span>
             )}
@@ -91,11 +91,11 @@ const UserHeader = () => {
                 <div className="px-4 py-3 border-b border-outline-variant/10 mb-1">
                   <p className="text-xs font-bold text-on-surface truncate mb-1">{userName}</p>
                   {isVip ? (
-                    <span className="text-[9px] font-black uppercase tracking-widest text-[#ffc107] bg-[#ffc107]/10 px-1.5 py-0.5 rounded inline-flex items-center gap-0.5 leading-none">
-                      <span className="material-symbols-outlined text-[10px]">workspace_premium</span> VIP
+                    <span className="text-[9px] uppercase tracking-widest badge-vip-animated px-2 py-0.5 rounded-full inline-flex items-center gap-0.5 leading-none">
+                      <span className="material-symbols-outlined text-[10px] material-symbols-fill">workspace_premium</span> VIP
                     </span>
                   ) : (
-                    <span className="text-[9px] font-black uppercase tracking-widest text-on-surface-variant/60 bg-surface-container-highest px-1.5 py-0.5 rounded inline-flex leading-none">
+                    <span className="text-[9px] uppercase tracking-widest badge-normal-animated px-2 py-0.5 rounded-full inline-flex leading-none">
                       NORMAL
                     </span>
                   )}
@@ -116,19 +116,41 @@ const UserHeader = () => {
         </div>
       </div>
 
-      {/* Mobile Menu Dropdown */}
+      {/* Mobile Menu Drawer (Left Side) */}
       {mobileMenuOpen && (
         <>
-          <div className="fixed inset-0 top-16 bg-black/60 backdrop-blur-sm z-40 md:hidden" onClick={() => setMobileMenuOpen(false)}></div>
-          <div className="absolute top-16 left-0 w-full bg-surface-container-low border-b border-outline-variant/15 flex flex-col p-4 z-50 md:hidden animate-in slide-in-from-top duration-200">
-            <a onClick={() => { navigate('/dashboard'); setMobileMenuOpen(false); }} className="py-4 px-4 text-on-surface hover:bg-surface-container-high rounded-xl font-bold cursor-pointer">{t('nav.dashboard')}</a>
-            <a onClick={() => { navigate('/preparation'); setMobileMenuOpen(false); }} className="py-4 px-4 text-on-surface hover:bg-surface-container-high rounded-xl font-bold cursor-pointer">{t('nav.preparation')}</a>
-            <a onClick={() => { navigate('/forum'); setMobileMenuOpen(false); }} className="py-4 px-4 text-on-surface hover:bg-surface-container-high rounded-xl font-bold cursor-pointer">{t('forum.title')}</a>
-            <a onClick={() => { navigate('/showcase'); setMobileMenuOpen(false); }} className="py-4 px-4 text-on-surface hover:bg-surface-container-high rounded-xl font-bold cursor-pointer">{t('showcase.title')}</a>
-            <a onClick={() => { navigate('/upgrade'); setMobileMenuOpen(false); }} className="py-4 px-4 text-primary hover:bg-primary/10 rounded-xl font-black uppercase tracking-widest flex items-center gap-2 cursor-pointer mt-2">
-              <span className="material-symbols-outlined text-[20px]">workspace_premium</span>
-              {t('nav.upgrade')}
-            </a>
+          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[60] sm:hidden" onClick={() => setMobileMenuOpen(false)}></div>
+          <div className="fixed top-0 left-0 w-[280px] h-full bg-surface-container-low border-r border-outline-variant/15 flex flex-col p-6 z-[70] sm:hidden animate-in slide-in-from-left duration-300">
+            <div className="flex items-center gap-3 mb-10 pb-6 border-b border-outline-variant/10">
+              <div className="w-10 h-10 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center">
+                <span className="material-symbols-outlined text-primary">psychiatry</span>
+              </div>
+              <span className="text-xl font-black tracking-tighter text-on-surface">
+                {t('app_name') || 'Obsidian AI'}
+              </span>
+            </div>
+
+            <div className="flex flex-col gap-1">
+              <a onClick={() => { navigate('/dashboard'); setMobileMenuOpen(false); }} className={`flex items-center gap-4 py-4 px-4 rounded-2xl font-bold transition-all ${location.pathname === '/dashboard' ? 'bg-primary text-on-primary shadow-lg shadow-primary/20' : 'text-on-surface hover:bg-surface-container-high'}`}>
+                <span className="material-symbols-outlined">dashboard</span> {t('nav.dashboard')}
+              </a>
+              <a onClick={() => { navigate('/preparation'); setMobileMenuOpen(false); }} className={`flex items-center gap-4 py-4 px-4 rounded-2xl font-bold transition-all ${location.pathname === '/preparation' ? 'bg-primary text-on-primary shadow-lg shadow-primary/20' : 'text-on-surface hover:bg-surface-container-high'}`}>
+                <span className="material-symbols-outlined">rocket_launch</span> {t('nav.preparation')}
+              </a>
+              <a onClick={() => { navigate('/forum'); setMobileMenuOpen(false); }} className={`flex items-center gap-4 py-4 px-4 rounded-2xl font-bold transition-all ${location.pathname.startsWith('/forum') ? 'bg-primary text-on-primary shadow-lg shadow-primary/20' : 'text-on-surface hover:bg-surface-container-high'}`}>
+                <span className="material-symbols-outlined">forum</span> {t('forum.title')}
+              </a>
+              <a onClick={() => { navigate('/showcase'); setMobileMenuOpen(false); }} className={`flex items-center gap-4 py-4 px-4 rounded-2xl font-bold transition-all ${location.pathname === '/showcase' ? 'bg-primary text-on-primary shadow-lg shadow-primary/20' : 'text-on-surface hover:bg-surface-container-high'}`}>
+                <span className="material-symbols-outlined">military_tech</span> {t('showcase.title')}
+              </a>
+            </div>
+
+            <div className="mt-auto pt-6 border-t border-outline-variant/10">
+              <a onClick={() => { navigate('/upgrade'); setMobileMenuOpen(false); }} className="flex items-center gap-3 py-5 px-4 bg-primary/10 text-primary rounded-2xl font-black uppercase tracking-widest text-[11px] border border-primary/20">
+                <span className="material-symbols-outlined text-[20px]">workspace_premium</span>
+                {t('nav.upgrade')}
+              </a>
+            </div>
           </div>
         </>
       )}
