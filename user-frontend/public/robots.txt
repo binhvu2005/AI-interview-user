@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://ai-interview.id.vn/sitemap.xml
