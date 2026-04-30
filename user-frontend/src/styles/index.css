@@ -336,16 +336,16 @@
 .badge-vip-animated {
   background: linear-gradient(90deg, #ffc107, #fff, #ffeb3b, #ff9800, #ffc107);
   background-size: 200% auto;
-  animation: shimmer 1.5s linear infinite;
+  animation: shimmer 6s linear infinite;
   color: #000 !important;
   font-weight: 900 !important;
-  text-shadow: 0 0 5px rgba(255,255,255,0.5);
+  text-shadow: 0 0 5px rgba(255,255,255,0.3);
 }
 
 .badge-normal-animated {
   background: linear-gradient(90deg, #4b5563, #9ca3af, #4b5563);
   background-size: 200% auto;
-  animation: shimmer 3s linear infinite;
+  animation: shimmer 10s linear infinite;
   color: #fff !important;
   font-weight: 800 !important;
 }
