@@ -37,7 +37,7 @@ jobs:
             echo "MONGODB_URI=${{ secrets.MONGODB_URI }}" >> .env
             echo "GROQ_API_KEY=${{ secrets.GROQ_API_KEY }}" >> .env
             echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> .env
-            echo "VITE_API_URL=http://${{ secrets.HOST }}:5000" >> .env
+            echo "VITE_API_URL=/api" >> .env
             
             echo "--- REBUILDING & RESTARTING DOCKER CONTAINERS ---"
             # Giải phóng cổng 5000 và 80 triệt để
