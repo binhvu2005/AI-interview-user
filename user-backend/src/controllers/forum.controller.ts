@@ -4,13 +4,29 @@ import ForumPost from '../models/ForumPost.model';
 
 export const getPosts = async (req: Request, res: Response) => {
   try {
-    const { sort } = req.query;
+    const { sort, page = 1, limit = 6, search = '' } = req.query;
+    const pageNum = parseInt(page as string);
+    const limitNum = parseInt(limit as string);
+    const skip = (pageNum - 1) * limitNum;
+
     let sortQuery = {};
     if (sort === 'newest') sortQuery = { date: -1 };
     else if (sort === 'popular') sortQuery = { likesCount: -1 };
 
+    const matchQuery: any = { isHidden: { $ne: true } };
+    if (search) {
+      matchQuery.$or = [
+        { title: { $regex: search, $options: 'i' } },
+        { tags: { $regex: search, $options: 'i' } }
+      ];
+    }
+
+    // Get total count for pagination
+    const totalPosts = await ForumPost.countDocuments(matchQuery);
+    const totalPages = Math.ceil(totalPosts / limitNum);
+
     const posts = await ForumPost.aggregate([
-      { $match: { isHidden: { $ne: true } } },
+      { $match: matchQuery },
       {
         $addFields: {
           likesCount: { $size: "$likes" },
@@ -48,7 +64,9 @@ export const getPosts = async (req: Request, res: Response) => {
             }
           }
         }
-      }
+      },
+      { $skip: skip },
+      { $limit: limitNum }
     ]);
 
     // Map to match frontend expectations
@@ -58,7 +76,15 @@ export const getPosts = async (req: Request, res: Response) => {
       author: { name: p.author.fullName, avatar: p.author.avatar, isVip: p.author.isVip }
     }));
 
-    res.json(formattedPosts);
+    res.json({
+      posts: formattedPosts,
+      pagination: {
+        totalPosts,
+        totalPages,
+        currentPage: pageNum,
+        limit: limitNum
+      }
+    });
   } catch (error) {
     res.status(500).json({ message: 'Error fetching posts' });
   }

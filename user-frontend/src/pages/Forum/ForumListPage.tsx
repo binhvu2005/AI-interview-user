@@ -9,9 +9,11 @@ const ForumListPage = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [posts, setPosts] = useState<any[]>([]);
+  const [pagination, setPagination] = useState<any>({ currentPage: 1, totalPages: 1 });
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [sortBy, setSortBy] = useState('newest');
+  const [page, setPage] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newPostTitle, setNewPostTitle] = useState('');
   const [newPostContent, setNewPostContent] = useState('');
@@ -21,7 +23,16 @@ const ForumListPage = () => {
 
   useEffect(() => {
     fetchPosts();
-  }, [sortBy]);
+  }, [sortBy, page]);
+
+  // Debounced search
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (page === 1) fetchPosts();
+      else setPage(1);
+    }, 500);
+    return () => clearTimeout(timer);
+  }, [search]);
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
@@ -56,12 +67,13 @@ const ForumListPage = () => {
     try {
       setLoading(true);
       const token = localStorage.getItem('token');
-      const res = await fetch(`${API_ENDPOINTS.FORUM.GET_POSTS}?sort=${sortBy}`, {
+      const res = await fetch(`${API_ENDPOINTS.FORUM.GET_POSTS}?sort=${sortBy}&page=${page}&search=${search}`, {
         headers: token ? { 'Authorization': `Bearer ${token}` } : {}
       });
       if (res.ok) {
         const data = await res.json();
-        setPosts(data);
+        setPosts(data.posts || []);
+        setPagination(data.pagination || { currentPage: 1, totalPages: 1 });
       }
     } catch (error) {
       toast.error('Failed to load discussions');
@@ -106,8 +118,7 @@ const ForumListPage = () => {
     }
   };
 
-  const filteredPosts = posts
-    .filter(p => p.title.toLowerCase().includes(search.toLowerCase()) || p.tags?.some((tag: string) => tag.toLowerCase().includes(search.toLowerCase())));
+  const filteredPosts = posts;
 
   const stripHtml = (html: string) => {
     if (!html) return "";
@@ -143,27 +154,27 @@ const ForumListPage = () => {
       </div>
 
       {/* Search & Filter */}
-      <div className="flex flex-col lg:flex-row gap-4 mb-8 bg-surface-container-low p-4 rounded-3xl border border-outline-variant/15 shadow-sm">
+      <div className="flex flex-col lg:flex-row gap-3 mb-8 bg-surface-container-low p-3 rounded-2xl border border-outline-variant/15 shadow-sm">
         <div className="relative flex-1 group">
-          <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant opacity-40 group-focus-within:text-primary transition-colors">search</span>
+          <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant opacity-40 group-focus-within:text-primary transition-colors text-[20px]">search</span>
           <input 
             type="text" 
-            placeholder={t('forum.search_placeholder')}
+            placeholder="Tìm kiếm theo tiêu đề hoặc hashtag..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full bg-surface-container-high border border-outline-variant/10 rounded-2xl pl-12 pr-4 py-3.5 text-on-surface focus:ring-2 focus:ring-primary/20 outline-none transition-all font-medium"
+            className="w-full bg-surface-container-high border border-outline-variant/10 rounded-xl pl-11 pr-4 py-3 text-sm text-on-surface focus:ring-2 focus:ring-primary/20 outline-none transition-all font-medium placeholder:opacity-50"
           />
         </div>
         <div className="flex flex-wrap gap-2">
           <button 
-            onClick={() => setSortBy('newest')}
-            className={`flex-1 sm:flex-none px-6 py-3.5 rounded-2xl font-bold text-xs uppercase tracking-widest transition-all ${sortBy === 'newest' ? 'bg-primary text-on-primary shadow-lg' : 'bg-surface-container-highest text-on-surface-variant hover:bg-outline-variant/20'}`}
+            onClick={() => { setSortBy('newest'); setPage(1); }}
+            className={`flex-1 sm:flex-none px-5 py-3 rounded-xl font-bold text-xs uppercase tracking-widest transition-all ${sortBy === 'newest' ? 'bg-primary text-on-primary shadow-lg' : 'bg-surface-container-highest text-on-surface-variant hover:bg-outline-variant/20'}`}
           >
             {t('forum.sort_newest')}
           </button>
           <button 
-            onClick={() => setSortBy('popular')}
-            className={`flex-1 sm:flex-none px-6 py-3.5 rounded-2xl font-bold text-xs uppercase tracking-widest transition-all ${sortBy === 'popular' ? 'bg-primary text-on-primary shadow-lg' : 'bg-surface-container-highest text-on-surface-variant hover:bg-outline-variant/20'}`}
+            onClick={() => { setSortBy('popular'); setPage(1); }}
+            className={`flex-1 sm:flex-none px-5 py-3 rounded-xl font-bold text-xs uppercase tracking-widest transition-all ${sortBy === 'popular' ? 'bg-primary text-on-primary shadow-lg' : 'bg-surface-container-highest text-on-surface-variant hover:bg-outline-variant/20'}`}
           >
             {t('forum.sort_popular')}
           </button>
@@ -177,10 +188,10 @@ const ForumListPage = () => {
             <div 
               key={post.id}
               onClick={() => navigate(`/forum/${post.id}`)}
-              className="bg-surface-container-lowest border border-outline-variant/15 rounded-[32px] p-6 sm:p-8 flex flex-col md:flex-row gap-6 sm:gap-8 hover:border-primary/40 transition-all duration-300 group cursor-pointer shadow-sm hover:shadow-xl hover:-translate-y-1"
+              className="bg-surface-container-lowest border border-outline-variant/15 rounded-[28px] p-5 sm:p-6 flex flex-col md:flex-row gap-5 sm:gap-6 hover:border-primary/40 transition-all duration-300 group cursor-pointer shadow-sm hover:shadow-xl hover:-translate-y-1"
             >
               <div className="flex flex-col items-center gap-2 shrink-0">
-                <div className="w-14 h-14 rounded-2xl overflow-hidden border border-outline-variant/20 group-hover:scale-105 transition-transform">
+                <div className="w-12 h-12 rounded-2xl overflow-hidden border border-outline-variant/20 group-hover:scale-105 transition-transform">
                   <img src={post.author.avatar} alt={post.author.name} className="w-full h-full object-cover" />
                 </div>
               </div>
@@ -197,18 +208,18 @@ const ForumListPage = () => {
                   </span>
                 </div>
                 
-                <h3 className="text-xl font-bold text-on-surface mb-3 group-hover:text-primary transition-colors leading-tight">{post.title}</h3>
-                <p className="text-sm text-on-surface-variant line-clamp-2 opacity-80 mb-4 font-medium leading-relaxed">{stripHtml(post.content)}</p>
+                <h3 className="text-lg font-bold text-on-surface mb-2 group-hover:text-primary transition-colors leading-tight">{post.title}</h3>
+                <p className="text-xs text-on-surface-variant line-clamp-2 opacity-80 mb-4 font-medium leading-relaxed">{stripHtml(post.content)}</p>
                 
                 {post.images && post.images.length > 0 && (
-                  <div className="flex gap-2 mb-6 overflow-hidden">
+                  <div className="flex gap-2 mb-4 overflow-hidden">
                     {post.images.slice(0, 3).map((img: string, idx: number) => (
-                      <div key={idx} className="w-20 h-20 rounded-xl overflow-hidden border border-outline-variant/10 shadow-sm shrink-0">
+                      <div key={idx} className="w-16 h-16 rounded-xl overflow-hidden border border-outline-variant/10 shadow-sm shrink-0">
                         <img src={img} alt="post-img" className="w-full h-full object-cover" />
                       </div>
                     ))}
                     {post.images.length > 3 && (
-                      <div className="w-20 h-20 rounded-xl bg-surface-container-highest border border-outline-variant/10 flex items-center justify-center text-[10px] font-black text-on-surface-variant shrink-0">
+                      <div className="w-16 h-16 rounded-xl bg-surface-container-highest border border-outline-variant/10 flex items-center justify-center text-[10px] font-black text-on-surface-variant shrink-0">
                         +{post.images.length - 3}
                       </div>
                     )}
@@ -250,12 +261,55 @@ const ForumListPage = () => {
         )}
       </div>
 
-      {/* Pagination Placeholder */}
-      <div className="mt-12 flex justify-center gap-2">
-        <button className="w-10 h-10 rounded-xl bg-primary text-on-primary flex items-center justify-center font-black text-xs shadow-lg shadow-primary/20">1</button>
-        <button className="w-10 h-10 rounded-xl bg-surface-container-high text-on-surface flex items-center justify-center font-black text-xs hover:bg-outline-variant/20 transition-all">2</button>
-        <button className="w-10 h-10 rounded-xl bg-surface-container-high text-on-surface flex items-center justify-center font-black text-xs hover:bg-outline-variant/20 transition-all">3</button>
-      </div>
+      {/* Pagination */}
+      {pagination.totalPages > 1 && (
+        <div className="mt-12 flex justify-center items-center gap-2">
+          <button 
+            disabled={page === 1}
+            onClick={() => setPage(page - 1)}
+            className="w-10 h-10 rounded-xl bg-surface-container-high text-on-surface flex items-center justify-center hover:bg-outline-variant/20 disabled:opacity-30 transition-all"
+          >
+            <span className="material-symbols-outlined">chevron_left</span>
+          </button>
+          
+          {(() => {
+            const pages = [];
+            const { totalPages, currentPage } = pagination;
+            if (totalPages <= 5) {
+              for (let i = 1; i <= totalPages; i++) pages.push(i);
+            } else {
+              if (currentPage <= 3) {
+                pages.push(1, 2, 3, '...', totalPages);
+              } else if (currentPage >= totalPages - 2) {
+                pages.push(1, '...', totalPages - 2, totalPages - 1, totalPages);
+              } else {
+                pages.push(1, '...', currentPage, '...', totalPages);
+              }
+            }
+            return pages.map((p, idx) => (
+              p === '...' ? (
+                <span key={`dots-${idx}`} className="px-2 text-on-surface-variant opacity-40 font-bold">...</span>
+              ) : (
+                <button 
+                  key={p}
+                  onClick={() => setPage(Number(p))}
+                  className={`w-10 h-10 rounded-xl font-black text-xs transition-all ${p === currentPage ? 'bg-primary text-on-primary shadow-lg shadow-primary/20' : 'bg-surface-container-high text-on-surface hover:bg-outline-variant/20'}`}
+                >
+                  {p}
+                </button>
+              )
+            ));
+          })()}
+
+          <button 
+            disabled={page === pagination.totalPages}
+            onClick={() => setPage(page + 1)}
+            className="w-10 h-10 rounded-xl bg-surface-container-high text-on-surface flex items-center justify-center hover:bg-outline-variant/20 disabled:opacity-30 transition-all"
+          >
+            <span className="material-symbols-outlined">chevron_right</span>
+          </button>
+        </div>
+      )}
 
       {/* Create Modal Placeholder */}
       {isModalOpen && (
