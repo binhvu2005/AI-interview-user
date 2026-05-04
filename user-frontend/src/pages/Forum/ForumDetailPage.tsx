@@ -14,6 +14,8 @@ const ForumDetailPage = () => {
   const [loading, setLoading] = useState(true);
   const [replyText, setReplyText] = useState('');
   const [sortBy, setSortBy] = useState('newest');
+  const userAvatar = localStorage.getItem('userAvatar');
+  const userName = localStorage.getItem('userName');
 
   useEffect(() => {
     fetchPost();
@@ -165,9 +167,13 @@ const ForumDetailPage = () => {
         <div className="flex items-center gap-6 pt-8 border-t border-outline-variant/10 relative z-10">
           <button 
             onClick={handleLikePost}
-            className="flex items-center gap-2 bg-primary/10 text-primary px-6 py-3 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-primary hover:text-on-primary transition-all active:scale-95 shadow-lg shadow-primary/5"
+            className={`flex items-center gap-2 px-6 py-3 rounded-2xl font-black text-xs uppercase tracking-widest transition-all active:scale-95 shadow-lg ${
+              post.isLiked 
+                ? 'bg-red-500/20 text-red-500 shadow-red-500/10' 
+                : 'bg-primary/10 text-primary shadow-primary/5 hover:bg-primary hover:text-on-primary'
+            }`}
           >
-            <span className="material-symbols-outlined text-[20px] font-bold">favorite</span>
+            <span className={`material-symbols-outlined text-[20px] font-bold ${post.isLiked ? 'material-symbols-fill' : ''}`}>favorite</span>
             {post.likes}
           </button>
           <button className="flex items-center gap-2 bg-surface-container-highest text-on-surface-variant px-6 py-3 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-outline-variant/20 transition-all">
@@ -197,7 +203,11 @@ const ForumDetailPage = () => {
       <div className="bg-surface-container-low border border-outline-variant/15 rounded-[32px] p-8 mb-12 shadow-inner">
         <div className="flex gap-4">
            <div className="w-10 h-10 rounded-xl overflow-hidden shrink-0 border border-outline-variant/30">
-              <img src="https://ui-avatars.com/api/?name=User&background=6366f1&color=fff" alt="You" />
+               <img 
+                 src={userAvatar || `https://ui-avatars.com/api/?name=${userName || 'User'}&background=6366f1&color=fff`} 
+                 alt="You" 
+                 className="w-full h-full object-cover"
+               />
            </div>
            <div className="flex-1 space-y-4">
               <RichTextEditor 
@@ -235,7 +245,7 @@ const ForumDetailPage = () => {
                     </p>
                   </div>
                 </div>
-                <button onClick={() => handleLikeReply(reply.id)} className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${reply.isLiked ? 'bg-primary/10 text-primary' : 'bg-surface-container-highest text-on-surface-variant'}`}>
+                <button onClick={() => handleLikeReply(reply.id)} className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${reply.isLiked ? 'bg-red-500/10 text-red-500' : 'bg-surface-container-highest text-on-surface-variant'}`}>
                   <span className={`material-symbols-outlined text-[16px] ${reply.isLiked ? 'material-symbols-fill' : ''}`}>favorite</span>
                   {reply.likes}
                 </button>

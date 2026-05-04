@@ -35,9 +35,11 @@ export const getPosts = async (req: Request, res: Response) => {
           views: 1,
           likes: { $size: "$likes" },
           replies: { $size: "$replies" },
+          images: 1,
           'author.fullName': 1,
           'author.avatar': 1,
-          'author.isVip': 1
+          'author.isVip': 1,
+          isLiked: { $in: [new mongoose.Types.ObjectId((req as any).user?.id), "$likes"] }
         }
       }
     ]);
@@ -77,6 +79,8 @@ export const getPostDetail = async (req: Request, res: Response) => {
       date: post.date,
       views: post.views,
       likes: post.likes.length,
+      isLiked: post.likes.includes((req as any).user?.id),
+      images: post.images,
       author: { 
         name: (post.author as any).fullName, 
         avatar: (post.author as any).avatar,

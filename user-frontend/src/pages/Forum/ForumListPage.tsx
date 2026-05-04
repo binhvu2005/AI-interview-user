@@ -213,8 +213,8 @@ const ForumListPage = () => {
                 )}
                 
                 <div className="flex items-center gap-6 pt-4 border-t border-outline-variant/5">
-                  <div className="flex items-center gap-1.5 text-on-surface-variant/60 group-hover:text-primary transition-colors">
-                    <span className="material-symbols-outlined text-[20px] font-bold">favorite</span>
+                  <div className={`flex items-center gap-1.5 transition-colors ${post.isLiked ? 'text-red-500' : 'text-on-surface-variant/60 group-hover:text-primary'}`}>
+                    <span className={`material-symbols-outlined text-[20px] font-bold ${post.isLiked ? 'material-symbols-fill' : ''}`}>favorite</span>
                     <span className="text-xs font-black">{post.likes}</span>
                   </div>
                   <div className="flex items-center gap-1.5 text-on-surface-variant/60">
