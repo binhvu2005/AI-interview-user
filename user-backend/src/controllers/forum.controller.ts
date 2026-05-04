@@ -39,7 +39,13 @@ export const getPosts = async (req: Request, res: Response) => {
           'author.fullName': 1,
           'author.avatar': 1,
           'author.isVip': 1,
-          isLiked: { $in: [new mongoose.Types.ObjectId((req as any).user?.id), "$likes"] }
+          isLiked: { 
+            $cond: {
+              if: { $and: [{ $gt: [(req as any).user?.id ? 1 : 0, 0] }, { $isArray: "$likes" }] },
+              then: { $in: [new mongoose.Types.ObjectId((req as any).user?.id || "000000000000000000000000"), "$likes"] },
+              else: false
+            }
+          }
         }
       }
     ]);
@@ -79,7 +85,7 @@ export const getPostDetail = async (req: Request, res: Response) => {
       date: post.date,
       views: post.views,
       likes: post.likes.length,
-      isLiked: post.likes.includes((req as any).user?.id),
+      isLiked: (req as any).user?.id ? post.likes.includes((req as any).user.id) : false,
       images: post.images,
       author: { 
         name: (post.author as any).fullName, 
@@ -92,7 +98,7 @@ export const getPostDetail = async (req: Request, res: Response) => {
         content: r.content,
         date: r.date,
         likes: r.likes.length,
-        isLiked: r.likes.includes((req as any).user?.id),
+        isLiked: (req as any).user?.id ? r.likes.includes((req as any).user.id) : false,
         author: { name: r.author.fullName, avatar: r.author.avatar },
         replies: r.replies?.map((rr: any) => ({
           id: rr._id,

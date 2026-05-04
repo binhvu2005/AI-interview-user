@@ -55,7 +55,10 @@ const ForumListPage = () => {
   const fetchPosts = async () => {
     try {
       setLoading(true);
-      const res = await fetch(`${API_ENDPOINTS.FORUM.GET_POSTS}?sort=${sortBy}`);
+      const token = localStorage.getItem('token');
+      const res = await fetch(`${API_ENDPOINTS.FORUM.GET_POSTS}?sort=${sortBy}`, {
+        headers: token ? { 'Authorization': `Bearer ${token}` } : {}
+      });
       if (res.ok) {
         const data = await res.json();
         setPosts(data);
