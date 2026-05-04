@@ -13,7 +13,12 @@ const ReplySchema: Schema = new Schema({
   content: { type: String, required: true },
   date: { type: Date, default: Date.now },
   likes: [{ type: Schema.Types.ObjectId, ref: 'User' }],
-  replies: [this] // Recursive for nested replies
+});
+
+// Use virtual or separate method to handle recursion if needed, 
+// or simply define the field after schema creation.
+(ReplySchema as any).add({
+  replies: [ReplySchema]
 });
 
 export interface IForumPost extends Document {
@@ -25,6 +30,7 @@ export interface IForumPost extends Document {
   likes: mongoose.Types.ObjectId[];
   views: number;
   replies: IReply[];
+  images: string[];
   isHidden: boolean;
 }
 
@@ -37,6 +43,7 @@ const ForumPostSchema: Schema = new Schema({
   likes: [{ type: Schema.Types.ObjectId, ref: 'User' }],
   views: { type: Number, default: 0 },
   replies: [ReplySchema],
+  images: [{ type: String }],
   isHidden: { type: Boolean, default: false }
 });
 

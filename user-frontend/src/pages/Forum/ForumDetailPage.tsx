@@ -141,7 +141,17 @@ const ForumDetailPage = () => {
             ))}
           </div>
           <h1 className="text-3xl font-black text-on-surface tracking-tight mb-6 leading-[1.2]">{post.title}</h1>
-          <p className="text-on-surface-variant text-lg leading-relaxed font-medium opacity-90 whitespace-pre-wrap">{post.content}</p>
+          <p className="text-on-surface-variant text-lg leading-relaxed font-medium opacity-90 whitespace-pre-wrap mb-8">{post.content}</p>
+          
+          {post.images && post.images.length > 0 && (
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
+              {post.images.map((img: string, idx: number) => (
+                <div key={idx} className="rounded-2xl overflow-hidden border border-outline-variant/10 shadow-md">
+                  <img src={img} alt={`post-img-${idx}`} className="w-full h-auto object-cover hover:scale-105 transition-transform duration-500" />
+                </div>
+              ))}
+            </div>
+          )}
         </div>
 
         <div className="flex items-center gap-6 pt-8 border-t border-outline-variant/10 relative z-10">

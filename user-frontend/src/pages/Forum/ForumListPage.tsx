@@ -16,10 +16,41 @@ const ForumListPage = () => {
   const [newPostTitle, setNewPostTitle] = useState('');
   const [newPostContent, setNewPostContent] = useState('');
   const [newPostTags, setNewPostTags] = useState('');
+  const [newPostImages, setNewPostImages] = useState<string[]>([]);
+  const [isUploading, setIsUploading] = useState(false);
 
   useEffect(() => {
     fetchPosts();
   }, [sortBy]);
+
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files) return;
+
+    setIsUploading(true);
+    const uploadPromises = Array.from(files).map(file => {
+      return new Promise<string>((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result as string);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+    });
+
+    Promise.all(uploadPromises)
+      .then(base64Images => {
+        setNewPostImages(prev => [...prev, ...base64Images]);
+        setIsUploading(false);
+      })
+      .catch(() => {
+        toast.error('Failed to upload some images');
+        setIsUploading(false);
+      });
+  };
+
+  const removeImage = (index: number) => {
+    setNewPostImages(prev => prev.filter((_, i) => i !== index));
+  };
 
   const fetchPosts = async () => {
     try {
@@ -53,7 +84,8 @@ const ForumListPage = () => {
         body: JSON.stringify({
           title: newPostTitle,
           content: newPostContent,
-          tags: newPostTags.split(',').map(tag => tag.trim()).filter(tag => tag !== '')
+          tags: newPostTags.split(',').map(tag => tag.trim()).filter(tag => tag !== ''),
+          images: newPostImages
         })
       });
 
@@ -63,6 +95,7 @@ const ForumListPage = () => {
         setNewPostTitle('');
         setNewPostContent('');
         setNewPostTags('');
+        setNewPostImages([]);
         fetchPosts();
       }
     } catch (error) {
@@ -237,11 +270,41 @@ const ForumListPage = () => {
                   </div>
                   <div className="space-y-2">
                     <label className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant ml-1">{t('forum.create_media_label')}</label>
-                    <div className="flex gap-2">
-                      <button className="flex-1 bg-surface-container-highest border border-dashed border-outline-variant/30 rounded-2xl py-3 flex items-center justify-center gap-2 text-on-surface-variant hover:border-primary/40 transition-all group">
-                        <span className="material-symbols-outlined text-[20px] group-hover:text-primary transition-colors">add_photo_alternate</span>
-                        <span className="text-[10px] font-bold uppercase tracking-widest">{t('forum.create_add_image')}</span>
-                      </button>
+                    <div className="flex flex-col gap-4">
+                      <div className="flex gap-2">
+                        <label className="flex-1 bg-surface-container-highest border border-dashed border-outline-variant/30 rounded-2xl py-3 flex items-center justify-center gap-2 text-on-surface-variant hover:border-primary/40 transition-all group cursor-pointer">
+                          <input 
+                            type="file" 
+                            multiple 
+                            accept="image/*" 
+                            className="hidden" 
+                            onChange={handleImageUpload}
+                            disabled={isUploading}
+                          />
+                          <span className="material-symbols-outlined text-[20px] group-hover:text-primary transition-colors">
+                            {isUploading ? 'progress_activity' : 'add_photo_alternate'}
+                          </span>
+                          <span className="text-[10px] font-bold uppercase tracking-widest">
+                            {isUploading ? 'Uploading...' : t('forum.create_add_image')}
+                          </span>
+                        </label>
+                      </div>
+                      
+                      {newPostImages.length > 0 && (
+                        <div className="flex flex-wrap gap-2">
+                          {newPostImages.map((img, idx) => (
+                            <div key={idx} className="relative w-16 h-16 rounded-lg overflow-hidden border border-outline-variant/20">
+                              <img src={img} alt="preview" className="w-full h-full object-cover" />
+                              <button 
+                                onClick={() => removeImage(idx)}
+                                className="absolute top-0.5 right-0.5 w-5 h-5 bg-black/60 text-white rounded-full flex items-center justify-center hover:bg-error transition-colors"
+                              >
+                                <span className="material-symbols-outlined text-[12px]">close</span>
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>

@@ -87,7 +87,7 @@ export const getPostDetail = async (req: Request, res: Response) => {
         content: r.content,
         date: r.date,
         likes: r.likes.length,
-        isLiked: r.likes.includes((req as any).user?._id),
+        isLiked: r.likes.includes((req as any).user?.id),
         author: { name: r.author.fullName, avatar: r.author.avatar },
         replies: r.replies?.map((rr: any) => ({
           id: rr._id,
@@ -107,13 +107,14 @@ export const getPostDetail = async (req: Request, res: Response) => {
 export const createPost = async (req: Request, res: Response) => {
   try {
     const { title, content, tags } = req.body;
-    const author = (req as any).user._id;
+    const author = (req as any).user.id;
 
     const newPost = new ForumPost({
       title,
       content,
       author,
-      tags
+      tags,
+      images: req.body.images || []
     });
 
     await newPost.save();
@@ -125,7 +126,7 @@ export const createPost = async (req: Request, res: Response) => {
 
 export const likePost = async (req: Request, res: Response) => {
   try {
-    const userId = (req as any).user._id;
+    const userId = (req as any).user.id;
     const post = await ForumPost.findById(req.params.id);
     if (!post) return res.status(404).json({ message: 'Post not found' });
 
@@ -143,7 +144,7 @@ export const likePost = async (req: Request, res: Response) => {
 export const addReply = async (req: Request, res: Response) => {
   try {
     const { content } = req.body;
-    const author = (req as any).user._id;
+    const author = (req as any).user.id;
     const post = await ForumPost.findById(req.params.id);
     if (!post) return res.status(404).json({ message: 'Post not found' });
 
@@ -164,7 +165,7 @@ export const addReply = async (req: Request, res: Response) => {
 
 export const likeReply = async (req: Request, res: Response) => {
   try {
-    const userId = (req as any).user._id;
+    const userId = (req as any).user.id;
     const { postId, replyId } = req.params;
     const post = await ForumPost.findById(postId);
     if (!post) return res.status(404).json({ message: 'Post not found' });
