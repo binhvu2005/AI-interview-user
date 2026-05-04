@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import mongoose from 'mongoose';
 import ForumPost from '../models/ForumPost.model';
 
 export const getPosts = async (req: Request, res: Response) => {
