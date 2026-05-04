@@ -325,6 +325,32 @@
   .delay-4 {
     animation-delay: 0.4s;
   }
+
+  /* Rich Text Content Styling */
+  .rich-text-content p {
+    @apply mb-4 last:mb-0;
+  }
+  .rich-text-content ul {
+    @apply list-disc pl-6 mb-4;
+  }
+  .rich-text-content ol {
+    @apply list-decimal pl-6 mb-4;
+  }
+  .rich-text-content h1 {
+    @apply text-2xl font-bold mb-4;
+  }
+  .rich-text-content h2 {
+    @apply text-xl font-bold mb-3;
+  }
+  .rich-text-content h3 {
+    @apply text-lg font-bold mb-2;
+  }
+  .rich-text-content blockquote {
+    @apply border-l-4 border-primary/30 pl-4 italic mb-4;
+  }
+  .rich-text-content pre {
+    @apply bg-surface-container-high p-4 rounded-xl overflow-x-auto mb-4;
+  }
 }
 
 /* Badge Animations */

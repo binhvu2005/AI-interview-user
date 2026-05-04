@@ -106,6 +106,21 @@ const ForumListPage = () => {
   const filteredPosts = posts
     .filter(p => p.title.toLowerCase().includes(search.toLowerCase()) || p.tags?.some((tag: string) => tag.toLowerCase().includes(search.toLowerCase())));
 
+  const stripHtml = (html: string) => {
+    if (!html) return "";
+    // Remove HTML tags
+    let stripped = html.replace(/<[^>]*>?/gm, '');
+    // Decode common entities
+    stripped = stripped
+      .replace(/&nbsp;/g, ' ')
+      .replace(/&amp;/g, '&')
+      .replace(/&lt;/g, '<')
+      .replace(/&gt;/g, '>')
+      .replace(/&quot;/g, '"')
+      .replace(/&#39;/g, "'");
+    return stripped.trim();
+  };
+
   return (
     <div className="max-w-6xl mx-auto px-4 py-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
 
@@ -175,12 +190,27 @@ const ForumListPage = () => {
                     </span>
                   ))}
                   <span className="text-[10px] font-bold text-on-surface-variant opacity-40 ml-auto">
-                    {new Date(post.date).toLocaleDateString()}
+                    {new Date(post.date).toLocaleDateString()} {new Date(post.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                   </span>
                 </div>
                 
                 <h3 className="text-xl font-bold text-on-surface mb-3 group-hover:text-primary transition-colors leading-tight">{post.title}</h3>
-                <p className="text-sm text-on-surface-variant line-clamp-2 opacity-80 mb-6 font-medium leading-relaxed">{post.content}</p>
+                <p className="text-sm text-on-surface-variant line-clamp-2 opacity-80 mb-4 font-medium leading-relaxed">{stripHtml(post.content)}</p>
+                
+                {post.images && post.images.length > 0 && (
+                  <div className="flex gap-2 mb-6 overflow-hidden">
+                    {post.images.slice(0, 3).map((img: string, idx: number) => (
+                      <div key={idx} className="w-20 h-20 rounded-xl overflow-hidden border border-outline-variant/10 shadow-sm shrink-0">
+                        <img src={img} alt="post-img" className="w-full h-full object-cover" />
+                      </div>
+                    ))}
+                    {post.images.length > 3 && (
+                      <div className="w-20 h-20 rounded-xl bg-surface-container-highest border border-outline-variant/10 flex items-center justify-center text-[10px] font-black text-on-surface-variant shrink-0">
+                        +{post.images.length - 3}
+                      </div>
+                    )}
+                  </div>
+                )}
                 
                 <div className="flex items-center gap-6 pt-4 border-t border-outline-variant/5">
                   <div className="flex items-center gap-1.5 text-on-surface-variant/60 group-hover:text-primary transition-colors">

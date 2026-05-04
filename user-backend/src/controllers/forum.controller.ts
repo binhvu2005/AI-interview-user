@@ -45,6 +45,7 @@ export const getPosts = async (req: Request, res: Response) => {
     // Map to match frontend expectations
     const formattedPosts = posts.map(p => ({
       ...p,
+      id: p._id,
       author: { name: p.author.fullName, avatar: p.author.avatar, isVip: p.author.isVip }
     }));
 

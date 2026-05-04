@@ -141,13 +141,21 @@ const ForumDetailPage = () => {
             ))}
           </div>
           <h1 className="text-3xl font-black text-on-surface tracking-tight mb-6 leading-[1.2]">{post.title}</h1>
-          <p className="text-on-surface-variant text-lg leading-relaxed font-medium opacity-90 whitespace-pre-wrap mb-8">{post.content}</p>
+          <div 
+            className="text-on-surface-variant text-lg leading-relaxed font-medium opacity-90 mb-8 rich-text-content"
+            dangerouslySetInnerHTML={{ __html: post.content }}
+          />
           
           {post.images && post.images.length > 0 && (
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
+            <div className="flex flex-wrap gap-4 mb-8">
               {post.images.map((img: string, idx: number) => (
-                <div key={idx} className="rounded-2xl overflow-hidden border border-outline-variant/10 shadow-md">
-                  <img src={img} alt={`post-img-${idx}`} className="w-full h-auto object-cover hover:scale-105 transition-transform duration-500" />
+                <div key={idx} className="rounded-2xl overflow-hidden border border-outline-variant/10 shadow-md max-w-full sm:max-w-[48%] flex-1 min-w-[200px]">
+                  <img 
+                    src={img} 
+                    alt={`post-img-${idx}`} 
+                    className="w-full h-auto object-cover cursor-zoom-in hover:scale-105 transition-transform duration-500" 
+                    onClick={() => window.open(img, '_blank')}
+                  />
                 </div>
               ))}
             </div>
@@ -233,7 +241,10 @@ const ForumDetailPage = () => {
                 </button>
               </header>
               
-              <p className="text-sm text-on-surface-variant leading-relaxed font-medium opacity-80 pl-13 mb-4">{reply.content}</p>
+              <div 
+                className="text-sm text-on-surface-variant leading-relaxed font-medium opacity-80 pl-13 mb-4 rich-text-content"
+                dangerouslySetInnerHTML={{ __html: reply.content }}
+              />
               
               <div className="pl-13">
                  <button className="text-[10px] font-black text-primary uppercase tracking-widest hover:underline flex items-center gap-1">
@@ -257,7 +268,10 @@ const ForumDetailPage = () => {
                     </div>
                   </div>
                 </header>
-                <p className="text-xs text-on-surface-variant leading-relaxed font-medium opacity-80">{sub.content}</p>
+                <div 
+                  className="text-xs text-on-surface-variant leading-relaxed font-medium opacity-80 rich-text-content"
+                  dangerouslySetInnerHTML={{ __html: sub.content }}
+                />
               </div>
             ))}
           </div>
