@@ -139,8 +139,8 @@ export const processInterviewChat = async (history: any[], cvData: string, jdTex
     CRITICAL INSTRUCTION: The candidate explicitly stated they DO NOT KNOW or provided a very poor/short answer. 
     ACTION REQUIRED: 
     1. DO NOT ask a probing question. DO NOT linger on this topic.
-    2. Provide a VERY BRIEF correct answer (< 10 words).
-    3. IMMEDIATELY MOVE ON to a COMPLETELY NEW MAIN QUESTION in a different technical domain.
+    2. In the 'feedback' JSON field, provide a VERY BRIEF correct answer (< 15 words) to the PREVIOUS question you just asked.
+    3. In the 'nextQuestion' JSON field, IMMEDIATELY ask a COMPLETELY NEW MAIN QUESTION in a DIFFERENT technical domain.
     `;
   } else {
     steeringInstruction = `
@@ -169,10 +169,10 @@ Respond in ${languageName}.
 ${steeringInstruction}
 
 STRICT RULES:
-- Every MAIN question MUST follow "Theory + Practice + Mindset" (Scenario-based).
+- Every MAIN question MUST follow "Theory + Practice + Mindset" (Scenario-based). It MUST be a detailed, multi-sentence scenario. DO NOT ask short 1-sentence questions!
 - NO HALLUCINATION: If candidate says "don't know", do NOT assume they have that experience.
 - NO SOCIAL FILLER & NO PRAISE: Absolutely NO generic praise like "Tôi đánh giá cao", "Tuyệt vời", "Rất tốt", "I appreciate". Be direct.
-- NO REPETITION: Do not repeat any question or topic from the history above. ALWAYS ask something new if transitioning to a main question.
+- NO REPETITION: Do not repeat any question, topic, or feedback explanation from the history above. ALWAYS ask something new if transitioning to a main question.
 
 If you estimate you have asked ${maxTechQuestions} MAIN questions (ignoring probes/intro), set isFinished: true. If currentTurn >= ${maxTechQuestions * 3 + 2}, force isFinished: true to prevent infinite loops.
 `;
