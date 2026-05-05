@@ -127,41 +127,36 @@ export const processInterviewChat = async (history: any[], cvData: string, jdTex
 
 
   const aiMessages = history.filter(m => m.role === 'ai');
-  const currentTurn = aiMessages.length;
+  const currentTurn = aiMessages.length; // Total AI messages (including probes)
   const mins = parseInt(duration);
   const maxTechQuestions = mins <= 15 ? 6 : Math.min(15, 6 + Math.floor((mins - 15) / 5));
 
-
-  const totalTech = maxTechQuestions;
-  const theoryCount = Math.max(1, Math.floor(totalTech * 0.5));
-  const debugCount = Math.max(1, Math.floor(totalTech * 0.2));
-  const practiceCount = totalTech - theoryCount - debugCount;
-
-
-  const phase = currentTurn === 0 ? 'INTRO' : 
-                currentTurn <= theoryCount ? 'THEORY' :
-                currentTurn <= theoryCount + practiceCount ? 'PRACTICE' :
-                currentTurn < maxTechQuestions ? 'DEBUG' : 'WRAP_UP';
-
-  let turnTask = "";
+  let steeringInstruction = "";
   if (currentTurn === 0) {
-    turnTask = "PHASE: INTRO. Introduce Obsidian AI, welcome the candidate and ask for a BRIEF self-introduction (under 2 minutes).";
-  } else if (phase === 'THEORY') {
-    turnTask = `PHASE: THEORY (Question ${currentTurn}/${maxTechQuestions - 1}). Ask a deep theoretical question about CORE KNOWLEDGE of the ${position} position.`;
-  } else if (phase === 'PRACTICE') {
-    turnTask = `PHASE: PRACTICE (Question ${currentTurn}/${maxTechQuestions - 1}). Ask a REAL-WORLD SCENARIO or ARCHITECTURE problem related to ${position} (${level}).`;
-  } else if (phase === 'DEBUG') {
-    turnTask = `PHASE: DEBUG CODE (Question ${currentTurn}/${maxTechQuestions - 1}). Provide a BUGGY CODE snippet or an edge-case logic issue and ask the candidate how to debug and fix it.`;
+    steeringInstruction = "PHASE: INTRO. Introduce Obsidian AI, welcome the candidate and ask for a BRIEF self-introduction (under 2 minutes).";
+  } else if (isCandidateStruggling) {
+    steeringInstruction = `
+    CRITICAL INSTRUCTION: The candidate explicitly stated they DO NOT KNOW or provided a very poor/short answer. 
+    ACTION REQUIRED: 
+    1. DO NOT ask a probing question. DO NOT linger on this topic.
+    2. Provide a VERY BRIEF correct answer (< 10 words).
+    3. IMMEDIATELY MOVE ON to a COMPLETELY NEW MAIN QUESTION in a different technical domain.
+    `;
   } else {
-    turnTask = "PHASE: WRAP_UP. Ask a final challenge question (Edge case) and conclude the interview. Set isFinished: true.";
+    steeringInstruction = `
+    ACTION REQUIRED:
+    - If their previous answer was Excellent (>7/10), DO NOT probe. Ask a NEW MAIN QUESTION.
+    - If their previous answer was Vague/Mediocre (4-7/10), you may ask ONE PROBING QUESTION to test depth.
+    - Keep in mind the structure: 3 Theory, 2 Practice, 1 Debug. Move towards the next phase when appropriate.
+    `;
   }
 
   const userPrompt = `
 ### CONTEXT
 - POSITION: ${position} (${level})
 - DURATION: ${duration} mins
-- CURRENT_TURN: ${currentTurn}
-- MAX_TURNS: ${maxTechQuestions}
+- TOTAL AI MESSAGES SO FAR: ${currentTurn}
+- TARGET STRUCTURE: ${maxTechQuestions} MAIN questions (3 Theory, 2 Practice, 1 Debug)
 - JD: ${jdText.substring(0, 1000)}
 - CV: ${cvData.substring(0, 3000)}
 
@@ -170,26 +165,16 @@ ${truncatedHistory.map(m => `${m.role.toUpperCase()}: ${m.content}`).join('\n')}
 
 ### TASK
 Respond in ${languageName}. 
-${turnTask}
 
-STRICT TECHNICAL STEERING (THE IRON RULES):
-1. ANALYZE the LAST CANDIDATE RESPONSE in HISTORY.
-2. IF score would be > 7 (Excellent): DO NOT ask follow-ups. Transition to a NEW technical domain from CV/JD immediately to save time.
-3. IF score would be 4-7 (Vague/Mediocre): Ask ONE professional probing question (drill-down) to test depth. (Max 2 probing per topic).
-4. IF score would be < 4 (Poor) or "don't know": 
-   - Briefly explain the answer/concept (< 15 words) to maintain flow.
-   - AGGRESSIVE PIVOT: IMMEDIATELY move to a COMPLETELY DIFFERENT skill/technology from CV/JD to give them a fresh chance.
-   - DO NOT linger on failed topics.
-5. ANTI-VAGUE PENALTY: If answer is < 10 words or generic, apply a max cap of 4/10 for this turn in your internal evaluation.
+${steeringInstruction}
 
 STRICT RULES:
-- Every question MUST follow "Theory + Practice + Mindset" (Scenario-based).
+- Every MAIN question MUST follow "Theory + Practice + Mindset" (Scenario-based).
 - NO HALLUCINATION: If candidate says "don't know", do NOT assume they have that experience.
-- NO SOCIAL FILLER & NO PRAISE: Absolutely NO generic praise like "Tôi đánh giá cao", "Tuyệt vời", "Rất tốt", "I appreciate". It sounds artificial. Be direct.
-- NO REPETITION: Do not repeat any question or topic from the history above. ALWAYS ask something new.
+- NO SOCIAL FILLER & NO PRAISE: Absolutely NO generic praise like "Tôi đánh giá cao", "Tuyệt vời", "Rất tốt", "I appreciate". Be direct.
+- NO REPETITION: Do not repeat any question or topic from the history above. ALWAYS ask something new if transitioning to a main question.
 
-If currentTurn is ${maxTechQuestions - 1}, you MUST ask a REAL-WORLD ARCHITECTURE/DEBUGGING scenario.
-If currentTurn >= ${maxTechQuestions}, set isFinished: true.
+If you estimate you have asked ${maxTechQuestions} MAIN questions (ignoring probes/intro), set isFinished: true. If currentTurn >= ${maxTechQuestions * 3 + 2}, force isFinished: true to prevent infinite loops.
 `;
 
 
