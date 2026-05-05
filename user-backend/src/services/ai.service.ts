@@ -139,28 +139,22 @@ export const processInterviewChat = async (history: any[], cvData: string, jdTex
 
 
   const phase = currentTurn === 0 ? 'INTRO' : 
-                currentTurn <= Math.floor(maxTechQuestions * 0.4) ? 'CORE_TECH' :
-                currentTurn <= Math.floor(maxTechQuestions * 0.7) ? 'SCENARIO_PRACTICE' :
-                currentTurn < maxTechQuestions ? 'ARCHITECTURE_MINDSET' : 'WRAP_UP';
+                currentTurn <= theoryCount ? 'THEORY' :
+                currentTurn <= theoryCount + practiceCount ? 'PRACTICE' :
+                currentTurn < maxTechQuestions ? 'DEBUG' : 'WRAP_UP';
 
   let turnTask = "";
   if (currentTurn === 0) {
     turnTask = "PHASE: INTRO. Introduce Obsidian AI, welcome the candidate and ask for a BRIEF self-introduction (under 2 minutes).";
-  } else if (phase === 'CORE_TECH') {
-    turnTask = `PHASE: CORE TECH. Ask question number ${currentTurn}/${maxTechQuestions}. Focus on CORE KNOWLEDGE of the ${position} position.`;
-  } else if (phase === 'SCENARIO_PRACTICE') {
-    turnTask = `PHASE: SCENARIO & DEBUGGING. Ask question number ${currentTurn}/${maxTechQuestions}. Provide a BUGGY CODE snippet or a REAL-WORLD SCENARIO needing logic error identification related to ${position}.`;
-  } else if (phase === 'ARCHITECTURE_MINDSET') {
-    turnTask = `PHASE: ARCHITECTURE. Ask question number ${currentTurn}/${maxTechQuestions}. 
-      - If Level is Junior: Ask about Clean Code, file/component organization.
-      - If Level is Mid: Ask about Design Patterns, performance optimization, or API Design.
-      - If Level is Senior: Ask about System Design, Scalability, High Availability, or Security.`;
+  } else if (phase === 'THEORY') {
+    turnTask = `PHASE: THEORY (Question ${currentTurn}/${maxTechQuestions - 1}). Ask a deep theoretical question about CORE KNOWLEDGE of the ${position} position.`;
+  } else if (phase === 'PRACTICE') {
+    turnTask = `PHASE: PRACTICE (Question ${currentTurn}/${maxTechQuestions - 1}). Ask a REAL-WORLD SCENARIO or ARCHITECTURE problem related to ${position} (${level}).`;
+  } else if (phase === 'DEBUG') {
+    turnTask = `PHASE: DEBUG CODE (Question ${currentTurn}/${maxTechQuestions - 1}). Provide a BUGGY CODE snippet or an edge-case logic issue and ask the candidate how to debug and fix it.`;
   } else {
     turnTask = "PHASE: WRAP_UP. Ask a final challenge question (Edge case) and conclude the interview. Set isFinished: true.";
   }
-
-
-
 
   const userPrompt = `
 ### CONTEXT
@@ -191,8 +185,8 @@ STRICT TECHNICAL STEERING (THE IRON RULES):
 STRICT RULES:
 - Every question MUST follow "Theory + Practice + Mindset" (Scenario-based).
 - NO HALLUCINATION: If candidate says "don't know", do NOT assume they have that experience.
-- NO SOCIAL FILLER: No "Great", "I understand", "Interesting". Use professional reactions like "I see", "Thank you", "Acknowledged".
-- NO REPETITION: Do not repeat any question or topic from the history above.
+- NO SOCIAL FILLER & NO PRAISE: Absolutely NO generic praise like "Tôi đánh giá cao", "Tuyệt vời", "Rất tốt", "I appreciate". It sounds artificial. Be direct.
+- NO REPETITION: Do not repeat any question or topic from the history above. ALWAYS ask something new.
 
 If currentTurn is ${maxTechQuestions - 1}, you MUST ask a REAL-WORLD ARCHITECTURE/DEBUGGING scenario.
 If currentTurn >= ${maxTechQuestions}, set isFinished: true.
