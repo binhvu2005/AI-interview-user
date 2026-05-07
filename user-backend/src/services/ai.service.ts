@@ -139,8 +139,9 @@ export const processInterviewChat = async (history: any[], cvData: string, jdTex
     CRITICAL INSTRUCTION: The candidate explicitly stated they DO NOT KNOW or provided a very poor/short answer. 
     ACTION REQUIRED: 
     1. DO NOT ask a probing question. DO NOT linger on this topic.
-    2. In the 'feedback' JSON field, provide a VERY BRIEF correct answer (< 15 words) to the PREVIOUS question you just asked.
-    3. In the 'nextQuestion' JSON field, IMMEDIATELY ask a COMPLETELY NEW MAIN QUESTION in a DIFFERENT technical domain.
+    2. In the 'feedback' JSON field, provide a VERY BRIEF correct answer (< 15 words) to the PREVIOUS question you just asked. DO NOT copy-paste your previous feedback.
+    3. In the 'nextQuestion' JSON field, IMMEDIATELY ask a COMPLETELY NEW MAIN QUESTION testing a DIFFERENT TECHNICAL SKILL. 
+       - EXTREMELY IMPORTANT: Changing the business scenario (e.g., E-commerce to Gaming) while testing the same skill (e.g., Database Design) is FORBIDDEN. You MUST change the core technical topic (e.g., if previous was Database, switch to Security, CI/CD, API Design, or Algorithms).
     `;
   } else {
     steeringInstruction = `
@@ -172,7 +173,7 @@ STRICT RULES:
 - Every MAIN question MUST follow "Theory + Practice + Mindset" (Scenario-based). It MUST be a detailed, multi-sentence scenario. DO NOT ask short 1-sentence questions!
 - NO HALLUCINATION: If candidate says "don't know", do NOT assume they have that experience.
 - NO SOCIAL FILLER & NO PRAISE: Absolutely NO generic praise like "Tôi đánh giá cao", "Tuyệt vời", "Rất tốt", "I appreciate". Be direct.
-- NO REPETITION: Do not repeat any question, topic, or feedback explanation from the history above. ALWAYS ask something new if transitioning to a main question.
+- ANTI-LOOP MECHANISM: Do NOT repeat the exact same technical topic. If you just asked about Database Design, DO NOT ask about Database Design again even if you change the app type (like E-commerce to Social Network). Switch to a completely different technical skill (e.g., Security, Caching, API Design, Deployment). DO NOT repeat your own phrases.
 
 If you estimate you have asked ${maxTechQuestions} MAIN questions (ignoring probes/intro), set isFinished: true. If currentTurn >= ${maxTechQuestions * 3 + 2}, force isFinished: true to prevent infinite loops.
 `;
