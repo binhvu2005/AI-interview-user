@@ -5,6 +5,8 @@ import toast from 'react-hot-toast';
 import RichTextEditor from '../../components/base/RichTextEditor';
 
 import { API_ENDPOINTS } from '../../services/api.config';
+import { fetchWithAuth } from '../../services/fetchClient';
+
 
 const ForumDetailPage = () => {
   const { t } = useTranslation();
@@ -25,7 +27,7 @@ const ForumDetailPage = () => {
     try {
       setLoading(true);
       const token = localStorage.getItem('token');
-      const res = await fetch(`${API_ENDPOINTS.FORUM.GET_POST(id!)}?sort=${sortBy}`, {
+      const res = await fetchWithAuth(`${API_ENDPOINTS.FORUM.GET_POST(id!)}?sort=${sortBy}`, {
         headers: token ? { 'Authorization': `Bearer ${token}` } : {}
       });
       if (res.ok) {
@@ -42,7 +44,7 @@ const ForumDetailPage = () => {
   const handleLikePost = async () => {
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch(API_ENDPOINTS.FORUM.LIKE_POST(id!), {
+      const res = await fetchWithAuth(API_ENDPOINTS.FORUM.LIKE_POST(id!), {
         method: 'POST',
         headers: { 'Authorization': `Bearer ${token}` }
       });
@@ -60,7 +62,7 @@ const ForumDetailPage = () => {
     if (!replyText.trim()) return;
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch(API_ENDPOINTS.FORUM.REPLY(id!), {
+      const res = await fetchWithAuth(API_ENDPOINTS.FORUM.REPLY(id!), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -81,7 +83,7 @@ const ForumDetailPage = () => {
   const handleLikeReply = async (replyId: string) => {
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch(API_ENDPOINTS.FORUM.LIKE_REPLY(id!, replyId), {
+      const res = await fetchWithAuth(API_ENDPOINTS.FORUM.LIKE_REPLY(id!, replyId), {
         method: 'POST',
         headers: { 'Authorization': `Bearer ${token}` }
       });

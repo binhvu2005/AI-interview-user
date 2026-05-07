@@ -6,6 +6,8 @@ import toast from 'react-hot-toast';
 import RichTextEditor from '../../components/base/RichTextEditor';
 
 import type { AnalysisResult } from '../../types';
+import { fetchWithAuth } from '../../services/fetchClient';
+
 
 const PreparationPage = () => {
   const { t, i18n } = useTranslation();
@@ -34,7 +36,7 @@ const PreparationPage = () => {
 
   const fetchSetupOptions = async () => {
     try {
-      const res = await fetch(API_ENDPOINTS.DATA.SETUP_OPTIONS);
+      const res = await fetchWithAuth(API_ENDPOINTS.DATA.SETUP_OPTIONS);
       if (res.ok) {
         const data = await res.json();
         setPositions(data.positions || []);
@@ -49,7 +51,7 @@ const PreparationPage = () => {
     try {
       const token = localStorage.getItem('token');
       if (!token) return;
-      const res = await fetch(API_ENDPOINTS.AUTH.ME, {
+      const res = await fetchWithAuth(API_ENDPOINTS.AUTH.ME, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       if (res.ok) {
@@ -105,7 +107,7 @@ const PreparationPage = () => {
       const token = localStorage.getItem('token');
       const cvData = await getCVData();
 
-      const res = await fetch(API_ENDPOINTS.AI.ANALYZE_CV, {
+      const res = await fetchWithAuth(API_ENDPOINTS.AI.ANALYZE_CV, {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
@@ -150,7 +152,7 @@ const PreparationPage = () => {
       const token = localStorage.getItem('token');
       const cvData = await getCVData();
 
-      const res = await fetch(API_ENDPOINTS.AI.GENERATE_QUESTIONS, {
+      const res = await fetchWithAuth(API_ENDPOINTS.AI.GENERATE_QUESTIONS, {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',

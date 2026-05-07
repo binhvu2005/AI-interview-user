@@ -3,6 +3,8 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { API_ENDPOINTS } from '../../services/api.config';
 import { toast } from 'react-hot-toast';
+import { fetchWithAuth } from '../../services/fetchClient';
+
 
 interface Message {
   role: 'ai' | 'user';
@@ -142,7 +144,7 @@ const InterviewPage = () => {
         duration: localStorage.getItem('interview_duration') || "15"
       };
 
-      const res = await fetch(API_ENDPOINTS.AI.CHAT, {
+      const res = await fetchWithAuth(API_ENDPOINTS.AI.CHAT, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
         body: JSON.stringify(payload)
@@ -198,7 +200,7 @@ const InterviewPage = () => {
         lang: i18n.language
       };
 
-      const res = await fetch(API_ENDPOINTS.INTERVIEWS.SAVE, {
+      const res = await fetchWithAuth(API_ENDPOINTS.INTERVIEWS.SAVE, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
         body: JSON.stringify(payload)

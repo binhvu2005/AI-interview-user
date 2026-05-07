@@ -5,6 +5,8 @@ import { API_ENDPOINTS } from '../../services/api.config';
 import toast from 'react-hot-toast';
 
 import type { ShowcaseInterview } from '../../types';
+import { fetchWithAuth } from '../../services/fetchClient';
+
 const ShowcasePage = () => {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
@@ -29,7 +31,7 @@ const ShowcasePage = () => {
 
   const fetchSetupOptions = async () => {
     try {
-      const res = await fetch(API_ENDPOINTS.DATA.SETUP_OPTIONS);
+      const res = await fetchWithAuth(API_ENDPOINTS.DATA.SETUP_OPTIONS);
       if (res.ok) {
         const data = await res.json();
         setPositions(data.positions || []);

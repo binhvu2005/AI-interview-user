@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
+import { API_ENDPOINTS } from '../services/api.config';
 
 const UserHeader = () => {
   const { t } = useTranslation();
@@ -25,8 +26,20 @@ const UserHeader = () => {
     };
   }, []);
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      if (token) {
+        await fetch(API_ENDPOINTS.AUTH.LOGOUT, { // Or use fetchWithAuth if imported
+          method: 'POST',
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+      }
+    } catch (e) {
+      // Ignore
+    }
     localStorage.removeItem('token');
+    localStorage.removeItem('refreshToken');
     localStorage.removeItem('userName');
     localStorage.removeItem('userAvatar');
     localStorage.removeItem('isVip');

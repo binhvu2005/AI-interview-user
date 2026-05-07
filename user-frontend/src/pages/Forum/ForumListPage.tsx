@@ -4,6 +4,8 @@ import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import RichTextEditor from '../../components/base/RichTextEditor';
 import { API_ENDPOINTS } from '../../services/api.config';
+import { fetchWithAuth } from '../../services/fetchClient';
+
 
 const ForumListPage = () => {
   const { t } = useTranslation();
@@ -67,7 +69,7 @@ const ForumListPage = () => {
     try {
       setLoading(true);
       const token = localStorage.getItem('token');
-      const res = await fetch(`${API_ENDPOINTS.FORUM.GET_POSTS}?sort=${sortBy}&page=${page}&search=${search}`, {
+      const res = await fetchWithAuth(`${API_ENDPOINTS.FORUM.GET_POSTS}?sort=${sortBy}&page=${page}&search=${search}`, {
         headers: token ? { 'Authorization': `Bearer ${token}` } : {}
       });
       if (res.ok) {
@@ -90,7 +92,7 @@ const ForumListPage = () => {
 
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch(API_ENDPOINTS.FORUM.CREATE_POST, {
+      const res = await fetchWithAuth(API_ENDPOINTS.FORUM.CREATE_POST, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

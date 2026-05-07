@@ -31,6 +31,7 @@ const LoginPage = () => {
 
       toast.success(t('notifications.login_success'));
       localStorage.setItem('token', data.token);
+      if (data.refreshToken) localStorage.setItem('refreshToken', data.refreshToken);
       localStorage.setItem('userName', data.user.fullName);
       if (data.user.avatar) localStorage.setItem('userAvatar', data.user.avatar);
       localStorage.setItem('isVip', data.user.isVip ? 'true' : 'false');

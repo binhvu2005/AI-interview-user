@@ -3,6 +3,8 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { API_ENDPOINTS } from '../../services/api.config';
+import { fetchWithAuth } from '../../services/fetchClient';
+
 
 const ProfilePage = () => {
   const { t } = useTranslation();
@@ -36,7 +38,7 @@ const ProfilePage = () => {
         navigate('/login');
         return;
       }
-      const res = await fetch(API_ENDPOINTS.AUTH.ME, {
+      const res = await fetchWithAuth(API_ENDPOINTS.AUTH.ME, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       if (res.ok) {
@@ -82,7 +84,7 @@ const ProfilePage = () => {
     setSaving(true);
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch(API_ENDPOINTS.AUTH.PROFILE, {
+      const res = await fetchWithAuth(API_ENDPOINTS.AUTH.PROFILE, {
         method: 'PUT',
         headers: { 
           'Content-Type': 'application/json',
@@ -116,7 +118,7 @@ const ProfilePage = () => {
     setSaving(true);
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch(API_ENDPOINTS.AUTH.CHANGE_PASSWORD, {
+      const res = await fetchWithAuth(API_ENDPOINTS.AUTH.CHANGE_PASSWORD, {
         method: 'PUT',
         headers: { 
           'Content-Type': 'application/json',

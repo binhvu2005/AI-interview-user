@@ -1,4 +1,4 @@
-import { Response } from 'express';
+import { Request, Response } from 'express';
 import { AuthRequest } from '../middlewares/auth.middleware';
 import bcrypt from 'bcryptjs';
 import * as AuthService from '../services/auth.service';
@@ -8,8 +8,10 @@ import { User } from '../models/user.model';
 export const register = async (req: any, res: Response) => {
   try {
     const user = await AuthService.registerUser(req.body);
-    const token = AuthService.generateToken(user.id);
-    res.json({ token, user: { id: user.id, fullName: user.fullName, email: user.email } });
+    const tokens = AuthService.generateTokens(user.id);
+    user.refreshToken = tokens.refreshToken;
+    await user.save();
+    res.json({ token: tokens.accessToken, refreshToken: tokens.refreshToken, user: { id: user.id, fullName: user.fullName, email: user.email } });
   } catch (err: any) {
     res.status(400).json({ message: err.message });
   }
@@ -18,8 +20,10 @@ export const register = async (req: any, res: Response) => {
 export const login = async (req: any, res: Response) => {
   try {
     const user = await AuthService.loginUser(req.body);
-    const token = AuthService.generateToken(user.id);
-    res.json({ token, user: { id: user.id, fullName: user.fullName, email: user.email, avatar: user.avatar, isVip: (user as any).isVip } });
+    const tokens = AuthService.generateTokens(user.id);
+    user.refreshToken = tokens.refreshToken;
+    await user.save();
+    res.json({ token: tokens.accessToken, refreshToken: tokens.refreshToken, user: { id: user.id, fullName: user.fullName, email: user.email, avatar: user.avatar, isVip: (user as any).isVip } });
   } catch (err: any) {
     res.status(400).json({ message: err.message });
   }
@@ -91,5 +95,30 @@ export const changePassword = async (req: AuthRequest, res: Response) => {
     res.json({ message: 'Đổi mật khẩu thành công' });
   } catch (err: any) {
     res.status(500).json({ message: 'Lỗi server', error: err.message });
+  }
+};
+
+export const refreshToken = async (req: Request, res: Response) => {
+  try {
+    const { refreshToken } = req.body;
+    const tokens = await AuthService.refreshAccessToken(refreshToken);
+    res.json({ token: tokens.accessToken, refreshToken: tokens.refreshToken });
+  } catch (err: any) {
+    res.status(401).json({ message: err.message });
+  }
+};
+
+export const logout = async (req: AuthRequest, res: Response) => {
+  try {
+    if (req.user) {
+      const user = await User.findById(req.user.id);
+      if (user) {
+        user.refreshToken = null;
+        await user.save();
+      }
+    }
+    res.json({ message: 'Logged out successfully' });
+  } catch (err: any) {
+    res.status(500).json({ message: 'Server error during logout' });
   }
 };

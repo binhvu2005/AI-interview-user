@@ -38,7 +38,31 @@ export const loginUser = async (credentials: any) => {
   return user;
 };
 
-export const generateToken = (userId: string) => {
+export const generateTokens = (userId: string) => {
   const payload = { user: { id: userId } };
-  return jwt.sign(payload, JWT_SECRET, { expiresIn: '1d' });
+  const accessToken = jwt.sign(payload, JWT_SECRET, { expiresIn: '1h' });
+  const refreshToken = jwt.sign(payload, JWT_SECRET, { expiresIn: '7d' });
+  return { accessToken, refreshToken };
+};
+
+export const refreshAccessToken = async (refreshToken: string) => {
+  if (!refreshToken) throw new Error('Refresh token is required');
+
+  try {
+    const decoded = jwt.verify(refreshToken, JWT_SECRET) as any;
+    const user = await User.findById(decoded.user.id);
+    
+    if (!user || user.refreshToken !== refreshToken) {
+      throw new Error('Invalid refresh token');
+    }
+
+    // Generate new tokens
+    const tokens = generateTokens(user.id);
+    user.refreshToken = tokens.refreshToken;
+    await user.save();
+
+    return tokens;
+  } catch (err) {
+    throw new Error('Invalid refresh token');
+  }
 };

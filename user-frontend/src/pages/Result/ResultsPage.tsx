@@ -5,6 +5,8 @@ import toast from 'react-hot-toast';
 import { API_ENDPOINTS } from '../../services/api.config';
 
 import type { Evaluation, Interview } from '../../types';
+import { fetchWithAuth } from '../../services/fetchClient';
+
 
 const ITEMS_PER_PAGE = 8;
 
@@ -36,7 +38,7 @@ const ResultsPage = () => {
     setLoading(true);
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch(API_ENDPOINTS.INTERVIEWS.GET_ONE(resultId), {
+      const res = await fetchWithAuth(API_ENDPOINTS.INTERVIEWS.GET_ONE(resultId), {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       if (res.ok) {
@@ -65,7 +67,7 @@ const ResultsPage = () => {
     setLoading(true);
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch(API_ENDPOINTS.INTERVIEWS.GET_ALL, {
+      const res = await fetchWithAuth(API_ENDPOINTS.INTERVIEWS.GET_ALL, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       if (res.ok) {

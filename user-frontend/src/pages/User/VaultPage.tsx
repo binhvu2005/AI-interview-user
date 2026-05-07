@@ -2,6 +2,8 @@ import React, { useEffect, useState, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import toast from 'react-hot-toast';
 import { API_ENDPOINTS } from '../../services/api.config';
+import { fetchWithAuth } from '../../services/fetchClient';
+
 
 interface SavedCV {
   id: string;
@@ -23,7 +25,7 @@ const VaultPage = () => {
   const fetchVault = async () => {
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch(API_ENDPOINTS.AUTH.ME, {
+      const res = await fetchWithAuth(API_ENDPOINTS.AUTH.ME, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       if (res.ok) {
@@ -53,7 +55,7 @@ const VaultPage = () => {
         formData.append('file', file);
         formData.append('name', file.name);
         const token = localStorage.getItem('token');
-        const res = await fetch(API_ENDPOINTS.AUTH.CV, {
+        const res = await fetchWithAuth(API_ENDPOINTS.AUTH.CV, {
           method: 'POST',
           headers: { 'Authorization': `Bearer ${token}` },
           body: formData
@@ -81,7 +83,7 @@ const VaultPage = () => {
     if (!deleteConfirmId) return;
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch(`${API_ENDPOINTS.AUTH.CV}/${deleteConfirmId}`, {
+      const res = await fetchWithAuth(`${API_ENDPOINTS.AUTH.CV}/${deleteConfirmId}`, {
         method: 'DELETE',
         headers: { 'Authorization': `Bearer ${token}` }
       });

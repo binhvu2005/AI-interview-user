@@ -9,6 +9,8 @@ export const API_ENDPOINTS = {
     PROFILE: `${API_BASE_URL}/auth/profile`,
     CHANGE_PASSWORD: `${API_BASE_URL}/auth/change-password`,
     CV: `${API_BASE_URL}/auth/cv`,
+    REFRESH: `${API_BASE_URL}/auth/refresh`,
+    LOGOUT: `${API_BASE_URL}/auth/logout`,
   },
   AI: {
     ANALYZE_CV: `${API_BASE_URL}/ai/analyze-cv`,

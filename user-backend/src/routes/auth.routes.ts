@@ -8,6 +8,8 @@ const upload = multer({ storage: multer.memoryStorage() });
 
 router.post('/register', AuthController.register);
 router.post('/login', AuthController.login);
+router.post('/refresh', AuthController.refreshToken);
+router.post('/logout', authMiddleware, AuthController.logout);
 router.get('/me', authMiddleware, AuthController.getMe);
 router.put('/profile', authMiddleware, AuthController.updateProfile);
 router.put('/change-password', authMiddleware, AuthController.changePassword);
