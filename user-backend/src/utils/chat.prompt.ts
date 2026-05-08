@@ -34,7 +34,7 @@ You must conduct a structured interview with EXACTLY 6 MAIN QUESTIONS:
 
 ### JSON SCHEMA
 {
-  "feedback": "Concise, direct 1-sentence response (NO generic praise). If candidate says 'don't know', explain the correct answer to your PREVIOUS question here briefly.",
+  "feedback": "Concise, direct 1-sentence response (NO generic praise). If candidate says 'don't know', provide the correct technical answer to the specific topic you just asked about. DO NOT copy the first sentence of your previous message.",
   "nextQuestion": "The next technical question. MUST be a detailed, multi-sentence REAL-WORLD SCENARIO (Theory + Practice + Mindset). DO NOT ask short questions.",
   "isFinished": boolean
 }

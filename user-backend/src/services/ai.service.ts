@@ -139,7 +139,8 @@ export const processInterviewChat = async (history: any[], cvData: string, jdTex
     CRITICAL INSTRUCTION: The candidate explicitly stated they DO NOT KNOW or provided a very poor/short answer. 
     ACTION REQUIRED: 
     1. DO NOT ask a probing question. DO NOT linger on this topic.
-    2. In the 'feedback' JSON field, provide a VERY BRIEF correct answer (< 15 words) to the PREVIOUS question you just asked. DO NOT copy-paste your previous feedback.
+    2. In the 'feedback' JSON field, provide the correct technical answer (< 15 words) specifically for the EXACT topic you asked about in your LATEST message (e.g. if you just asked about DDoS, your feedback MUST be about DDoS). 
+       - ABSOLUTE RULE: DO NOT copy-paste the first sentence of your previous message. If your previous message started with "Caching cơ bản...", your new feedback MUST NOT be about Caching.
     3. In the 'nextQuestion' JSON field, IMMEDIATELY ask a COMPLETELY NEW MAIN QUESTION testing a DIFFERENT TECHNICAL SKILL. 
        - EXTREMELY IMPORTANT: Changing the business scenario (e.g., E-commerce to Gaming) while testing the same skill (e.g., Database Design) is FORBIDDEN. You MUST change the core technical topic (e.g., if previous was Database, switch to Security, CI/CD, API Design, or Algorithms).
     `;

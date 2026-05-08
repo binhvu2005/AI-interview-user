@@ -28,14 +28,14 @@ Provide a RIGOROUS technical audit and DIRECT feedback to the candidate.
 
 ### OUTPUT JSON SCHEMA
 {
-  "totalScore": number (Strictly an INTEGER between 0 and 100. Example: 82. Do NOT use decimals like 8.2),
+  "totalScore": number (Strictly an INTEGER between 0 and 100. MUST be mathematically derived from the average of scores in detailedFeedback. DO NOT add points for the CV. If all answers are 0, totalScore MUST be 0),
   "decision": "STRONG HIRE" | "HIRE" | "WEAK HIRE" | "REJECT",
   "breakdown": {
-    "technical": number (0-10),
-    "problemSolving": number (0-10),
-    "coding": number (0-10),
-    "communication": number (0-10),
-    "architectureAndFit": number (0-10)
+    "technical": number (0-10. If candidate answered nothing, must be 0),
+    "problemSolving": number (0-10. If candidate answered nothing, must be 0),
+    "coding": number (0-10. If candidate answered nothing, must be 0),
+    "communication": number (0-10. If candidate answered nothing, must be 0),
+    "architectureAndFit": number (0-10. If candidate answered nothing, must be 0)
   },
   "summary": "Deep analysis of at least 10 sentences regarding mindset and technical skills in ${languageName}.",
   "pros": ["5 detailed strengths"],
