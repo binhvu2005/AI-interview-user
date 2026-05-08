@@ -15,9 +15,10 @@ Provide a RIGOROUS technical audit and DIRECT feedback to the candidate.
 ### ANTI-HALLUCINATION & COMPLETENESS RULE (CRITICAL)
 - YOU MUST ONLY evaluate the EXACT messages present in the TRANSCRIPT.
 - DO NOT INVENT or HALLUCINATE any questions, answers, or technical discussions that did not actually happen in the TRANSCRIPT.
+- DO NOT praise the candidate for skills listed in their CV if they did not explicitly demonstrate them in the TRANSCRIPT. The CV is only context. Your evaluation MUST be 100% based on the TRANSCRIPT.
 - YOU MUST EVALUATE EVERY SINGLE QUESTION asked by the interviewer in the transcript, starting from the very first INTRODUCTORY question. Do not skip any question.
-- If the TRANSCRIPT contains 6 questions, your \`detailedFeedback\` array MUST contain EXACTLY 6 items. 
 - If the candidate provided very short or irrelevant answers, grade them harshly (0-2/10) instead of making up a good answer for them.
+- IF A QUESTION WAS ASKED BUT THE CANDIDATE DID NOT ANSWER IT (e.g. the transcript ends after the AI's question), you MUST set "answer" to "No answer provided / Không có câu trả lời", set "score" to 0, and evaluate it as "incorrect" or "skipped". DO NOT hallucinate an answer for them.
 
 ### LANGUAGE & OUTPUT FORMAT
 - LANGUAGE: All content in JSON (except technical terms) MUST be 100% in ${languageName}.
