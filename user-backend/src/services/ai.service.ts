@@ -52,7 +52,7 @@ const extractJSON = (text: string): any => {
   }
 };
 
-const callAI = async (systemPrompt: string, userPrompt: string, label: string): Promise<any> => {
+const callAI = async (systemPrompt: string, userPrompt: string, label: string, temperature: number = 0.1): Promise<any> => {
   console.log(`[Groq] Calling: ${label}...`);
   try {
     const response = await groq.chat.completions.create({
@@ -62,7 +62,7 @@ const callAI = async (systemPrompt: string, userPrompt: string, label: string): 
         { role: 'user', content: userPrompt }
       ],
       response_format: { type: 'json_object' },
-      temperature: 0.1,
+      temperature: temperature,
       max_tokens: 3000,
     });
 
@@ -180,7 +180,7 @@ If you estimate you have asked ${maxTechQuestions} MAIN questions (ignoring prob
 `;
 
 
-  return await callAI(INTERVIEW_CHAT_SYSTEM_PROMPT, userPrompt, 'Interview Chat');
+  return await callAI(INTERVIEW_CHAT_SYSTEM_PROMPT, userPrompt, 'Interview Chat', 0.6);
 
 
 };
