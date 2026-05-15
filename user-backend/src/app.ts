@@ -1,17 +1,22 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import helmet from 'helmet';
 import authRoutes from './routes/auth.routes';
 import aiRoutes from './routes/ai.routes';
 import dataRoutes from './routes/data.routes';
 import interviewRoutes from './routes/interview.routes';
 import forumRoutes from './routes/forum.routes';
+import notificationRoutes from './routes/notification.routes';
 
 dotenv.config();
 
 const app = express();
 
 // Middlewares
+app.use(helmet({
+  crossOriginResourcePolicy: { policy: "cross-origin" }
+}));
 app.use(cors());
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
@@ -23,6 +28,7 @@ app.use('/api/ai', aiRoutes);
 app.use('/api/data', dataRoutes);
 app.use('/api/interviews', interviewRoutes);
 app.use('/api/forum', forumRoutes);
+app.use('/api/notifications', notificationRoutes);
 
 // 2. Proxy Fallback (When Nginx sends the full /api/user/api or /api/user path)
 app.use('/api/user/api/auth', authRoutes);
@@ -30,12 +36,14 @@ app.use('/api/user/api/ai', aiRoutes);
 app.use('/api/user/api/data', dataRoutes);
 app.use('/api/user/api/interviews', interviewRoutes);
 app.use('/api/user/api/forum', forumRoutes);
+app.use('/api/user/api/notifications', notificationRoutes);
 
 app.use('/api/user/auth', authRoutes);
 app.use('/api/user/ai', aiRoutes);
 app.use('/api/user/data', dataRoutes);
 app.use('/api/user/interviews', interviewRoutes);
 app.use('/api/user/forum', forumRoutes);
+app.use('/api/user/notifications', notificationRoutes);
 
 // 3. Simple Fallback (When Nginx strips /api but keep /auth)
 app.use('/auth', authRoutes);
@@ -43,6 +51,7 @@ app.use('/ai', aiRoutes);
 app.use('/data', dataRoutes);
 app.use('/interviews', interviewRoutes);
 app.use('/forum', forumRoutes);
+app.use('/notifications', notificationRoutes);
 
 // Error Handler
 app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {

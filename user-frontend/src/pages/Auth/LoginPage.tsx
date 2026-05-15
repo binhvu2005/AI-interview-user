@@ -68,6 +68,7 @@ const LoginPage = () => {
       localStorage.setItem('token', data.token);
       if (data.refreshToken) localStorage.setItem('refreshToken', data.refreshToken);
       localStorage.setItem('userName', data.user.fullName);
+      localStorage.setItem('userId', data.user.id || data.user._id);
       if (data.user.avatar) localStorage.setItem('userAvatar', data.user.avatar);
       localStorage.setItem('isVip', data.user.isVip ? 'true' : 'false');
 

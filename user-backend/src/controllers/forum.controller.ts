@@ -1,6 +1,9 @@
 import { Request, Response } from 'express';
 import mongoose from 'mongoose';
 import ForumPost from '../models/ForumPost.model';
+import User from '../models/user.model';
+import { createNotification } from '../services/notification.service';
+import { NotificationType } from '../models/Notification.model';
 
 export const getPosts = async (req: Request, res: Response) => {
   try {
@@ -173,6 +176,20 @@ export const likePost = async (req: Request, res: Response) => {
     else post.likes.splice(index, 1);
 
     await post.save();
+    
+    // Notify post author
+    if (index === -1) { // Only notify on Like, not Unlike
+      const sender = await User.findById(userId);
+      await createNotification({
+        recipient: post.author.toString(),
+        sender: userId,
+        type: NotificationType.LIKE,
+        title: 'New Like',
+        message: `${sender?.fullName || 'Someone'} liked your post: "${post.title}"`,
+        link: `/forum/${post._id}`
+      });
+    }
+
     res.json({ likes: post.likes.length });
   } catch (error) {
     res.status(500).json({ message: 'Error liking post' });
@@ -195,6 +212,18 @@ export const addReply = async (req: Request, res: Response) => {
     } as any);
 
     await post.save();
+
+    // Notify post author
+    const sender = await User.findById(author);
+    await createNotification({
+      recipient: post.author.toString(),
+      sender: author,
+      type: NotificationType.REPLY,
+      title: 'New Reply',
+      message: `${sender?.fullName || 'Someone'} replied to your post: "${post.title}"`,
+      link: `/forum/${post._id}`
+    });
+
     res.status(201).json({ message: 'Reply added' });
   } catch (error) {
     res.status(500).json({ message: 'Error adding reply' });
@@ -216,6 +245,20 @@ export const likeReply = async (req: Request, res: Response) => {
     else reply.likes.splice(index, 1);
 
     await post.save();
+
+    // Notify reply author
+    if (index === -1) {
+      const sender = await User.findById(userId);
+      await createNotification({
+        recipient: reply.author.toString(),
+        sender: userId,
+        type: NotificationType.LIKE,
+        title: 'New Like',
+        message: `${sender?.fullName || 'Someone'} liked your comment`,
+        link: `/forum/${postId}`
+      });
+    }
+
     res.json({ likes: reply.likes.length });
   } catch (error) {
     res.status(500).json({ message: 'Error liking reply' });

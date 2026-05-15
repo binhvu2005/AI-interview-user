@@ -17,6 +17,9 @@ const resources = {
         "profile": "Profile",
         "signin": "Sign In",
         "signup": "Sign Up",
+        "notifications": "Notifications",
+        "mark_all_read": "Mark all as read",
+        "no_notifications": "No notifications",
         "greeting": "Hi",
         "logout": "Logout"
       },
@@ -84,7 +87,7 @@ const resources = {
         "forgot": "Forgot password?",
         "btn": "Sign In",
         "no_account": "Don't have an account?",
-        "signup": "Sign up"
+        "signup": "Sign Up"
       },
       "register": {
         "title": "Create Account",
@@ -397,6 +400,9 @@ const resources = {
         "profile": "Thông tin cá nhân",
         "signin": "Đăng nhập",
         "signup": "Đăng ký",
+        "notifications": "Thông báo",
+        "mark_all_read": "Đánh dấu đã đọc tất cả",
+        "no_notifications": "Không có thông báo",
         "greeting": "Chào",
         "logout": "Đăng xuất"
       },

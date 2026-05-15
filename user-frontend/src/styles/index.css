@@ -209,6 +209,20 @@
     /* Chrome, Safari and Opera */
   }
 
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 4px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: var(--c-outline-variant);
+    border-radius: 10px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: var(--c-primary-dim);
+  }
+
   /* Support for pre-formatted text (code snippets) in chat */
   .chat-message-text {
     white-space: pre-wrap;

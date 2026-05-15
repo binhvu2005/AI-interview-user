@@ -37,5 +37,10 @@ export const API_ENDPOINTS = {
     LIKE_POST: (id: string) => `${API_BASE_URL}/forum/posts/${id}/like`,
     REPLY: (id: string) => `${API_BASE_URL}/forum/posts/${id}/replies`,
     LIKE_REPLY: (postId: string, replyId: string) => `${API_BASE_URL}/forum/posts/${postId}/replies/${replyId}/like`,
+  },
+  NOTIFICATIONS: {
+    GET_ALL: `${API_BASE_URL}/notifications`,
+    READ: (id: string) => `${API_BASE_URL}/notifications/${id}/read`,
+    READ_ALL: `${API_BASE_URL}/notifications/read-all`,
   }
 };

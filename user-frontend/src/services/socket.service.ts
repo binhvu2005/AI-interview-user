@@ -26,6 +26,23 @@ class SocketService {
       this.socket = null;
     }
   }
+
+  joinNotifications(userId: string) {
+    if (this.socket) {
+      this.socket.emit('join_notifications', userId);
+    }
+  }
+
+  onNewNotification(callback: (notification: any) => void) {
+    if (this.socket) {
+      this.socket.on('new_notification', callback);
+    }
+    return () => {
+      if (this.socket) {
+        this.socket.off('new_notification', callback);
+      }
+    };
+  }
 }
 
 export const socketService = new SocketService();

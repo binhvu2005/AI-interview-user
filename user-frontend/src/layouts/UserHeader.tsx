@@ -2,6 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { API_ENDPOINTS } from '../services/api.config';
+import * as NotificationService from '../services/NotificationService';
+import { socketService } from '../services/socket.service';
+import type { AppNotification } from '../services/NotificationService';
 
 const UserHeader = () => {
   const { t } = useTranslation();
@@ -11,6 +14,9 @@ const UserHeader = () => {
   const [isVip, setIsVip] = useState<boolean>(localStorage.getItem('isVip') === 'true');
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [notifications, setNotifications] = useState<AppNotification[]>([]);
+  const [unreadCount, setUnreadCount] = useState(0);
+  const [notiOpen, setNotiOpen] = useState(false);
 
   useEffect(() => {
     const handleStorageChange = () => {
@@ -20,11 +26,88 @@ const UserHeader = () => {
     };
     window.addEventListener('storage', handleStorageChange);
     window.addEventListener('userUpdate', handleStorageChange);
+
+    // Initial Fetch Notifications
+    const fetchNotis = async () => {
+      try {
+        const { notifications, unreadCount } = await NotificationService.getNotifications();
+        setNotifications(notifications);
+        setUnreadCount(unreadCount);
+      } catch (err) {
+        console.error('Error fetching notifications:', err);
+      }
+    };
+    
+    const initNotifications = async () => {
+      const token = localStorage.getItem('token');
+      if (!token) return;
+
+      fetchNotis();
+      
+      let userId = localStorage.getItem('userId');
+      
+      // Fallback: Nếu thiếu userId nhưng có token (do cache cũ), fetch lại profile
+      if (!userId) {
+        try {
+          const res = await fetch(API_ENDPOINTS.AUTH.ME, {
+            headers: { 'Authorization': `Bearer ${token}` }
+          });
+          const data = await res.json();
+          if (data.user) {
+            userId = data.user.id || data.user._id;
+            localStorage.setItem('userId', userId!);
+          }
+        } catch (err) {
+          console.error('Error fetching userId fallback:', err);
+        }
+      }
+
+      if (userId) {
+        socketService.connect();
+        socketService.joinNotifications(userId);
+        const cleanup = socketService.onNewNotification((newNoti) => {
+          setNotifications(prev => [newNoti, ...prev]);
+          setUnreadCount(prev => prev + 1);
+        });
+        return cleanup;
+      }
+    };
+
+    let cleanupFn: (() => void) | undefined;
+    initNotifications().then(cleanup => {
+      cleanupFn = cleanup;
+    });
+
     return () => {
+      if (cleanupFn) cleanupFn();
       window.removeEventListener('storage', handleStorageChange);
       window.removeEventListener('userUpdate', handleStorageChange);
     };
   }, []);
+
+  const handleMarkAllRead = async () => {
+    try {
+      await NotificationService.markAllAsRead();
+      setNotifications(prev => prev.map(n => ({ ...n, isRead: true })));
+      setUnreadCount(0);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleNotiClick = async (noti: AppNotification) => {
+    try {
+      if (!noti.isRead) {
+        await NotificationService.markAsRead(noti._id);
+        setNotifications(prev => prev.map(n => n._id === noti._id ? { ...n, isRead: true } : n));
+        setUnreadCount(prev => Math.max(0, prev - 1));
+      }
+      setNotiOpen(false);
+      navigate(noti.link);
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   const handleLogout = async () => {
     try {
@@ -77,6 +160,80 @@ const UserHeader = () => {
         >
           <span className="material-symbols-outlined text-[24px]">{mobileMenuOpen ? 'close' : 'menu'}</span>
         </button>
+        
+        {/* Notification Bell */}
+        <div className="relative">
+          <button 
+            onClick={() => { setNotiOpen(!notiOpen); setDropdownOpen(false); }}
+            className={`w-10 h-10 flex items-center justify-center rounded-xl transition-all ${notiOpen ? 'bg-primary/10 text-primary' : 'text-on-surface-variant hover:bg-surface-container-high'}`}
+          >
+            <span className={`material-symbols-outlined text-[24px] ${unreadCount > 0 ? 'animate-pulse' : ''}`}>notifications</span>
+            {unreadCount > 0 && (
+              <span className="absolute top-1 right-1 w-4 h-4 bg-error text-on-error text-[10px] font-black rounded-full flex items-center justify-center border-2 border-surface">
+                {unreadCount > 9 ? '9+' : unreadCount}
+              </span>
+            )}
+          </button>
+
+          {notiOpen && (
+            <>
+              <div className="fixed inset-0 z-40" onClick={() => setNotiOpen(false)}></div>
+              <div className="absolute top-14 right-[-60px] sm:right-0 w-[320px] sm:w-[380px] bg-surface-container-low border border-outline-variant/15 rounded-2xl shadow-2xl overflow-hidden z-50 animate-in fade-in zoom-in-95 duration-200">
+                <div className="px-5 py-4 border-b border-outline-variant/10 flex justify-between items-center">
+                  <h3 className="text-sm font-black uppercase tracking-widest text-on-surface">{t('nav.notifications') || 'Thông báo'}</h3>
+                  <button onClick={handleMarkAllRead} className="text-[10px] font-black text-primary uppercase tracking-widest hover:opacity-70 transition-opacity">
+                    {t('nav.mark_all_read') || 'Đánh dấu đã đọc tất cả'}
+                  </button>
+                </div>
+
+                <div className="max-h-[380px] overflow-y-auto custom-scrollbar">
+                  {notifications.length > 0 ? (
+                    notifications.map(noti => (
+                      <div 
+                        key={noti._id} 
+                        onClick={() => handleNotiClick(noti)}
+                        className={`px-5 py-4 border-b border-outline-variant/5 hover:bg-surface-container-high transition-colors cursor-pointer flex gap-4 ${!noti.isRead ? 'bg-primary/5' : ''}`}
+                      >
+                        <div className={`w-10 h-10 rounded-full flex-shrink-0 flex items-center justify-center ${
+                          noti.type === 'LIKE' ? 'bg-pink-100 text-pink-500' :
+                          noti.type === 'REPLY' ? 'bg-blue-100 text-blue-500' :
+                          noti.type === 'INTERVIEW_COMPLETE' ? 'bg-green-100 text-green-500' :
+                          'bg-gray-100 text-gray-500'
+                        }`}>
+                          <span className="material-symbols-outlined text-[20px]">
+                            {noti.type === 'LIKE' ? 'favorite' :
+                             noti.type === 'REPLY' ? 'chat' :
+                             noti.type === 'INTERVIEW_COMPLETE' ? 'military_tech' : 'info'}
+                          </span>
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className={`text-xs leading-normal mb-1 ${noti.isRead ? 'text-on-surface-variant' : 'text-on-surface font-bold'}`}>
+                            {noti.message}
+                          </p>
+                          <p className="text-[9px] font-medium text-on-surface-variant opacity-50 uppercase tracking-wider">
+                            {new Date(noti.createdAt).toLocaleString()}
+                          </p>
+                        </div>
+                        {!noti.isRead && (
+                          <div className="w-2 h-2 rounded-full bg-primary mt-2"></div>
+                        )}
+                      </div>
+                    ))
+                  ) : (
+                    <div className="py-12 flex flex-col items-center justify-center text-on-surface-variant opacity-30">
+                      <span className="material-symbols-outlined text-4xl mb-2">notifications_off</span>
+                      <p className="text-[10px] font-black uppercase tracking-widest">{t('nav.no_notifications') || 'Không có thông báo'}</p>
+                    </div>
+                  )}
+                </div>
+
+                <div className="p-3 bg-surface-container-highest/30 text-center">
+                   <p className="text-[9px] font-black text-on-surface-variant opacity-40 uppercase tracking-[0.2em]">Obsidian AI Notifications</p>
+                </div>
+              </div>
+            </>
+          )}
+        </div>
 
         <div className="flex items-center gap-3 relative">
           <div className="flex flex-col items-end mr-1 justify-center">

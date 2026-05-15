@@ -5,6 +5,8 @@ import Interview from '../models/Interview';
 import { User } from '../models/user.model';
 import * as AIService from '../services/ai.service';
 import * as EmailService from '../services/email.service';
+import { createNotification } from '../services/notification.service';
+import { NotificationType } from '../models/Notification.model';
 
 export const saveAndEvaluateInterview = async (req: AuthRequest, res: Response) => {
   try {
@@ -75,6 +77,15 @@ export const saveAndEvaluateInterview = async (req: AuthRequest, res: Response) 
         evaluation
       ).catch(err => console.error('Error sending email:', err));
     }
+    
+    // Notify user of completion
+    await createNotification({
+      recipient: userId,
+      type: NotificationType.INTERVIEW_COMPLETE,
+      title: lang === 'vi' ? 'Phỏng vấn hoàn tất' : 'Interview Completed',
+      message: lang === 'vi' ? `Kết quả phỏng vấn vị trí ${position} đã có sẵn.` : `Interview result for ${position} is now available.`,
+      link: `/results/${newInterview._id}`
+    });
 
     res.status(201).json({
       message: 'Interview saved and evaluated successfully',
