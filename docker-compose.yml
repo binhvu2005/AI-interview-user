@@ -17,7 +17,7 @@ services:
       args:
         - VITE_API_URL=${VITE_API_URL}
     ports:
-      - "80:80"
+      - "3000:80"
     depends_on:
       - backend
     restart: always
