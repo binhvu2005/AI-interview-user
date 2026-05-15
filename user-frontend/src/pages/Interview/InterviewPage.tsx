@@ -50,7 +50,7 @@ const InterviewPage = () => {
 
     const peer = new Peer({
       initiator: true,
-      trickle: false,
+      trickle: true,
       stream: stream,
       config: {
         iceServers: [
@@ -386,19 +386,44 @@ const InterviewPage = () => {
         <div className="w-full lg:w-[380px] flex flex-col gap-6 shrink-0">
           {/* Camera Feed */}
           <div className="bg-surface-container-lowest rounded-[32px] overflow-hidden relative aspect-video lg:aspect-auto lg:h-[480px] border border-outline-variant/20 shadow-2xl group">
-            {isVideoOff ? (
+            <video 
+              ref={videoRef} 
+              autoPlay 
+              playsInline 
+              muted 
+              className={`absolute inset-0 w-full h-full object-cover transform -scale-x-100 bg-black transition-opacity duration-300 ${isVideoOff ? 'opacity-0' : 'opacity-100'}`} 
+            />
+            
+            {isVideoOff && (
               <div className="absolute inset-0 flex flex-col items-center justify-center bg-surface-container">
                 <span className="material-symbols-outlined text-6xl text-on-surface-variant/20">videocam_off</span>
                 <p className="text-[10px] font-black text-on-surface-variant/60 mt-4 uppercase tracking-widest">{t('interview.camera_off')}</p>
               </div>
-            ) : (
-              <video ref={videoRef} autoPlay playsInline muted className="absolute inset-0 w-full h-full object-cover transform -scale-x-100 bg-black" />
             )}
+
             <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-3 opacity-0 group-hover:opacity-100 transition-opacity">
-              <button onClick={() => setIsMuted(!isMuted)} className={`w-12 h-12 rounded-2xl flex items-center justify-center backdrop-blur-xl border ${isMuted ? 'bg-error/20 border-error/50 text-error' : 'bg-surface-container/60 border-outline-variant/20 text-on-surface'}`}>
+              <button 
+                onClick={() => {
+                  const newMuted = !isMuted;
+                  setIsMuted(newMuted);
+                  if (stream) {
+                    stream.getAudioTracks().forEach(track => track.enabled = !newMuted);
+                  }
+                }} 
+                className={`w-12 h-12 rounded-2xl flex items-center justify-center backdrop-blur-xl border ${isMuted ? 'bg-error/20 border-error/50 text-error' : 'bg-surface-container/60 border-outline-variant/20 text-on-surface'}`}
+              >
                 <span className="material-symbols-outlined text-xl">{isMuted ? 'mic_off' : 'mic'}</span>
               </button>
-              <button onClick={() => setIsVideoOff(!isVideoOff)} className={`w-12 h-12 rounded-2xl flex items-center justify-center backdrop-blur-xl border ${isVideoOff ? 'bg-error/20 border-error/50 text-error' : 'bg-surface-container/60 border-outline-variant/20 text-on-surface'}`}>
+              <button 
+                onClick={() => {
+                  const newVideoOff = !isVideoOff;
+                  setIsVideoOff(newVideoOff);
+                  if (stream) {
+                    stream.getVideoTracks().forEach(track => track.enabled = !newVideoOff);
+                  }
+                }} 
+                className={`w-12 h-12 rounded-2xl flex items-center justify-center backdrop-blur-xl border ${isVideoOff ? 'bg-error/20 border-error/50 text-error' : 'bg-surface-container/60 border-outline-variant/20 text-on-surface'}`}
+              >
                 <span className="material-symbols-outlined text-xl">{isVideoOff ? 'videocam_off' : 'videocam'}</span>
               </button>
             </div>

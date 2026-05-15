@@ -26,11 +26,17 @@ const SpectatorPage = () => {
     });
 
     socket.on('signal', ({ from, signal }) => {
+      // If we get an offer but already have a peer, it means the host restarted
+      if (signal.type === 'offer' && peerRef.current) {
+        peerRef.current.destroy();
+        peerRef.current = null;
+      }
+
       if (!peerRef.current) {
         // We are the receiver, host initiates
         const peer = new Peer({
           initiator: false,
-          trickle: false,
+          trickle: true,
           config: {
             iceServers: [
               { urls: 'stun:stun.l.google.com:19302' },
