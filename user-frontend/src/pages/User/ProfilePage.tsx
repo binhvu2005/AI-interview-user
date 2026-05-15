@@ -31,7 +31,7 @@ const ProfilePage = () => {
     confirmPassword: ''
   });
 
-  const [heatmapData, setHeatmapData] = useState([]);
+  const [heatmapData, setHeatmapData] = useState<{ date: string, count: number }[]>([]);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -367,7 +367,7 @@ const ProfilePage = () => {
               startDate={new Date(new Date().setFullYear(new Date().getFullYear() - 1))}
               endDate={new Date()}
               values={heatmapData}
-              classForValue={(value) => {
+              classForValue={(value: any) => {
                 if (!value || value.count === 0) return 'color-empty';
                 if (value.count < 3) return 'color-scale-1';
                 if (value.count < 5) return 'color-scale-2';
