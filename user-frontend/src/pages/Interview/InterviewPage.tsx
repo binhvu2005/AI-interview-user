@@ -88,10 +88,17 @@ const InterviewPage = () => {
     socket.emit('join-room-host', roomCode);
 
     socket.on('spectator-update', (list: any[]) => {
+      console.log('[WebRTC] Spectators updated. Count:', list.length);
       setSpectators(list);
-      // For each spectator in the list, if we don't have a peer yet, create one
+      
+      if (!stream) {
+        console.warn('[WebRTC] Cannot create peer: Host stream is NULL!');
+        return;
+      }
+
       list.forEach(spec => {
         if (!peersRef.current.has(spec.socketId)) {
+          console.log('[WebRTC] Creating peer for new spectator:', spec.socketId);
           createPeer(spec.socketId, stream);
         }
       });
