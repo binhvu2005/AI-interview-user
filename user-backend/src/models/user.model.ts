@@ -11,6 +11,7 @@ const UserSchema = new mongoose.Schema({
   isBlocked: { type: Boolean, default: false },
   isVip: { type: Boolean, default: false },
   emailNotifications: { type: Boolean, default: false },
+  googleId: { type: String, default: null },
   refreshToken: { type: String, default: null },
   savedCVs: [{
     id: { type: String, required: true },

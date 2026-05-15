@@ -5,6 +5,9 @@ import * as AuthService from '../services/auth.service';
 import * as CVService from '../services/cv.service';
 import { User } from '../models/user.model';
 import * as EmailService from '../services/email.service';
+import { OAuth2Client } from 'google-auth-library';
+
+const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 const generateRandomPassword = (length: number = 10) => {
   const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+";
@@ -37,6 +40,51 @@ export const login = async (req: any, res: Response) => {
     res.json({ token: tokens.accessToken, refreshToken: tokens.refreshToken, user: { id: user.id, fullName: user.fullName, email: user.email, avatar: user.avatar, isVip: (user as any).isVip } });
   } catch (err: any) {
     res.status(400).json({ message: err.message });
+  }
+};
+
+export const googleLogin = async (req: Request, res: Response) => {
+  try {
+    const { token } = req.body;
+    
+    // Sử dụng access_token để lấy thông tin user từ Google API
+    const googleRes = await fetch(`https://www.googleapis.com/oauth2/v3/userinfo`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    
+    if (!googleRes.ok) {
+      return res.status(400).json({ message: 'Invalid Google token' });
+    }
+    
+    const payload = await googleRes.json();
+    const { email, name, picture, sub } = payload;
+    let user = await User.findOne({ email });
+
+    if (!user) {
+      const randomPassword = await bcrypt.hash(generateRandomPassword(16), 10);
+      user = new User({
+        email,
+        fullName: name,
+        avatar: picture,
+        password: randomPassword,
+        googleId: sub,
+        isVip: false
+      });
+      await user.save();
+    } else if (!user.googleId) {
+      user.googleId = sub;
+      if (!user.avatar && picture) user.avatar = picture;
+      await user.save();
+    }
+
+    const tokens = AuthService.generateTokens(user.id);
+    user.refreshToken = tokens.refreshToken;
+    await user.save();
+
+    res.json({ token: tokens.accessToken, refreshToken: tokens.refreshToken, user: { id: user.id, fullName: user.fullName, email: user.email, avatar: user.avatar, isVip: (user as any).isVip } });
+  } catch (err: any) {
+    console.error('Google login error:', err);
+    res.status(400).json({ message: 'Google authentication failed' });
   }
 };
 

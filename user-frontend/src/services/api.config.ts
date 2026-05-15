@@ -12,6 +12,7 @@ export const API_ENDPOINTS = {
     CV: `${API_BASE_URL}/auth/cv`,
     REFRESH: `${API_BASE_URL}/auth/refresh`,
     LOGOUT: `${API_BASE_URL}/auth/logout`,
+    GOOGLE_LOGIN: `${API_BASE_URL}/auth/google`,
   },
   AI: {
     ANALYZE_CV: `${API_BASE_URL}/ai/analyze-cv`,

@@ -44,9 +44,9 @@ const SettingsPage = () => {
       const token = localStorage.getItem('token');
       await fetch(API_ENDPOINTS.AUTH.PROFILE, {
         method: 'PUT',
-        headers: { 
+        headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}` 
+          Authorization: `Bearer ${token}`
         },
         body: JSON.stringify({ emailNotifications: next })
       });
@@ -91,7 +91,7 @@ const SettingsPage = () => {
           <div className="px-6 py-4 border-b border-outline-variant/5">
             <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-on-surface-variant opacity-50">{isVi ? 'GIAO DIỆN' : 'APPEARANCE'}</h3>
           </div>
-          
+
           <div className="p-4 space-y-2">
             {/* Theme Toggle Card */}
             <div className="flex items-center justify-between p-5 bg-surface-container-lowest rounded-2xl border border-outline-variant/10 group hover:border-primary/30 transition-all duration-300">
@@ -111,9 +111,9 @@ const SettingsPage = () => {
                 className={`w-14 h-8 rounded-full relative transition-all duration-500 shadow-inner group/toggle ${isDark ? 'bg-primary' : 'bg-surface-container-highest'}`}
               >
                 <div className={`w-6 h-6 rounded-full bg-white absolute top-1 shadow-md transition-all duration-500 transform flex items-center justify-center ${isDark ? 'translate-x-7' : 'translate-x-1'}`}>
-                   <span className="material-symbols-outlined text-[14px] text-primary opacity-0 group-hover/toggle:opacity-100 transition-opacity">
-                     {isDark ? 'check' : 'circle'}
-                   </span>
+                  <span className="material-symbols-outlined text-[14px] text-primary opacity-0 group-hover/toggle:opacity-100 transition-opacity">
+                    {isDark ? 'check' : 'circle'}
+                  </span>
                 </div>
               </button>
             </div>
@@ -132,22 +132,20 @@ const SettingsPage = () => {
               <div className="flex bg-surface-container-high p-1 rounded-xl border border-outline-variant/10">
                 <button
                   onClick={() => setLanguage('vi')}
-                  className={`px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all flex items-center gap-2 ${
-                    currentLang === 'vi'
+                  className={`px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all flex items-center gap-2 ${currentLang === 'vi'
                       ? 'bg-surface-container-lowest text-primary shadow-sm ring-1 ring-primary/10'
                       : 'text-on-surface-variant hover:text-on-surface'
-                  }`}
+                    }`}
                 >
                   <span className="text-base">🇻🇳</span>
                   TIẾNG VIỆT
                 </button>
                 <button
                   onClick={() => setLanguage('en')}
-                  className={`px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all flex items-center gap-2 ${
-                    currentLang === 'en'
+                  className={`px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all flex items-center gap-2 ${currentLang === 'en'
                       ? 'bg-surface-container-lowest text-primary shadow-sm ring-1 ring-primary/10'
                       : 'text-on-surface-variant hover:text-on-surface'
-                  }`}
+                    }`}
                 >
                   <span className="text-base">🇬🇧</span>
                   ENGLISH
@@ -162,9 +160,9 @@ const SettingsPage = () => {
           <div className="px-6 py-4 border-b border-outline-variant/5">
             <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-on-surface-variant opacity-50">{isVi ? 'THÔNG BÁO' : 'NOTIFICATIONS'}</h3>
           </div>
-          
+
           <div className="p-4">
-                        <div className={`flex items-center justify-between p-5 bg-surface-container-lowest rounded-2xl border border-outline-variant/10 transition-all duration-300 ${!isVip ? 'opacity-70 cursor-not-allowed grayscale' : 'hover:border-primary/30 group'}`}>
+            <div className={`flex items-center justify-between p-5 bg-surface-container-lowest rounded-2xl border border-outline-variant/10 transition-all duration-300 ${!isVip ? 'opacity-70 cursor-not-allowed grayscale' : 'hover:border-primary/30 group'}`}>
               <div className="flex items-center gap-4">
                 <div className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all duration-500 ${emailNotifications ? 'bg-primary/10 text-primary' : 'bg-surface-container-highest text-on-surface-variant'}`}>
                   <span className="material-symbols-outlined text-2xl group-hover:rotate-12 transition-transform">notifications_active</span>
@@ -183,9 +181,9 @@ const SettingsPage = () => {
                 className={`w-14 h-8 rounded-full relative transition-all duration-500 shadow-inner group/toggle ${emailNotifications ? 'bg-primary' : 'bg-surface-container-highest'}`}
               >
                 <div className={`w-6 h-6 rounded-full bg-white absolute top-1 shadow-md transition-all duration-500 transform flex items-center justify-center ${emailNotifications ? 'translate-x-7' : 'translate-x-1'}`}>
-                   <span className="material-symbols-outlined text-[14px] text-primary opacity-0 group-hover/toggle:opacity-100 transition-opacity">
-                     {emailNotifications ? 'check' : 'close'}
-                   </span>
+                  <span className="material-symbols-outlined text-[14px] text-primary opacity-0 group-hover/toggle:opacity-100 transition-opacity">
+                    {emailNotifications ? 'check' : 'close'}
+                  </span>
                 </div>
               </button>
             </div>
@@ -194,23 +192,23 @@ const SettingsPage = () => {
 
         {/* Account Safety Info */}
         <div className="p-8 bg-gradient-to-br from-primary/5 to-secondary/5 border border-primary/10 rounded-[32px] flex flex-col md:flex-row items-center gap-6">
-           <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-             <span className="material-symbols-outlined text-3xl text-primary">security</span>
-           </div>
-           <div>
-             <h4 className="font-bold text-on-surface mb-1">{isVi ? 'Bảo mật tài khoản' : 'Account Security'}</h4>
-             <p className="text-xs text-on-surface-variant leading-relaxed opacity-70">
-               {isVi 
-                 ? 'Chúng tôi sử dụng mã hóa đầu cuối để bảo vệ dữ liệu phỏng vấn và thông tin cá nhân của bạn. Bạn có thể đổi mật khẩu trong mục Hồ sơ.' 
-                 : 'We use end-to-end encryption to protect your interview data and personal info. Change your password in the Profile section.'}
-             </p>
-           </div>
-           <button 
-             onClick={() => navigate('/profile')}
-             className="md:ml-auto px-6 py-3 bg-surface-container-high text-on-surface rounded-xl text-[10px] font-black uppercase tracking-widest border border-outline-variant/10 hover:bg-primary hover:text-on-primary transition-all whitespace-nowrap"
-           >
-             {isVi ? 'ĐẾN HỒ SƠ' : 'GO TO PROFILE'}
-           </button>
+          <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+            <span className="material-symbols-outlined text-3xl text-primary">security</span>
+          </div>
+          <div>
+            <h4 className="font-bold text-on-surface mb-1">{isVi ? 'Bảo mật tài khoản' : 'Account Security'}</h4>
+            <p className="text-xs text-on-surface-variant leading-relaxed opacity-70">
+              {isVi
+                ? 'Chúng tôi sử dụng mã hóa đầu cuối để bảo vệ dữ liệu phỏng vấn và thông tin cá nhân của bạn. Bạn có thể đổi mật khẩu trong mục Hồ sơ.'
+                : 'We use end-to-end encryption to protect your interview data and personal info. Change your password in the Profile section.'}
+            </p>
+          </div>
+          <button
+            onClick={() => navigate('/profile')}
+            className="md:ml-auto px-6 py-3 bg-surface-container-high text-on-surface rounded-xl text-[10px] font-black uppercase tracking-widest border border-outline-variant/10 hover:bg-primary hover:text-on-primary transition-all whitespace-nowrap"
+          >
+            {isVi ? 'ĐẾN HỒ SƠ' : 'GO TO PROFILE'}
+          </button>
         </div>
       </div>
     </div>
