@@ -8,12 +8,16 @@ import { GoogleOAuthProvider } from '@react-oauth/google';
 
 import { Buffer } from 'buffer';
 
-// Fix "global is not defined" error for libraries like simple-peer
-if (typeof (window as any).global === 'undefined') {
-  (window as any).global = window;
-}
-(window as any).Buffer = Buffer;
-(window as any).process = { env: {} };
+// Fix "global is not defined" and "call of undefined" errors in production
+const win = window as any;
+if (typeof win.global === 'undefined') win.global = win;
+if (typeof win.process === 'undefined') win.process = { env: {} };
+if (typeof win.Buffer === 'undefined') win.Buffer = Buffer;
+
+// Also set on globalThis for deeper compatibility
+(globalThis as any).Buffer = Buffer;
+(globalThis as any).process = { env: {} };
+(globalThis as any).global = globalThis;
 
 const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID || '579879352608-0vppj3d4iu8eamtstiej8tkc0keauird.apps.googleusercontent.com';
 
