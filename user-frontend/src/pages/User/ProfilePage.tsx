@@ -375,8 +375,8 @@ const ProfilePage = () => {
               }}
               tooltipDataAttrs={(value: any) => {
                 return {
-                  'data-tip': value.date ? `${value.date}: ${value.count} lượt` : 'Không có hoạt động',
-                };
+                  'data-tip': value && value.date ? `${value.date}: ${value.count} lượt` : 'Không có hoạt động',
+                } as any;
               }}
             />
           </div>
