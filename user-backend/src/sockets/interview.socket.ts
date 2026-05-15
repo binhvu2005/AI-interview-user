@@ -8,6 +8,9 @@ export const setupInterviewSockets = (io: Server) => {
       socket.data.roomCode = roomCode;
       socket.data.isHost = true;
       console.log(`[Socket] Host ${socket.id} joined room ${roomCode}`);
+      
+      // Notify host about existing spectators immediately
+      socket.emit('spectator-update', getSpectatorsInRoom(io, roomCode));
     });
 
     // Spectator joins a room
