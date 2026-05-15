@@ -7,6 +7,7 @@ import RichTextEditor from '../../components/base/RichTextEditor';
 
 import type { AnalysisResult } from '../../types';
 import { fetchWithAuth } from '../../services/fetchClient';
+import { socketService } from '../../services/socket.service';
 
 
 const PreparationPage = () => {
@@ -32,6 +33,21 @@ const PreparationPage = () => {
   // Spectator Mode
   const [showInviteModal, setShowInviteModal] = useState(false);
   const [roomCode, setRoomCode] = useState('');
+  const [spectators, setSpectators] = useState<{ socketId: string, name: string }[]>([]);
+
+  useEffect(() => {
+    if (showInviteModal && roomCode) {
+      const socket = socketService.connect();
+      socket.emit('join-room-host', roomCode);
+      socket.on('spectator-update', (list: any[]) => {
+        setSpectators(list);
+      });
+      return () => {
+        socket.off('spectator-update');
+        // Don't disconnect here because we might be navigating to InterviewPage
+      };
+    }
+  }, [showInviteModal, roomCode]);
 
   const generateRoomCode = () => {
     const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -522,6 +538,22 @@ const PreparationPage = () => {
             <div className="bg-surface-container-high rounded-2xl p-6 mb-8 border border-outline-variant/10">
                <p className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">{t('spectator.room_code_label')}</p>
                <div className="text-4xl font-black text-primary tracking-[0.2em]">{roomCode}</div>
+               
+               {spectators.length > 0 && (
+                 <div className="mt-4 pt-4 border-t border-outline-variant/10">
+                   <p className="text-[9px] font-black uppercase tracking-widest text-on-surface-variant mb-3 flex items-center justify-center gap-2">
+                     <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
+                     {spectators.length} {isVi ? 'Người đang chờ' : 'People Waiting'}
+                   </p>
+                   <div className="flex flex-wrap justify-center gap-2 max-h-[100px] overflow-y-auto custom-scrollbar">
+                     {spectators.map(s => (
+                       <div key={s.socketId} className="px-3 py-1 bg-surface rounded-lg border border-outline-variant/10 text-[10px] font-bold text-on-surface">
+                         {s.name}
+                       </div>
+                     ))}
+                   </div>
+                 </div>
+               )}
             </div>
 
             <div className="flex flex-col gap-3">

@@ -100,9 +100,14 @@ const SpectatorPage = () => {
       {/* Video Content */}
       <div className="flex-1 relative flex items-center justify-center">
         {connecting && (
-          <div className="absolute inset-0 z-10 flex flex-col items-center justify-center bg-black/60 backdrop-blur-sm">
-             <span className="material-symbols-outlined text-5xl text-primary animate-spin mb-4">progress_activity</span>
-             <p className="text-white/60 font-black text-xs uppercase tracking-[0.3em]">{t('watch.connecting')}</p>
+          <div className="absolute inset-0 z-10 flex flex-col items-center justify-center bg-black/60 backdrop-blur-md">
+             <div className="relative w-24 h-24 flex items-center justify-center mb-6">
+                <div className="absolute inset-0 border-4 border-primary/20 rounded-full"></div>
+                <div className="absolute inset-0 border-4 border-t-primary rounded-full animate-spin"></div>
+                <span className="material-symbols-outlined text-4xl text-primary">sensors</span>
+             </div>
+             <p className="text-white font-black text-sm uppercase tracking-[0.4em] mb-2">{t('watch.waiting_host') || 'PHÒNG CHỜ'}</p>
+             <p className="text-white/40 text-[10px] font-bold uppercase tracking-widest animate-pulse">{t('watch.waiting_host_desc') || 'Đang chờ người phỏng vấn bắt đầu...'}</p>
           </div>
         )}
 
