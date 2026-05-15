@@ -16,12 +16,27 @@ const SpectatorPage = () => {
   const peerRef = useRef<Peer.Instance | null>(null);
 
   useEffect(() => {
+    console.log('--- Spectator Page Mounted ---');
     const name = localStorage.getItem('spectator_name') || t('showcase.anonymous');
     const socket = socketService.connect();
+    
+    console.log('--- Socket State:', socket.connected ? 'Connected' : 'Connecting...', '---');
 
-    socket.emit('join-room-spectator', { roomCode: code, name });
+    socket.on('connect', () => {
+      console.log('--- Socket Connected! ID:', socket.id, '---');
+    });
+
+    socket.on('connect_error', (err: any) => {
+      console.error('--- Socket Connection Error: ---', err);
+    });
+
+    if (code) {
+      console.log('--- Joining room:', code, 'as', name, '---');
+      socket.emit('join-room-spectator', { roomCode: code, name });
+    }
 
     socket.on('error-msg', (msg: string) => {
+      console.error('--- Received error-msg:', msg, '---');
       toast.error(msg);
       navigate('/join');
     });

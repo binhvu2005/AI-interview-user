@@ -2,7 +2,7 @@ import { io, Socket } from 'socket.io-client';
 import { API_BASE_URL } from './api.config';
 
 // The socket URL should be the same as API_BASE_URL but without the /api suffix if it exists
-const socketUrl = API_BASE_URL.replace('/api', '');
+const socketUrl = window.location.origin;
 
 class SocketService {
   private socket: Socket | null = null;
@@ -10,6 +10,7 @@ class SocketService {
   connect() {
     if (!this.socket) {
       this.socket = io(socketUrl, {
+        path: '/socket.io',
         transports: ['polling', 'websocket'],
         secure: true,
         reconnection: true,
