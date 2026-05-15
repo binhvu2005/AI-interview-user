@@ -6,7 +6,8 @@ import Peer from 'simple-peer';
 import { socketService } from '../../services/socket.service';
 
 const SpectatorPage = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const isVi = i18n.language.startsWith('vi');
   const { code } = useParams();
   const navigate = useNavigate();
   const remoteVideoRef = useRef<HTMLVideoElement>(null);
@@ -106,14 +107,22 @@ const SpectatorPage = () => {
       {/* Video Content */}
       <div className="flex-1 relative flex items-center justify-center">
         {connecting && (
-          <div className="absolute inset-0 z-10 flex flex-col items-center justify-center bg-black/60 backdrop-blur-md">
+          <div className="absolute inset-0 z-10 flex flex-col items-center justify-center bg-black/60 backdrop-blur-md p-6">
              <div className="relative w-24 h-24 flex items-center justify-center mb-6">
                 <div className="absolute inset-0 border-4 border-primary/20 rounded-full"></div>
                 <div className="absolute inset-0 border-4 border-t-primary rounded-full animate-spin"></div>
                 <span className="material-symbols-outlined text-4xl text-primary">sensors</span>
              </div>
              <p className="text-white font-black text-sm uppercase tracking-[0.4em] mb-2">{t('watch.waiting_host') || 'PHÒNG CHỜ'}</p>
-             <p className="text-white/40 text-[10px] font-bold uppercase tracking-widest animate-pulse">{t('watch.waiting_host_desc') || 'Đang chờ người phỏng vấn bắt đầu...'}</p>
+             <p className="text-white/40 text-[10px] font-bold uppercase tracking-widest animate-pulse mb-8">{t('watch.waiting_host_desc') || 'Đang chờ người phỏng vấn bắt đầu...'}</p>
+             
+             {/* Manual Retry/Join Button after 5s */}
+             <button 
+               onClick={() => window.location.reload()}
+               className="px-6 py-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-full text-white text-[10px] font-black uppercase tracking-widest transition-all"
+             >
+               {isVi ? 'Thử kết nối lại' : 'Retry Connection'}
+             </button>
           </div>
         )}
 
@@ -121,6 +130,7 @@ const SpectatorPage = () => {
           ref={remoteVideoRef} 
           autoPlay 
           playsInline 
+          muted
           className="w-full h-full object-contain bg-black"
         />
 

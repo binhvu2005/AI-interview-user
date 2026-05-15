@@ -25,7 +25,8 @@
     "react-router-dom": "^7.14.1",
     "recharts": "^3.8.1",
     "simple-peer": "^9.11.1",
-    "socket.io-client": "^4.8.3"
+    "socket.io-client": "^4.8.3",
+    "buffer": "^6.0.3"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.4",
