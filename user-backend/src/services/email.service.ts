@@ -11,6 +11,12 @@ const transporter = nodemailer.createTransport({
     user: process.env.SMTP_USER || 'no-reply@ai-interview.id.vn',
     pass: process.env.SMTP_PASS || 'Binhaz19.',
   },
+  tls: {
+    rejectUnauthorized: false
+  },
+  connectionTimeout: 10000, // 10 seconds
+  greetingTimeout: 5000,
+  socketTimeout: 10000,
 });
 
 export const sendInterviewResult = async (to: string, candidateName: string, position: string, resultDetails: any) => {
