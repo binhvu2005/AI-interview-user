@@ -9,6 +9,8 @@ export const API_ENDPOINTS = {
     PROFILE: `${API_BASE_URL}/auth/profile`,
     CHANGE_PASSWORD: `${API_BASE_URL}/auth/change-password`,
     FORGOT_PASSWORD: `${API_BASE_URL}/auth/forgot-password`,
+    VERIFY_OTP: `${API_BASE_URL}/auth/verify-otp`,
+    RESET_PASSWORD: `${API_BASE_URL}/auth/reset-password`,
     CV: `${API_BASE_URL}/auth/cv`,
     REFRESH: `${API_BASE_URL}/auth/refresh`,
     LOGOUT: `${API_BASE_URL}/auth/logout`,
@@ -22,6 +24,7 @@ export const API_ENDPOINTS = {
   INTERVIEWS: {
     SAVE: `${API_BASE_URL}/interviews/save`,
     GET_ALL: `${API_BASE_URL}/interviews`,
+    GET_HEATMAP: `${API_BASE_URL}/interviews/stats/heatmap`,
     GET_ONE: (id: string) => `${API_BASE_URL}/interviews/${id}`,
   },
   DATA: {

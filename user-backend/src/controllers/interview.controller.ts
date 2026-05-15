@@ -1,4 +1,5 @@
 import { Response } from 'express';
+import mongoose from 'mongoose';
 import { AuthRequest } from '../middlewares/auth.middleware';
 import Interview from '../models/Interview';
 import { User } from '../models/user.model';
@@ -16,7 +17,8 @@ export const saveAndEvaluateInterview = async (req: AuthRequest, res: Response) 
       messages,
       cvData,
       jdText,
-      lang
+      lang,
+      cheatCount
     } = req.body;
 
     const userId = req.user?.id;
@@ -40,7 +42,8 @@ export const saveAndEvaluateInterview = async (req: AuthRequest, res: Response) 
         detailedFeedback: []
       };
     } else {
-      evaluation = await AIService.evaluateInterview(messages, cvData, jdText, matchScore, lang || 'vi', position, level);
+      const parsedCheatCount = parseInt(cheatCount) || 0;
+      evaluation = await AIService.evaluateInterview(messages, cvData, jdText, matchScore, lang || 'vi', position, level, parsedCheatCount);
     }
 
     // 2. Validate and Clean Data
@@ -166,5 +169,43 @@ export const getShowcaseInterviews = async (req: AuthRequest, res: Response) => 
     });
   } catch (err: any) {
     res.status(500).json({ message: 'Server error', error: err.message });
+  }
+};
+
+export const getHeatmapData = async (req: AuthRequest, res: Response) => {
+  try {
+    const userId = req.user?.id;
+    if (!userId) return res.status(401).json({ message: 'Unauthorized' });
+
+    const oneYearAgo = new Date();
+    oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
+
+    const heatmap = await Interview.aggregate([
+      {
+        $match: {
+          userId: new mongoose.Types.ObjectId(userId),
+          createdAt: { $gte: oneYearAgo }
+        }
+      },
+      {
+        $group: {
+          _id: {
+            $dateToString: { format: "%Y-%m-%d", date: "$createdAt" }
+          },
+          count: { $sum: 1 }
+        }
+      },
+      { $sort: { _id: 1 } }
+    ]);
+
+    const formattedData = heatmap.map(item => ({
+      date: item._id,
+      count: item.count
+    }));
+
+    res.json(formattedData);
+  } catch (error: any) {
+    console.error(error);
+    res.status(500).json({ message: 'Internal Server Error', error: error.message });
   }
 };

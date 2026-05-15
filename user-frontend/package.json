@@ -12,14 +12,20 @@
   "dependencies": {
     "@react-oauth/google": "^0.13.5",
     "@tailwindcss/vite": "^4.2.2",
+    "@types/simple-peer": "^9.11.9",
+    "date-fns": "^4.1.0",
     "i18next": "^26.0.5",
     "i18next-browser-languagedetector": "^8.2.1",
     "react": "^19.2.4",
+    "react-calendar-heatmap": "^1.10.0",
     "react-dom": "^19.2.4",
     "react-hot-toast": "^2.6.0",
     "react-i18next": "^17.0.4",
     "react-quill-new": "^3.8.3",
-    "react-router-dom": "^7.14.1"
+    "react-router-dom": "^7.14.1",
+    "recharts": "^3.8.1",
+    "simple-peer": "^9.11.1",
+    "socket.io-client": "^4.8.3"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.4",

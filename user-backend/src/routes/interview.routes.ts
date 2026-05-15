@@ -7,6 +7,7 @@ const router = Router();
 router.post('/save', authMiddleware, InterviewController.saveAndEvaluateInterview);
 router.get('/showcase', InterviewController.getShowcaseInterviews); // Showcase route
 router.get('/', authMiddleware, InterviewController.getUserInterviews);
+router.get('/stats/heatmap', authMiddleware, InterviewController.getHeatmapData);
 router.patch('/:id/share', authMiddleware, InterviewController.toggleShareInterview); // Share route
 router.get('/:id', authMiddleware, InterviewController.getInterviewResult);
 

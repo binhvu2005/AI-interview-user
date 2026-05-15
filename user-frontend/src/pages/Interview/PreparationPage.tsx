@@ -29,6 +29,19 @@ const PreparationPage = () => {
   const [positions, setPositions] = useState<string[]>([]);
   const [levels, setLevels] = useState<string[]>([]);
 
+  // Spectator Mode
+  const [showInviteModal, setShowInviteModal] = useState(false);
+  const [roomCode, setRoomCode] = useState('');
+
+  const generateRoomCode = () => {
+    const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    const numbers = '0123456789';
+    let code = '';
+    for (let i = 0; i < 3; i++) code += letters.charAt(Math.floor(Math.random() * letters.length));
+    for (let i = 0; i < 3; i++) code += numbers.charAt(Math.floor(Math.random() * numbers.length));
+    return code;
+  };
+
   useEffect(() => {
     fetchVault();
     fetchSetupOptions();
@@ -174,8 +187,11 @@ const PreparationPage = () => {
         localStorage.setItem('interview_position', selectedPosition);
         localStorage.setItem('interview_level', selectedLevel);
         
-        toast.success(isVi ? 'Đang khởi tạo phỏng vấn...' : 'Initializing interview...');
-        setTimeout(() => navigate('/interview'), 500);
+        // Show Invite Modal instead of immediate navigate
+        const code = generateRoomCode();
+        setRoomCode(code);
+        localStorage.setItem('spectator_room_code', code);
+        setShowInviteModal(true);
       } else {
         throw new Error('Failed to generate interview questions');
       }
@@ -482,6 +498,51 @@ const PreparationPage = () => {
               >
                 {isGenerating ? <span className="material-symbols-outlined animate-spin">progress_activity</span> : <span className="material-symbols-outlined">rocket_launch</span>}
                 {isGenerating ? (isVi ? 'Đang chuẩn bị câu hỏi...' : 'Preparing Questions...') : (isVi ? 'Bắt đầu phỏng vấn ngay' : 'Start Interview Now')}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Spectator Invite Modal */}
+      {showInviteModal && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-surface/80 backdrop-blur-md animate-in fade-in duration-300">
+          <div className="bg-surface-container-low border border-outline-variant/20 rounded-[32px] p-8 max-w-md w-full shadow-2xl relative overflow-hidden text-center animate-in zoom-in-95 duration-500">
+            <div className="w-20 h-20 mx-auto bg-gradient-to-tr from-[#6366F1] to-[#8B5CF6] rounded-2xl flex items-center justify-center mb-6 shadow-lg shadow-primary/20">
+              <span className="material-symbols-outlined text-4xl text-white">group_add</span>
+            </div>
+            
+            <h3 className="text-3xl font-black text-on-surface tracking-tighter mb-2">
+              {t('spectator.invite_title')}
+            </h3>
+            <p className="text-on-surface-variant font-medium text-sm leading-relaxed mb-8">
+              {t('spectator.invite_desc')}
+            </p>
+
+            <div className="bg-surface-container-high rounded-2xl p-6 mb-8 border border-outline-variant/10">
+               <p className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">{t('spectator.room_code_label')}</p>
+               <div className="text-4xl font-black text-primary tracking-[0.2em]">{roomCode}</div>
+            </div>
+
+            <div className="flex flex-col gap-3">
+              <button 
+                onClick={() => {
+                  toast.success(t('spectator.modal_success'));
+                  navigate('/interview');
+                }}
+                className="w-full py-4 rounded-xl bg-primary text-on-primary font-black text-sm uppercase tracking-widest hover:bg-primary/90 transition-colors shadow-lg shadow-primary/20 flex justify-center items-center gap-2"
+              >
+                <span className="material-symbols-outlined text-sm">rocket_launch</span>
+                {t('spectator.btn_start_share')}
+              </button>
+              <button 
+                onClick={() => {
+                  localStorage.removeItem('spectator_room_code');
+                  navigate('/interview');
+                }}
+                className="w-full py-4 rounded-xl bg-surface-container-high text-on-surface font-bold text-xs uppercase tracking-widest hover:bg-outline-variant/20 transition-colors"
+              >
+                {t('spectator.btn_private')}
               </button>
             </div>
           </div>

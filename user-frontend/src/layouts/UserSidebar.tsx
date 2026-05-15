@@ -63,11 +63,14 @@ const UserSidebar = () => {
           <button
             key={item.id}
             onClick={() => navigate(item.path)}
-            className={`flex items-center gap-3 px-4 py-3.5 rounded-2xl transition-all duration-300 group w-full ${item.active
-              ? 'bg-primary text-on-primary shadow-lg shadow-primary/20'
-              : 'text-on-surface-variant hover:bg-surface-container-highest hover:text-on-surface'
+            className={`flex items-center gap-3 px-4 py-4 rounded-2xl transition-all duration-300 group w-full relative overflow-hidden ${item.active
+              ? 'bg-gradient-to-r from-primary to-primary-dim text-on-primary shadow-xl shadow-primary/30'
+              : 'text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface'
               }`}
           >
+            {item.active && (
+              <div className="absolute top-0 right-0 w-24 h-24 bg-white/10 rounded-full -mr-12 -mt-12 blur-xl animate-pulse-slow"></div>
+            )}
             <span className={`material-symbols-outlined text-[22px] transition-transform duration-500 ${item.active ? 'material-symbols-fill scale-110' : 'group-hover:scale-110'}`}>
               {item.icon}
             </span>

@@ -13,6 +13,8 @@ import ForumListPage from '../pages/Forum/ForumListPage';
 import ForumDetailPage from '../pages/Forum/ForumDetailPage';
 import ResultsPage from '../pages/Result/ResultsPage';
 import ShowcasePage from '../pages/Showcase/ShowcasePage';
+import JoinInterview from '../pages/Spectator/JoinInterview';
+import SpectatorPage from '../pages/Spectator/SpectatorPage';
 import ProtectedRoute from './ProtectedRoute';
 import MainLayout from '../layouts/MainLayout';
 
@@ -46,5 +48,13 @@ export const AppRoutes = [
   {
     path: '/interview',
     element: <ProtectedRoute><InterviewPage /></ProtectedRoute>
+  },
+  {
+    path: '/join',
+    element: <JoinInterview />
+  },
+  {
+    path: '/watch/:code',
+    element: <SpectatorPage />
   }
 ];

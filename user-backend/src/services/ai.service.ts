@@ -185,7 +185,7 @@ If you estimate you have asked ${maxTechQuestions} MAIN questions (ignoring prob
 
 };
 
-export const evaluateInterview = async (history: any[], cvData: string, jdText: string, matchScore: number, lang: string = 'vi', position: string = '', level: string = '') => {
+export const evaluateInterview = async (history: any[], cvData: string, jdText: string, matchScore: number, lang: string = 'vi', position: string = '', level: string = '', cheatCount: number = 0) => {
   const userPrompt = getEvaluationUserPrompt(history, cvData, jdText, matchScore, lang);
-  return await callAI(INTERVIEW_EVALUATION_SYSTEM_PROMPT(lang, position, level), userPrompt, 'Interview Evaluation');
+  return await callAI(INTERVIEW_EVALUATION_SYSTEM_PROMPT(lang, position, level, cheatCount), userPrompt, 'Interview Evaluation');
 };

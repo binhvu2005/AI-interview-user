@@ -4,6 +4,7 @@ import bcrypt from 'bcryptjs';
 import * as AuthService from '../services/auth.service';
 import * as CVService from '../services/cv.service';
 import { User } from '../models/user.model';
+import { Otp } from '../models/otp.model';
 import * as EmailService from '../services/email.service';
 import { OAuth2Client } from 'google-auth-library';
 
@@ -195,18 +196,62 @@ export const forgotPassword = async (req: Request, res: Response) => {
     const user = await User.findOne({ email });
     if (!user) return res.status(404).json({ message: 'Không tìm thấy tài khoản với email này' });
 
-    const newPassword = generateRandomPassword();
+    // Generate 6-digit OTP
+    const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
+    
+    // Save to DB (upsert)
+    await Otp.findOneAndUpdate(
+      { email },
+      { otp: otpCode, createdAt: new Date() },
+      { upsert: true, new: true }
+    );
+
+    // TODO: Update EmailService to send OTP instead of new password
+    const emailSent = await EmailService.sendForgotPassword(email, otpCode);
+    
+    if (emailSent) {
+      res.json({ message: 'Mã OTP đã được gửi đến email của bạn' });
+    } else {
+      res.status(500).json({ message: 'Lỗi khi gửi email, vui lòng thử lại sau' });
+    }
+  } catch (err: any) {
+    res.status(500).json({ message: 'Lỗi server', error: err.message });
+  }
+};
+
+export const verifyOtp = async (req: Request, res: Response) => {
+  try {
+    const { email, otp } = req.body;
+    if (!email || !otp) return res.status(400).json({ message: 'Vui lòng cung cấp email và mã OTP' });
+
+    const otpRecord = await Otp.findOne({ email, otp });
+    if (!otpRecord) return res.status(400).json({ message: 'Mã OTP không hợp lệ hoặc đã hết hạn' });
+
+    res.json({ message: 'Xác thực OTP thành công' });
+  } catch (err: any) {
+    res.status(500).json({ message: 'Lỗi server', error: err.message });
+  }
+};
+
+export const resetPassword = async (req: Request, res: Response) => {
+  try {
+    const { email, otp, newPassword } = req.body;
+    if (!email || !otp || !newPassword) return res.status(400).json({ message: 'Thiếu thông tin yêu cầu' });
+
+    const otpRecord = await Otp.findOne({ email, otp });
+    if (!otpRecord) return res.status(400).json({ message: 'Mã OTP không hợp lệ hoặc đã hết hạn' });
+
+    const user = await User.findOne({ email });
+    if (!user) return res.status(404).json({ message: 'Người dùng không tồn tại' });
+
     const salt = await bcrypt.genSalt(10);
     user.password = await bcrypt.hash(newPassword, salt);
     await user.save();
 
-    const emailSent = await EmailService.sendForgotPassword(email, newPassword);
-    
-    if (emailSent) {
-      res.json({ message: 'Mật khẩu mới đã được gửi đến email của bạn' });
-    } else {
-      res.status(500).json({ message: 'Lỗi khi gửi email, vui lòng thử lại sau' });
-    }
+    // Xóa OTP sau khi dùng
+    await Otp.deleteOne({ _id: otpRecord._id });
+
+    res.json({ message: 'Đặt lại mật khẩu thành công' });
   } catch (err: any) {
     res.status(500).json({ message: 'Lỗi server', error: err.message });
   }

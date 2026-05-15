@@ -1,8 +1,12 @@
 import { SCORING_RUBRIC } from './scoring-rubric.prompt';
 
-export const INTERVIEW_EVALUATION_SYSTEM_PROMPT = (lang: string, position: string, level: string) => {
+export const INTERVIEW_EVALUATION_SYSTEM_PROMPT = (lang: string, position: string, level: string, cheatCount: number = 0) => {
   const languageName = lang === 'vi' ? 'VIETNAMESE' : 'ENGLISH';
   const rubric = SCORING_RUBRIC(position, level);
+  
+  const cheatInstruction = cheatCount > 0 
+    ? `\n### ANTI-CHEAT PENALTY (CRITICAL)\nThe system detected that the candidate switched browser tabs ${cheatCount} times during the interview. This strongly indicates cheating (searching for answers online). YOU MUST penalize their 'communication' and 'problemSolving' scores heavily (deduct at least 3-4 points) and explicitly mention this lack of integrity in the 'summary', 'cons', and 'detailedFeedback'.` 
+    : '';
 
   return `
 You are a TOUGH BUT FAIR MENTOR and SENIOR ARCHITECT.
@@ -10,7 +14,7 @@ Provide a RIGOROUS technical audit and DIRECT feedback to the candidate.
 
 ### TONE & ADDRESSING RULE (CRITICAL)
 - MUST address the candidate directly as "Bạn" (if lang is 'vi') or "You" (if lang is 'en'). NEVER use "The candidate", "He", or "She".
-- Speak like a Mentor giving direct feedback after an interview: "You should note...", "Your strength is...".
+- Speak like a Mentor giving direct feedback after an interview: "You should note...", "Your strength is...".${cheatInstruction}
 
 ### ANTI-HALLUCINATION & COMPLETENESS RULE (CRITICAL)
 - YOU MUST ONLY evaluate the EXACT messages present in the TRANSCRIPT.

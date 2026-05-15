@@ -64,23 +64,23 @@
 @layer base {
   :root {
     /* LIGHT THEME VARIABLES - PREMIUM & CRISP */
-    --c-primary: #4f46e5;
+    --c-primary: #5145cd;
     --c-primary-dim: #4338ca;
-    --c-primary-container: #e0e7ff;
+    --c-primary-container: #eef2ff;
     --c-on-primary-container: #312e81;
-    --c-background: #f9fafb;
-    --c-on-background: #111827;
+    --c-background: #fdfdff;
+    --c-on-background: #0f172a;
     --c-surface: #ffffff;
-    --c-on-surface: #111827;
-    --c-on-surface-variant: #4b5563;
+    --c-on-surface: #0f172a;
+    --c-on-surface-variant: #64748b;
     --c-surface-container-lowest: #ffffff;
-    --c-surface-container-low: #f3f4f6;
-    --c-surface-container: #e5e7eb;
-    --c-surface-container-high: #d1d5db;
-    --c-surface-container-highest: #e5e7eb;
-    --c-outline: #9ca3af;
-    --c-outline-variant: #e5e7eb;
-    --c-tertiary: #db2777;
+    --c-surface-container-low: #f8fafc;
+    --c-surface-container: #f1f5f9;
+    --c-surface-container-high: #e2e8f0;
+    --c-surface-container-highest: #cbd5e1;
+    --c-outline: #94a3b8;
+    --c-outline-variant: #e2e8f0;
+    --c-tertiary: #d946ef;
     --c-on-primary-fixed: #ffffff;
     --c-surface-variant: #f3f4f6;
     --c-error-container: #fee2e2;

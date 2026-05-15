@@ -6,6 +6,10 @@ import { API_ENDPOINTS } from '../../services/api.config';
 
 import type { Evaluation, Interview } from '../../types';
 import { fetchWithAuth } from '../../services/fetchClient';
+import { 
+  Radar, RadarChart, PolarGrid, 
+  PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer 
+} from 'recharts';
 
 
 const ITEMS_PER_PAGE = 8;
@@ -220,57 +224,60 @@ const ResultsPage = () => {
         {/* Dashboard Metrics Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
           {/* Card 1: Total Interviews */}
-          <div className="bg-[#111115] border border-outline-variant/10 rounded-2xl p-6 shadow-sm flex flex-col justify-between">
-            <div className="flex items-center gap-3 mb-6">
-              <div className="w-8 h-8 rounded-lg bg-[#2A2B3D] text-[#818CF8] flex items-center justify-center">
-                <span className="material-symbols-outlined text-[18px]">bar_chart</span>
+          <div className="bg-surface-container-low border border-outline-variant/10 rounded-[32px] p-8 shadow-sm flex flex-col justify-between group hover:border-primary/30 transition-all relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full -mr-16 -mt-16 blur-2xl group-hover:bg-primary/10 transition-colors"></div>
+            <div className="flex items-center gap-4 mb-6 relative z-10">
+              <div className="w-12 h-12 rounded-2xl bg-primary/10 text-primary flex items-center justify-center group-hover:scale-110 transition-transform">
+                <span className="material-symbols-outlined text-[24px]">bar_chart</span>
               </div>
-              <span className="text-[#9CA3AF] text-sm font-medium">{t('results.total_interviews') || 'Total Interviews'}</span>
+              <span className="text-on-surface-variant text-xs font-black uppercase tracking-widest opacity-60">{t('results.total_interviews') || 'Total Interviews'}</span>
             </div>
-            <div>
-              <div className="text-4xl font-black text-white mb-2">{totalInterviewsCount}</div>
-              <div className="flex items-center gap-1 text-[#F472B6] text-xs font-bold">
-                <span className="material-symbols-outlined text-[14px]">trending_up</span>
-                +{recentCount} {t('results.this_week') || 'this week'}
+            <div className="relative z-10">
+              <div className="text-5xl font-black text-on-surface tracking-tighter mb-2">{totalInterviewsCount}</div>
+              <div className="flex items-center gap-2 text-secondary text-xs font-bold">
+                <span className="material-symbols-outlined text-[16px]">trending_up</span>
+                <span className="bg-secondary/10 px-2 py-0.5 rounded-full">+{recentCount} {t('results.this_week') || 'this week'}</span>
               </div>
             </div>
           </div>
 
           {/* Card 2: Average Score */}
-          <div className="bg-[#111115] border border-outline-variant/10 rounded-2xl p-6 shadow-sm flex flex-col justify-between">
-            <div className="flex items-center gap-3 mb-6">
-              <div className="w-8 h-8 rounded-lg bg-[#2A2B3D] text-[#60A5FA] flex items-center justify-center">
-                <span className="material-symbols-outlined text-[18px]">psychiatry</span>
+          <div className="bg-surface-container-low border border-outline-variant/10 rounded-[32px] p-8 shadow-sm flex flex-col justify-between group hover:border-secondary/30 transition-all relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-secondary/5 rounded-full -mr-16 -mt-16 blur-2xl group-hover:bg-secondary/10 transition-colors"></div>
+            <div className="flex items-center gap-4 mb-6 relative z-10">
+              <div className="w-12 h-12 rounded-2xl bg-secondary/10 text-secondary flex items-center justify-center group-hover:scale-110 transition-transform">
+                <span className="material-symbols-outlined text-[24px]">psychiatry</span>
               </div>
-              <span className="text-[#9CA3AF] text-sm font-medium">{t('results.average_score') || 'Average Score'}</span>
+              <span className="text-on-surface-variant text-xs font-black uppercase tracking-widest opacity-60">{t('results.average_score') || 'Average Score'}</span>
             </div>
-            <div>
-              <div className="text-4xl font-black text-white mb-2">{avgScore} <span className="text-xl text-[#6B7280]">/100</span></div>
-              <div className="flex items-center gap-1 text-[#60A5FA] text-xs font-bold">
-                <span className="material-symbols-outlined text-[14px]">show_chart</span>
-                {avgScore >= 80 ? 'Top 15% of cohort' : 'Average range'}
+            <div className="relative z-10">
+              <div className="text-5xl font-black text-on-surface tracking-tighter mb-2">{avgScore} <span className="text-2xl text-on-surface-variant opacity-30 font-medium">/100</span></div>
+              <div className="flex items-center gap-2 text-primary text-xs font-bold">
+                <span className="material-symbols-outlined text-[16px]">show_chart</span>
+                <span className="bg-primary/10 px-2 py-0.5 rounded-full">{avgScore >= 80 ? 'Top 15% of cohort' : 'Average range'}</span>
               </div>
             </div>
           </div>
 
           {/* Card 3: Match Rate */}
-          <div className="bg-[#19181E] border border-outline-variant/10 rounded-2xl p-6 shadow-sm flex flex-col justify-between">
-            <div className="flex items-center justify-between mb-6">
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-lg bg-[#2D2A43] text-[#A78BFA] flex items-center justify-center">
-                  <span className="material-symbols-outlined text-[18px]">fact_check</span>
+          <div className="bg-surface-container-low border border-outline-variant/10 rounded-[32px] p-8 shadow-sm flex flex-col justify-between group hover:border-tertiary/30 transition-all relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-tertiary/5 rounded-full -mr-16 -mt-16 blur-2xl group-hover:bg-tertiary/10 transition-colors"></div>
+            <div className="flex items-center justify-between mb-6 relative z-10">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded-2xl bg-tertiary/10 text-tertiary flex items-center justify-center group-hover:scale-110 transition-transform">
+                  <span className="material-symbols-outlined text-[24px]">fact_check</span>
                 </div>
-                <span className="text-[#9CA3AF] text-sm font-medium">{t('results.match_rate') || 'Match Rate (CV vs JD)'}</span>
+                <span className="text-on-surface-variant text-xs font-black uppercase tracking-widest opacity-60">{t('results.match_rate') || 'Match Rate (CV vs JD)'}</span>
               </div>
-              <span className="bg-[#2D2A43] text-[#A78BFA] text-[9px] font-black uppercase tracking-widest px-2 py-1 rounded-md">
+              <span className="bg-tertiary/10 text-tertiary text-[9px] font-black uppercase tracking-widest px-2 py-1 rounded-lg border border-tertiary/20">
                 CURRENT TARGET
               </span>
             </div>
-            <div>
-              <div className="text-4xl font-black text-white mb-3">{avgMatchRate}%</div>
-              <div className="w-full h-1.5 bg-[#2A2B3D] rounded-full overflow-hidden">
+            <div className="relative z-10">
+              <div className="text-5xl font-black text-on-surface tracking-tighter mb-4">{avgMatchRate}%</div>
+              <div className="w-full h-2 bg-surface-container-high rounded-full overflow-hidden">
                 <div 
-                  className="h-full bg-gradient-to-r from-[#6366f1] to-[#A78BFA] rounded-full" 
+                  className="h-full bg-gradient-to-r from-primary to-tertiary rounded-full shadow-[0_0_10px_rgba(81,69,205,0.3)]" 
                   style={{ width: `${avgMatchRate}%` }}
                 ></div>
               </div>
@@ -469,22 +476,47 @@ const ResultsPage = () => {
             </div>
           </div>
           {evaluation?.breakdown && (
-            <div className="mt-6 pt-6 border-t border-outline-variant/10 grid grid-cols-2 gap-4">
-              {Object.entries(evaluation.breakdown).map(([key, val]) => {
-                const labels: Record<string, string> = {
-                  technical: 'Technical Skills',
-                  problemSolving: 'Problem Solving',
-                  coding: 'Coding Ability',
-                  communication: 'Communication',
-                  architectureAndFit: 'Architecture & Potential'
-                };
-                return (
-                  <div key={key} className="flex justify-between items-center bg-surface-container-high/50 p-3 rounded-xl border border-outline-variant/5">
-                    <span className="text-[9px] font-bold uppercase opacity-50">{labels[key] || key}</span>
-                    <span className="text-xs font-black text-primary">{val}/10</span>
-                  </div>
-                );
-              })}
+            <div className="mt-6 pt-6 border-t border-outline-variant/10">
+              <div className="h-[280px] w-full">
+                <ResponsiveContainer width="100%" height="100%">
+                  <RadarChart cx="50%" cy="50%" outerRadius="80%" data={[
+                    { subject: 'Technical', A: evaluation.breakdown.technical, fullMark: 10 },
+                    { subject: 'Problem Solving', A: evaluation.breakdown.problemSolving, fullMark: 10 },
+                    { subject: 'Coding', A: evaluation.breakdown.coding, fullMark: 10 },
+                    { subject: 'Communication', A: evaluation.breakdown.communication, fullMark: 10 },
+                    { subject: 'Architecture', A: evaluation.breakdown.architectureAndFit, fullMark: 10 },
+                  ]}>
+                    <PolarGrid stroke="var(--color-outline-variant)" />
+                    <PolarAngleAxis dataKey="subject" tick={{ fill: 'var(--color-on-surface-variant)', fontSize: 10, fontWeight: '800' }} />
+                    <PolarRadiusAxis angle={30} domain={[0, 10]} tick={false} axisLine={false} />
+                    <Radar
+                      name="Score"
+                      dataKey="A"
+                      stroke="var(--color-primary)"
+                      fill="var(--color-primary)"
+                      fillOpacity={0.5}
+                    />
+                  </RadarChart>
+                </ResponsiveContainer>
+              </div>
+              
+              <div className="mt-4 grid grid-cols-2 gap-2">
+                {Object.entries(evaluation.breakdown).map(([key, val]) => {
+                  const labels: Record<string, string> = {
+                    technical: 'Technical',
+                    problemSolving: 'Problem Solving',
+                    coding: 'Coding',
+                    communication: 'Communication',
+                    architectureAndFit: 'Architecture'
+                  };
+                  return (
+                    <div key={key} className="flex justify-between items-center bg-surface-container-high/50 px-3 py-2 rounded-lg border border-outline-variant/5">
+                      <span className="text-[9px] font-bold uppercase opacity-50">{labels[key] || key}</span>
+                      <span className="text-[10px] font-black text-primary">{val}/10</span>
+                    </div>
+                  );
+                })}
+              </div>
             </div>
           )}
         </div>

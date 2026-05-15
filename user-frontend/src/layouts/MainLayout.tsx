@@ -44,7 +44,7 @@ const MainLayout = () => {
           {/* Sidebar - Desktop Sticky */}
           {showSidebar && (
             <aside className="w-72 flex-shrink-0 sticky top-24 self-start mt-4 h-[calc(100vh-104px)] z-10">
-              <div className="h-full bg-surface-container-low border border-outline-variant/15 rounded-[32px] shadow-xl overflow-hidden">
+              <div className="h-full bg-surface-container-lowest border border-outline-variant/10 rounded-[32px] shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden">
                 <UserSidebar />
               </div>
             </aside>

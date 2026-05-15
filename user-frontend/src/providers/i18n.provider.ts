@@ -336,6 +336,51 @@ const resources = {
         "unshare": "Remove from Showcase",
         "shared_success": "Interview shared to Showcase!",
         "unshared_success": "Interview removed from Showcase!"
+      },
+      "spectator": {
+        "invite_title": "Invite Friends to Watch?",
+        "invite_desc": "Would you like to share a room code so friends can watch your interview simulation live?",
+        "room_code_label": "YOUR ROOM CODE",
+        "btn_start_share": "Start & Share Code",
+        "btn_private": "No, I want a private session",
+        "modal_success": "Spectator mode enabled!",
+        "panel_title": "Spectators",
+        "panel_empty": "No spectators yet",
+        "kick_btn": "Kick",
+        "kick_success": "Spectator removed",
+        "live_tag": "LIVE"
+      },
+      "join": {
+        "title": "Watch Interview",
+        "subtitle": "Enter room code to join live session",
+        "code_label": "ROOM CODE (6 CHARS)",
+        "code_placeholder": "E.G. ABC123",
+        "btn_join": "Join Now",
+        "btn_back": "Go Back",
+        "err_code": "Room code must be 6 characters"
+      },
+      "watch": {
+        "status_live": "Live Viewing",
+        "room_code": "Room Code",
+        "btn_leave": "Leave",
+        "connecting": "Connecting signal...",
+        "no_signal": "No video signal",
+        "err_stream": "Stream connection error",
+        "kicked_msg": "You have been removed from the room by the host",
+        "footer_warning": "You are watching a mock interview on Obsidian AI. Any screen recording is strictly prohibited."
+      },
+      "interview": {
+        "thinking": "Thinking...",
+        "type_answer": "Type answer...",
+        "time_remaining": "TIME REMAINING",
+        "camera_off": "Camera Off",
+        "exit": "Exit",
+        "analyzing": "Analyzing...",
+        "welcome": "Welcome to your mock interview. I am Obsidian AI. Please introduce yourself briefly.",
+        "error_busy": "The AI system is busy. Please resend your answer.",
+        "cheat_warning": "WARNING: Tab switch detected! This will negatively impact your attitude score.",
+        "no_camera_support": "Browser does not support camera/mic",
+        "camera_access_denied": "Camera access denied"
       }
     }
   },
@@ -671,6 +716,51 @@ const resources = {
         "unshare": "Gỡ khỏi Showcase",
         "shared_success": "Đã chia sẻ bài phỏng vấn lên Showcase!",
         "unshared_success": "Đã gỡ bài phỏng vấn khỏi Showcase!"
+      },
+      "spectator": {
+        "invite_title": "Mời bạn bè xem?",
+        "invite_desc": "Bạn có muốn chia sẻ mã phòng để bạn bè có thể xem trực tiếp buổi phỏng vấn của bạn không?",
+        "room_code_label": "MÃ PHÒNG CỦA BẠN",
+        "btn_start_share": "Bắt đầu & Chia sẻ mã",
+        "btn_private": "Không, tôi muốn phỏng vấn 1 mình",
+        "modal_success": "Đã kích hoạt chế độ xem trực tiếp!",
+        "panel_title": "Người xem",
+        "panel_empty": "Chưa có người xem",
+        "kick_btn": "Đuổi",
+        "kick_success": "Đã đuổi người xem",
+        "live_tag": "TRỰC TIẾP"
+      },
+      "join": {
+        "title": "Xem Phỏng Vấn",
+        "subtitle": "Nhập mã phòng để tham gia xem trực tiếp",
+        "code_label": "MÃ PHÒNG (6 KÝ TỰ)",
+        "code_placeholder": "VD: ABC123",
+        "btn_join": "Tham gia ngay",
+        "btn_back": "Quay lại",
+        "err_code": "Mã phòng phải có 6 ký tự"
+      },
+      "watch": {
+        "status_live": "Đang xem trực tiếp",
+        "room_code": "Mã phòng",
+        "btn_leave": "Rời khỏi",
+        "connecting": "Đang kết nối tín hiệu...",
+        "no_signal": "Không có tín hiệu video",
+        "err_stream": "Lỗi kết nối stream",
+        "kicked_msg": "Bạn đã bị chủ phòng mời ra khỏi phòng",
+        "footer_warning": "Bạn đang xem buổi phỏng vấn giả định trên hệ thống Obsidian AI. Mọi hành vi quay màn hình đều bị nghiêm cấm."
+      },
+      "interview": {
+        "thinking": "Đang suy nghĩ...",
+        "type_answer": "Nhập câu trả lời...",
+        "time_remaining": "THỜI GIAN CÒN LẠI",
+        "camera_off": "Camera Đã Tắt",
+        "exit": "Thoát",
+        "analyzing": "Đang phân tích...",
+        "welcome": "Chào mừng bạn đến với buổi phỏng vấn giả định. Tôi là Obsidian AI. Hãy giới thiệu ngắn gọn về bản thân bạn.",
+        "error_busy": "Hệ thống AI đang tạm thời bận. Vui lòng gửi lại câu trả lời.",
+        "cheat_warning": "CẢNH BÁO: Phát hiện chuyển tab! Hành vi này sẽ bị AI ghi nhận và trừ điểm thái độ.",
+        "no_camera_support": "Trình duyệt không hỗ trợ camera/mic",
+        "camera_access_denied": "Không thể truy cập Camera/Mic"
       }
     }
   }

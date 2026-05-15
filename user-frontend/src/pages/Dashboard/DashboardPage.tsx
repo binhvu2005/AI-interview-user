@@ -173,8 +173,9 @@ const DashboardPage = () => {
                 {t('dashboard.btn_start')}
                 <span className="material-symbols-outlined text-[18px] group-hover:translate-x-1 transition-transform">arrow_forward</span>
               </button>
-              <button className="bg-surface-container-high text-on-surface border border-outline-variant/20 font-bold px-8 py-4 rounded-xl hover:bg-surface-container-highest transition-all hover:border-primary/30 w-full sm:w-auto">
-                {t('dashboard.btn_demo')}
+              <button onClick={() => navigate('/join')} className="bg-surface-container-high text-on-surface border border-outline-variant/20 font-bold px-8 py-4 rounded-xl hover:bg-surface-container-highest transition-all hover:border-primary/30 flex items-center justify-center gap-2 w-full sm:w-auto">
+                <span className="material-symbols-outlined text-[18px]">visibility</span>
+                {t('join.title')}
               </button>
             </div>
           </div>

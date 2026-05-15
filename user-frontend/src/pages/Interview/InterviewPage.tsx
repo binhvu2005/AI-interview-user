@@ -4,6 +4,8 @@ import { useNavigate } from 'react-router-dom';
 import { API_ENDPOINTS } from '../../services/api.config';
 import { toast } from 'react-hot-toast';
 import { fetchWithAuth } from '../../services/fetchClient';
+import Peer from 'simple-peer';
+import { socketService } from '../../services/socket.service';
 
 
 interface Message {
@@ -32,8 +34,86 @@ const InterviewPage = () => {
   // Countdown Timer
   const [timeLeft, setTimeLeft] = useState(parseInt(localStorage.getItem('interview_duration') || '15') * 60);
 
+  // Anti-Cheat
+  const [cheatCount, setCheatCount] = useState(0);
+
   const scrollRef = useRef<HTMLDivElement>(null);
   const recognitionRef = useRef<any>(null);
+
+  // Spectator Management
+  const [spectators, setSpectators] = useState<{ socketId: string, name: string }[]>([]);
+  const peersRef = useRef<Map<string, Peer.Instance>>(new Map());
+
+  const createPeer = (spectatorSocketId: string, stream: MediaStream) => {
+    const socket = socketService.getSocket();
+    if (!socket) return;
+
+    const peer = new Peer({
+      initiator: true,
+      trickle: false,
+      stream: stream,
+    });
+
+    peer.on('signal', signal => {
+      socket.emit('signal', { to: spectatorSocketId, signal });
+    });
+
+    peer.on('error', err => {
+      console.error('Peer error:', err);
+      peer.destroy();
+      peersRef.current.delete(spectatorSocketId);
+    });
+
+    peersRef.current.set(spectatorSocketId, peer);
+  };
+
+  useEffect(() => {
+    const roomCode = localStorage.getItem('spectator_room_code');
+    if (!roomCode || !stream) return;
+
+    const socket = socketService.connect();
+    socket.emit('join-room-host', roomCode);
+
+    socket.on('spectator-update', (list: any[]) => {
+      setSpectators(list);
+      // For each spectator in the list, if we don't have a peer yet, create one
+      list.forEach(spec => {
+        if (!peersRef.current.has(spec.socketId)) {
+          createPeer(spec.socketId, stream);
+        }
+      });
+
+      // Cleanup peers for spectators who left
+      const currentSocketIds = new Set(list.map(s => s.socketId));
+      peersRef.current.forEach((peer, socketId) => {
+        if (!currentSocketIds.has(socketId)) {
+          peer.destroy();
+          peersRef.current.delete(socketId);
+        }
+      });
+    });
+
+    socket.on('signal', ({ from, signal }) => {
+      const peer = peersRef.current.get(from);
+      if (peer) peer.signal(signal);
+    });
+
+    return () => {
+      socket.off('spectator-update');
+      socket.off('signal');
+      peersRef.current.forEach(p => p.destroy());
+      peersRef.current.clear();
+      socketService.disconnect();
+    };
+  }, [stream]);
+
+  const handleKick = (socketId: string) => {
+    const socket = socketService.getSocket();
+    if (socket) {
+      socket.emit('kick-spectator', socketId);
+      toast.success(t('spectator.kick_success'));
+    }
+  };
 
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
@@ -68,6 +148,18 @@ const InterviewPage = () => {
     return () => clearInterval(timer);
   }, []);
 
+  // Anti-Cheat Effect
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        setCheatCount(prev => prev + 1);
+        toast.error(t('interview.cheat_warning'), { duration: 5000, icon: '🚨' });
+      }
+    };
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    return () => document.removeEventListener("visibilitychange", handleVisibilityChange);
+  }, [isVi]);
+
   // Speech Recognition Setup
   useEffect(() => {
     const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
@@ -95,16 +187,13 @@ const InterviewPage = () => {
           setStream(userStream);
           if (videoRef.current) videoRef.current.srcObject = userStream;
         } else {
-          toast.error(isVi ? "Trình duyệt không hỗ trợ camera/mic" : "Browser does not support camera/mic");
+          toast.error(t('interview.no_camera_support'));
         }
       } catch (err) { 
-        toast.error(isVi ? "Không thể truy cập Camera/Mic" : "Camera access denied"); 
+        toast.error(t('interview.camera_access_denied')); 
       } finally {
         setTimeout(() => {
-          const intro = isVi
-            ? "Chào mừng bạn đến với buổi phỏng vấn giả định. Tôi là Obsidian AI. Hãy giới thiệu ngắn gọn về bản thân bạn."
-            : "Welcome to your mock interview. I am Obsidian AI. Please introduce yourself briefly.";
-          addMessage('ai', intro);
+          addMessage('ai', t('interview.welcome'));
         }, 1000);
       }
     };
@@ -167,10 +256,7 @@ const InterviewPage = () => {
     } catch (err: any) {
       console.error("Interview Send Message Error:", err);
       setTimeout(() => {
-        const errorMessage = isVi
-          ? "Hệ thống AI đang tạm thời bận. Vui lòng gửi lại câu trả lời."
-          : "The AI system is busy. Please resend your answer.";
-        addMessage('ai', errorMessage);
+        addMessage('ai', t('interview.error_busy'));
       }, 1000);
     } finally {
       setIsProcessing(false);
@@ -184,7 +270,7 @@ const InterviewPage = () => {
     if (stream) stream.getTracks().forEach(t => t.stop());
     window.speechSynthesis.cancel();
 
-    const loadingToast = toast.loading(isVi ? "Đang phân tích..." : "Analyzing...");
+    const loadingToast = toast.loading(t('interview.analyzing'));
 
     try {
       const token = localStorage.getItem('token');
@@ -197,7 +283,8 @@ const InterviewPage = () => {
         messages,
         cvData: localStorage.getItem('last_cv_content') || "",
         jdText: localStorage.getItem('last_jd_content') || "",
-        lang: i18n.language
+        lang: i18n.language,
+        cheatCount
       };
 
       const res = await fetchWithAuth(API_ENDPOINTS.INTERVIEWS.SAVE, {
@@ -209,7 +296,7 @@ const InterviewPage = () => {
       const data = await res.json().catch(() => ({ message: "Error" }));
 
       if (res.ok) {
-        toast.success(isVi ? "Hoàn thành" : "Finished", { id: loadingToast });
+        toast.success(t('results.congrats_title'), { id: loadingToast });
         navigate(`/results/${data.interviewId}`);
       } else {
         throw new Error(data.message || "Failed");
@@ -236,7 +323,7 @@ const InterviewPage = () => {
           <button onClick={() => setIsDark(!isDark)} className="w-9 h-9 rounded-full flex items-center justify-center hover:bg-surface-container-highest transition-colors border border-outline-variant/20 text-on-surface-variant">
             <span className="material-symbols-outlined text-lg">{isDark ? 'light_mode' : 'dark_mode'}</span>
           </button>
-          <button onClick={endInterview} className="bg-error/10 text-error px-5 py-2 rounded-xl font-black text-[10px] uppercase tracking-[0.2em] border border-error/20 hover:bg-error hover:text-on-error transition-all">Exit</button>
+          <button onClick={endInterview} className="bg-error/10 text-error px-5 py-2 rounded-xl font-black text-[10px] uppercase tracking-[0.2em] border border-error/20 hover:bg-error hover:text-on-error transition-all">{t('interview.exit')}</button>
         </div>
       </nav>
 
@@ -260,7 +347,7 @@ const InterviewPage = () => {
                     <span className="w-1.5 h-1.5 bg-primary rounded-full animate-bounce [animation-delay:0.2s]"></span>
                     <span className="w-1.5 h-1.5 bg-primary rounded-full animate-bounce [animation-delay:0.4s]"></span>
                   </div>
-                  <span className="text-[10px] font-black opacity-60 tracking-widest uppercase text-on-surface">{isVi ? 'Đang suy nghĩ...' : 'Thinking...'}</span>
+                  <span className="text-[10px] font-black opacity-60 tracking-widest uppercase text-on-surface">{t('interview.thinking')}</span>
                 </div>
               </div>
             )}
@@ -273,7 +360,7 @@ const InterviewPage = () => {
                 value={userInput} 
                 onChange={(e) => setUserInput(e.target.value)} 
                 onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()} 
-                placeholder={isVi ? "Nhập câu trả lời..." : "Type answer..."} 
+                placeholder={t('interview.type_answer')} 
                 className="flex-1 bg-transparent border-none outline-none py-4 text-base text-on-surface placeholder:text-on-surface-variant/50" 
               />
               <div className="flex items-center gap-2 pr-2">
@@ -295,7 +382,7 @@ const InterviewPage = () => {
             {isVideoOff ? (
               <div className="absolute inset-0 flex flex-col items-center justify-center bg-surface-container">
                 <span className="material-symbols-outlined text-6xl text-on-surface-variant/20">videocam_off</span>
-                <p className="text-[10px] font-black text-on-surface-variant/60 mt-4 uppercase tracking-widest">Camera Off</p>
+                <p className="text-[10px] font-black text-on-surface-variant/60 mt-4 uppercase tracking-widest">{t('interview.camera_off')}</p>
               </div>
             ) : (
               <video ref={videoRef} autoPlay playsInline muted className="absolute inset-0 w-full h-full object-cover transform -scale-x-100 bg-black" />
@@ -315,12 +402,52 @@ const InterviewPage = () => {
             <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-primary/40 to-transparent"></div>
             <div className="flex items-center gap-3 mb-2 opacity-60">
               <span className="material-symbols-outlined text-sm text-on-surface">timer</span>
-              <h3 className="font-black text-[10px] uppercase tracking-[0.3em] text-on-surface">{isVi ? 'THỜI GIAN CÒN LẠI' : 'TIME REMAINING'}</h3>
+              <h3 className="font-black text-[10px] uppercase tracking-[0.3em] text-on-surface">{t('interview.time_remaining')}</h3>
             </div>
             <p className={`text-5xl font-black tracking-tighter ${timeLeft < 60 ? 'text-error animate-pulse' : 'text-primary'}`}>
               {formatTime(timeLeft)}
             </p>
           </div>
+
+          {/* Spectators Management */}
+          {localStorage.getItem('spectator_room_code') && (
+            <div className="flex-1 bg-surface-container-low rounded-[32px] p-6 border border-outline-variant/10 shadow-xl flex flex-col overflow-hidden">
+               <div className="flex items-center justify-between mb-4 shrink-0">
+                  <div className="flex items-center gap-2">
+                    <span className="material-symbols-outlined text-primary text-sm">group</span>
+                    <h3 className="font-black text-[10px] uppercase tracking-widest text-on-surface">{t('spectator.panel_title')} ({spectators.length})</h3>
+                  </div>
+                  <div className="bg-primary/10 text-primary px-3 py-1 rounded-full text-[10px] font-black tracking-widest border border-primary/20">
+                    {t('watch.room_code')}: {localStorage.getItem('spectator_room_code')}
+                  </div>
+               </div>
+
+               <div className="flex-1 overflow-y-auto space-y-2 pr-2 scrollbar-none">
+                  {spectators.length > 0 ? spectators.map(spec => (
+                    <div key={spec.socketId} className="flex items-center justify-between p-3 bg-surface-container-high/50 rounded-2xl border border-outline-variant/5 group/item">
+                       <div className="flex items-center gap-3">
+                          <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-primary/20 to-secondary/20 flex items-center justify-center text-[10px] font-black text-primary border border-primary/10">
+                            {spec.name.charAt(0).toUpperCase()}
+                          </div>
+                          <span className="text-xs font-bold text-on-surface">{spec.name}</span>
+                       </div>
+                       <button 
+                         onClick={() => handleKick(spec.socketId)}
+                         className="w-8 h-8 rounded-xl bg-error/10 text-error flex items-center justify-center opacity-0 group-hover/item:opacity-100 transition-all hover:bg-error hover:text-on-error"
+                         title={t('spectator.kick_btn')}
+                       >
+                         <span className="material-symbols-outlined text-sm">person_remove</span>
+                       </button>
+                    </div>
+                  )) : (
+                    <div className="h-20 flex flex-col items-center justify-center opacity-30">
+                       <span className="material-symbols-outlined text-3xl mb-2">visibility_off</span>
+                       <p className="text-[9px] font-black uppercase tracking-widest">{t('spectator.panel_empty')}</p>
+                    </div>
+                  )}
+               </div>
+            </div>
+          )}
         </div>
       </main>
     </div>

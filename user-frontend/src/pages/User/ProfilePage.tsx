@@ -4,6 +4,8 @@ import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { API_ENDPOINTS } from '../../services/api.config';
 import { fetchWithAuth } from '../../services/fetchClient';
+import CalendarHeatmap from 'react-calendar-heatmap';
+import 'react-calendar-heatmap/dist/styles.css';
 
 
 const ProfilePage = () => {
@@ -29,6 +31,8 @@ const ProfilePage = () => {
     confirmPassword: ''
   });
 
+  const [heatmapData, setHeatmapData] = useState([]);
+
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const fetchProfile = async () => {
@@ -53,8 +57,21 @@ const ProfilePage = () => {
     }
   };
 
+  const fetchHeatmap = async () => {
+    try {
+      const res = await fetchWithAuth(API_ENDPOINTS.INTERVIEWS.GET_HEATMAP);
+      if (res.ok) {
+        const data = await res.json();
+        setHeatmapData(data);
+      }
+    } catch (error) {
+      console.error('Fetch heatmap error:', error);
+    }
+  };
+
   useEffect(() => {
     fetchProfile();
+    fetchHeatmap();
   }, []);
 
   const handleAvatarClick = () => {
@@ -322,6 +339,67 @@ const ProfilePage = () => {
               </button>
             </div>
           )}
+        </div>
+      )}
+
+      {/* Contribution Heatmap */}
+      {!showPasswordForm && (
+        <div className="mt-8 bg-surface-container-low border border-outline-variant/15 rounded-[32px] p-6 md:p-10 shadow-xl overflow-hidden">
+          <div className="flex items-center justify-between mb-8">
+            <div className="flex items-center gap-3">
+              <span className="material-symbols-outlined text-primary">calendar_month</span>
+              <h3 className="text-xl font-black text-on-surface uppercase tracking-widest">Hoạt động luyện tập</h3>
+            </div>
+            <div className="flex items-center gap-2 text-[10px] font-bold text-on-surface-variant opacity-60">
+              <span>Ít</span>
+              <div className="flex gap-1">
+                <div className="w-3 h-3 rounded-sm bg-surface-container-highest"></div>
+                <div className="w-3 h-3 rounded-sm bg-primary/30"></div>
+                <div className="w-3 h-3 rounded-sm bg-primary/60"></div>
+                <div className="w-3 h-3 rounded-sm bg-primary"></div>
+              </div>
+              <span>Nhiều</span>
+            </div>
+          </div>
+          
+          <div className="heatmap-container">
+            <CalendarHeatmap
+              startDate={new Date(new Date().setFullYear(new Date().getFullYear() - 1))}
+              endDate={new Date()}
+              values={heatmapData}
+              classForValue={(value) => {
+                if (!value || value.count === 0) return 'color-empty';
+                if (value.count < 3) return 'color-scale-1';
+                if (value.count < 5) return 'color-scale-2';
+                return 'color-scale-3';
+              }}
+              tooltipDataAttrs={(value: any) => {
+                return {
+                  'data-tip': value.date ? `${value.date}: ${value.count} lượt` : 'Không có hoạt động',
+                };
+              }}
+            />
+          </div>
+          
+          <style>{`
+            .heatmap-container {
+              width: 100%;
+              padding: 10px 0;
+            }
+            .react-calendar-heatmap .color-empty { fill: rgba(255, 255, 255, 0.05); }
+            .react-calendar-heatmap .color-scale-1 { fill: rgba(99, 102, 241, 0.3); }
+            .react-calendar-heatmap .color-scale-2 { fill: rgba(99, 102, 241, 0.6); }
+            .react-calendar-heatmap .color-scale-3 { fill: rgba(99, 102, 241, 1); }
+            .react-calendar-heatmap rect {
+               rx: 2;
+               ry: 2;
+               transition: all 0.2s;
+            }
+            .react-calendar-heatmap rect:hover {
+               stroke: rgba(255, 255, 255, 0.2);
+               stroke-width: 1px;
+            }
+          `}</style>
         </div>
       )}
     </div>
