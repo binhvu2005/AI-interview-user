@@ -27,13 +27,16 @@ const SpectatorPage = () => {
     });
 
     socket.on('signal', ({ from, signal }) => {
+      console.log('[WebRTC] Received signal from host:', signal.type || 'candidate');
       // If we get an offer but already have a peer, it means the host restarted
       if (signal.type === 'offer' && peerRef.current) {
+        console.log('[WebRTC] Host restarted, recreating peer...');
         peerRef.current.destroy();
         peerRef.current = null;
       }
 
       if (!peerRef.current) {
+        console.log('[WebRTC] Creating new peer connection...');
         // We are the receiver, host initiates
         const peer = new Peer({
           initiator: false,
@@ -54,10 +57,12 @@ const SpectatorPage = () => {
         });
 
         peer.on('signal', (data) => {
+          console.log('[WebRTC] Sending signal back to host:', data.type || 'candidate');
           socket.emit('signal', { to: from, signal: data });
         });
 
         peer.on('stream', (stream) => {
+          console.log('[WebRTC] Stream received successfully!');
           setRemoteStream(stream);
           if (remoteVideoRef.current) {
             remoteVideoRef.current.srcObject = stream;
@@ -66,8 +71,12 @@ const SpectatorPage = () => {
         });
 
         peer.on('error', (err) => {
-          console.error('Peer error:', err);
+          console.error('[WebRTC] Peer error:', err);
           toast.error(t('watch.err_stream'));
+        });
+
+        peer.on('connect', () => {
+          console.log('[WebRTC] Peer connected!');
         });
 
         peerRef.current = peer;

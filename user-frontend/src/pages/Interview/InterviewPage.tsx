@@ -107,6 +107,7 @@ const InterviewPage = () => {
     });
 
     socket.on('signal', ({ from, signal }) => {
+      console.log('[WebRTC] Received signal from spectator:', from, signal.type || 'candidate');
       const peer = peersRef.current.get(from);
       if (peer) peer.signal(signal);
     });
