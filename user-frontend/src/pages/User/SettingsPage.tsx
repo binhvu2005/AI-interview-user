@@ -1,10 +1,64 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
+import { API_ENDPOINTS } from '../../services/api.config';
+import toast from 'react-hot-toast';
 
 const SettingsPage = () => {
   const { t, i18n } = useTranslation();
   const [isDark, setIsDark] = useState(() => localStorage.getItem('theme') !== 'light');
+  const [emailNotifications, setEmailNotifications] = useState(false);
+  const [isVip, setIsVip] = useState(localStorage.getItem('isVip') === 'true');
+  const [loading, setLoading] = useState(true);
+
+  React.useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        if (!token) return;
+        const res = await fetch(API_ENDPOINTS.AUTH.ME, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        if (res.ok) {
+          const data = await res.json();
+          setEmailNotifications(data.emailNotifications || false);
+          setIsVip(data.isVip || false);
+        }
+      } catch (err) {
+        console.error('Failed to fetch user settings', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchUserData();
+  }, []);
+
+  const toggleEmailNotifications = async () => {
+    if (!isVip) {
+      toast.error(isVi ? 'Tính năng này chỉ dành cho thành viên VIP' : 'This feature is for VIP members only');
+      return;
+    }
+    const next = !emailNotifications;
+    setEmailNotifications(next);
+    try {
+      const token = localStorage.getItem('token');
+      await fetch(API_ENDPOINTS.AUTH.PROFILE, {
+        method: 'PUT',
+        headers: { 
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}` 
+        },
+        body: JSON.stringify({ emailNotifications: next })
+      });
+      toast.success(isVi ? 'Đã cập nhật cài đặt thông báo' : 'Notification settings updated');
+    } catch (err) {
+      toast.error(isVi ? 'Lỗi khi cập nhật cài đặt' : 'Error updating settings');
+      setEmailNotifications(!next);
+    }
+  };
+
+
+
 
   const toggleTheme = () => {
     const next = !isDark;
@@ -110,19 +164,30 @@ const SettingsPage = () => {
           </div>
           
           <div className="p-4">
-            <div className="flex items-center justify-between p-5 bg-surface-container-lowest/50 rounded-2xl border border-outline-variant/5 opacity-50 grayscale cursor-not-allowed">
+                        <div className={`flex items-center justify-between p-5 bg-surface-container-lowest rounded-2xl border border-outline-variant/10 transition-all duration-300 ${!isVip ? 'opacity-70 cursor-not-allowed grayscale' : 'hover:border-primary/30 group'}`}>
               <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-2xl bg-secondary/10 flex items-center justify-center text-secondary">
-                  <span className="material-symbols-outlined text-2xl">notifications</span>
+                <div className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all duration-500 ${emailNotifications ? 'bg-primary/10 text-primary' : 'bg-surface-container-highest text-on-surface-variant'}`}>
+                  <span className="material-symbols-outlined text-2xl group-hover:rotate-12 transition-transform">notifications_active</span>
                 </div>
                 <div>
-                  <h4 className="font-bold text-sm text-on-surface">{t('settings.email_notif')}</h4>
-                  <p className="text-[11px] text-on-surface-variant mt-0.5 font-medium">{t('settings.email_notif_desc')}</p>
+                  <h4 className="font-bold text-sm text-on-surface flex items-center gap-2">
+                    {t('settings.email_notif')}
+                    {!isVip && <span className="text-[9px] bg-amber-500/20 text-amber-600 px-2 py-0.5 rounded-full uppercase tracking-tighter font-black">VIP ONLY</span>}
+                  </h4>
+                  <p className="text-[11px] text-on-surface-variant mt-0.5 font-medium opacity-70">{t('settings.email_notif_desc')}</p>
                 </div>
               </div>
-              <div className="flex items-center gap-2 bg-surface-container-highest px-3 py-1 rounded-full">
-                 <span className="text-[9px] font-black uppercase tracking-tighter opacity-40">Coming Soon</span>
-              </div>
+              <button
+                onClick={toggleEmailNotifications}
+                disabled={!isVip}
+                className={`w-14 h-8 rounded-full relative transition-all duration-500 shadow-inner group/toggle ${emailNotifications ? 'bg-primary' : 'bg-surface-container-highest'}`}
+              >
+                <div className={`w-6 h-6 rounded-full bg-white absolute top-1 shadow-md transition-all duration-500 transform flex items-center justify-center ${emailNotifications ? 'translate-x-7' : 'translate-x-1'}`}>
+                   <span className="material-symbols-outlined text-[14px] text-primary opacity-0 group-hover/toggle:opacity-100 transition-opacity">
+                     {emailNotifications ? 'check' : 'close'}
+                   </span>
+                </div>
+              </button>
             </div>
           </div>
         </div>

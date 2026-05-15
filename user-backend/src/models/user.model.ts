@@ -10,6 +10,7 @@ const UserSchema = new mongoose.Schema({
   avatar: { type: String, default: '' },
   isBlocked: { type: Boolean, default: false },
   isVip: { type: Boolean, default: false },
+  emailNotifications: { type: Boolean, default: false },
   refreshToken: { type: String, default: null },
   savedCVs: [{
     id: { type: String, required: true },

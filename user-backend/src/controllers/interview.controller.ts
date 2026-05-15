@@ -64,7 +64,7 @@ export const saveAndEvaluateInterview = async (req: AuthRequest, res: Response) 
 
     // Gửi email kết quả
     const user = await User.findById(userId);
-    if (user && user.email) {
+    if (user && user.email && user.isVip && user.emailNotifications) {
       EmailService.sendInterviewResult(
         user.email,
         user.fullName || 'Ứng viên',

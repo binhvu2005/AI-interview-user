@@ -43,6 +43,21 @@ export const sendInterviewResult = async (to: string, candidateName: string, pos
         </div>
         
         <p><strong>Kết luận:</strong> ${resultDetails.summary}</p>
+
+        <h3 style="color: #333; margin-top: 20px;">Phân tích chi tiết câu hỏi:</h3>
+        ${resultDetails.detailedFeedback && resultDetails.detailedFeedback.length > 0 ? 
+          resultDetails.detailedFeedback.map((fb: any, index: number) => `
+            <div style="background-color: #ffffff; padding: 15px; border: 1px solid #e0e0e0; border-radius: 8px; margin-bottom: 15px;">
+              <p style="margin: 0 0 10px 0; color: #555;"><strong>Câu hỏi ${index + 1}:</strong> ${fb.question || ''}</p>
+              <div style="background-color: #f5f5f5; padding: 10px; border-radius: 5px; margin-bottom: 10px;">
+                <p style="margin: 0; font-size: 13px; color: #666;"><strong>Bạn trả lời:</strong> ${fb.answer || 'Không trả lời'}</p>
+              </div>
+              <p style="margin: 0 0 5px 0; font-size: 13px; color: ${fb.score > 5 ? '#4CAF50' : '#f44336'};"><strong>Đánh giá (${fb.score}/10):</strong> ${fb.feedback || ''}</p>
+              <p style="margin: 0; font-size: 13px; color: #2196F3;"><strong>Gợi ý:</strong> ${fb.idealAnswer || ''}</p>
+            </div>
+          `).join('') 
+        : '<p>Không có dữ liệu phân tích chi tiết.</p>'}
+
         
         <p style="text-align: center; margin-top: 30px;">
           <a href="https://ai-interview.id.vn" style="background-color: #4CAF50; color: white; padding: 12px 25px; text-decoration: none; border-radius: 5px; font-weight: bold; display: inline-block;">Xem Chi Tiết Đánh Giá</a>

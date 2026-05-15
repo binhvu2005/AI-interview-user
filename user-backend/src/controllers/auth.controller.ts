@@ -51,7 +51,7 @@ export const getMe = async (req: AuthRequest, res: Response) => {
 
 export const updateProfile = async (req: AuthRequest, res: Response) => {
   try {
-    const { fullName, phoneNumber, targetRole, bio, avatar } = req.body;
+    const { fullName, phoneNumber, targetRole, bio, avatar, emailNotifications } = req.body;
     const user = await User.findById(req.user?.id);
     if (!user) return res.status(404).json({ message: 'User not found' });
 
@@ -60,6 +60,11 @@ export const updateProfile = async (req: AuthRequest, res: Response) => {
     if (targetRole !== undefined) user.targetRole = targetRole;
     if (bio !== undefined) user.bio = bio;
     if (avatar !== undefined) user.avatar = avatar;
+    if (emailNotifications !== undefined) {
+      if (user.isVip) {
+        user.emailNotifications = emailNotifications;
+      }
+    }
 
     await user.save();
     res.json(user);
