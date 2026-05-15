@@ -1,7 +1,9 @@
 import { Response } from 'express';
 import { AuthRequest } from '../middlewares/auth.middleware';
 import Interview from '../models/Interview';
+import { User } from '../models/user.model';
 import * as AIService from '../services/ai.service';
+import * as EmailService from '../services/email.service';
 
 export const saveAndEvaluateInterview = async (req: AuthRequest, res: Response) => {
   try {
@@ -59,6 +61,17 @@ export const saveAndEvaluateInterview = async (req: AuthRequest, res: Response) 
 
     console.log('[Evaluation] Saving interview to database...');
     await newInterview.save();
+
+    // Gửi email kết quả
+    const user = await User.findById(userId);
+    if (user && user.email) {
+      EmailService.sendInterviewResult(
+        user.email,
+        user.fullName || 'Ứng viên',
+        position,
+        evaluation
+      ).catch(err => console.error('Error sending email:', err));
+    }
 
     res.status(201).json({
       message: 'Interview saved and evaluated successfully',

@@ -13,6 +13,7 @@ router.post('/logout', authMiddleware, AuthController.logout);
 router.get('/me', authMiddleware, AuthController.getMe);
 router.put('/profile', authMiddleware, AuthController.updateProfile);
 router.put('/change-password', authMiddleware, AuthController.changePassword);
+router.post('/forgot-password', AuthController.forgotPassword);
 
 // CV Vault Endpoints
 router.post('/cv', authMiddleware, upload.single('file'), AuthController.uploadCV);

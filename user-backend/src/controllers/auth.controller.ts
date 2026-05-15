@@ -4,6 +4,17 @@ import bcrypt from 'bcryptjs';
 import * as AuthService from '../services/auth.service';
 import * as CVService from '../services/cv.service';
 import { User } from '../models/user.model';
+import * as EmailService from '../services/email.service';
+
+const generateRandomPassword = (length: number = 10) => {
+  const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+";
+  let password = "";
+  for (let i = 0; i < length; i++) {
+    const randomIndex = Math.floor(Math.random() * charset.length);
+    password += charset[randomIndex];
+  }
+  return password;
+};
 
 export const register = async (req: any, res: Response) => {
   try {
@@ -120,5 +131,30 @@ export const logout = async (req: AuthRequest, res: Response) => {
     res.json({ message: 'Logged out successfully' });
   } catch (err: any) {
     res.status(500).json({ message: 'Server error during logout' });
+  }
+};
+
+export const forgotPassword = async (req: Request, res: Response) => {
+  try {
+    const { email } = req.body;
+    if (!email) return res.status(400).json({ message: 'Vui lòng cung cấp email' });
+
+    const user = await User.findOne({ email });
+    if (!user) return res.status(404).json({ message: 'Không tìm thấy tài khoản với email này' });
+
+    const newPassword = generateRandomPassword();
+    const salt = await bcrypt.genSalt(10);
+    user.password = await bcrypt.hash(newPassword, salt);
+    await user.save();
+
+    const emailSent = await EmailService.sendForgotPassword(email, newPassword);
+    
+    if (emailSent) {
+      res.json({ message: 'Mật khẩu mới đã được gửi đến email của bạn' });
+    } else {
+      res.status(500).json({ message: 'Lỗi khi gửi email, vui lòng thử lại sau' });
+    }
+  } catch (err: any) {
+    res.status(500).json({ message: 'Lỗi server', error: err.message });
   }
 };
