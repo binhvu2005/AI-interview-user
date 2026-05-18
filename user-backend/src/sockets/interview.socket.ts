@@ -37,6 +37,11 @@ export const setupInterviewSockets = (io: Server) => {
       io.to(to).emit('signal', { from: socket.id, signal });
     });
 
+    // Sync Messages from Host to Spectators
+    socket.on('sync-messages', ({ roomCode, messages }: { roomCode: string, messages: any[] }) => {
+      socket.to(roomCode).emit('sync-messages', messages);
+    });
+
     // Kick spectator (Only Host can do this)
     socket.on('kick-spectator', (spectatorSocketId: string) => {
       if (socket.data.isHost) {

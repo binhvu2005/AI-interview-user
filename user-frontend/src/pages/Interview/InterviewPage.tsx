@@ -43,6 +43,18 @@ const InterviewPage = () => {
   // Spectator Management
   const [spectators, setSpectators] = useState<{ socketId: string, name: string }[]>([]);
   const peersRef = useRef<Map<string, Peer.Instance>>(new Map());
+  const messagesRef = useRef<Message[]>([]);
+
+  useEffect(() => {
+    messagesRef.current = messages;
+    
+    // Sync messages immediately to all spectators when a new message is added
+    const roomCode = localStorage.getItem('spectator_room_code');
+    const socket = socketService.getSocket();
+    if (socket && roomCode && messages.length > 0) {
+      socket.emit('sync-messages', { roomCode, messages });
+    }
+  }, [messages]);
 
   const createPeer = (spectatorSocketId: string, stream: MediaStream) => {
     const socket = socketService.getSocket();
@@ -102,6 +114,11 @@ const InterviewPage = () => {
           createPeer(spec.socketId, stream);
         }
       });
+
+      // Emit current messages to synchronize with newly joined/updated spectators
+      if (messagesRef.current.length > 0) {
+        socket.emit('sync-messages', { roomCode, messages: messagesRef.current });
+      }
 
       // Cleanup peers for spectators who left
       const currentSocketIds = new Set(list.map(s => s.socketId));
