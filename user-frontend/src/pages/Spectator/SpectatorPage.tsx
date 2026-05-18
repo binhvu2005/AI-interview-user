@@ -24,16 +24,15 @@ const SpectatorPage = () => {
 
     socket.on('connect', () => {
       console.log('--- Socket Connected! ID:', socket.id, '---');
+      if (code) {
+        console.log('--- Joining room:', code, 'as', name, '---');
+        socket.emit('join-room-spectator', { roomCode: code, name });
+      }
     });
 
     socket.on('connect_error', (err: any) => {
       console.error('--- Socket Connection Error: ---', err);
     });
-
-    if (code) {
-      console.log('--- Joining room:', code, 'as', name, '---');
-      socket.emit('join-room-spectator', { roomCode: code, name });
-    }
 
     socket.on('error-msg', (msg: string) => {
       console.error('--- Received error-msg:', msg, '---');
