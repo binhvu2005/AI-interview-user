@@ -13,7 +13,9 @@
     "@react-oauth/google": "^0.13.5",
     "@tailwindcss/vite": "^4.2.2",
     "@types/simple-peer": "^9.11.9",
+    "buffer": "^6.0.3",
     "date-fns": "^4.1.0",
+    "events": "^3.3.0",
     "i18next": "^26.0.5",
     "i18next-browser-languagedetector": "^8.2.1",
     "react": "^19.2.4",
@@ -25,8 +27,7 @@
     "react-router-dom": "^7.14.1",
     "recharts": "^3.8.1",
     "simple-peer": "^9.11.1",
-    "socket.io-client": "^4.8.3",
-    "buffer": "^6.0.3"
+    "socket.io-client": "^4.8.3"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.4",

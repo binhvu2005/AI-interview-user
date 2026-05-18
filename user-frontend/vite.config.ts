@@ -9,4 +9,9 @@ export default defineConfig({
     global: 'globalThis',
     'process.env': {},
   },
+  resolve: {
+    alias: {
+      events: 'events',
+    },
+  },
 })
