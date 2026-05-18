@@ -39,7 +39,7 @@ export const setupInterviewSockets = (io: Server) => {
 
     // Sync Messages from Host to Spectators
     socket.on('sync-messages', ({ roomCode, messages }: { roomCode: string, messages: any[] }) => {
-      socket.to(roomCode).emit('sync-messages', messages);
+      io.to(roomCode).emit('sync-messages', messages);
     });
 
     // Kick spectator (Only Host can do this)

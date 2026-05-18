@@ -219,7 +219,6 @@ const SpectatorPage = () => {
               ref={remoteVideoRef} 
               autoPlay 
               playsInline 
-              muted
               className="absolute inset-0 w-full h-full object-cover bg-black"
             />
 
