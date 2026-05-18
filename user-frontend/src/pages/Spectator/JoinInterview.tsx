@@ -32,7 +32,7 @@ const JoinInterview = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background p-6">
+    <div className="min-h-[calc(100vh-160px)] flex items-center justify-center p-6">
       <div className="max-w-md w-full bg-surface-container-low border border-outline-variant/20 rounded-[40px] p-10 shadow-2xl animate-in zoom-in-95 duration-500">
         <div className="w-20 h-20 mx-auto bg-gradient-to-tr from-primary to-secondary rounded-3xl flex items-center justify-center mb-8 shadow-lg shadow-primary/20 overflow-hidden">
           {userAvatar ? (

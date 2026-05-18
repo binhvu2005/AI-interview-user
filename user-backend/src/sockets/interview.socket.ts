@@ -42,6 +42,11 @@ export const setupInterviewSockets = (io: Server) => {
       io.to(roomCode).emit('sync-messages', messages);
     });
 
+    // Interview Ended (Broadcast to everyone in the room)
+    socket.on('interview-ended', (roomCode: string) => {
+      io.to(roomCode).emit('interview-ended');
+    });
+
     // Kick spectator (Only Host can do this)
     socket.on('kick-spectator', (spectatorSocketId: string) => {
       if (socket.data.isHost) {

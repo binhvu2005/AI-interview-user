@@ -305,6 +305,13 @@ const InterviewPage = () => {
   const stopRecording = () => { if (recognitionRef.current) { setIsRecording(false); recognitionRef.current.stop(); } };
 
   const endInterview = async () => {
+    // Notify spectators first
+    const socket = socketService.getSocket();
+    const roomCode = localStorage.getItem('spectator_room_code');
+    if (socket && roomCode) {
+      socket.emit('interview-ended', roomCode);
+    }
+
     if (stream) stream.getTracks().forEach(t => t.stop());
     window.speechSynthesis.cancel();
 

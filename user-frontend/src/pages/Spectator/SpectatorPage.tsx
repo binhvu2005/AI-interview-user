@@ -126,10 +126,16 @@ const SpectatorPage = () => {
       navigate('/join');
     });
 
+    socket.on('interview-ended', () => {
+      toast.success(isVi ? 'Buổi phỏng vấn đã kết thúc thành công.' : 'The interview has ended successfully.', { icon: '🎓' });
+      navigate('/join');
+    });
+
     return () => {
       socket.off('error-msg');
       socket.off('signal');
       socket.off('kicked');
+      socket.off('interview-ended');
       socket.off('sync-messages');
       if (peerRef.current) peerRef.current.destroy();
       socketService.disconnect();

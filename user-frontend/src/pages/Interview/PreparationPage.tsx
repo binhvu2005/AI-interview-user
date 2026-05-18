@@ -207,6 +207,11 @@ const PreparationPage = () => {
         const code = generateRoomCode();
         setRoomCode(code);
         localStorage.setItem('spectator_room_code', code);
+
+        // Connect socket and join as host immediately so the room exists for spectators
+        const socket = socketService.connect();
+        socket.emit('join-room-host', code);
+
         setShowInviteModal(true);
       } else {
         throw new Error('Failed to generate interview questions');

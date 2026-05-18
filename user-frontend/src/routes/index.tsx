@@ -43,15 +43,12 @@ export const AppRoutes = [
       { path: '/results', element: <ResultsPage /> },
       { path: '/results/:id', element: <ResultsPage /> },
       { path: '/showcase', element: <ShowcasePage /> },
+      { path: '/join', element: <JoinInterview /> },
     ]
   },
   {
     path: '/interview',
     element: <ProtectedRoute><InterviewPage /></ProtectedRoute>
-  },
-  {
-    path: '/join',
-    element: <JoinInterview />
   },
   {
     path: '/watch/:code',
