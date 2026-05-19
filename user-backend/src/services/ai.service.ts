@@ -118,14 +118,31 @@ export const processInterviewChat = async (history: any[], cvData: string, jdTex
 
   // Check for "không biết" in the latest user response
   const lastUserMessage = [...history].reverse().find(m => m.role === 'user')?.content?.toLowerCase() || "";
-  const isCandidateStruggling = lastUserMessage === "không" ||
+  
+  const isCandidateAskingClarification = 
+    lastUserMessage.includes("chưa rõ câu hỏi") ||
+    lastUserMessage.includes("chưa hiểu câu hỏi") ||
+    lastUserMessage.includes("chưa rõ ý") ||
+    lastUserMessage.includes("chưa hiểu ý") ||
+    lastUserMessage.includes("giải thích thêm") ||
+    lastUserMessage.includes("giải thích lại") ||
+    lastUserMessage.includes("làm rõ câu hỏi") ||
+    lastUserMessage.includes("giải thích rõ") ||
+    lastUserMessage.includes("hỏi lại") ||
+    lastUserMessage.includes("clarify") ||
+    lastUserMessage.includes("explain the question") ||
+    lastUserMessage.includes("don't understand the question") ||
+    lastUserMessage.includes("what do you mean");
+
+  const isCandidateStruggling = !isCandidateAskingClarification && (
+    lastUserMessage === "không" ||
     lastUserMessage.includes("không biết") ||
     lastUserMessage.includes("chưa rõ") ||
     lastUserMessage.includes("không có kinh nghiệm") ||
     lastUserMessage.includes("don't know") ||
     lastUserMessage.includes("not sure") ||
-    (lastUserMessage.length < 5 && lastUserMessage.length > 0);
-
+    (lastUserMessage.length < 5 && lastUserMessage.length > 0)
+  );
 
   const aiMessages = history.filter(m => m.role === 'ai');
   const currentTurn = aiMessages.length; // Total AI messages (including probes)
@@ -135,6 +152,14 @@ export const processInterviewChat = async (history: any[], cvData: string, jdTex
   let steeringInstruction = "";
   if (currentTurn === 0) {
     steeringInstruction = "PHASE: INTRO. Introduce Obsidian AI, welcome the candidate and ask for a BRIEF self-introduction (under 2 minutes).";
+  } else if (isCandidateAskingClarification) {
+    steeringInstruction = `
+    CRITICAL INSTRUCTION: The candidate explicitly asked for clarification, explanation, or rephrasing of your question.
+    ACTION REQUIRED:
+    1. DO NOT change the topic. DO NOT move to a new topic.
+    2. In the 'feedback' JSON field, politely and briefly explain or clarify the question/scenario in simpler terms or provide a helpful hint/context (under 30 words).
+    3. In the 'nextQuestion' JSON field, rephrase or restate the exact same question/scenario clearly, encouraging them to try answering it.
+    `;
   } else if (isCandidateStruggling) {
     steeringInstruction = `
     CRITICAL INSTRUCTION: The candidate explicitly stated they DO NOT KNOW or provided a very poor/short answer. 
