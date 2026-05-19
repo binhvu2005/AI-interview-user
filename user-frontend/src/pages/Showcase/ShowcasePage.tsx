@@ -72,28 +72,28 @@ const ShowcasePage = () => {
     setSelectedLevel('');
   };
 
-  const getScoreColor = (score: number) => {
-    if (score >= 90) return 'text-primary';
-    if (score >= 70) return 'text-green-400';
-    if (score >= 50) return 'text-amber-400';
-    return 'text-red-400';
+  const getScoreBadgeStyles = (score: number) => {
+    if (score >= 90) return 'bg-yellow-500/10 text-yellow-500 border border-yellow-500/25';
+    if (score >= 70) return 'bg-green-500/10 text-green-400 border border-green-500/25';
+    if (score >= 50) return 'bg-amber-500/10 text-amber-400 border border-amber-500/25';
+    return 'bg-red-500/10 text-red-400 border border-red-500/25';
   };
 
   return (
-    <div className="max-w-7xl mx-auto pb-12">
+    <div className="max-w-7xl mx-auto pb-12 px-4 animate-in fade-in slide-in-from-bottom-4 duration-500">
       {/* Header Section */}
-      <header className="mb-12 relative overflow-hidden rounded-[40px] bg-gradient-to-r from-primary/10 via-surface to-secondary/10 border border-primary/10 p-12">
+      <header className="mb-12 relative overflow-hidden rounded-[40px] bg-gradient-to-r from-primary/10 via-surface-container-low to-secondary/10 border border-outline-variant/10 p-8 sm:p-12 shadow-lg">
         <div className="absolute -top-24 -right-24 w-64 h-64 bg-primary/20 rounded-full blur-3xl"></div>
         <div className="absolute -bottom-24 -left-24 w-64 h-64 bg-secondary/20 rounded-full blur-3xl"></div>
         
         <div className="relative z-10 flex flex-col items-center text-center">
-          <div className="w-16 h-16 rounded-2xl bg-primary/20 flex items-center justify-center mb-6 shadow-inner border border-primary/30">
-            <span className="material-symbols-outlined text-4xl text-primary font-light">military_tech</span>
+          <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-yellow-500/20 to-amber-500/10 flex items-center justify-center mb-6 shadow-inner border border-yellow-500/30">
+            <span className="material-symbols-outlined text-4xl text-yellow-500 font-bold">military_tech</span>
           </div>
-          <h1 className="text-5xl font-black tracking-tighter mb-4 text-on-surface bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary">
+          <h1 className="text-4xl sm:text-5xl md:text-6xl font-black tracking-tighter mb-4 text-on-surface bg-clip-text text-transparent bg-gradient-to-r from-primary via-on-surface to-secondary leading-none">
             {isVi ? 'Hội Trường Danh Vọng' : 'Hall of Fame Showcase'}
           </h1>
-          <p className="text-on-surface-variant max-w-2xl leading-relaxed text-base opacity-80">
+          <p className="text-on-surface-variant max-w-2xl leading-relaxed text-sm sm:text-base opacity-80 font-medium">
             {isVi 
               ? 'Khám phá những bài phỏng vấn xuất sắc nhất từ cộng đồng. Học hỏi từ cách trả lời của các ứng viên hàng đầu theo từng vị trí và cấp độ.' 
               : 'Discover top-rated interviews from the community. Learn from the best responses across various roles and levels.'}
@@ -102,13 +102,13 @@ const ShowcasePage = () => {
       </header>
 
       {/* Filter Section */}
-      <section className="bg-surface-container border border-outline-variant/15 rounded-3xl p-4 sm:p-6 shadow-sm mb-10 flex flex-col md:flex-row gap-4 items-center justify-between">
+      <section className="bg-surface-container-low border border-outline-variant/10 rounded-3xl p-5 shadow-sm mb-10 flex flex-col md:flex-row gap-4 items-center justify-between backdrop-blur-md">
         <div className="flex flex-col md:flex-row gap-4 w-full md:w-auto">
-          <div className="relative group w-full md:min-w-[200px]">
+          <div className="relative group w-full md:min-w-[220px]">
             <select 
               value={selectedPosition} 
               onChange={(e) => setSelectedPosition(e.target.value)} 
-              className="w-full bg-surface-container-high border border-outline-variant/20 rounded-xl px-4 py-3 text-on-surface appearance-none text-sm font-medium focus:border-primary/50 transition-all cursor-pointer"
+              className="w-full bg-surface-container-high border border-outline-variant/10 rounded-2xl px-5 py-3.5 text-on-surface appearance-none text-sm font-semibold focus:border-primary/50 outline-none transition-all cursor-pointer"
             >
                 <option value="">{isVi ? 'Tất cả vị trí' : 'All Positions'}</option>
                 {positions.map(p => <option key={p} value={p}>{p}</option>)}
@@ -116,11 +116,11 @@ const ShowcasePage = () => {
             <span className="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none text-sm">expand_more</span>
           </div>
           
-          <div className="relative group w-full md:min-w-[200px]">
+          <div className="relative group w-full md:min-w-[220px]">
             <select 
               value={selectedLevel} 
               onChange={(e) => setSelectedLevel(e.target.value)} 
-              className="w-full bg-surface-container-high border border-outline-variant/20 rounded-xl px-4 py-3 text-on-surface appearance-none text-sm font-medium focus:border-primary/50 transition-all cursor-pointer"
+              className="w-full bg-surface-container-high border border-outline-variant/10 rounded-2xl px-5 py-3.5 text-on-surface appearance-none text-sm font-semibold focus:border-primary/50 outline-none transition-all cursor-pointer"
             >
               <option value="">{isVi ? 'Tất cả cấp độ' : 'All Levels'}</option>
               {levels.map(l => <option key={l} value={l}>{l}</option>)}
@@ -132,9 +132,9 @@ const ShowcasePage = () => {
         {(selectedPosition || selectedLevel) && (
           <button 
             onClick={clearFilters}
-            className="text-[11px] font-bold uppercase tracking-widest text-primary hover:text-primary/80 transition-colors flex items-center gap-1"
+            className="text-[11px] font-black uppercase tracking-widest text-primary hover:text-primary/80 transition-colors flex items-center gap-1.5 self-end md:self-auto py-2 px-4 rounded-xl bg-primary/5 border border-primary/10"
           >
-            <span className="material-symbols-outlined text-sm">close</span>
+            <span className="material-symbols-outlined text-sm font-bold">close</span>
             {isVi ? 'Xóa bộ lọc' : 'Clear Filters'}
           </button>
         )}
@@ -156,61 +156,89 @@ const ShowcasePage = () => {
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {interviews.map((interview) => (
-            <div 
-              key={interview._id} 
-              className="group bg-surface-container-low border border-outline-variant/10 rounded-3xl p-6 hover:border-primary/30 hover:shadow-xl hover:shadow-primary/5 transition-all duration-300 relative overflow-hidden flex flex-col"
-            >
-              {/* Top Section */}
-              <div className="flex justify-between items-start mb-6">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-surface-container-high border border-outline-variant/20 overflow-hidden flex items-center justify-center">
-                     {interview.userId?.avatar ? (
-                       <img src={interview.userId.avatar} alt="avatar" className="w-full h-full object-cover" />
-                     ) : (
-                       <span className="material-symbols-outlined text-on-surface-variant text-xl">person</span>
-                     )}
-                  </div>
-                  <div>
-                    <h4 className="text-sm font-bold text-on-surface leading-none mb-1">
-                      {interview.userId?.fullName || (isVi ? 'Ứng viên ẩn danh' : 'Anonymous')}
-                    </h4>
-                    <p className="text-[10px] uppercase tracking-widest text-on-surface-variant">
-                      {new Date(interview.createdAt).toLocaleDateString()}
-                    </p>
-                  </div>
-                </div>
-                <div className={`flex items-center gap-1 bg-surface-container-highest px-3 py-1.5 rounded-full ${getScoreColor(interview.evaluation?.totalScore || 0)}`}>
-                  <span className="material-symbols-outlined text-[14px]">star</span>
-                  <span className="text-xs font-black">{interview.evaluation?.totalScore || 0}</span>
-                </div>
-              </div>
-
-              {/* Role Details */}
-              <div className="mb-8 flex-1">
-                <h3 className="text-lg font-black text-on-surface mb-2 group-hover:text-primary transition-colors">
-                  {interview.position}
-                </h3>
-                <div className="flex items-center gap-2 text-xs font-medium text-on-surface-variant">
-                  <span className="bg-surface-container-highest px-2.5 py-1 rounded-md">{interview.level}</span>
-                  <span className="w-1 h-1 rounded-full bg-outline-variant/50"></span>
-                  <span className="flex items-center gap-1">
-                    <span className="material-symbols-outlined text-[12px]">timer</span>
-                    {interview.duration} {isVi ? 'phút' : 'mins'}
-                  </span>
-                </div>
-              </div>
-
-              {/* Action */}
-              <button 
-                onClick={() => navigate(`/results/${interview._id}`)}
-                className="w-full py-3.5 rounded-xl bg-surface-container-high text-on-surface text-xs font-bold uppercase tracking-widest flex items-center justify-center gap-2 group-hover:bg-primary group-hover:text-on-primary transition-colors"
+          {interviews.map((interview) => {
+            const score = interview.evaluation?.totalScore || 0;
+            const isHighScore = score >= 90;
+            return (
+              <div 
+                key={interview._id} 
+                className={`group relative border rounded-[32px] p-6 transition-all duration-500 overflow-hidden flex flex-col ${
+                  isHighScore 
+                    ? 'bg-gradient-to-br from-surface-container-low via-surface-container-lowest to-yellow-500/5 border-yellow-500/30 hover:border-yellow-500/60 shadow-md hover:shadow-yellow-500/5' 
+                    : 'bg-gradient-to-br from-surface-container-low to-surface-container-lowest border-outline-variant/10 hover:border-primary/40 shadow-sm hover:shadow-primary/5 hover:shadow-2xl'
+                } hover:-translate-y-1`}
               >
-                {isVi ? 'Xem chi tiết' : 'View Details'}
-                <span className="material-symbols-outlined text-sm group-hover:translate-x-1 transition-transform">arrow_forward</span>
-              </button>
-            </div>
-          ))}
+                {/* Background spotlight on card hover */}
+                <div className={`absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none ${
+                  isHighScore 
+                    ? 'bg-gradient-to-tr from-yellow-500/5 via-transparent to-amber-500/5' 
+                    : 'bg-gradient-to-tr from-primary/5 via-transparent to-secondary/5'
+                }`}></div>
+
+                {/* Highlight Badge for High Score */}
+                {isHighScore && (
+                  <div className="absolute top-0 right-0 w-24 h-24 overflow-hidden pointer-events-none z-10">
+                    <div className="absolute top-4 -right-8 w-28 bg-yellow-500 text-white text-[8px] font-black uppercase tracking-widest text-center py-1 rotate-45 shadow-sm">
+                      {isVi ? 'ĐỈNH CAO' : 'ELITE'}
+                    </div>
+                  </div>
+                )}
+
+                {/* Top Section */}
+                <div className="flex justify-between items-start mb-6 relative z-10">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-xl bg-surface-container-high border border-outline-variant/20 overflow-hidden flex items-center justify-center">
+                       {interview.userId?.avatar ? (
+                         <img src={interview.userId.avatar} alt="avatar" className="w-full h-full object-cover" />
+                       ) : (
+                         <span className="material-symbols-outlined text-on-surface-variant text-xl">person</span>
+                       )}
+                    </div>
+                    <div>
+                      <h4 className="text-sm font-bold text-on-surface leading-none mb-1 group-hover:text-primary transition-colors">
+                        {interview.userId?.fullName || (isVi ? 'Ứng viên ẩn danh' : 'Anonymous')}
+                      </h4>
+                      <p className="text-[9px] uppercase tracking-widest text-on-surface-variant opacity-50">
+                        {new Date(interview.createdAt).toLocaleDateString()}
+                      </p>
+                    </div>
+                  </div>
+                  <div className={`flex items-center gap-1.5 px-3 py-1 rounded-full ${getScoreBadgeStyles(score)}`}>
+                    <span className="material-symbols-outlined text-[14px]">star</span>
+                    <span className="text-xs font-black">{score}</span>
+                  </div>
+                </div>
+
+                {/* Role Details */}
+                <div className="mb-8 flex-1 relative z-10">
+                  <h3 className="text-lg font-black text-on-surface mb-2 group-hover:text-primary transition-colors tracking-tight leading-snug">
+                    {interview.position}
+                  </h3>
+                  <div className="flex items-center gap-2 text-xs font-semibold text-on-surface-variant">
+                    <span className="bg-surface-container-highest px-2.5 py-1 rounded-md">{interview.level}</span>
+                    <span className="w-1 h-1 rounded-full bg-outline-variant/50"></span>
+                    <span className="flex items-center gap-1 opacity-70">
+                      <span className="material-symbols-outlined text-[12px]">timer</span>
+                      {interview.duration} {isVi ? 'phút' : 'mins'}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Action */}
+                <button 
+                  onClick={() => navigate(`/results/${interview._id}`)}
+                  className={`w-full py-3.5 rounded-2xl text-xs font-black uppercase tracking-widest flex items-center justify-center gap-2 transition-all relative z-10 ${
+                    isHighScore
+                      ? 'bg-yellow-500/10 text-yellow-600 border border-yellow-500/20 group-hover:bg-yellow-500 group-hover:text-white group-hover:border-transparent group-hover:shadow-lg group-hover:shadow-yellow-500/20'
+                      : 'bg-surface-container-high text-on-surface border border-outline-variant/10 group-hover:bg-primary group-hover:text-on-primary group-hover:border-transparent group-hover:shadow-lg group-hover:shadow-primary/20'
+                  }`}
+                >
+                  {isVi ? 'Xem chi tiết' : 'View Details'}
+                  <span className="material-symbols-outlined text-sm group-hover:translate-x-1 transition-transform">arrow_forward</span>
+                </button>
+              </div>
+            );
+          })}
         </div>
       )}
     </div>

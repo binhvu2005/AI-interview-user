@@ -8,7 +8,8 @@ import { fetchWithAuth } from '../../services/fetchClient';
 
 
 const ForumListPage = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const isVi = i18n.language.startsWith('vi');
   const navigate = useNavigate();
   const [posts, setPosts] = useState<any[]>([]);
   const [pagination, setPagination] = useState<any>({ currentPage: 1, totalPages: 1 });
@@ -141,42 +142,55 @@ const ForumListPage = () => {
     <div className="max-w-6xl mx-auto px-4 py-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
 
       {/* Header Area */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
-        <div>
-          <h1 className="text-4xl font-black text-on-surface tracking-tight mb-2">{t('forum.title')}</h1>
-          <p className="text-sm text-on-surface-variant font-medium opacity-70">{t('forum.subtitle')}</p>
+      <header className="mb-12 relative overflow-hidden rounded-[32px] bg-gradient-to-r from-primary/10 via-surface-container-low to-secondary/10 border border-outline-variant/10 p-8 sm:p-10 shadow-lg">
+        <div className="absolute -top-24 -right-24 w-64 h-64 bg-primary/20 rounded-full blur-3xl"></div>
+        <div className="absolute -bottom-24 -left-24 w-64 h-64 bg-secondary/20 rounded-full blur-3xl"></div>
+        
+        <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-6">
+          <div>
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-[10px] font-black tracking-widest uppercase mb-4 border border-primary/20">
+              <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span>
+              {isVi ? 'Cộng đồng' : 'Community'}
+            </div>
+            <h1 className="text-4xl sm:text-5xl font-black text-on-surface tracking-tight mb-3">
+              {t('forum.title')}
+            </h1>
+            <p className="text-sm text-on-surface-variant font-medium opacity-80 max-w-xl leading-relaxed">
+              {t('forum.subtitle')}
+            </p>
+          </div>
+          <button 
+            onClick={() => setIsModalOpen(true)}
+            className="bg-primary text-on-primary px-8 py-4 rounded-2xl font-black text-xs uppercase tracking-widest flex items-center gap-2 hover:shadow-xl hover:shadow-primary/30 hover:scale-[1.03] transition-all active:scale-95 whitespace-nowrap self-start sm:self-center"
+          >
+            <span className="material-symbols-outlined">add_comment</span>
+            {t('forum.new_post')}
+          </button>
         </div>
-        <button 
-          onClick={() => setIsModalOpen(true)}
-          className="bg-primary text-on-primary px-8 py-4 rounded-2xl font-black text-xs uppercase tracking-widest flex items-center gap-2 hover:shadow-xl hover:shadow-primary/30 transition-all active:scale-95 whitespace-nowrap"
-        >
-          <span className="material-symbols-outlined">add_comment</span>
-          {t('forum.new_post')}
-        </button>
-      </div>
+      </header>
 
       {/* Search & Filter */}
-      <div className="flex flex-col lg:flex-row gap-3 mb-8 bg-surface-container-low p-3 rounded-2xl border border-outline-variant/15 shadow-sm">
+      <div className="flex flex-col lg:flex-row gap-4 mb-8 bg-surface-container-low p-4 rounded-3xl border border-outline-variant/10 shadow-sm backdrop-blur-md">
         <div className="relative flex-1 group">
-          <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant opacity-40 group-focus-within:text-primary transition-colors text-[20px]">search</span>
+          <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant opacity-40 group-focus-within:text-primary group-focus-within:opacity-100 transition-all text-[20px]">search</span>
           <input 
             type="text" 
-            placeholder="Tìm kiếm theo tiêu đề hoặc hashtag..."
+            placeholder={isVi ? "Tìm kiếm thảo luận theo tiêu đề hoặc hashtag..." : "Search discussions by title or hashtag..."}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full bg-surface-container-high border border-outline-variant/10 rounded-xl pl-11 pr-4 py-3 text-sm text-on-surface focus:ring-2 focus:ring-primary/20 outline-none transition-all font-medium placeholder:opacity-50"
+            className="w-full bg-surface-container-high border border-outline-variant/10 rounded-2xl pl-12 pr-4 py-3.5 text-sm text-on-surface focus:ring-2 focus:ring-primary/20 focus:border-primary/30 outline-none transition-all font-medium placeholder:opacity-50"
           />
         </div>
-        <div className="flex flex-wrap gap-2">
+        <div className="flex gap-2">
           <button 
             onClick={() => { setSortBy('newest'); setPage(1); }}
-            className={`flex-1 sm:flex-none px-5 py-3 rounded-xl font-bold text-xs uppercase tracking-widest transition-all ${sortBy === 'newest' ? 'bg-primary text-on-primary shadow-lg' : 'bg-surface-container-highest text-on-surface-variant hover:bg-outline-variant/20'}`}
+            className={`flex-1 sm:flex-none px-6 py-3.5 rounded-2xl font-black text-xs uppercase tracking-widest transition-all duration-300 ${sortBy === 'newest' ? 'bg-primary text-on-primary shadow-lg shadow-primary/25 scale-[1.02]' : 'bg-surface-container-high text-on-surface-variant hover:bg-outline-variant/15 hover:text-on-surface'}`}
           >
             {t('forum.sort_newest')}
           </button>
           <button 
             onClick={() => { setSortBy('popular'); setPage(1); }}
-            className={`flex-1 sm:flex-none px-5 py-3 rounded-xl font-bold text-xs uppercase tracking-widest transition-all ${sortBy === 'popular' ? 'bg-primary text-on-primary shadow-lg' : 'bg-surface-container-highest text-on-surface-variant hover:bg-outline-variant/20'}`}
+            className={`flex-1 sm:flex-none px-6 py-3.5 rounded-2xl font-black text-xs uppercase tracking-widest transition-all duration-300 ${sortBy === 'popular' ? 'bg-primary text-on-primary shadow-lg shadow-primary/25 scale-[1.02]' : 'bg-surface-container-high text-on-surface-variant hover:bg-outline-variant/15 hover:text-on-surface'}`}
           >
             {t('forum.sort_popular')}
           </button>
@@ -190,19 +204,27 @@ const ForumListPage = () => {
             <div 
               key={post.id}
               onClick={() => navigate(`/forum/${post.id}`)}
-              className="bg-surface-container-lowest border border-outline-variant/15 rounded-[28px] p-5 sm:p-6 flex flex-col md:flex-row gap-5 sm:gap-6 hover:border-primary/40 transition-all duration-300 group cursor-pointer shadow-sm hover:shadow-xl hover:-translate-y-1"
+              className="relative bg-gradient-to-br from-surface-container-lowest to-surface-container-low border border-outline-variant/10 rounded-3xl p-6 flex flex-col sm:flex-row gap-6 hover:border-primary/30 transition-all duration-500 group cursor-pointer shadow-sm hover:shadow-2xl hover:shadow-primary/5 hover:-translate-y-1 overflow-hidden"
             >
-              <div className="flex flex-col items-center gap-2 shrink-0">
-                <div className="w-12 h-12 rounded-2xl overflow-hidden border border-outline-variant/20 group-hover:scale-105 transition-transform">
+              {/* Background spotlight on card hover */}
+              <div className="absolute inset-0 bg-gradient-to-tr from-primary/5 via-transparent to-secondary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none"></div>
+
+              <div className="flex sm:flex-col items-center gap-3 shrink-0 relative z-10">
+                <div className="w-12 h-12 rounded-2xl overflow-hidden border border-outline-variant/20 group-hover:scale-105 transition-transform shadow-md relative bg-surface-container-high">
                   <img src={post.author.avatar} alt={post.author.name} className="w-full h-full object-cover" />
+                  {post.author.isVip && (
+                    <div className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-yellow-500 flex items-center justify-center border border-surface-container-lowest" title="VIP Member">
+                      <span className="material-symbols-outlined text-[10px] text-white font-black">workspace_premium</span>
+                    </div>
+                  )}
                 </div>
               </div>
               
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2 mb-3">
+              <div className="flex-1 min-w-0 relative z-10 flex flex-col">
+                <div className="flex flex-wrap items-center gap-2 mb-3">
                   {post.tags?.map((tag: string) => (
-                    <span key={tag} className="px-2.5 py-0.5 rounded-md bg-secondary/10 text-secondary text-[10px] font-black uppercase tracking-widest border border-secondary/20">
-                      {tag}
+                    <span key={tag} className="px-2.5 py-1 rounded-lg bg-primary/5 text-primary text-[9px] font-black uppercase tracking-widest border border-primary/10">
+                      #{tag}
                     </span>
                   ))}
                   <span className="text-[10px] font-bold text-on-surface-variant opacity-40 ml-auto">
@@ -210,46 +232,43 @@ const ForumListPage = () => {
                   </span>
                 </div>
                 
-                <h3 className="text-lg font-bold text-on-surface mb-2 group-hover:text-primary transition-colors leading-tight">{post.title}</h3>
-                <p className="text-xs text-on-surface-variant line-clamp-2 opacity-80 mb-4 font-medium leading-relaxed">{stripHtml(post.content)}</p>
+                <h3 className="text-xl font-bold text-on-surface mb-2 group-hover:text-primary transition-colors leading-snug tracking-tight">{post.title}</h3>
+                <p className="text-sm text-on-surface-variant line-clamp-2 opacity-75 mb-5 font-medium leading-relaxed">{stripHtml(post.content)}</p>
                 
                 {post.images && post.images.length > 0 && (
-                  <div className="flex gap-2 mb-4 overflow-hidden">
+                  <div className="flex gap-3 mb-5 overflow-hidden">
                     {post.images.slice(0, 3).map((img: string, idx: number) => (
-                      <div key={idx} className="w-16 h-16 rounded-xl overflow-hidden border border-outline-variant/10 shadow-sm shrink-0">
+                      <div key={idx} className="w-20 h-20 rounded-2xl overflow-hidden border border-outline-variant/10 shadow-sm shrink-0 hover:scale-102 transition-transform">
                         <img src={img} alt="post-img" className="w-full h-full object-cover" />
                       </div>
                     ))}
                     {post.images.length > 3 && (
-                      <div className="w-16 h-16 rounded-xl bg-surface-container-highest border border-outline-variant/10 flex items-center justify-center text-[10px] font-black text-on-surface-variant shrink-0">
+                      <div className="w-20 h-20 rounded-2xl bg-surface-container-highest border border-outline-variant/10 flex items-center justify-center text-xs font-black text-on-surface-variant shrink-0">
                         +{post.images.length - 3}
                       </div>
                     )}
                   </div>
                 )}
                 
-                <div className="flex items-center gap-6 pt-4 border-t border-outline-variant/5">
-                  <div className={`flex items-center gap-1.5 transition-colors ${post.isLiked ? 'text-red-500' : 'text-on-surface-variant/60 group-hover:text-primary'}`}>
-                    <span className={`material-symbols-outlined text-[20px] font-bold ${post.isLiked ? 'material-symbols-fill' : ''}`}>favorite</span>
-                    <span className="text-xs font-black">{post.likes}</span>
-                  </div>
-                  <div className="flex items-center gap-1.5 text-on-surface-variant/60">
-                    <span className="material-symbols-outlined text-[20px] font-bold">chat_bubble</span>
-                    <span className="text-xs font-black">{post.replies}</span>
-                  </div>
-                  <div className="flex items-center gap-1.5 text-on-surface-variant/60">
-                    <span className="material-symbols-outlined text-[20px] font-bold">visibility</span>
-                    <span className="text-xs font-black">{post.views}</span>
+                <div className="flex flex-wrap items-center gap-6 pt-4 border-t border-outline-variant/5 mt-auto">
+                  <div className="flex items-center gap-4">
+                    <div className={`flex items-center gap-1.5 transition-colors ${post.isLiked ? 'text-red-500' : 'text-on-surface-variant/60 group-hover:text-red-400'}`}>
+                      <span className={`material-symbols-outlined text-[20px] font-bold ${post.isLiked ? 'material-symbols-fill text-red-500' : ''}`}>favorite</span>
+                      <span className="text-xs font-black">{post.likes}</span>
+                    </div>
+                    <div className="flex items-center gap-1.5 text-on-surface-variant/60 group-hover:text-primary">
+                      <span className="material-symbols-outlined text-[20px] font-bold">chat_bubble</span>
+                      <span className="text-xs font-black">{post.replies}</span>
+                    </div>
+                    <div className="flex items-center gap-1.5 text-on-surface-variant/60">
+                      <span className="material-symbols-outlined text-[20px] font-bold">visibility</span>
+                      <span className="text-xs font-black">{post.views}</span>
+                    </div>
                   </div>
                   
                   <div className="ml-auto flex items-center gap-2">
-                    <span className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant opacity-50">{t('forum.posted_by')}</span>
-                    <div className="flex items-center gap-1">
-                      <span className="text-xs font-bold text-on-surface">{post.author.name}</span>
-                      {post.author.isVip && (
-                        <span className="material-symbols-outlined text-[14px] text-[#ffc107]" title="VIP Member">workspace_premium</span>
-                      )}
-                    </div>
+                    <span className="text-[9px] font-black uppercase tracking-widest text-on-surface-variant opacity-40">{t('forum.posted_by')}</span>
+                    <span className="text-xs font-bold text-on-surface group-hover:text-primary transition-colors">{post.author.name}</span>
                   </div>
                 </div>
               </div>
