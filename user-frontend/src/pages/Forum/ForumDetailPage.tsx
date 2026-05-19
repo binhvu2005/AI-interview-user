@@ -17,23 +17,30 @@ const ForumDetailPage = () => {
   const [loading, setLoading] = useState(true);
   const [replyText, setReplyText] = useState('');
   const [sortBy, setSortBy] = useState('newest');
+  const [replyPage, setReplyPage] = useState(1);
+  const [pagination, setPagination] = useState<any>(null);
+  const [activeReplyId, setActiveReplyId] = useState<string | null>(null);
+  const [subReplyText, setSubReplyText] = useState('');
   const userAvatar = localStorage.getItem('userAvatar');
   const userName = localStorage.getItem('userName');
 
   useEffect(() => {
-    fetchPost();
-  }, [id, sortBy]);
+    fetchPost(replyPage);
+  }, [id, sortBy, replyPage]);
 
-  const fetchPost = async () => {
+  const fetchPost = async (page: number = replyPage) => {
     try {
       setLoading(true);
       const token = localStorage.getItem('token');
-      const res = await fetchWithAuth(`${API_ENDPOINTS.FORUM.GET_POST(id!)}?sort=${sortBy}`, {
+      const res = await fetchWithAuth(`${API_ENDPOINTS.FORUM.GET_POST(id!)}?sort=${sortBy}&replyPage=${page}&replyLimit=5`, {
         headers: token ? { 'Authorization': `Bearer ${token}` } : {}
       });
       if (res.ok) {
         const data = await res.json();
         setPost(data);
+        if (data.pagination) {
+          setPagination(data.pagination);
+        }
       }
     } catch (error) {
       toast.error('Failed to load discussion');
@@ -72,12 +79,35 @@ const ForumDetailPage = () => {
         body: JSON.stringify({ content: replyText })
       });
       if (res.ok) {
-        toast.success('Reply posted!');
+        toast.success('Bình luận thành công!');
         setReplyText('');
-        fetchPost();
+        fetchPost(replyPage);
       }
     } catch (error) {
       toast.error('Failed to post reply');
+    }
+  };
+
+  const handlePostSubReply = async (parentReplyId: string) => {
+    if (!subReplyText.trim()) return;
+    try {
+      const token = localStorage.getItem('token');
+      const res = await fetchWithAuth(API_ENDPOINTS.FORUM.REPLY(id!), {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ content: subReplyText, parentReplyId })
+      });
+      if (res.ok) {
+        toast.success('Phản hồi thành công!');
+        setSubReplyText('');
+        setActiveReplyId(null);
+        fetchPost(replyPage);
+      }
+    } catch (error) {
+      toast.error('Gửi phản hồi thất bại');
     }
   };
 
@@ -89,7 +119,7 @@ const ForumDetailPage = () => {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       if (res.ok) {
-        fetchPost();
+        fetchPost(replyPage);
         toast.success('Liked reply');
       }
     } catch (error) {
@@ -214,7 +244,9 @@ const ForumDetailPage = () => {
       <div className="flex items-center justify-between mb-8">
         <h3 className="text-2xl font-black text-on-surface tracking-tight flex items-center gap-3">
           {t('forum.replies')}
-          <span className="text-xs bg-surface-container-highest text-on-surface-variant px-2.5 py-1 rounded-full font-black">{post.replies.length}</span>
+          <span className="text-xs bg-surface-container-highest text-on-surface-variant px-2.5 py-1 rounded-full font-black">
+            {pagination ? pagination.totalReplies : post.replies.length}
+          </span>
         </h3>
         <div className="flex gap-2 bg-surface-container-low p-1.5 rounded-2xl border border-outline-variant/10">
            <button onClick={() => setSortBy('newest')} className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${sortBy === 'newest' ? 'bg-primary text-on-primary shadow-md' : 'text-on-surface-variant hover:bg-outline-variant/10'}`}>{t('forum.sort_newest')}</button>
@@ -298,12 +330,55 @@ const ForumDetailPage = () => {
               />
               
               <div className="pl-13">
-                 <button className="text-[10px] font-black text-primary uppercase tracking-widest hover:underline flex items-center gap-1">
+                 <button 
+                   onClick={() => {
+                     setActiveReplyId(activeReplyId === reply.id ? null : reply.id);
+                     setSubReplyText('');
+                   }}
+                   className="text-[10px] font-black text-primary uppercase tracking-widest hover:underline flex items-center gap-1"
+                 >
                     <span className="material-symbols-outlined text-[16px]">reply</span>
                     {t('forum.reply_btn')}
                  </button>
               </div>
             </div>
+
+            {/* Inline Sub-Reply Editor */}
+            {activeReplyId === reply.id && (
+              <div className="ml-16 bg-surface-container-low border border-outline-variant/15 rounded-[24px] p-6 shadow-inner animate-in slide-in-from-top-2 duration-300">
+                <div className="flex gap-3">
+                  <div className="w-8 h-8 rounded-lg overflow-hidden shrink-0 border border-outline-variant/30">
+                    <img 
+                      src={userAvatar || `https://ui-avatars.com/api/?name=${userName || 'User'}&background=6366f1&color=fff`} 
+                      alt="You" 
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  <div className="flex-1 space-y-3">
+                    <RichTextEditor 
+                      value={subReplyText}
+                      onChange={setSubReplyText}
+                      placeholder="Viết phản hồi..."
+                    />
+                    <div className="flex justify-end gap-2">
+                      <button 
+                        onClick={() => setActiveReplyId(null)}
+                        className="px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest text-on-surface-variant hover:bg-outline-variant/10 transition-colors"
+                      >
+                        Hủy
+                      </button>
+                      <button 
+                        onClick={() => handlePostSubReply(reply.id)}
+                        disabled={!subReplyText.trim()}
+                        className="bg-primary text-on-primary px-5 py-2.5 rounded-xl font-black text-[10px] uppercase tracking-widest hover:shadow-lg hover:shadow-primary/20 transition-all active:scale-95 disabled:opacity-50"
+                      >
+                        Gửi phản hồi
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
             
             {/* Nested Replies */}
             {reply.replies && reply.replies.map((sub: any) => (
@@ -312,22 +387,22 @@ const ForumDetailPage = () => {
                   <div className="flex items-center gap-2">
                     <div 
                       className={`relative w-8 h-8 rounded-lg flex items-center justify-center bg-surface-container-high transition-all shadow-sm ${
-                        sub.author.isVip
+                        sub.author?.isVip
                           ? 'ring-2 ring-amber-400 ring-offset-1 ring-offset-background shadow-[0_0_8px_rgba(245,158,11,0.55)] border-none'
                           : 'border border-outline-variant/20'
                       }`}
                     >
-                      {sub.author.isVip && (
+                      {sub.author?.isVip && (
                         <span className="absolute inset-0 rounded-lg bg-gradient-to-tr from-amber-500 via-yellow-400 to-amber-300 opacity-90 blur-[1px] animate-pulse pointer-events-none"></span>
                       )}
-                      <div className={`relative w-full h-full rounded-lg overflow-hidden ${sub.author.isVip ? 'p-[1px] bg-background' : ''}`}>
-                        <img src={sub.author.avatar} alt={sub.author.name} className="w-full h-full object-cover rounded-lg" />
+                      <div className={`relative w-full h-full rounded-lg overflow-hidden ${sub.author?.isVip ? 'p-[1px] bg-background' : ''}`}>
+                        <img src={sub.author?.avatar} alt={sub.author?.name} className="w-full h-full object-cover rounded-lg" />
                       </div>
                     </div>
                     <div>
                       <div className="flex items-center gap-2">
-                        <h6 className="text-xs font-bold text-on-surface">{sub.author.name}</h6>
-                        {sub.author.isVip && (
+                        <h6 className="text-xs font-bold text-on-surface">{sub.author?.name}</h6>
+                        {sub.author?.isVip && (
                           <span className="text-[7px] uppercase tracking-widest badge-vip-animated px-1 py-0.5 rounded-full inline-flex items-center gap-0.5 leading-none shadow-sm shadow-yellow-500/20">
                             <span className="material-symbols-outlined text-[8px] material-symbols-fill">workspace_premium</span> VIP
                           </span>
@@ -346,6 +421,41 @@ const ForumDetailPage = () => {
           </div>
         ))}
       </div>
+
+      {/* Comments Pagination */}
+      {pagination && pagination.totalPages > 1 && (
+        <div className="flex justify-center items-center gap-2 mt-8 mb-12">
+          <button
+            onClick={() => setReplyPage(prev => Math.max(prev - 1, 1))}
+            disabled={replyPage === 1}
+            className="w-10 h-10 rounded-xl bg-surface-container-low border border-outline-variant/15 text-on-surface flex items-center justify-center disabled:opacity-40 transition-colors hover:bg-outline-variant/10"
+          >
+            <span className="material-symbols-outlined text-[18px]">chevron_left</span>
+          </button>
+          
+          {Array.from({ length: pagination.totalPages }, (_, idx) => idx + 1).map((p) => (
+            <button
+              key={p}
+              onClick={() => setReplyPage(p)}
+              className={`w-10 h-10 rounded-xl font-bold text-xs transition-all ${
+                replyPage === p
+                  ? 'bg-primary text-on-primary shadow-md shadow-primary/20 scale-105'
+                  : 'bg-surface-container-low border border-outline-variant/15 text-on-surface hover:bg-outline-variant/10'
+              }`}
+            >
+              {p}
+            </button>
+          ))}
+
+          <button
+            onClick={() => setReplyPage(prev => Math.min(prev + 1, pagination.totalPages))}
+            disabled={replyPage === pagination.totalPages}
+            className="w-10 h-10 rounded-xl bg-surface-container-low border border-outline-variant/15 text-on-surface flex items-center justify-center disabled:opacity-40 transition-colors hover:bg-outline-variant/10"
+          >
+            <span className="material-symbols-outlined text-[18px]">chevron_right</span>
+          </button>
+        </div>
+      )}
     </div>
   );
 };

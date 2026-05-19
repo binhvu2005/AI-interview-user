@@ -107,6 +107,14 @@ export const getPostDetail = async (req: Request, res: Response) => {
     post.views += 1;
     await post.save();
 
+    // Paginate replies
+    const totalReplies = post.replies.length;
+    const replyPage = parseInt(req.query.replyPage as string || '1');
+    const replyLimit = parseInt(req.query.replyLimit as string || '5');
+    const totalReplyPages = Math.ceil(totalReplies / replyLimit);
+    const skipReplies = (replyPage - 1) * replyLimit;
+    const paginatedReplies = post.replies.slice(skipReplies, skipReplies + replyLimit);
+
     // Map to match frontend expectations
     const formattedPost = {
       id: post._id,
@@ -124,20 +132,26 @@ export const getPostDetail = async (req: Request, res: Response) => {
         role: (post.author as any).isVip ? 'VIP' : 'Member',
         isVip: (post.author as any).isVip
       },
-      replies: post.replies.map((r: any) => ({
+      replies: paginatedReplies.map((r: any) => ({
         id: r._id,
         content: r.content,
         date: r.date,
         likes: r.likes.length,
         isLiked: (req as any).user?.id ? r.likes.includes((req as any).user.id) : false,
-        author: { name: r.author.fullName, avatar: r.author.avatar },
+        author: { name: r.author.fullName, avatar: r.author.avatar, isVip: r.author.isVip },
         replies: r.replies?.map((rr: any) => ({
           id: rr._id,
           content: rr.content,
           date: rr.date,
-          author: { name: rr.author.fullName, avatar: rr.author.avatar }
+          author: { name: rr.author.fullName, avatar: rr.author.avatar, isVip: rr.author.isVip }
         }))
-      }))
+      })),
+      pagination: {
+        totalReplies,
+        totalPages: totalReplyPages,
+        currentPage: replyPage,
+        limit: replyLimit
+      }
     };
 
     res.json(formattedPost);
@@ -221,7 +235,7 @@ export const likePost = async (req: Request, res: Response) => {
 
 export const addReply = async (req: Request, res: Response) => {
   try {
-    const { content } = req.body;
+    const { content, parentReplyId } = req.body;
     const author = (req as any).user.id;
     const post = await ForumPost.findById(req.params.id);
     if (!post) return res.status(404).json({ message: 'Post not found' });
@@ -237,27 +251,47 @@ export const addReply = async (req: Request, res: Response) => {
       }
     });
 
-    post.replies.push({
+    const newReply = {
       author,
       content: sanitizedContent,
       date: new Date(),
       likes: [],
       replies: []
-    } as any);
+    };
+
+    if (parentReplyId) {
+      // Find the parent reply in the post replies subdocument array
+      const parentReply = (post.replies as any).id(parentReplyId);
+      if (!parentReply) return res.status(404).json({ message: 'Parent reply not found' });
+
+      parentReply.replies.push(newReply as any);
+
+      // Notify comment author
+      const sender = await User.findById(author);
+      await createNotification({
+        recipient: parentReply.author.toString(),
+        sender: author,
+        type: NotificationType.REPLY,
+        title: 'New Reply',
+        message: `${sender?.fullName || 'Someone'} replied to your comment in: "${post.title}"`,
+        link: `/forum/${post._id}`
+      });
+    } else {
+      post.replies.push(newReply as any);
+
+      // Notify post author
+      const sender = await User.findById(author);
+      await createNotification({
+        recipient: post.author.toString(),
+        sender: author,
+        type: NotificationType.REPLY,
+        title: 'New Reply',
+        message: `${sender?.fullName || 'Someone'} replied to your post: "${post.title}"`,
+        link: `/forum/${post._id}`
+      });
+    }
 
     await post.save();
-
-    // Notify post author
-    const sender = await User.findById(author);
-    await createNotification({
-      recipient: post.author.toString(),
-      sender: author,
-      type: NotificationType.REPLY,
-      title: 'New Reply',
-      message: `${sender?.fullName || 'Someone'} replied to your post: "${post.title}"`,
-      link: `/forum/${post._id}`
-    });
-
     res.status(201).json({ message: 'Reply added' });
   } catch (error) {
     res.status(500).json({ message: 'Error adding reply' });
