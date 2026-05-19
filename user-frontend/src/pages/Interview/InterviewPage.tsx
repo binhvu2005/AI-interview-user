@@ -36,6 +36,7 @@ const InterviewPage = () => {
 
   // Anti-Cheat
   const [cheatCount, setCheatCount] = useState(0);
+  const [showCheatModal, setShowCheatModal] = useState(false);
 
   const scrollRef = useRef<HTMLDivElement>(null);
   const recognitionRef = useRef<any>(null);
@@ -190,8 +191,19 @@ const InterviewPage = () => {
   useEffect(() => {
     const handleVisibilityChange = () => {
       if (document.hidden) {
-        setCheatCount(prev => prev + 1);
-        toast.error(t('interview.cheat_warning'), { duration: 5000, icon: '🚨' });
+        setCheatCount(prev => {
+          const next = prev + 1;
+          toast.error(t('interview.cheat_warning'), { duration: 5000, icon: '🚨' });
+          return next;
+        });
+      } else {
+        // When they return to the tab, open the modal if cheatCount is > 0
+        setCheatCount(current => {
+          if (current > 0) {
+            setShowCheatModal(true);
+          }
+          return current;
+        });
       }
     };
     document.addEventListener("visibilitychange", handleVisibilityChange);
@@ -520,6 +532,44 @@ const InterviewPage = () => {
           )}
         </div>
       </main>
+
+      {showCheatModal && (
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/85 backdrop-blur-md animate-in fade-in duration-300">
+          <div className="bg-[#1e1f22] border border-red-500/30 rounded-[32px] p-8 max-w-md w-full text-center shadow-2xl relative overflow-hidden animate-in zoom-in-95 duration-300">
+            {/* Red glowing decorative top bar */}
+            <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-red-500 via-red-400 to-red-500 shadow-[0_0_10px_rgba(239,68,68,0.5)]"></div>
+            
+            <div className="w-16 h-16 rounded-full bg-red-500/10 border border-red-500/20 flex items-center justify-center mx-auto mb-6 text-red-500">
+              <span className="material-symbols-outlined text-3xl animate-bounce">warning</span>
+            </div>
+            
+            <h3 className="text-xl font-black tracking-tight text-white mb-2 uppercase">
+              {isVi ? '🚨 Cảnh Báo Vi Phạm' : '🚨 Proctoring Violation'}
+            </h3>
+            
+            <p className="text-sm text-gray-300 mb-6 leading-relaxed">
+              {isVi 
+                ? `Hệ thống Obsidian AI phát hiện bạn vừa rời khỏi màn hình phỏng vấn. Hành vi chuyển tab sẽ làm giảm nghiêm trọng điểm số thái độ trên báo cáo đánh giá.`
+                : `Obsidian AI detected that you left the interview screen. Tab switching will severely penalize your attitude score on the final report.`
+              }
+            </p>
+            
+            <div className="bg-red-500/5 border border-red-500/10 rounded-2xl p-4 mb-6">
+              <p className="text-[10px] font-black text-red-400 uppercase tracking-widest mb-1">
+                {isVi ? 'Tổng số lần vi phạm' : 'Total Violations'}
+              </p>
+              <p className="text-3xl font-black text-red-500">{cheatCount} {isVi ? 'lần' : 'time(s)'}</p>
+            </div>
+            
+            <button
+              onClick={() => setShowCheatModal(false)}
+              className="w-full bg-red-600 text-white font-black py-4 rounded-2xl hover:bg-red-500 active:scale-95 transition-all text-xs uppercase tracking-widest shadow-lg shadow-red-500/20"
+            >
+              {isVi ? 'Tôi đã hiểu và cam kết tập trung' : 'I understand & will focus'}
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
