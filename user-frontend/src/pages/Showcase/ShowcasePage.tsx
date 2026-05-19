@@ -237,9 +237,9 @@ const ShowcasePage = () => {
                   </div>
                 </div>
 
-                {/* Action */}
+                 {/* Action */}
                 <button 
-                  onClick={() => navigate(`/results/${interview._id}`)}
+                  onClick={() => navigate(`/showcase/${interview._id}`)}
                   className={`w-full py-3.5 rounded-2xl text-xs font-black uppercase tracking-widest flex items-center justify-center gap-2 transition-all relative z-10 ${
                     isHighScore
                       ? 'bg-yellow-500/10 text-yellow-600 border border-yellow-500/20 group-hover:bg-yellow-500 group-hover:text-white group-hover:border-transparent group-hover:shadow-lg group-hover:shadow-yellow-500/20'

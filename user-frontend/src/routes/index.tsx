@@ -13,6 +13,7 @@ import ForumListPage from '../pages/Forum/ForumListPage';
 import ForumDetailPage from '../pages/Forum/ForumDetailPage';
 import ResultsPage from '../pages/Result/ResultsPage';
 import ShowcasePage from '../pages/Showcase/ShowcasePage';
+import ShowcaseDetailPage from '../pages/Showcase/ShowcaseDetailPage';
 import JoinInterview from '../pages/Spectator/JoinInterview';
 import SpectatorPage from '../pages/Spectator/SpectatorPage';
 import ProtectedRoute from './ProtectedRoute';
@@ -43,6 +44,7 @@ export const AppRoutes = [
       { path: '/results', element: <ResultsPage /> },
       { path: '/results/:id', element: <ResultsPage /> },
       { path: '/showcase', element: <ShowcasePage /> },
+      { path: '/showcase/:id', element: <ShowcaseDetailPage /> },
       { path: '/join', element: <JoinInterview /> },
     ]
   },

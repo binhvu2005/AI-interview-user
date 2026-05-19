@@ -124,6 +124,9 @@ export const getInterviewResult = async (req: AuthRequest, res: Response) => {
       return res.status(403).json({ message: 'Access denied. This interview result is private.' });
     }
 
+    // Populate user profile info (fullName, avatar, isVip) for display on Results & Showcase
+    await interview.populate({ path: 'userId', select: 'fullName avatar isVip' });
+
     res.json(interview);
   } catch (err: any) {
     res.status(500).json({ message: 'Server error', error: err.message });
