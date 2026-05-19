@@ -38,6 +38,7 @@ jobs:
               echo "MONGODB_URI=${{ secrets.MONGODB_URI }}" >> .env
               echo "GROQ_API_KEY=${{ secrets.GROQ_API_KEY }}" >> .env
               echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> .env
+              echo "GEMINI_API_KEY=AIzaSyDIdhYNxz2GXapaq1k42oJSip7spoTQzdE" >> .env
               echo "VITE_API_URL=/api" >> .env
             else
               echo ".env file already exists. Preserving existing VPS configurations."
@@ -49,6 +50,11 @@ jobs:
               fi
               if [ ! -z "${{ secrets.JWT_SECRET }}" ]; then
                 sed -i 's|^JWT_SECRET=.*|JWT_SECRET=${{ secrets.JWT_SECRET }}|' .env
+              fi
+              if grep -q "GEMINI_API_KEY=" .env; then
+                sed -i 's|^GEMINI_API_KEY=.*|GEMINI_API_KEY=AIzaSyDIdhYNxz2GXapaq1k42oJSip7spoTQzdE|' .env
+              else
+                echo "GEMINI_API_KEY=AIzaSyDIdhYNxz2GXapaq1k42oJSip7spoTQzdE" >> .env
               fi
             fi
             
