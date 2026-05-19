@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import toast from 'react-hot-toast';
+import DOMPurify from 'dompurify';
 import RichTextEditor from '../../components/base/RichTextEditor';
 
 import { API_ENDPOINTS } from '../../services/api.config';
@@ -150,7 +151,7 @@ const ForumDetailPage = () => {
           <h1 className="text-3xl font-black text-on-surface tracking-tight mb-6 leading-[1.2]">{post.title}</h1>
           <div 
             className="text-on-surface-variant text-lg leading-relaxed font-medium opacity-90 mb-8 rich-text-content"
-            dangerouslySetInnerHTML={{ __html: post.content }}
+            dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(post.content) }}
           />
           
           {post.images && post.images.length > 0 && (
@@ -258,7 +259,7 @@ const ForumDetailPage = () => {
               
               <div 
                 className="text-sm text-on-surface-variant leading-relaxed font-medium opacity-80 pl-13 mb-4 rich-text-content"
-                dangerouslySetInnerHTML={{ __html: reply.content }}
+                dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(reply.content) }}
               />
               
               <div className="pl-13">
@@ -285,7 +286,7 @@ const ForumDetailPage = () => {
                 </header>
                 <div 
                   className="text-xs text-on-surface-variant leading-relaxed font-medium opacity-80 rich-text-content"
-                  dangerouslySetInnerHTML={{ __html: sub.content }}
+                  dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(sub.content) }}
                 />
               </div>
             ))}

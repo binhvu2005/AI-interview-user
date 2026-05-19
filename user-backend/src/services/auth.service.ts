@@ -2,11 +2,28 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { User } from '../models/user.model';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'fallback_secret_key';
+if (!process.env.JWT_SECRET) {
+  console.error('CRITICAL ERROR: JWT_SECRET environment variable is missing!');
+  process.exit(1);
+}
+const JWT_SECRET = process.env.JWT_SECRET;
 
 export const registerUser = async (userData: any) => {
   const { fullName, email, password, phoneNumber, targetRole } = userData;
   
+  if (!fullName || fullName.trim().length < 2) {
+    throw new Error('Họ và tên phải có ít nhất 2 ký tự');
+  }
+
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!email || !emailRegex.test(email)) {
+    throw new Error('Địa chỉ email không hợp lệ');
+  }
+
+  if (!password || password.length < 6) {
+    throw new Error('Mật khẩu phải có ít nhất 6 ký tự');
+  }
+
   let user = await User.findOne({ email });
   if (user) throw new Error('User already exists');
 

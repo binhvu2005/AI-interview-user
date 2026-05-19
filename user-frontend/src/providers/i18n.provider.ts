@@ -68,7 +68,9 @@ const resources = {
         "uploading": "Uploading...",
         "job_desc_placeholder": "Paste the target job description here. The AI will extract key competencies and tailor the interview questions to match the exact requirements of the role...",
         "analyze_btn": "Analyze Match",
-        "analyzing": "Analyzing..."
+        "analyzing": "Analyzing...",
+        "pdf_only": "Only PDF files are allowed!",
+        "pdf_size_error": "Maximum file size is 5MB!"
       },
       "analysis": {
         "title": "AI Match Analysis",
@@ -100,7 +102,10 @@ const resources = {
         "password": "Password",
         "btn": "Sign Up",
         "has_account": "Already have an account?",
-        "signin": "Sign in"
+        "signin": "Sign in",
+        "name_too_short": "Full name must be at least 2 characters",
+        "invalid_email": "Invalid email address format",
+        "pwd_too_short": "Password must be at least 6 characters"
       },
       "dashboard": {
         "tag": "Cognitive Sanctuary v2.0",
@@ -255,7 +260,10 @@ const resources = {
           "confirm_pwd": "Confirm New Password",
           "cancel": "Cancel",
           "submit": "Update Password"
-        }
+        },
+        "pwd_too_short": "New password must be at least 6 characters",
+        "name_too_short": "Full name must be at least 2 characters",
+        "invalid_phone": "Invalid phone number (must be 9 to 12 digits)"
       },
       "notifications": {
         "login_success": "Authentication successful. Welcome back!",
@@ -454,7 +462,9 @@ const resources = {
         "uploading": "Đang tải lên...",
         "job_desc_placeholder": "Dán mô tả công việc (JD) vào đây. AI sẽ trích xuất các kỹ năng trọng tâm và cá nhân hóa câu hỏi phỏng vấn để bám sát yêu cầu công việc...",
         "analyze_btn": "Phân tích Phù hợp",
-        "analyzing": "Đang phân tích..."
+        "analyzing": "Đang phân tích...",
+        "pdf_only": "Chỉ nhận định dạng file PDF!",
+        "pdf_size_error": "Kích thước file tối đa là 5MB!"
       },
       "analysis": {
         "title": "Phân tích Độ khớp AI",
@@ -486,7 +496,10 @@ const resources = {
         "password": "Mật khẩu",
         "btn": "Đăng Ký",
         "has_account": "Đã có tài khoản?",
-        "signin": "Đăng nhập"
+        "signin": "Đăng nhập",
+        "name_too_short": "Họ và tên phải có ít nhất 2 ký tự",
+        "invalid_email": "Địa chỉ email không hợp lệ",
+        "pwd_too_short": "Mật khẩu phải có ít nhất 6 ký tự"
       },
       "dashboard": {
         "tag": "Thánh địa Nhận thức v2.0",
@@ -641,7 +654,10 @@ const resources = {
           "confirm_pwd": "Xác nhận mật khẩu mới",
           "cancel": "Hủy",
           "submit": "Cập nhật mật khẩu"
-        }
+        },
+        "pwd_too_short": "Mật khẩu mới phải có ít nhất 6 ký tự",
+        "name_too_short": "Họ và tên phải có ít nhất 2 ký tự",
+        "invalid_phone": "Số điện thoại không hợp lệ (9 đến 12 ký tự số)"
       },
       "notifications": {
         "login_success": "Đăng nhập thành công. Chào mừng trở lại!",

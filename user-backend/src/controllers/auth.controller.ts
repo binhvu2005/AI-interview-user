@@ -224,8 +224,20 @@ export const verifyOtp = async (req: Request, res: Response) => {
     const { email, otp } = req.body;
     if (!email || !otp) return res.status(400).json({ message: 'Vui lòng cung cấp email và mã OTP' });
 
-    const otpRecord = await Otp.findOne({ email, otp });
+    const otpRecord = await Otp.findOne({ email });
     if (!otpRecord) return res.status(400).json({ message: 'Mã OTP không hợp lệ hoặc đã hết hạn' });
+
+    if (otpRecord.otp !== otp) {
+      otpRecord.attempts += 1;
+      await otpRecord.save();
+
+      if (otpRecord.attempts >= 5) {
+        await Otp.deleteOne({ _id: otpRecord._id });
+        return res.status(400).json({ message: 'Quá số lần thử. Mã OTP đã bị vô hiệu hóa.' });
+      }
+
+      return res.status(400).json({ message: 'Mã OTP không hợp lệ hoặc đã hết hạn' });
+    }
 
     res.json({ message: 'Xác thực OTP thành công' });
   } catch (err: any) {
@@ -238,8 +250,20 @@ export const resetPassword = async (req: Request, res: Response) => {
     const { email, otp, newPassword } = req.body;
     if (!email || !otp || !newPassword) return res.status(400).json({ message: 'Thiếu thông tin yêu cầu' });
 
-    const otpRecord = await Otp.findOne({ email, otp });
+    const otpRecord = await Otp.findOne({ email });
     if (!otpRecord) return res.status(400).json({ message: 'Mã OTP không hợp lệ hoặc đã hết hạn' });
+
+    if (otpRecord.otp !== otp) {
+      otpRecord.attempts += 1;
+      await otpRecord.save();
+
+      if (otpRecord.attempts >= 5) {
+        await Otp.deleteOne({ _id: otpRecord._id });
+        return res.status(400).json({ message: 'Quá số lần thử. Mã OTP đã bị vô hiệu hóa.' });
+      }
+
+      return res.status(400).json({ message: 'Mã OTP không hợp lệ hoặc đã hết hạn' });
+    }
 
     const user = await User.findOne({ email });
     if (!user) return res.status(404).json({ message: 'Người dùng không tồn tại' });
@@ -248,7 +272,7 @@ export const resetPassword = async (req: Request, res: Response) => {
     user.password = await bcrypt.hash(newPassword, salt);
     await user.save();
 
-    // Xóa OTP sau khi dùng
+    // Xóa OTP sau khi dùng thành công
     await Otp.deleteOne({ _id: otpRecord._id });
 
     res.json({ message: 'Đặt lại mật khẩu thành công' });

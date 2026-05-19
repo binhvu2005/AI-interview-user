@@ -336,7 +336,27 @@ const PreparationPage = () => {
                 <label className={`flex flex-col items-center justify-center border-2 border-dashed rounded-2xl p-6 cursor-pointer transition-all ${cvFile ? 'border-primary bg-primary/5' : 'border-outline-variant/30 bg-surface hover:border-primary/50'}`}>
                   <span className={`material-symbols-outlined text-3xl mb-2 ${cvFile ? 'text-primary' : 'text-on-surface-variant'}`}>{cvFile ? 'check_circle' : 'cloud_upload'}</span>
                   <p className="text-sm font-bold text-on-surface">{cvFile ? cvFile.name : (isVi ? 'Kéo thả PDF hoặc bấm để chọn' : 'Drop PDF or click to browse')}</p>
-                  <input type="file" className="hidden" accept=".pdf" onChange={(e) => setCvFile(e.target.files?.[0] || null)} />
+                  <input 
+                    type="file" 
+                    className="hidden" 
+                    accept=".pdf" 
+                    onChange={(e) => {
+                      const file = e.target.files?.[0] || null;
+                      if (file) {
+                        if (file.type !== 'application/pdf') {
+                          toast.error(t('setup.pdf_only'));
+                          e.target.value = '';
+                          return;
+                        }
+                        if (file.size > 5 * 1024 * 1024) {
+                          toast.error(t('setup.pdf_size_error'));
+                          e.target.value = '';
+                          return;
+                        }
+                      }
+                      setCvFile(file);
+                    }} 
+                  />
                 </label>
               )}
             </div>

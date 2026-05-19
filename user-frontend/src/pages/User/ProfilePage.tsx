@@ -98,6 +98,19 @@ const ProfilePage = () => {
   };
 
   const handleSaveProfile = async () => {
+    if (!userData.fullName || userData.fullName.trim().length < 2) {
+      toast.error(t('profile_page.name_too_short'));
+      return;
+    }
+
+    if (userData.phoneNumber && userData.phoneNumber.trim()) {
+      const phoneRegex = /^[0-9+]{9,12}$/;
+      if (!phoneRegex.test(userData.phoneNumber.trim())) {
+        toast.error(t('profile_page.invalid_phone'));
+        return;
+      }
+    }
+
     setSaving(true);
     try {
       const token = localStorage.getItem('token');
@@ -128,6 +141,10 @@ const ProfilePage = () => {
 
   const handleChangePassword = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!pwdForm.newPassword || pwdForm.newPassword.length < 6) {
+      toast.error(t('profile_page.pwd_too_short'));
+      return;
+    }
     if (pwdForm.newPassword !== pwdForm.confirmPassword) {
       toast.error(t('notifications.pwd_mismatch'));
       return;

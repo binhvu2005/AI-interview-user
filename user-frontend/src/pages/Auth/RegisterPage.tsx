@@ -14,6 +14,23 @@ const RegisterPage = () => {
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!fullName || fullName.trim().length < 2) {
+      toast.error(t('register.name_too_short'));
+      return;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!email || !emailRegex.test(email)) {
+      toast.error(t('register.invalid_email'));
+      return;
+    }
+
+    if (!password || password.length < 6) {
+      toast.error(t('register.pwd_too_short'));
+      return;
+    }
+
     setLoading(true);
 
     try {

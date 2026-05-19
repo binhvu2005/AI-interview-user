@@ -114,6 +114,13 @@ export const getInterviewResult = async (req: AuthRequest, res: Response) => {
     }
     const interview = await Interview.findById(id);
     if (!interview) return res.status(404).json({ message: 'Interview not found' });
+
+    // Enforce strict ownership check to block IDOR attacks
+    const userId = req.user?.id;
+    if (interview.userId.toString() !== userId && !interview.isPublic) {
+      return res.status(403).json({ message: 'Access denied. This interview result is private.' });
+    }
+
     res.json(interview);
   } catch (err: any) {
     res.status(500).json({ message: 'Server error', error: err.message });

@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import mongoose from 'mongoose';
+import sanitizeHtml from 'sanitize-html';
 import ForumPost from '../models/ForumPost.model';
 import User from '../models/user.model';
 import { createNotification } from '../services/notification.service';
@@ -150,11 +151,33 @@ export const createPost = async (req: Request, res: Response) => {
     const { title, content, tags } = req.body;
     const author = (req as any).user.id;
 
+    // Sanitize user inputs to shield against Stored XSS attacks
+    const sanitizedTitle = sanitizeHtml(title, {
+      allowedTags: [],
+      allowedAttributes: {}
+    });
+
+    const sanitizedContent = sanitizeHtml(content, {
+      allowedTags: sanitizeHtml.defaults.allowedTags.concat([ 'img', 'h1', 'h2', 'span', 'div' ]),
+      allowedAttributes: {
+        ...sanitizeHtml.defaults.allowedAttributes,
+        'img': [ 'src', 'alt', 'class' ],
+        'span': [ 'class', 'style' ],
+        'div': [ 'class', 'style' ]
+      }
+    });
+
+    const sanitizedTags = Array.isArray(tags)
+      ? tags.map(t => sanitizeHtml(t, { allowedTags: [], allowedAttributes: {} }))
+      : typeof tags === 'string'
+        ? sanitizeHtml(tags, { allowedTags: [], allowedAttributes: {} })
+        : tags;
+
     const newPost = new ForumPost({
-      title,
-      content,
+      title: sanitizedTitle,
+      content: sanitizedContent,
       author,
-      tags,
+      tags: sanitizedTags,
       images: req.body.images || []
     });
 
@@ -203,9 +226,20 @@ export const addReply = async (req: Request, res: Response) => {
     const post = await ForumPost.findById(req.params.id);
     if (!post) return res.status(404).json({ message: 'Post not found' });
 
+    // Sanitize comment/reply content
+    const sanitizedContent = sanitizeHtml(content, {
+      allowedTags: sanitizeHtml.defaults.allowedTags.concat([ 'img', 'h1', 'h2', 'span', 'div' ]),
+      allowedAttributes: {
+        ...sanitizeHtml.defaults.allowedAttributes,
+        'img': [ 'src', 'alt', 'class' ],
+        'span': [ 'class', 'style' ],
+        'div': [ 'class', 'style' ]
+      }
+    });
+
     post.replies.push({
       author,
-      content,
+      content: sanitizedContent,
       date: new Date(),
       likes: [],
       replies: []

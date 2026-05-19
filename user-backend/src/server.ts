@@ -8,10 +8,19 @@ import { setupNotificationSockets } from './sockets/notification.socket';
 const PORT = process.env.PORT || 5000;
 
 const server = http.createServer(app);
+const allowedOrigins = [
+  'https://ai-interview.id.vn',
+  'https://www.ai-interview.id.vn',
+  'http://localhost:3000',
+  'http://localhost:5173',
+  'http://localhost:5174'
+];
+
 export const io = new Server(server, {
   cors: {
-    origin: "*", // Adjust this for production
-    methods: ["GET", "POST"]
+    origin: allowedOrigins,
+    methods: ["GET", "POST"],
+    credentials: true
   }
 });
 
