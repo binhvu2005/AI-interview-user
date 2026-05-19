@@ -113,8 +113,9 @@ export const generateInterviewQuestions = async (cvData: string, jdText: string,
 export const processInterviewChat = async (history: any[], cvData: string, jdText: string, position: string, level: string, lang: string = 'vi', duration: string = '15', isVip: boolean = false) => {
   const languageName = lang === 'vi' ? 'Vietnamese' : 'English';
 
-  // Truncate history to stay within token limits (last 10 messages)
-  const truncatedHistory = history.slice(-10);
+  // Use the entire conversation history so the AI has 100% full memory of all previous questions and topics.
+  // This is critical for accurate phase progression and anti-looping rules.
+  const fullHistory = history;
 
   // Check for "không biết" in the latest user response
   const lastUserMessage = [...history].reverse().find(m => m.role === 'user')?.content?.toLowerCase() || "";
@@ -209,7 +210,7 @@ You must ask exactly ${maxTechQuestions} MAIN technical questions in total. Coun
 - DEBUG CODE PHASE (when you have introduced exactly ${maxTechQuestions - 1} distinct technical topics so far): Present a buggy block of code (Main Question ${maxTechQuestions} / Final Question). Once the candidate fully responds (including follow-up probing), set isFinished: true.
 
 ### HISTORY
-${truncatedHistory.map(m => `${m.role.toUpperCase()}: ${m.content}`).join('\n')}
+${fullHistory.map(m => `${m.role.toUpperCase()}: ${m.content}`).join('\n')}
 
 ### TASK
 Respond in ${languageName}. 
