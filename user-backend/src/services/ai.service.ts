@@ -58,8 +58,8 @@ const callAI = async (systemPrompt: string, userPrompt: string, label: string, t
       try {
         console.log(`[Gemini] Calling: ${label} (VIP: ${isVip})...`);
         const apiKey = process.env.GEMINI_API_KEY;
-        // Use gemini-2.5-flash for VIP reasoning tasks as pro is rate-limited to 0 on free tier
-        const modelName = 'gemini-2.5-flash';
+        // Use gemini-3-flash-preview for VIP tasks to bypass gemini-2.5-flash rate limits
+        const modelName = 'gemini-3-flash-preview';
         const url = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${apiKey}`;
 
         const payload = {
