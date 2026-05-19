@@ -53,9 +53,52 @@ const extractJSON = (text: string): any => {
 };
 
 const callAI = async (systemPrompt: string, userPrompt: string, label: string, temperature: number = 0.1, isVip: boolean = false): Promise<any> => {
-  console.log(`[Groq] Calling: ${label} (VIP: ${isVip})...`);
   try {
-    const model = isVip ? 'llama-3.3-70b-versatile' : 'llama-3.1-8b-instant';
+    if (isVip && process.env.GEMINI_API_KEY) {
+      console.log(`[Gemini] Calling: ${label} (VIP: ${isVip})...`);
+      const apiKey = process.env.GEMINI_API_KEY;
+      // Use gemini-2.5-pro for VIP reasoning tasks
+      const modelName = 'gemini-2.5-pro';
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${apiKey}`;
+
+      const payload = {
+        contents: [
+          {
+            role: 'user',
+            parts: [{ text: userPrompt }]
+          }
+        ],
+        systemInstruction: {
+          parts: [{ text: systemPrompt }]
+        },
+        generationConfig: {
+          temperature: temperature,
+          responseMimeType: 'application/json'
+        }
+      };
+
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`Gemini API Error: ${response.status} - ${errorText}`);
+      }
+
+      const data = await response.json();
+      const content = data.candidates?.[0]?.content?.parts?.[0]?.text;
+      if (!content) throw new Error('Gemini returned empty response content');
+
+      console.log(`[Gemini] ${label} RAW CONTENT:`, content);
+      return extractJSON(content);
+    }
+
+    // Fallback to Groq for normal users
+    console.log(`[Groq] Calling: ${label} (VIP: ${isVip})...`);
+    const model = 'llama-3.1-8b-instant';
     const response = await groq.chat.completions.create({
       model: model,
       messages: [
@@ -73,7 +116,7 @@ const callAI = async (systemPrompt: string, userPrompt: string, label: string, t
     console.log(`[Groq] ${label} RAW CONTENT:`, content);
     return extractJSON(content);
   } catch (err: any) {
-    console.error(`[Groq] ${label} FAILED:`, err.message);
+    console.error(`[AI Service] ${label} FAILED:`, err.message);
     throw err;
   }
 };
