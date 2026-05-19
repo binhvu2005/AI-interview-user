@@ -11,6 +11,8 @@ const UpgradePage = () => {
   const [vipExpiresAt, setVipExpiresAt] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [processing, setProcessing] = useState(false);
+  const [isCheckoutModalOpen, setIsCheckoutModalOpen] = useState(false);
+  const [selectedPlan, setSelectedPlan] = useState('monthly'); // 'weekly', 'monthly', '3month'
   
   const isVi = i18n.language.startsWith('vi');
 
@@ -157,16 +159,16 @@ const UpgradePage = () => {
       )}
 
       {/* Pricing Columns */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 items-stretch max-w-7xl mx-auto">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-stretch max-w-4xl mx-auto">
         
         {/* Plan 1: Free Plan */}
-        <div className={`bg-surface-container-low border rounded-[32px] p-8 flex flex-col transition-all duration-500 relative ${!isVip ? 'border-outline/30 shadow-md' : 'border-outline-variant/10'}`}>
+        <div className={`bg-surface-container-low border rounded-[32px] p-10 flex flex-col transition-all duration-500 relative ${!isVip ? 'border-outline/30 shadow-md' : 'border-outline-variant/10'}`}>
           <div className="mb-6">
-            <h3 className="text-lg font-bold text-on-surface mb-2">{isVi ? 'Gói Thường' : 'Free Standard'}</h3>
+            <h3 className="text-xl font-bold text-on-surface mb-2">{isVi ? 'Gói Thường' : 'Free Standard'}</h3>
             <div className="flex items-baseline gap-1 mb-4">
-              <span className="text-3xl font-black text-on-surface">0 đ</span>
+              <span className="text-4xl font-black text-on-surface">0 đ</span>
             </div>
-            <p className="text-xs text-on-surface-variant leading-relaxed opacity-70">
+            <p className="text-sm text-on-surface-variant leading-relaxed opacity-70">
               {isVi ? 'Phù hợp để làm quen và trải nghiệm các tính năng cốt lõi.' : 'Perfect to explore core platform features.'}
             </p>
           </div>
@@ -199,137 +201,199 @@ const UpgradePage = () => {
           )}
         </div>
 
-        {/* Plan 2: Weekly Bootcamp */}
-        <div className={`bg-surface-container-low border rounded-[32px] p-8 flex flex-col transition-all duration-500 relative ${isVip && vipPlan === 'weekly' ? 'border-primary/50 bg-surface-container-lowest shadow-md' : 'border-outline-variant/10 hover:border-primary/30 hover:-translate-y-1'}`}>
-          {isVip && vipPlan === 'weekly' && (
-            <div className="absolute top-4 right-4 bg-primary/20 text-primary text-[8px] font-black px-2.5 py-0.5 rounded-full uppercase tracking-widest">
-              {isVi ? 'Đang dùng' : 'Active'}
-            </div>
-          )}
-          
-          <div className="mb-6">
-            <h3 className="text-lg font-bold text-on-surface mb-2">{isVi ? 'Luyện Cấp Tốc' : 'Weekly Bootcamp'}</h3>
-            <div className="flex items-baseline gap-1 mb-4">
-              <span className="text-3xl font-black text-on-surface">99.000 đ</span>
-              <span className="text-xs font-semibold text-on-surface-variant">/ 7 {isVi ? 'ngày' : 'days'}</span>
-            </div>
-            <p className="text-xs text-on-surface-variant leading-relaxed opacity-70">
-              {isVi ? 'Dành cho ứng viên cần luyện khẩn cấp trước buổi phỏng vấn 1 tuần.' : 'Designed for candidates preparing for immediate interviews next week.'}
-            </p>
-          </div>
-
-          <div className="space-y-4 mb-8 flex-1">
-            {vipFeatures.map((f, i) => (
-              <div key={i} className="flex items-center gap-2.5 text-xs text-on-surface font-semibold">
-                <span className="material-symbols-outlined text-primary text-[18px]">check</span>
-                {f}
-              </div>
-            ))}
-          </div>
-
-          {isVip && vipPlan === 'weekly' ? (
-            <button disabled className="w-full py-3.5 rounded-2xl bg-primary/10 text-primary border border-primary/20 font-black text-xs uppercase tracking-widest flex items-center justify-center gap-1.5 opacity-80">
-              <span className="material-symbols-outlined text-[16px]">check</span>
-              {isVi ? 'Gói hiện tại' : 'Current'}
-            </button>
-          ) : (
-            <button 
-              onClick={() => handleUpgradeToggle(true, 'weekly')}
-              disabled={processing}
-              className="w-full py-3.5 rounded-2xl bg-surface-container-high text-on-surface border border-outline-variant/10 font-black text-xs uppercase tracking-widest hover:bg-primary hover:text-on-primary hover:border-transparent transition-all active:scale-95"
-            >
-              {isVi ? 'Nâng cấp ngay' : 'Upgrade Now'}
-            </button>
-          )}
-        </div>
-
-        {/* Plan 3: Monthly Pro */}
-        <div className={`relative border-2 rounded-[32px] p-8 flex flex-col shadow-xl transition-all duration-500 overflow-hidden ${isVip && vipPlan === 'monthly' ? 'border-yellow-500/40 bg-surface-container-lowest' : 'border-primary/30 bg-surface-container-lowest hover:-translate-y-1'}`}>
+        {/* Plan 2: Premium VIP Card */}
+        <div className={`relative border-2 rounded-[32px] p-10 flex flex-col shadow-xl transition-all duration-500 overflow-hidden ${isVip ? 'border-yellow-500/40 bg-surface-container-lowest shadow-yellow-500/5' : 'border-primary/30 bg-surface-container-lowest shadow-primary/10 hover:-translate-y-1'}`}>
           <div className="absolute top-4 right-4 bg-primary text-on-primary text-[8px] font-black px-2.5 py-0.5 rounded-full uppercase tracking-widest animate-pulse">
-            {isVip && vipPlan === 'monthly' ? (isVi ? 'Đang dùng' : 'Active') : (isVi ? 'PHỔ BIẾN' : 'POPULAR')}
+            {isVip ? (isVi ? 'Đang dùng' : 'Active') : (isVi ? 'KHUYÊN DÙNG' : 'RECOMMENDED')}
           </div>
           <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary via-secondary to-primary"></div>
           
           <div className="mb-6">
-            <h3 className="text-lg font-bold text-primary mb-2">{isVi ? 'Chuẩn Bị Dài Hạn' : 'Monthly Pro'}</h3>
+            <h3 className={`text-xl font-bold mb-2 ${isVip ? 'text-yellow-500' : 'text-primary'}`}>{isVi ? 'Gói Premium VIP' : 'Premium VIP'}</h3>
             <div className="flex items-baseline gap-1 mb-4">
-              <span className="text-3xl font-black text-on-surface">199.000 đ</span>
-              <span className="text-xs font-semibold text-on-surface-variant">/ 30 {isVi ? 'ngày' : 'days'}</span>
+              <span className="text-xs font-semibold text-on-surface-variant mr-1">{isVi ? 'Chỉ từ' : 'From only'}</span>
+              <span className="text-4xl font-black text-on-surface">99.000 đ</span>
             </div>
-            <p className="text-xs text-on-surface-variant leading-relaxed opacity-70">
-              {isVi ? 'Tốt nhất để kiên trì rèn luyện phản xạ phỏng vấn và mở rộng tư duy trả lời.' : 'Best for consistent long-term training of logical answering skill.'}
+            <p className="text-sm text-on-surface-variant leading-relaxed opacity-70">
+              {isVi ? 'Mở khóa toàn bộ sức mạnh của AI để phỏng vấn không giới hạn và nhận kết quả chi tiết nhất.' : 'Unlock the full power of AI to practice interviews with no limits and receive deep insights.'}
             </p>
           </div>
 
           <div className="space-y-4 mb-8 flex-1">
             {vipFeatures.map((f, i) => (
               <div key={i} className="flex items-center gap-2.5 text-xs text-on-surface font-bold">
-                <span className="material-symbols-outlined text-primary text-[18px]">check</span>
+                <span className={`material-symbols-outlined text-[18px] ${isVip ? 'text-yellow-500' : 'text-primary'}`}>check</span>
                 {f}
               </div>
             ))}
           </div>
 
-          {isVip && vipPlan === 'monthly' ? (
+          {isVip ? (
             <button disabled className="w-full py-3.5 rounded-2xl bg-yellow-500/10 text-yellow-600 border border-yellow-500/20 font-black text-xs uppercase tracking-widest flex items-center justify-center gap-1.5 opacity-80">
               <span className="material-symbols-outlined text-[16px]">workspace_premium</span>
               {isVi ? 'Gói hiện tại' : 'Current'}
             </button>
           ) : (
             <button 
-              onClick={() => handleUpgradeToggle(true, 'monthly')}
+              onClick={() => setIsCheckoutModalOpen(true)}
               disabled={processing}
               className="w-full py-3.5 rounded-2xl bg-primary text-on-primary font-black text-xs uppercase tracking-widest shadow-lg shadow-primary/10 hover:shadow-primary/30 hover:scale-[1.02] active:scale-95 transition-all relative overflow-hidden"
             >
-              {isVi ? 'Nâng cấp ngay' : 'Upgrade Now'}
-            </button>
-          )}
-        </div>
-
-        {/* Plan 4: 3-Month Career Boost */}
-        <div className={`relative border-2 rounded-[32px] p-8 flex flex-col shadow-xl transition-all duration-500 overflow-hidden ${isVip && vipPlan === '3month' ? 'border-yellow-500/40 bg-surface-container-lowest' : 'border-yellow-500/30 bg-surface-container-lowest hover:-translate-y-1'}`}>
-          <div className="absolute top-4 right-4 bg-yellow-500 text-white text-[8px] font-black px-2.5 py-0.5 rounded-full uppercase tracking-widest">
-            {isVip && vipPlan === '3month' ? (isVi ? 'Đang dùng' : 'Active') : (isVi ? 'BỨT PHÁ' : 'ELITE')}
-          </div>
-          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-yellow-500 via-amber-400 to-yellow-500 animate-pulse"></div>
-          
-          <div className="mb-6">
-            <h3 className="text-lg font-bold text-yellow-500 mb-2">{isVi ? 'Bứt Phá Sự Nghiệp' : '3-Month Career'}</h3>
-            <div className="flex items-baseline gap-1 mb-4">
-              <span className="text-3xl font-black text-on-surface">399.000 đ</span>
-              <span className="text-xs font-semibold text-on-surface-variant">/ 3 {isVi ? 'tháng' : 'months'}</span>
-            </div>
-            <p className="text-xs text-on-surface-variant leading-relaxed opacity-70">
-              {isVi ? 'Tối ưu tuyệt đối, cam kết đỗ vào các tập đoàn lớn & định hình phong cách làm việc.' : 'Ultimate training package to secure elite roles in tech companies.'}
-            </p>
-          </div>
-
-          <div className="space-y-4 mb-8 flex-1">
-            {vipFeatures.map((f, i) => (
-              <div key={i} className="flex items-center gap-2.5 text-xs text-on-surface font-bold">
-                <span className="material-symbols-outlined text-yellow-500 text-[18px]">check</span>
-                {f}
-              </div>
-            ))}
-          </div>
-
-          {isVip && vipPlan === '3month' ? (
-            <button disabled className="w-full py-3.5 rounded-2xl bg-yellow-500/10 text-yellow-600 border border-yellow-500/20 font-black text-xs uppercase tracking-widest flex items-center justify-center gap-1.5 opacity-80">
-              <span className="material-symbols-outlined text-[16px]">workspace_premium</span>
-              {isVi ? 'Gói hiện tại' : 'Current'}
-            </button>
-          ) : (
-            <button 
-              onClick={() => handleUpgradeToggle(true, '3month')}
-              disabled={processing}
-              className="w-full py-3.5 rounded-2xl bg-yellow-500 text-white font-black text-xs uppercase tracking-widest shadow-lg shadow-yellow-500/10 hover:shadow-yellow-500/30 hover:scale-[1.02] active:scale-95 transition-all relative overflow-hidden"
-            >
-              {isVi ? 'Nâng cấp ngay' : 'Upgrade Now'}
+              {isVi ? 'Nâng cấp VIP ngay' : 'Upgrade VIP Now'}
             </button>
           )}
         </div>
 
       </div>
+
+      {/* Checkout Selection Modal */}
+      {isCheckoutModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-in fade-in duration-300">
+          <div className="bg-surface-container border border-outline-variant/10 rounded-[32px] w-full max-w-xl overflow-hidden shadow-2xl relative animate-in zoom-in-95 duration-300 flex flex-col max-h-[90vh]">
+            
+            {/* Header */}
+            <div className="p-6 border-b border-outline-variant/10 flex items-center justify-between">
+              <div>
+                <h3 className="text-xl font-black text-on-surface">
+                  {isVi ? 'Chọn Thời Hạn VIP' : 'Select VIP Plan Duration'}
+                </h3>
+                <p className="text-xs text-on-surface-variant opacity-75 font-medium">
+                  {isVi ? 'Mở khóa đặc quyền Premium VIP để bứt phá phỏng vấn' : 'Activate Premium VIP privileges now'}
+                </p>
+              </div>
+              <button 
+                onClick={() => setIsCheckoutModalOpen(false)}
+                className="w-8 h-8 rounded-full hover:bg-outline-variant/20 flex items-center justify-center text-on-surface-variant transition-colors"
+              >
+                <span className="material-symbols-outlined text-xl">close</span>
+              </button>
+            </div>
+            
+            {/* Body */}
+            <div className="p-6 overflow-y-auto space-y-4 flex-1">
+              
+              {/* Option 1: Weekly Bootcamp */}
+              <div 
+                onClick={() => setSelectedPlan('weekly')}
+                className={`border-2 rounded-2xl p-4 cursor-pointer transition-all flex items-start gap-4 ${
+                  selectedPlan === 'weekly' 
+                    ? 'border-primary bg-primary/5 shadow-md shadow-primary/5' 
+                    : 'border-outline-variant/15 hover:border-primary/30 bg-surface-container-low'
+                }`}
+              >
+                <div className="pt-0.5">
+                  <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${selectedPlan === 'weekly' ? 'border-primary' : 'border-outline-variant/50'}`}>
+                    {selectedPlan === 'weekly' && <div className="w-2.5 h-2.5 rounded-full bg-primary animate-in zoom-in"></div>}
+                  </div>
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 mb-1">
+                    <h4 className="font-bold text-on-surface text-sm sm:text-base">
+                      {isVi ? 'Luyện Cấp Tốc (7 Ngày)' : 'Weekly Bootcamp (7 Days)'}
+                    </h4>
+                    <span className="px-2 py-0.5 text-[8px] font-black uppercase tracking-widest bg-surface-container-highest text-on-surface-variant rounded-md">
+                      {isVi ? 'Cấp tốc' : 'Bootcamp'}
+                    </span>
+                  </div>
+                  <p className="text-xs text-on-surface-variant opacity-70 leading-relaxed font-medium mb-2">
+                    {isVi ? 'Dành cho ứng viên cần luyện khẩn cấp trước buổi phỏng vấn 1 tuần.' : 'Designed for candidates preparing for immediate interviews next week.'}
+                  </p>
+                </div>
+                <div className="text-right shrink-0">
+                  <span className="text-lg font-black text-on-surface">99.000 đ</span>
+                </div>
+              </div>
+
+              {/* Option 2: Monthly Pro */}
+              <div 
+                onClick={() => setSelectedPlan('monthly')}
+                className={`border-2 rounded-2xl p-4 cursor-pointer transition-all flex items-start gap-4 ${
+                  selectedPlan === 'monthly' 
+                    ? 'border-primary bg-primary/5 shadow-md shadow-primary/5' 
+                    : 'border-outline-variant/15 hover:border-primary/30 bg-surface-container-low'
+                }`}
+              >
+                <div className="pt-0.5">
+                  <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${selectedPlan === 'monthly' ? 'border-primary' : 'border-outline-variant/50'}`}>
+                    {selectedPlan === 'monthly' && <div className="w-2.5 h-2.5 rounded-full bg-primary animate-in zoom-in"></div>}
+                  </div>
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 mb-1">
+                    <h4 className="font-bold text-on-surface text-sm sm:text-base">
+                      {isVi ? 'Chuẩn Bị Dài Hạn (30 Ngày)' : 'Monthly Pro (30 Days)'}
+                    </h4>
+                    <span className="px-2 py-0.5 text-[8px] font-black uppercase tracking-widest bg-primary/10 text-primary rounded-md">
+                      {isVi ? 'TIẾT KIỆM 50%' : 'SAVE 50%'}
+                    </span>
+                  </div>
+                  <p className="text-xs text-on-surface-variant opacity-70 leading-relaxed font-medium mb-2">
+                    {isVi ? 'Tốt nhất để rèn luyện phản xạ phỏng vấn bền bỉ.' : 'Best for consistent long-term training of logical answering skill.'}
+                  </p>
+                </div>
+                <div className="text-right shrink-0">
+                  <span className="text-lg font-black text-on-surface">199.000 đ</span>
+                </div>
+              </div>
+
+              {/* Option 3: 3-Month Career Boost */}
+              <div 
+                onClick={() => setSelectedPlan('3month')}
+                className={`border-2 rounded-2xl p-4 cursor-pointer transition-all flex items-start gap-4 ${
+                  selectedPlan === '3month' 
+                    ? 'border-yellow-500 bg-yellow-500/5 shadow-md shadow-yellow-500/5' 
+                    : 'border-outline-variant/15 hover:border-yellow-500/30 bg-surface-container-low'
+                }`}
+              >
+                <div className="pt-0.5">
+                  <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${selectedPlan === '3month' ? 'border-yellow-500' : 'border-outline-variant/50'}`}>
+                    {selectedPlan === '3month' && <div className="w-2.5 h-2.5 rounded-full bg-yellow-500 animate-in zoom-in"></div>}
+                  </div>
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 mb-1">
+                    <h4 className="font-bold text-on-surface text-sm sm:text-base">
+                      {isVi ? 'Bứt Phá Sự Nghiệp (3 Tháng)' : '3-Month Career Boost (3 Months)'}
+                    </h4>
+                    <span className="px-2 py-0.5 text-[8px] font-black uppercase tracking-widest bg-yellow-500/20 text-yellow-600 rounded-md">
+                      {isVi ? 'TIẾT KIỆM 67%' : 'SAVE 67%'}
+                    </span>
+                  </div>
+                  <p className="text-xs text-on-surface-variant opacity-70 leading-relaxed font-medium mb-2">
+                    {isVi ? 'Cam kết bứt phá, tối ưu chi phí học tập vượt trội.' : 'Ultimate training package to secure elite roles in tech companies.'}
+                  </p>
+                </div>
+                <div className="text-right shrink-0">
+                  <span className="text-lg font-black text-on-surface">399.000 đ</span>
+                </div>
+              </div>
+
+            </div>
+            
+            {/* Footer */}
+            <div className="p-6 border-t border-outline-variant/10 bg-surface-container-high flex flex-col gap-4">
+              <button 
+                onClick={() => {
+                  setIsCheckoutModalOpen(false);
+                  handleUpgradeToggle(true, selectedPlan);
+                }}
+                disabled={processing}
+                className="w-full py-4 rounded-2xl bg-primary text-on-primary font-black text-xs uppercase tracking-widest shadow-xl shadow-primary/20 hover:shadow-primary/40 transition-all hover:scale-[1.01] active:scale-98"
+              >
+                {processing ? t('setup.analyzing') : (isVi ? 'Xác Nhận & Thanh Toán' : 'Confirm & Pay')}
+              </button>
+              
+              <div className="flex justify-center items-center gap-6 grayscale opacity-45">
+                <span className="text-[8px] font-black uppercase tracking-[0.2em] text-on-surface-variant mr-2">Secure Checkout</span>
+                <span className="font-bold text-xs tracking-tighter">STRIPE</span>
+                <span className="font-bold text-xs tracking-tighter">PAYPAL</span>
+                <span className="font-bold text-xs tracking-tighter">VISA</span>
+              </div>
+            </div>
+            
+          </div>
+        </div>
+      )}
 
       {/* Trust Badges */}
       <div className="mt-24 text-center">
