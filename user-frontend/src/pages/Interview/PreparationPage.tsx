@@ -17,6 +17,7 @@ const PreparationPage = () => {
   
   const [selectedPosition, setSelectedPosition] = useState('');
   const [selectedLevel, setSelectedLevel] = useState('');
+  const [selectedDuration, setSelectedDuration] = useState(localStorage.getItem('interview_duration') || '15');
   const [cvMode, setCvMode] = useState<'upload' | 'vault'>('upload');
   const [cvFile, setCvFile] = useState<File | null>(null);
   const [jdText, setJdText] = useState('');
@@ -403,8 +404,11 @@ const PreparationPage = () => {
                
                <div className="relative group">
                   <select 
-                    value={localStorage.getItem('interview_duration') || '15'} 
-                    onChange={(e) => localStorage.setItem('interview_duration', e.target.value)} 
+                    value={selectedDuration} 
+                    onChange={(e) => {
+                      setSelectedDuration(e.target.value);
+                      localStorage.setItem('interview_duration', e.target.value);
+                    }} 
                     className="w-full bg-surface border border-outline-variant/20 rounded-xl px-5 py-3.5 text-on-surface appearance-none text-sm font-medium focus:border-primary/50 transition-all outline-none text-center"
                   >
                     {[15, 20, 25, 30, 45, 60].map(m => <option key={m} value={m}>{m} {isVi ? 'Phút' : 'Minutes'}</option>)}
