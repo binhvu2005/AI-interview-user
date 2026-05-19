@@ -52,6 +52,7 @@ const UpgradePage = () => {
         setVipExpiresAt(data.vipExpiresAt || null);
         
         // Notify other components (like Header/Sidebar) of the VIP status change
+        localStorage.setItem('isVip', data.isVip ? 'true' : 'false');
         localStorage.setItem('userVip', data.isVip ? 'true' : 'false');
         window.dispatchEvent(new Event('userUpdate'));
 
