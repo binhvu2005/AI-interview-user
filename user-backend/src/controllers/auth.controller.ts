@@ -286,9 +286,29 @@ export const upgradeToVip = async (req: AuthRequest, res: Response) => {
     const user = await User.findById(req.user?.id);
     if (!user) return res.status(404).json({ message: 'User not found' });
     
-    user.isVip = req.body.isVip !== undefined ? req.body.isVip : true;
-    await user.save();
+    const { isVip, plan } = req.body;
     
+    if (isVip === false) {
+      user.isVip = false;
+      user.vipPlan = 'none';
+      user.vipExpiresAt = null;
+    } else {
+      user.isVip = true;
+      user.vipPlan = plan || 'monthly';
+      
+      const now = new Date();
+      if (plan === 'weekly') {
+        user.vipExpiresAt = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
+      } else if (plan === '3month') {
+        user.vipExpiresAt = new Date(now.getTime() + 90 * 24 * 60 * 60 * 1000);
+      } else {
+        // default monthly
+        user.vipPlan = 'monthly';
+        user.vipExpiresAt = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
+      }
+    }
+    
+    await user.save();
     res.json(user);
   } catch (err: any) {
     res.status(500).json({ message: 'Server Error', error: err.message });

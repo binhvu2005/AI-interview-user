@@ -7,10 +7,12 @@ import { fetchWithAuth } from '../../services/fetchClient';
 const UpgradePage = () => {
   const { t, i18n } = useTranslation();
   const [isVip, setIsVip] = useState(false);
+  const [vipPlan, setVipPlan] = useState('none');
+  const [vipExpiresAt, setVipExpiresAt] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [processing, setProcessing] = useState(false);
   
-  const isVi = i18n.language === 'vi';
+  const isVi = i18n.language.startsWith('vi');
 
   const checkVipStatus = async () => {
     try {
@@ -18,6 +20,8 @@ const UpgradePage = () => {
       if (res.ok) {
         const data = await res.json();
         setIsVip(data.isVip || false);
+        setVipPlan(data.vipPlan || 'none');
+        setVipExpiresAt(data.vipExpiresAt || null);
       }
     } catch (error) {
       console.error('Error checking VIP status:', error);
@@ -30,24 +34,27 @@ const UpgradePage = () => {
     checkVipStatus();
   }, []);
 
-  const handleUpgradeToggle = async (targetVipStatus: boolean) => {
+  const handleUpgradeToggle = async (targetVipStatus: boolean, plan?: string) => {
     setProcessing(true);
     try {
       const res = await fetchWithAuth(API_ENDPOINTS.AUTH.UPGRADE_VIP, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ isVip: targetVipStatus })
+        body: JSON.stringify({ isVip: targetVipStatus, plan })
       });
 
       if (res.ok) {
-        setIsVip(targetVipStatus);
+        const data = await res.json();
+        setIsVip(data.isVip || false);
+        setVipPlan(data.vipPlan || 'none');
+        setVipExpiresAt(data.vipExpiresAt || null);
         
         // Notify other components (like Header/Sidebar) of the VIP status change
-        localStorage.setItem('userVip', targetVipStatus ? 'true' : 'false');
+        localStorage.setItem('userVip', data.isVip ? 'true' : 'false');
         window.dispatchEvent(new Event('userUpdate'));
 
         if (targetVipStatus) {
-          toast.success(isVi ? 'Chúc mừng! Tài khoản của bạn đã được nâng cấp lên VIP thành công! 🌟' : 'Congratulations! Your account has been upgraded to VIP! 🌟');
+          toast.success(isVi ? `Chúc mừng! Bạn đã nâng cấp thành công gói ${getPlanName(plan)}! 🌟` : `Congratulations! You successfully upgraded to ${getPlanName(plan)}! 🌟`);
         } else {
           toast.success(isVi ? 'Tài khoản của bạn đã được chuyển về gói thường.' : 'Your account has been downgraded to Standard.');
         }
@@ -59,6 +66,22 @@ const UpgradePage = () => {
     } finally {
       setProcessing(false);
     }
+  };
+
+  const getPlanName = (plan?: string) => {
+    if (plan === 'weekly') return isVi ? 'Luyện thi Cấp tốc (7 Ngày)' : 'Weekly Bootcamp (7 Days)';
+    if (plan === '3month') return isVi ? 'Bứt phá Sự nghiệp (3 Tháng)' : '3-Month Career Boost';
+    return isVi ? 'Chuẩn bị Dài hạn (30 Ngày)' : 'Monthly Pro (30 Days)';
+  };
+
+  const formatExpiresDate = (dateString: string | null) => {
+    if (!dateString) return '';
+    const date = new Date(dateString);
+    return date.toLocaleDateString(isVi ? 'vi-VN' : 'en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
   };
 
   const vipFeatures = [
@@ -86,116 +109,226 @@ const UpgradePage = () => {
   }
 
   return (
-    <div className="max-w-6xl mx-auto px-4 py-12 animate-in fade-in slide-in-from-bottom-8 duration-700">
+    <div className="max-w-7xl mx-auto px-4 py-12 animate-in fade-in slide-in-from-bottom-8 duration-700">
+      
+      {/* Page Title */}
       <div className="text-center mb-16 relative">
-        <div className="mesh-gradient opacity-30"></div>
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-[10px] font-black tracking-widest uppercase mb-6 border border-primary/20">
           <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span>
-          {t('upgrade_page.tag')}
+          {isVi ? 'BẢNG GIÁ VIP' : 'PRICING PLANS'}
         </div>
         <h1 className="text-5xl md:text-7xl font-black text-on-surface tracking-tighter mb-6 leading-none">
-          {t('upgrade_page.title')} <br />
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">
-            {t('upgrade_page.title_highlight')}
+          {isVi ? 'Nâng Cấp Gói VIP' : 'Upgrade VIP Plan'} <br />
+          <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-on-surface to-secondary">
+            {isVi ? 'Để Bứt Phá Sự Nghiệp' : 'To Accelerate Your Career'}
           </span>
         </h1>
         <p className="text-on-surface-variant text-lg max-w-2xl mx-auto opacity-80 leading-relaxed font-medium">
-          {t('upgrade_page.subtitle')}
+          {isVi 
+            ? 'Lựa chọn gói VIP phù hợp nhất để rèn luyện tư duy phản xạ phỏng vấn và mở rộng cơ hội thành công trước mọi nhà tuyển dụng.' 
+            : 'Select the best VIP tier to practice interview response logic and secure your dream job.'}
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-stretch max-w-5xl mx-auto">
-        {/* Free Plan */}
-        <div className={`bg-surface-container-low border rounded-[40px] p-10 flex flex-col group transition-all duration-500 ${!isVip ? 'border-primary/20 shadow-lg' : 'border-outline-variant/10'}`}>
-          <div className="mb-8">
-            <h3 className="text-xl font-bold text-on-surface mb-2">{t('upgrade_page.plan_free_name')}</h3>
-            <div className="flex items-baseline gap-1 mb-4">
-              <span className="text-4xl font-black text-on-surface">{t('upgrade_page.plan_free_price')}</span>
+      {/* Active VIP Status Bar */}
+      {isVip && (
+        <div className="max-w-3xl mx-auto mb-12 p-6 rounded-3xl bg-yellow-500/10 border border-yellow-500/20 flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
+          <div className="flex items-center gap-3">
+            <span className="material-symbols-outlined text-yellow-500 text-3xl">workspace_premium</span>
+            <div>
+              <h4 className="font-black text-on-surface text-base">
+                {isVi ? 'Tài khoản VIP đang hoạt động!' : 'VIP Account Active!'}
+              </h4>
+              <p className="text-xs text-on-surface-variant font-medium opacity-85">
+                {isVi 
+                  ? `Bạn đang sử dụng gói: ${getPlanName(vipPlan)}. Hết hạn vào ngày ${formatExpiresDate(vipExpiresAt)}` 
+                  : `Current plan: ${getPlanName(vipPlan)}. Expires on ${formatExpiresDate(vipExpiresAt)}`}
+              </p>
             </div>
-            <p className="text-sm text-on-surface-variant leading-relaxed opacity-70">
-              {t('upgrade_page.plan_free_desc')}
+          </div>
+          <button 
+            onClick={() => handleUpgradeToggle(false)}
+            disabled={processing}
+            className="text-[11px] font-black uppercase tracking-widest text-red-500 hover:text-red-600 bg-red-500/10 border border-red-500/20 px-5 py-2.5 rounded-xl transition-all active:scale-95 disabled:opacity-50"
+          >
+            {processing ? t('setup.analyzing') : (isVi ? 'Hạ cấp xuống gói Thường' : 'Downgrade to Standard')}
+          </button>
+        </div>
+      )}
+
+      {/* Pricing Columns */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 items-stretch max-w-7xl mx-auto">
+        
+        {/* Plan 1: Free Plan */}
+        <div className={`bg-surface-container-low border rounded-[32px] p-8 flex flex-col transition-all duration-500 relative ${!isVip ? 'border-outline/30 shadow-md' : 'border-outline-variant/10'}`}>
+          <div className="mb-6">
+            <h3 className="text-lg font-bold text-on-surface mb-2">{isVi ? 'Gói Thường' : 'Free Standard'}</h3>
+            <div className="flex items-baseline gap-1 mb-4">
+              <span className="text-3xl font-black text-on-surface">0 đ</span>
+            </div>
+            <p className="text-xs text-on-surface-variant leading-relaxed opacity-70">
+              {isVi ? 'Phù hợp để làm quen và trải nghiệm các tính năng cốt lõi.' : 'Perfect to explore core platform features.'}
             </p>
           </div>
 
-          <div className="space-y-4 mb-10 flex-1">
+          <div className="space-y-4 mb-8 flex-1">
             {freeFeatures.map((f, i) => (
-              <div key={i} className="flex items-center gap-3 text-sm text-on-surface-variant font-medium">
-                <span className="material-symbols-outlined text-on-surface-variant/40 text-[20px]">check_circle</span>
+              <div key={i} className="flex items-center gap-2.5 text-xs text-on-surface-variant font-medium">
+                <span className="material-symbols-outlined text-on-surface-variant/40 text-[18px]">check_circle</span>
                 {f}
               </div>
             ))}
-            <div className="flex items-center gap-3 text-sm text-on-surface-variant/40 font-medium italic">
-              <span className="material-symbols-outlined text-[20px]">block</span>
+            <div className="flex items-center gap-2.5 text-xs text-on-surface-variant/30 font-medium italic">
+              <span className="material-symbols-outlined text-[18px]">block</span>
               {isVi ? 'Phân tích chuyên sâu (Advanced Analytics)' : 'Advanced Analytics'}
             </div>
           </div>
 
-          {isVip ? (
+          {!isVip ? (
+            <button disabled className="w-full py-3.5 rounded-2xl bg-surface-container-highest text-on-surface-variant font-black text-xs uppercase tracking-widest border border-outline-variant/20 opacity-60">
+              {isVi ? 'Gói hiện tại' : 'Current Plan'}
+            </button>
+          ) : (
             <button 
               onClick={() => handleUpgradeToggle(false)}
               disabled={processing}
-              className="w-full py-4 rounded-2xl bg-surface-container-highest text-on-surface hover:bg-red-500/10 hover:text-red-500 font-black text-xs uppercase tracking-widest border border-outline-variant/20 transition-all cursor-pointer active:scale-98 disabled:opacity-50"
+              className="w-full py-3.5 rounded-2xl bg-surface-container-highest text-on-surface hover:bg-red-500/10 hover:text-red-500 font-black text-xs uppercase tracking-widest border border-outline-variant/20 transition-all cursor-pointer active:scale-98 disabled:opacity-50"
             >
-              {processing ? t('setup.analyzing') : (isVi ? 'Hạ cấp xuống gói Thường' : 'Downgrade to Standard')}
-            </button>
-          ) : (
-            <button disabled className="w-full py-4 rounded-2xl bg-surface-container-highest text-on-surface-variant font-black text-xs uppercase tracking-widest border border-outline-variant/20 opacity-60">
-              {t('upgrade_page.current_plan')}
+              {processing ? t('setup.analyzing') : (isVi ? 'Hạ cấp' : 'Downgrade')}
             </button>
           )}
         </div>
 
-        {/* VIP Plan */}
-        <div className={`relative border-2 rounded-[40px] p-10 flex flex-col shadow-2xl transition-all duration-500 group overflow-hidden ${isVip ? 'border-yellow-500/40 bg-surface-container-lowest shadow-yellow-500/5' : 'border-primary/30 bg-surface-container-lowest shadow-primary/10 hover:-translate-y-2'}`}>
-          {/* VIP status Badge */}
-          <div className={`absolute top-6 right-6 text-[9px] font-black px-3 py-1 rounded-full uppercase tracking-widest animate-pulse ${isVip ? 'bg-yellow-500/20 text-yellow-500' : 'bg-primary text-on-primary'}`}>
-            {isVip ? (isVi ? 'Đang hoạt động' : 'Active') : t('upgrade_page.popular_badge')}
-          </div>
-          
-          {/* Animated Background Element */}
-          <div className={`absolute top-0 left-0 w-full h-1 bg-[length:200%_auto] animate-gradient-x ${isVip ? 'bg-gradient-to-r from-yellow-500 via-amber-400 to-yellow-500' : 'bg-gradient-to-r from-primary via-secondary to-primary'}`}></div>
-          
-          <div className="mb-8">
-            <h3 className={`text-xl font-bold mb-2 ${isVip ? 'text-yellow-500' : 'text-primary'}`}>{t('upgrade_page.plan_vip_name')}</h3>
-            <div className="flex items-baseline gap-1 mb-4">
-              <span className="text-5xl font-black text-on-surface">{t('upgrade_page.plan_vip_price')}</span>
-              <span className="text-sm font-bold text-on-surface-variant">{t('upgrade_page.plan_vip_period')}</span>
+        {/* Plan 2: Weekly Bootcamp */}
+        <div className={`bg-surface-container-low border rounded-[32px] p-8 flex flex-col transition-all duration-500 relative ${isVip && vipPlan === 'weekly' ? 'border-primary/50 bg-surface-container-lowest shadow-md' : 'border-outline-variant/10 hover:border-primary/30 hover:-translate-y-1'}`}>
+          {isVip && vipPlan === 'weekly' && (
+            <div className="absolute top-4 right-4 bg-primary/20 text-primary text-[8px] font-black px-2.5 py-0.5 rounded-full uppercase tracking-widest">
+              {isVi ? 'Đang dùng' : 'Active'}
             </div>
-            <p className="text-sm text-on-surface-variant leading-relaxed font-medium">
-              {t('upgrade_page.plan_vip_desc')}
+          )}
+          
+          <div className="mb-6">
+            <h3 className="text-lg font-bold text-on-surface mb-2">{isVi ? 'Luyện Cấp Tốc' : 'Weekly Bootcamp'}</h3>
+            <div className="flex items-baseline gap-1 mb-4">
+              <span className="text-3xl font-black text-on-surface">99.000 đ</span>
+              <span className="text-xs font-semibold text-on-surface-variant">/ 7 {isVi ? 'ngày' : 'days'}</span>
+            </div>
+            <p className="text-xs text-on-surface-variant leading-relaxed opacity-70">
+              {isVi ? 'Dành cho ứng viên cần luyện khẩn cấp trước buổi phỏng vấn 1 tuần.' : 'Designed for candidates preparing for immediate interviews next week.'}
             </p>
           </div>
 
-          <div className="space-y-4 mb-10 flex-1">
+          <div className="space-y-4 mb-8 flex-1">
             {vipFeatures.map((f, i) => (
-              <div key={i} className="flex items-center gap-3 text-sm text-on-surface font-semibold group-hover:translate-x-1 transition-transform" style={{ transitionDelay: `${i * 50}ms` }}>
-                <div className={`w-6 h-6 rounded-full flex items-center justify-center ${isVip ? 'bg-yellow-500/10' : 'bg-primary/10'}`}>
-                  <span className={`material-symbols-outlined text-[16px] font-bold ${isVip ? 'text-yellow-500' : 'text-primary'}`}>check</span>
-                </div>
+              <div key={i} className="flex items-center gap-2.5 text-xs text-on-surface font-semibold">
+                <span className="material-symbols-outlined text-primary text-[18px]">check</span>
                 {f}
               </div>
             ))}
           </div>
 
-          {isVip ? (
-            <button 
-              disabled 
-              className="w-full py-5 rounded-2xl bg-yellow-500/10 text-yellow-600 border border-yellow-500/20 font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2 opacity-80"
-            >
-              <span className="material-symbols-outlined text-[18px]">workspace_premium</span>
-              {t('upgrade_page.current_plan')}
+          {isVip && vipPlan === 'weekly' ? (
+            <button disabled className="w-full py-3.5 rounded-2xl bg-primary/10 text-primary border border-primary/20 font-black text-xs uppercase tracking-widest flex items-center justify-center gap-1.5 opacity-80">
+              <span className="material-symbols-outlined text-[16px]">check</span>
+              {isVi ? 'Gói hiện tại' : 'Current'}
             </button>
           ) : (
             <button 
-              onClick={() => handleUpgradeToggle(true)}
+              onClick={() => handleUpgradeToggle(true, 'weekly')}
               disabled={processing}
-              className="w-full py-5 rounded-2xl bg-primary text-on-primary font-black text-xs uppercase tracking-widest shadow-xl shadow-primary/20 hover:shadow-primary/40 hover:scale-[1.02] active:scale-95 transition-all relative overflow-hidden"
+              className="w-full py-3.5 rounded-2xl bg-surface-container-high text-on-surface border border-outline-variant/10 font-black text-xs uppercase tracking-widest hover:bg-primary hover:text-on-primary hover:border-transparent transition-all active:scale-95"
             >
-              <span className="relative z-10">{processing ? t('setup.analyzing') : t('upgrade_page.upgrade_btn')}</span>
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
+              {isVi ? 'Nâng cấp ngay' : 'Upgrade Now'}
             </button>
           )}
         </div>
+
+        {/* Plan 3: Monthly Pro */}
+        <div className={`relative border-2 rounded-[32px] p-8 flex flex-col shadow-xl transition-all duration-500 overflow-hidden ${isVip && vipPlan === 'monthly' ? 'border-yellow-500/40 bg-surface-container-lowest' : 'border-primary/30 bg-surface-container-lowest hover:-translate-y-1'}`}>
+          <div className="absolute top-4 right-4 bg-primary text-on-primary text-[8px] font-black px-2.5 py-0.5 rounded-full uppercase tracking-widest animate-pulse">
+            {isVip && vipPlan === 'monthly' ? (isVi ? 'Đang dùng' : 'Active') : (isVi ? 'PHỔ BIẾN' : 'POPULAR')}
+          </div>
+          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary via-secondary to-primary"></div>
+          
+          <div className="mb-6">
+            <h3 className="text-lg font-bold text-primary mb-2">{isVi ? 'Chuẩn Bị Dài Hạn' : 'Monthly Pro'}</h3>
+            <div className="flex items-baseline gap-1 mb-4">
+              <span className="text-3xl font-black text-on-surface">199.000 đ</span>
+              <span className="text-xs font-semibold text-on-surface-variant">/ 30 {isVi ? 'ngày' : 'days'}</span>
+            </div>
+            <p className="text-xs text-on-surface-variant leading-relaxed opacity-70">
+              {isVi ? 'Tốt nhất để kiên trì rèn luyện phản xạ phỏng vấn và mở rộng tư duy trả lời.' : 'Best for consistent long-term training of logical answering skill.'}
+            </p>
+          </div>
+
+          <div className="space-y-4 mb-8 flex-1">
+            {vipFeatures.map((f, i) => (
+              <div key={i} className="flex items-center gap-2.5 text-xs text-on-surface font-bold">
+                <span className="material-symbols-outlined text-primary text-[18px]">check</span>
+                {f}
+              </div>
+            ))}
+          </div>
+
+          {isVip && vipPlan === 'monthly' ? (
+            <button disabled className="w-full py-3.5 rounded-2xl bg-yellow-500/10 text-yellow-600 border border-yellow-500/20 font-black text-xs uppercase tracking-widest flex items-center justify-center gap-1.5 opacity-80">
+              <span className="material-symbols-outlined text-[16px]">workspace_premium</span>
+              {isVi ? 'Gói hiện tại' : 'Current'}
+            </button>
+          ) : (
+            <button 
+              onClick={() => handleUpgradeToggle(true, 'monthly')}
+              disabled={processing}
+              className="w-full py-3.5 rounded-2xl bg-primary text-on-primary font-black text-xs uppercase tracking-widest shadow-lg shadow-primary/10 hover:shadow-primary/30 hover:scale-[1.02] active:scale-95 transition-all relative overflow-hidden"
+            >
+              {isVi ? 'Nâng cấp ngay' : 'Upgrade Now'}
+            </button>
+          )}
+        </div>
+
+        {/* Plan 4: 3-Month Career Boost */}
+        <div className={`relative border-2 rounded-[32px] p-8 flex flex-col shadow-xl transition-all duration-500 overflow-hidden ${isVip && vipPlan === '3month' ? 'border-yellow-500/40 bg-surface-container-lowest' : 'border-yellow-500/30 bg-surface-container-lowest hover:-translate-y-1'}`}>
+          <div className="absolute top-4 right-4 bg-yellow-500 text-white text-[8px] font-black px-2.5 py-0.5 rounded-full uppercase tracking-widest">
+            {isVip && vipPlan === '3month' ? (isVi ? 'Đang dùng' : 'Active') : (isVi ? 'BỨT PHÁ' : 'ELITE')}
+          </div>
+          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-yellow-500 via-amber-400 to-yellow-500 animate-pulse"></div>
+          
+          <div className="mb-6">
+            <h3 className="text-lg font-bold text-yellow-500 mb-2">{isVi ? 'Bứt Phá Sự Nghiệp' : '3-Month Career'}</h3>
+            <div className="flex items-baseline gap-1 mb-4">
+              <span className="text-3xl font-black text-on-surface">399.000 đ</span>
+              <span className="text-xs font-semibold text-on-surface-variant">/ 3 {isVi ? 'tháng' : 'months'}</span>
+            </div>
+            <p className="text-xs text-on-surface-variant leading-relaxed opacity-70">
+              {isVi ? 'Tối ưu tuyệt đối, cam kết đỗ vào các tập đoàn lớn & định hình phong cách làm việc.' : 'Ultimate training package to secure elite roles in tech companies.'}
+            </p>
+          </div>
+
+          <div className="space-y-4 mb-8 flex-1">
+            {vipFeatures.map((f, i) => (
+              <div key={i} className="flex items-center gap-2.5 text-xs text-on-surface font-bold">
+                <span className="material-symbols-outlined text-yellow-500 text-[18px]">check</span>
+                {f}
+              </div>
+            ))}
+          </div>
+
+          {isVip && vipPlan === '3month' ? (
+            <button disabled className="w-full py-3.5 rounded-2xl bg-yellow-500/10 text-yellow-600 border border-yellow-500/20 font-black text-xs uppercase tracking-widest flex items-center justify-center gap-1.5 opacity-80">
+              <span className="material-symbols-outlined text-[16px]">workspace_premium</span>
+              {isVi ? 'Gói hiện tại' : 'Current'}
+            </button>
+          ) : (
+            <button 
+              onClick={() => handleUpgradeToggle(true, '3month')}
+              disabled={processing}
+              className="w-full py-3.5 rounded-2xl bg-yellow-500 text-white font-black text-xs uppercase tracking-widest shadow-lg shadow-yellow-500/10 hover:shadow-yellow-500/30 hover:scale-[1.02] active:scale-95 transition-all relative overflow-hidden"
+            >
+              {isVi ? 'Nâng cấp ngay' : 'Upgrade Now'}
+            </button>
+          )}
+        </div>
+
       </div>
 
       {/* Trust Badges */}

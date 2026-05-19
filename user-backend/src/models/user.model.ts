@@ -10,6 +10,8 @@ const UserSchema = new mongoose.Schema({
   avatar: { type: String, default: '' },
   isBlocked: { type: Boolean, default: false },
   isVip: { type: Boolean, default: false },
+  vipPlan: { type: String, default: 'none' }, // 'none', 'weekly', 'monthly', '3month'
+  vipExpiresAt: { type: Date, default: null },
   emailNotifications: { type: Boolean, default: false },
   googleId: { type: String, default: null },
   refreshToken: { type: String, default: null },
