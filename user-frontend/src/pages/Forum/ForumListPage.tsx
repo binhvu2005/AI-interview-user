@@ -210,13 +210,8 @@ const ForumListPage = () => {
               <div className="absolute inset-0 bg-gradient-to-tr from-primary/5 via-transparent to-secondary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none"></div>
 
               <div className="flex sm:flex-col items-center gap-3 shrink-0 relative z-10">
-                <div className="w-12 h-12 rounded-2xl overflow-hidden border border-outline-variant/20 group-hover:scale-105 transition-transform shadow-md relative bg-surface-container-high">
+                <div className="w-12 h-12 rounded-2xl overflow-hidden border border-outline-variant/20 group-hover:scale-105 transition-transform shadow-md bg-surface-container-high">
                   <img src={post.author.avatar} alt={post.author.name} className="w-full h-full object-cover" />
-                  {post.author.isVip && (
-                    <div className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-yellow-500 flex items-center justify-center border border-surface-container-lowest" title="VIP Member">
-                      <span className="material-symbols-outlined text-[10px] text-white font-black">workspace_premium</span>
-                    </div>
-                  )}
                 </div>
               </div>
               
@@ -268,7 +263,12 @@ const ForumListPage = () => {
                   
                   <div className="ml-auto flex items-center gap-2">
                     <span className="text-[9px] font-black uppercase tracking-widest text-on-surface-variant opacity-40">{t('forum.posted_by')}</span>
-                    <span className="text-xs font-bold text-on-surface group-hover:text-primary transition-colors">{post.author.name}</span>
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-xs font-bold text-on-surface group-hover:text-primary transition-colors">{post.author.name}</span>
+                      {post.author.isVip && (
+                        <span className="material-symbols-outlined text-[15px] text-[#ffc107] font-bold animate-in zoom-in duration-300" title="VIP Member">workspace_premium</span>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
