@@ -292,11 +292,18 @@ const InterviewPage = () => {
       const data = await res.json().catch(() => null);
 
       if (res.ok && data) {
-        const aiMessage = data.nextQuestion || data.content || data.feedback || "";
-        const aiFeedback = (data.nextQuestion && data.feedback) ? `${data.feedback} ` : "";
+        const nextQ = data.nextQuestion || "";
+        const feedback = data.feedback || "";
 
-        if (aiMessage || aiFeedback) {
-          addMessage('ai', `${aiFeedback}${aiMessage}`);
+        let finalMessage = "";
+        if (feedback && nextQ) {
+          finalMessage = `${feedback}\n\n${nextQ}`;
+        } else {
+          finalMessage = nextQ || feedback || data.content || "";
+        }
+
+        if (finalMessage) {
+          addMessage('ai', finalMessage);
         }
 
         if (data.isFinished) setTimeout(() => endInterview(), 3000);
@@ -392,7 +399,7 @@ const InterviewPage = () => {
               <div key={idx} className={`flex ${msg.role === 'ai' ? 'justify-start' : 'justify-end'} animate-in fade-in slide-in-from-bottom-2`}>
                 <div className={`max-w-[85%] p-6 rounded-[24px] ${msg.role === 'ai' ? 'bg-surface-container text-on-surface rounded-bl-none border border-outline-variant/10' : 'bg-primary text-on-primary rounded-br-none shadow-lg shadow-primary/20'}`}>
                   <p className="text-[9px] font-black opacity-60 mb-2 uppercase tracking-[0.2em]">{msg.role === 'ai' ? 'Obsidian AI' : (isVi ? 'BẠN' : 'YOU')}</p>
-                  <p className="text-base leading-relaxed">{msg.content}</p>
+                  <p className="text-base leading-relaxed whitespace-pre-line">{msg.content}</p>
                 </div>
               </div>
             ))}
