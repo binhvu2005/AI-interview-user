@@ -55,49 +55,54 @@ const extractJSON = (text: string): any => {
 const callAI = async (systemPrompt: string, userPrompt: string, label: string, temperature: number = 0.1, isVip: boolean = false): Promise<any> => {
   try {
     if (isVip && process.env.GEMINI_API_KEY) {
-      console.log(`[Gemini] Calling: ${label} (VIP: ${isVip})...`);
-      const apiKey = process.env.GEMINI_API_KEY;
-      // Use gemini-2.5-flash for VIP reasoning tasks as pro is rate-limited to 0 on free tier
-      const modelName = 'gemini-2.5-flash';
-      const url = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${apiKey}`;
+      try {
+        console.log(`[Gemini] Calling: ${label} (VIP: ${isVip})...`);
+        const apiKey = process.env.GEMINI_API_KEY;
+        // Use gemini-2.5-flash for VIP reasoning tasks as pro is rate-limited to 0 on free tier
+        const modelName = 'gemini-2.5-flash';
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${apiKey}`;
 
-      const payload = {
-        contents: [
-          {
-            role: 'user',
-            parts: [{ text: userPrompt }]
+        const payload = {
+          contents: [
+            {
+              role: 'user',
+              parts: [{ text: userPrompt }]
+            }
+          ],
+          systemInstruction: {
+            parts: [{ text: systemPrompt }]
+          },
+          generationConfig: {
+            temperature: temperature,
+            responseMimeType: 'application/json'
           }
-        ],
-        systemInstruction: {
-          parts: [{ text: systemPrompt }]
-        },
-        generationConfig: {
-          temperature: temperature,
-          responseMimeType: 'application/json'
+        };
+
+        const response = await fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        if (!response.ok) {
+          const errorText = await response.text();
+          throw new Error(`Gemini API Error: ${response.status} - ${errorText}`);
         }
-      };
 
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
+        const data = await response.json();
+        const content = data.candidates?.[0]?.content?.parts?.[0]?.text;
+        if (!content) throw new Error('Gemini returned empty response content');
 
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`Gemini API Error: ${response.status} - ${errorText}`);
+        console.log(`[Gemini] ${label} RAW CONTENT:`, content);
+        return extractJSON(content);
+      } catch (geminiErr: any) {
+        console.error(`[Gemini] ${label} FAILED, falling back to Groq. Error:`, geminiErr.message);
+        // Let it fall through to Groq
       }
-
-      const data = await response.json();
-      const content = data.candidates?.[0]?.content?.parts?.[0]?.text;
-      if (!content) throw new Error('Gemini returned empty response content');
-
-      console.log(`[Gemini] ${label} RAW CONTENT:`, content);
-      return extractJSON(content);
     }
 
-    // Fallback to Groq for normal users
-    console.log(`[Groq] Calling: ${label} (VIP: ${isVip})...`);
+    // Fallback to Groq for normal users or when Gemini fails
+    console.log(`[Groq] Calling: ${label} (VIP: ${isVip} - Fallback)...`);
     const model = 'llama-3.1-8b-instant';
     const response = await groq.chat.completions.create({
       model: model,
