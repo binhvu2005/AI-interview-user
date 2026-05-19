@@ -28,6 +28,7 @@ router.put('/change-password', authMiddleware, AuthController.changePassword);
 router.post('/forgot-password', AuthController.forgotPassword);
 router.post('/verify-otp', AuthController.verifyOtp);
 router.post('/reset-password', AuthController.resetPassword);
+router.post('/upgrade-vip', authMiddleware, AuthController.upgradeToVip);
 
 // CV Vault Endpoints
 router.post('/cv', authMiddleware, upload.single('file'), AuthController.uploadCV);

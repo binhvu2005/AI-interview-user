@@ -15,6 +15,7 @@ export const API_ENDPOINTS = {
     REFRESH: `${API_BASE_URL}/auth/refresh`,
     LOGOUT: `${API_BASE_URL}/auth/logout`,
     GOOGLE_LOGIN: `${API_BASE_URL}/auth/google`,
+    UPGRADE_VIP: `${API_BASE_URL}/auth/upgrade-vip`,
   },
   AI: {
     ANALYZE_CV: `${API_BASE_URL}/ai/analyze-cv`,

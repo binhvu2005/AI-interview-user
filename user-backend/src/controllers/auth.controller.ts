@@ -280,3 +280,17 @@ export const resetPassword = async (req: Request, res: Response) => {
     res.status(500).json({ message: 'Lỗi server', error: err.message });
   }
 };
+
+export const upgradeToVip = async (req: AuthRequest, res: Response) => {
+  try {
+    const user = await User.findById(req.user?.id);
+    if (!user) return res.status(404).json({ message: 'User not found' });
+    
+    user.isVip = req.body.isVip !== undefined ? req.body.isVip : true;
+    await user.save();
+    
+    res.json(user);
+  } catch (err: any) {
+    res.status(500).json({ message: 'Server Error', error: err.message });
+  }
+};
