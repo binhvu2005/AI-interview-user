@@ -62,19 +62,18 @@ const UpgradePage = () => {
   };
 
   const vipFeatures = [
-    t('upgrade_page.feature_unlimited'),
-    t('upgrade_page.feature_advanced_ai'),
-    t('upgrade_page.feature_cv_export'),
-    t('upgrade_page.feature_priority'),
-    t('upgrade_page.feature_no_ads'),
-    t('upgrade_page.feature_custom_roles'),
-    t('upgrade_page.feature_voice')
+    isVi ? 'Phỏng vấn AI không giới hạn' : 'Unlimited AI Interviews',
+    isVi ? 'Mô hình AI cao cấp (GPT-4o)' : 'Advanced AI Model (GPT-4o)',
+    isVi ? 'Báo cáo Độ khớp chuyên sâu' : 'Deep Match Analysis',
+    isVi ? 'Tương tác giọng nói thời gian thực' : 'Real-time Voice-to-Voice Interaction',
+    isVi ? 'Hỗ trợ 24/7 chuyên nghiệp' : '24/7 Professional Support',
+    isVi ? 'Phân tích chuyên sâu (Advanced Analytics)' : 'Advanced Analytics'
   ];
 
   const freeFeatures = [
-    t('upgrade_page.feature_unlimited').replace('Unlimited', '3 Free').replace('Không giới hạn', '3 lượt'),
+    isVi ? 'Phỏng vấn AI giới hạn (3 lượt/tháng)' : 'Limited AI Interviews (3/month)',
     isVi ? 'Mô hình AI Tiêu chuẩn' : 'Standard AI Model',
-    isVi ? 'Báo cáo Độ khớp cơ bản' : 'Standard CV View',
+    isVi ? 'Báo cáo Độ khớp cơ bản' : 'Basic Match Report',
     isVi ? 'Hỗ trợ cộng đồng' : 'Community Support'
   ];
 
@@ -127,7 +126,7 @@ const UpgradePage = () => {
             ))}
             <div className="flex items-center gap-3 text-sm text-on-surface-variant/40 font-medium italic">
               <span className="material-symbols-outlined text-[20px]">block</span>
-              Advanced Analytics
+              {isVi ? 'Phân tích chuyên sâu (Advanced Analytics)' : 'Advanced Analytics'}
             </div>
           </div>
 
