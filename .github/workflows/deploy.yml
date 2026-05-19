@@ -32,12 +32,25 @@ jobs:
             fi
             
             echo "--- PREPARING ENVIRONMENT ---"
-            # Tạo file .env chung cho Docker Compose
-            echo "PORT=5000" > .env
-            echo "MONGODB_URI=${{ secrets.MONGODB_URI }}" >> .env
-            echo "GROQ_API_KEY=${{ secrets.GROQ_API_KEY }}" >> .env
-            echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> .env
-            echo "VITE_API_URL=/api" >> .env
+            if [ ! -f ".env" ]; then
+              echo "Creating .env for the first time..."
+              echo "PORT=5000" > .env
+              echo "MONGODB_URI=${{ secrets.MONGODB_URI }}" >> .env
+              echo "GROQ_API_KEY=${{ secrets.GROQ_API_KEY }}" >> .env
+              echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> .env
+              echo "VITE_API_URL=/api" >> .env
+            else
+              echo ".env file already exists. Preserving existing VPS configurations."
+              if [ ! -z "${{ secrets.MONGODB_URI }}" ]; then
+                sed -i 's|^MONGODB_URI=.*|MONGODB_URI=${{ secrets.MONGODB_URI }}|' .env
+              fi
+              if [ ! -z "${{ secrets.GROQ_API_KEY }}" ]; then
+                sed -i 's|^GROQ_API_KEY=.*|GROQ_API_KEY=${{ secrets.GROQ_API_KEY }}|' .env
+              fi
+              if [ ! -z "${{ secrets.JWT_SECRET }}" ]; then
+                sed -i 's|^JWT_SECRET=.*|JWT_SECRET=${{ secrets.JWT_SECRET }}|' .env
+              fi
+            fi
             
             echo "--- REBUILDING & RESTARTING DOCKER CONTAINERS ---"
             # Giải phóng cổng 5000 và 80 triệt để
