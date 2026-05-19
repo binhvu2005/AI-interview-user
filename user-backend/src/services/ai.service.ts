@@ -104,11 +104,42 @@ const callAI = async (systemPrompt: string, userPrompt: string, label: string, t
     // Fallback to Groq for normal users or when Gemini fails
     console.log(`[Groq] Calling: ${label} (VIP: ${isVip} - Fallback)...`);
     const model = 'llama-3.1-8b-instant';
+    
+    let finalUserPrompt = userPrompt;
+    // Groq llama-3.1-8b-instant has a tight 6000 TPM limit. Optimize prompt size to prevent 413 errors.
+    const maxCharLimit = 10000;
+    if (systemPrompt.length + finalUserPrompt.length > maxCharLimit) {
+      console.log(`[Groq] Prompt length (${systemPrompt.length + finalUserPrompt.length}) exceeds safety limit. Optimizing...`);
+      
+      // 1. Truncate CV in the prompt to 1000 characters
+      finalUserPrompt = finalUserPrompt.replace(/- CV: ([\s\S]*?)(?=\n-|\n\n|###)/g, (match, p1) => {
+        return `- CV: ${p1.substring(0, 1000)}... [Truncated for Groq] `;
+      });
+
+      // 2. Truncate JD in the prompt to 500 characters
+      finalUserPrompt = finalUserPrompt.replace(/- JD: ([\s\S]*?)(?=\n-|\n\n|###)/g, (match, p1) => {
+        return `- JD: ${p1.substring(0, 500)}... [Truncated for Groq] `;
+      });
+
+      // 3. If still too long, keep only the recent history
+      if (systemPrompt.length + finalUserPrompt.length > maxCharLimit) {
+        const historyIndex = finalUserPrompt.indexOf('### HISTORY');
+        if (historyIndex !== -1) {
+          const beforeHistory = finalUserPrompt.substring(0, historyIndex);
+          const historyAndAfter = finalUserPrompt.substring(historyIndex);
+          // Keep only last 3500 chars of history to stay within limit
+          const truncatedHistory = historyAndAfter.substring(0, 12) + "\n...[Older history removed for space]...\n" + historyAndAfter.substring(historyAndAfter.length - 3500);
+          finalUserPrompt = beforeHistory + truncatedHistory;
+        }
+      }
+      console.log(`[Groq] Optimized prompt length: ${systemPrompt.length + finalUserPrompt.length}`);
+    }
+
     const response = await groq.chat.completions.create({
       model: model,
       messages: [
         { role: 'system', content: systemPrompt },
-        { role: 'user', content: userPrompt }
+        { role: 'user', content: finalUserPrompt }
       ],
       response_format: { type: 'json_object' },
       temperature: temperature,
