@@ -26,6 +26,9 @@ export const saveAndEvaluateInterview = async (req: AuthRequest, res: Response) 
     const userId = req.user?.id;
     if (!userId) return res.status(401).json({ message: 'Unauthorized' });
 
+    const dbUser = await User.findById(userId);
+    const isVip = dbUser?.isVip || false;
+
     // 1. Get AI Evaluation
     console.log('[Evaluation] Starting AI analysis...');
     const userMessages = messages.filter((m: any) => m.role === 'user');
@@ -45,7 +48,7 @@ export const saveAndEvaluateInterview = async (req: AuthRequest, res: Response) 
       };
     } else {
       const parsedCheatCount = parseInt(cheatCount) || 0;
-      evaluation = await AIService.evaluateInterview(messages, cvData, jdText, matchScore, lang || 'vi', position, level, parsedCheatCount);
+      evaluation = await AIService.evaluateInterview(messages, cvData, jdText, matchScore, lang || 'vi', position, level, parsedCheatCount, isVip);
     }
 
     // 2. Validate and Clean Data

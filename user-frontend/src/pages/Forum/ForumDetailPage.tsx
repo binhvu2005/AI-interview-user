@@ -126,12 +126,29 @@ const ForumDetailPage = () => {
         
         <header className="flex items-center justify-between gap-6 mb-8 relative z-10">
           <div className="flex items-center gap-4">
-             <div className="w-14 h-14 rounded-2xl overflow-hidden border-2 border-primary/20">
-                <img src={post.author.avatar} alt={post.author.name} className="w-full h-full object-cover" />
+             <div 
+               className={`relative w-14 h-14 rounded-2xl flex items-center justify-center bg-surface-container-high transition-all shadow-md ${
+                 post.author.isVip
+                   ? 'ring-2 ring-amber-400 ring-offset-2 ring-offset-background shadow-[0_0_12px_rgba(245,158,11,0.55)] border-none'
+                   : 'border-2 border-primary/20'
+               }`}
+             >
+               {post.author.isVip && (
+                 <span className="absolute inset-0 rounded-2xl bg-gradient-to-tr from-amber-500 via-yellow-400 to-amber-300 opacity-90 blur-[1px] animate-pulse pointer-events-none"></span>
+               )}
+               <div className={`relative w-full h-full rounded-2xl overflow-hidden ${post.author.isVip ? 'p-[1px] bg-background' : ''}`}>
+                 <img src={post.author.avatar} alt={post.author.name} className="w-full h-full object-cover rounded-2xl" />
+               </div>
              </div>
              <div>
                 <h4 className="font-black text-on-surface tracking-tight">{post.author.name}</h4>
-                <p className="text-[10px] font-black text-primary uppercase tracking-widest opacity-60">{t('forum.user_role_premium')}</p>
+                {post.author.isVip ? (
+                  <span className="text-[9px] uppercase tracking-widest badge-vip-animated px-2 py-0.5 rounded-full inline-flex items-center gap-0.5 leading-none mt-1 shadow-sm shadow-yellow-500/20">
+                    <span className="material-symbols-outlined text-[10px] material-symbols-fill">workspace_premium</span> VIP
+                  </span>
+                ) : (
+                  <p className="text-[10px] font-black text-primary uppercase tracking-widest opacity-60">{t('forum.user_role_premium')}</p>
+                )}
              </div>
           </div>
           <div className="text-right">
@@ -241,11 +258,29 @@ const ForumDetailPage = () => {
             <div className="bg-surface-container-lowest border border-outline-variant/15 rounded-[32px] p-8 shadow-sm hover:border-primary/20 transition-colors">
               <header className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl overflow-hidden border border-outline-variant/20">
-                    <img src={reply.author.avatar} alt={reply.author.name} className="w-full h-full object-cover" />
+                  <div 
+                    className={`relative w-10 h-10 rounded-xl flex items-center justify-center bg-surface-container-high transition-all shadow-sm ${
+                      reply.author.isVip
+                        ? 'ring-2 ring-amber-400 ring-offset-2 ring-offset-background shadow-[0_0_12px_rgba(245,158,11,0.55)] border-none'
+                        : 'border border-outline-variant/20'
+                    }`}
+                  >
+                    {reply.author.isVip && (
+                      <span className="absolute inset-0 rounded-xl bg-gradient-to-tr from-amber-500 via-yellow-400 to-amber-300 opacity-90 blur-[1px] animate-pulse pointer-events-none"></span>
+                    )}
+                    <div className={`relative w-full h-full rounded-xl overflow-hidden ${reply.author.isVip ? 'p-[1px] bg-background' : ''}`}>
+                      <img src={reply.author.avatar} alt={reply.author.name} className="w-full h-full object-cover rounded-xl" />
+                    </div>
                   </div>
                   <div>
-                    <h5 className="text-sm font-bold text-on-surface">{reply.author.name}</h5>
+                    <div className="flex items-center gap-2">
+                      <h5 className="text-sm font-bold text-on-surface">{reply.author.name}</h5>
+                      {reply.author.isVip && (
+                        <span className="text-[8px] uppercase tracking-widest badge-vip-animated px-1.5 py-0.5 rounded-full inline-flex items-center gap-0.5 leading-none shadow-sm shadow-yellow-500/20">
+                          <span className="material-symbols-outlined text-[8px] material-symbols-fill">workspace_premium</span> VIP
+                        </span>
+                      )}
+                    </div>
                     <p className="text-[10px] font-bold text-on-surface-variant opacity-40 uppercase tracking-widest">
                       {new Date(reply.date).toLocaleDateString()} — {new Date(reply.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                     </p>
@@ -275,11 +310,29 @@ const ForumDetailPage = () => {
               <div key={sub.id} className="ml-16 bg-surface-container-low/50 border border-outline-variant/10 rounded-[24px] p-6 shadow-sm border-l-4 border-l-primary/30 animate-in slide-in-from-left-4 duration-500">
                 <header className="flex items-center justify-between mb-3">
                   <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 rounded-lg overflow-hidden">
-                      <img src={sub.author.avatar} alt={sub.author.name} />
+                    <div 
+                      className={`relative w-8 h-8 rounded-lg flex items-center justify-center bg-surface-container-high transition-all shadow-sm ${
+                        sub.author.isVip
+                          ? 'ring-2 ring-amber-400 ring-offset-1 ring-offset-background shadow-[0_0_8px_rgba(245,158,11,0.55)] border-none'
+                          : 'border border-outline-variant/20'
+                      }`}
+                    >
+                      {sub.author.isVip && (
+                        <span className="absolute inset-0 rounded-lg bg-gradient-to-tr from-amber-500 via-yellow-400 to-amber-300 opacity-90 blur-[1px] animate-pulse pointer-events-none"></span>
+                      )}
+                      <div className={`relative w-full h-full rounded-lg overflow-hidden ${sub.author.isVip ? 'p-[1px] bg-background' : ''}`}>
+                        <img src={sub.author.avatar} alt={sub.author.name} className="w-full h-full object-cover rounded-lg" />
+                      </div>
                     </div>
                     <div>
-                      <h6 className="text-xs font-bold text-on-surface">{sub.author.name}</h6>
+                      <div className="flex items-center gap-2">
+                        <h6 className="text-xs font-bold text-on-surface">{sub.author.name}</h6>
+                        {sub.author.isVip && (
+                          <span className="text-[7px] uppercase tracking-widest badge-vip-animated px-1 py-0.5 rounded-full inline-flex items-center gap-0.5 leading-none shadow-sm shadow-yellow-500/20">
+                            <span className="material-symbols-outlined text-[8px] material-symbols-fill">workspace_premium</span> VIP
+                          </span>
+                        )}
+                      </div>
                       <p className="text-[9px] font-bold text-on-surface-variant opacity-40">{new Date(sub.date).toLocaleDateString()}</p>
                     </div>
                   </div>

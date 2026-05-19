@@ -267,14 +267,23 @@ const ProfilePage = () => {
              <div className="flex flex-col items-center gap-4 shrink-0">
                 <div 
                   onClick={handleAvatarClick}
-                  className={`w-40 h-40 rounded-[3rem] overflow-hidden border-2 border-outline-variant/20 relative group transition-all ${isEditing ? 'cursor-pointer hover:scale-105 active:scale-95' : 'cursor-default'}`}
+                  className={`relative w-40 h-40 rounded-[3rem] flex items-center justify-center transition-all ${
+                    userData.isVip 
+                      ? 'ring-4 ring-amber-400 ring-offset-4 ring-offset-background shadow-[0_0_30px_rgba(245,158,11,0.4)] border-none' 
+                      : 'border-2 border-outline-variant/20'
+                  } ${isEditing ? 'cursor-pointer hover:scale-105 active:scale-95' : 'cursor-default'}`}
                 >
-                  <img alt="avatar" className="w-full h-full object-cover" src={userData.avatar || `https://ui-avatars.com/api/?name=${userData.fullName || 'U'}&background=6366f1&size=256`} />
-                  {isEditing && (
-                    <div className="absolute inset-0 bg-black/60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                      <span className="material-symbols-outlined text-white text-3xl">photo_camera</span>
-                    </div>
+                  {userData.isVip && (
+                    <span className="absolute inset-0 rounded-[3rem] bg-gradient-to-tr from-amber-500 via-yellow-400 to-amber-300 opacity-90 blur-[2px] animate-pulse pointer-events-none"></span>
                   )}
+                  <div className={`relative w-full h-full rounded-[3rem] overflow-hidden ${userData.isVip ? 'p-[3px] bg-background' : ''}`}>
+                    <img alt="avatar" className="w-full h-full object-cover rounded-[3rem]" src={userData.avatar || `https://ui-avatars.com/api/?name=${userData.fullName || 'U'}&background=6366f1&size=256`} />
+                    {isEditing && (
+                      <div className="absolute inset-0 bg-black/60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                        <span className="material-symbols-outlined text-white text-3xl">photo_camera</span>
+                      </div>
+                    )}
+                  </div>
                 </div>
                 <input type="file" ref={fileInputRef} onChange={handleFileChange} accept="image/*" className="hidden" />
                 <p className="text-[10px] font-black uppercase tracking-[0.2em] text-on-surface-variant opacity-50">{t('profile_page.avatar_lbl')}</p>

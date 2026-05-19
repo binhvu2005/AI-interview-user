@@ -210,8 +210,19 @@ const ForumListPage = () => {
               <div className="absolute inset-0 bg-gradient-to-tr from-primary/5 via-transparent to-secondary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none"></div>
 
               <div className="flex sm:flex-col items-center gap-3 shrink-0 relative z-10">
-                <div className="w-12 h-12 rounded-2xl overflow-hidden border border-outline-variant/20 group-hover:scale-105 transition-transform shadow-md bg-surface-container-high">
-                  <img src={post.author.avatar} alt={post.author.name} className="w-full h-full object-cover" />
+                <div 
+                  className={`relative w-12 h-12 rounded-2xl flex items-center justify-center bg-surface-container-high transition-all group-hover:scale-105 shadow-md ${
+                    post.author.isVip
+                      ? 'ring-2 ring-amber-400 ring-offset-2 ring-offset-background shadow-[0_0_12px_rgba(245,158,11,0.55)] border-none'
+                      : 'border border-outline-variant/20'
+                  }`}
+                >
+                  {post.author.isVip && (
+                    <span className="absolute inset-0 rounded-2xl bg-gradient-to-tr from-amber-500 via-yellow-400 to-amber-300 opacity-90 blur-[1px] animate-pulse pointer-events-none"></span>
+                  )}
+                  <div className={`relative w-full h-full rounded-2xl overflow-hidden ${post.author.isVip ? 'p-[1px] bg-background' : ''}`}>
+                    <img src={post.author.avatar} alt={post.author.name} className="w-full h-full object-cover rounded-2xl" />
+                  </div>
                 </div>
               </div>
               

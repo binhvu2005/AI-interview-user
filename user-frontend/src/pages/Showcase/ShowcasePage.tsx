@@ -187,12 +187,25 @@ const ShowcasePage = () => {
                 {/* Top Section */}
                 <div className="flex justify-between items-start mb-6 relative z-10">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-surface-container-high border border-outline-variant/20 overflow-hidden flex items-center justify-center">
-                       {interview.userId?.avatar ? (
-                         <img src={interview.userId.avatar} alt="avatar" className="w-full h-full object-cover" />
-                       ) : (
-                         <span className="material-symbols-outlined text-on-surface-variant text-xl">person</span>
-                       )}
+                    <div 
+                      className={`relative w-10 h-10 rounded-xl flex items-center justify-center bg-surface-container-high transition-all ${
+                        interview.userId?.isVip
+                          ? 'ring-2 ring-amber-400 ring-offset-2 ring-offset-background shadow-[0_0_12px_rgba(245,158,11,0.55)] border-none'
+                          : 'border border-outline-variant/20'
+                      }`}
+                    >
+                      {interview.userId?.isVip && (
+                        <span className="absolute inset-0 rounded-xl bg-gradient-to-tr from-amber-500 via-yellow-400 to-amber-300 opacity-90 blur-[1px] animate-pulse pointer-events-none"></span>
+                      )}
+                      <div className={`relative w-full h-full rounded-xl overflow-hidden ${interview.userId?.isVip ? 'p-[1px] bg-background' : ''}`}>
+                        {interview.userId?.avatar ? (
+                          <img src={interview.userId.avatar} alt="avatar" className="w-full h-full object-cover rounded-xl" />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center">
+                            <span className="material-symbols-outlined text-on-surface-variant text-xl">person</span>
+                          </div>
+                        )}
+                      </div>
                     </div>
                     <div>
                       <h4 className="text-sm font-bold text-on-surface leading-none mb-1 group-hover:text-primary transition-colors">

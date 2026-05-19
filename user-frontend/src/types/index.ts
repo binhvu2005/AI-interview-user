@@ -67,6 +67,7 @@ export interface ShowcaseInterview {
     fullName: string;
     targetRole: string;
     avatar: string;
+    isVip?: boolean;
   };
   createdAt: string;
 }

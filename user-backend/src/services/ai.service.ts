@@ -52,11 +52,12 @@ const extractJSON = (text: string): any => {
   }
 };
 
-const callAI = async (systemPrompt: string, userPrompt: string, label: string, temperature: number = 0.1): Promise<any> => {
-  console.log(`[Groq] Calling: ${label}...`);
+const callAI = async (systemPrompt: string, userPrompt: string, label: string, temperature: number = 0.1, isVip: boolean = false): Promise<any> => {
+  console.log(`[Groq] Calling: ${label} (VIP: ${isVip})...`);
   try {
+    const model = isVip ? 'llama-3.3-70b-versatile' : 'llama-3.1-8b-instant';
     const response = await groq.chat.completions.create({
-      model: 'llama-3.1-8b-instant',
+      model: model,
       messages: [
         { role: 'system', content: systemPrompt },
         { role: 'user', content: userPrompt }
@@ -84,10 +85,10 @@ const truncateCV = (cvData: string) => {
   return cvData;
 };
 
-export const analyzeCVJDMatch = async (cvData: string, jdText: string, position: string, level: string, lang: string = 'vi') => {
+export const analyzeCVJDMatch = async (cvData: string, jdText: string, position: string, level: string, lang: string = 'vi', isVip: boolean = false) => {
   const truncatedCV = truncateCV(cvData);
   const userPrompt = getCVAnalysisUserPrompt(truncatedCV, jdText, position, level, lang);
-  const result = await callAI(CV_ANALYSIS_SYSTEM_PROMPT, userPrompt, 'CV Analysis');
+  const result = await callAI(CV_ANALYSIS_SYSTEM_PROMPT, userPrompt, 'CV Analysis', 0.1, isVip);
 
   // Ensure CV analysis defaults
   return {
@@ -103,13 +104,13 @@ export const analyzeCVJDMatch = async (cvData: string, jdText: string, position:
   };
 };
 
-export const generateInterviewQuestions = async (cvData: string, jdText: string, position: string, level: string, lang: string = 'vi') => {
+export const generateInterviewQuestions = async (cvData: string, jdText: string, position: string, level: string, lang: string = 'vi', isVip: boolean = false) => {
   const truncatedCV = truncateCV(cvData);
   const userPrompt = getInterviewQuestionsPrompt(truncatedCV, jdText, position, level, lang);
-  return await callAI(INTERVIEW_SYSTEM_PROMPT, userPrompt, 'Interview Questions');
+  return await callAI(INTERVIEW_SYSTEM_PROMPT, userPrompt, 'Interview Questions', 0.1, isVip);
 };
 
-export const processInterviewChat = async (history: any[], cvData: string, jdText: string, position: string, level: string, lang: string = 'vi', duration: string = '15') => {
+export const processInterviewChat = async (history: any[], cvData: string, jdText: string, position: string, level: string, lang: string = 'vi', duration: string = '15', isVip: boolean = false) => {
   const languageName = lang === 'vi' ? 'Vietnamese' : 'English';
 
   // Truncate history to stay within token limits (last 10 messages)
@@ -174,18 +175,16 @@ STRICT RULES:
 - Every MAIN question MUST follow "Theory + Practice + Mindset" (Scenario-based). It MUST be a detailed, multi-sentence scenario. DO NOT ask short 1-sentence questions!
 - NO HALLUCINATION: If candidate says "don't know", do NOT assume they have that experience.
 - NO SOCIAL FILLER & NO PRAISE: Absolutely NO generic praise like "Tôi đánh giá cao", "Tuyệt vời", "Rất tốt", "I appreciate". Be direct.
-- ANTI-LOOP MECHANISM: Do NOT repeat the exact same technical topic. If you just asked about Database Design, DO NOT ask about Database Design again even if you change the app type (like E-commerce to Social Network). Switch to a completely different technical skill (e.g., Security, Caching, API Design, Deployment). DO NOT repeat your own phrases.
+- ANTI-LOOP MECHANISM: Do NOT repeat the exact same technical topic. If you just asked about Database Design, DO NOT ask about Database Design again even if you change the app type (like C-commerce to Social Network). Switch to a completely different technical skill (e.g., Security, Caching, API Design, Deployment). DO NOT repeat your own phrases.
 
 If you estimate you have asked ${maxTechQuestions} MAIN questions (ignoring probes/intro), set isFinished: true. If currentTurn >= ${maxTechQuestions * 3 + 2}, force isFinished: true to prevent infinite loops.
 `;
 
 
-  return await callAI(INTERVIEW_CHAT_SYSTEM_PROMPT, userPrompt, 'Interview Chat', 0.6);
-
-
+  return await callAI(INTERVIEW_CHAT_SYSTEM_PROMPT, userPrompt, 'Interview Chat', 0.6, isVip);
 };
 
-export const evaluateInterview = async (history: any[], cvData: string, jdText: string, matchScore: number, lang: string = 'vi', position: string = '', level: string = '', cheatCount: number = 0) => {
+export const evaluateInterview = async (history: any[], cvData: string, jdText: string, matchScore: number, lang: string = 'vi', position: string = '', level: string = '', cheatCount: number = 0, isVip: boolean = false) => {
   const userPrompt = getEvaluationUserPrompt(history, cvData, jdText, matchScore, lang);
-  return await callAI(INTERVIEW_EVALUATION_SYSTEM_PROMPT(lang, position, level, cheatCount), userPrompt, 'Interview Evaluation');
+  return await callAI(INTERVIEW_EVALUATION_SYSTEM_PROMPT(lang, position, level, cheatCount), userPrompt, 'Interview Evaluation', 0.1, isVip);
 };

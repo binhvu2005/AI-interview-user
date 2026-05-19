@@ -29,6 +29,27 @@ const ResultsPage = () => {
   // Filters & Sorting
   const [searchTerm, setSearchTerm] = useState('');
   const [sortBy, setSortBy] = useState<'date_desc' | 'date_asc' | 'score_desc' | 'score_asc'>('date_desc');
+  const [isVip, setIsVip] = useState(false);
+
+  const fetchVipStatus = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) return;
+      const res = await fetchWithAuth(API_ENDPOINTS.AUTH.ME, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setIsVip(data.isVip || false);
+      }
+    } catch (err) {
+      console.error('Failed to fetch VIP status:', err);
+    }
+  };
+
+  useEffect(() => {
+    fetchVipStatus();
+  }, []);
 
   useEffect(() => {
     if (id && id !== 'undefined') {
@@ -475,7 +496,7 @@ const ResultsPage = () => {
               </ul>
             </div>
           </div>
-          {evaluation?.breakdown && (
+          {isVip && evaluation?.breakdown && (
             <div className="mt-6 pt-6 border-t border-outline-variant/10">
               <div className="h-[280px] w-full">
                 <ResponsiveContainer width="100%" height="100%">
@@ -521,81 +542,155 @@ const ResultsPage = () => {
           )}
         </div>
       </div>
-
-      {/* Suggestions Section */}
-      <section className="bg-surface-container-low border border-outline-variant/15 rounded-[40px] p-10 mb-12 shadow-sm">
-        <div className="flex items-center gap-3 mb-8">
-          <span className="material-symbols-outlined text-primary">tips_and_updates</span>
-          <h3 className="text-2xl font-black text-on-surface">{t('results.growth_plan')}</h3>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {evaluation?.improvements?.map((imp, i) => (
-            <div key={i} className="bg-surface-container-high p-6 rounded-3xl border border-outline-variant/10">
-              <span className="text-2xl font-black text-primary opacity-20 block mb-2">0{i + 1}</span>
-              <p className="text-sm font-bold text-on-surface leading-relaxed">{imp}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* Detailed Chat Analysis */}
-      <section className="space-y-6">
-        <h3 className="text-2xl font-black text-on-surface ml-4">{t('results.breakdown')}</h3>
-        {evaluation?.detailedFeedback?.map((item, i) => (
-          <div key={i} className="bg-surface-container-low border border-outline-variant/15 rounded-[40px] p-8 shadow-sm group hover:border-primary/30 transition-all">
-            <div className="flex flex-col sm:flex-row justify-between items-start mb-6 gap-4">
-              <div className="max-w-2xl">
-                <p className="text-[10px] font-black text-primary uppercase tracking-widest mb-2">{t('results.question')} {i + 1}</p>
-                <h4 className="text-lg font-bold text-on-surface leading-tight">{item?.question}</h4>
+      {/* Suggestions and Breakdown Sections - Blocker for non-VIPs */}
+      {!isVip ? (
+        <div className="relative mt-12">
+          {/* Blurred Background Mockups of suggestions & detailed reviews */}
+          <div className="filter blur-md pointer-events-none select-none opacity-20">
+            {/* suggestions */}
+            <section className="bg-surface-container-low border border-outline-variant/15 rounded-[40px] p-10 mb-12 shadow-sm">
+              <div className="flex items-center gap-3 mb-8">
+                <span className="material-symbols-outlined text-primary">tips_and_updates</span>
+                <h3 className="text-2xl font-black text-on-surface">Mock Plan</h3>
               </div>
-              <div className="flex flex-row sm:flex-col items-center sm:items-end justify-between w-full sm:w-auto">
-                <span className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border ${item?.status === 'correct' ? 'bg-green-400/10 text-green-400 border-green-400/20' :
-                    item?.status === 'partially_correct' ? 'bg-amber-400/10 text-amber-400 border-amber-400/20' :
-                      'bg-red-400/10 text-red-400 border-red-400/20'
-                  }`}>
-                  {item?.status?.replace('_', ' ') || 'N/A'}
-                </span>
-                <span className="text-2xl font-black text-on-surface sm:mt-2">{item?.score || 0}/10</span>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="bg-surface-container-high p-6 rounded-3xl border border-outline-variant/10 h-28"></div>
+                <div className="bg-surface-container-high p-6 rounded-3xl border border-outline-variant/10 h-28"></div>
+                <div className="bg-surface-container-high p-6 rounded-3xl border border-outline-variant/10 h-28"></div>
               </div>
-            </div>
+            </section>
+            {/* detailed breakdown */}
+            <section className="space-y-6">
+              <h3 className="text-2xl font-black text-on-surface ml-4">Mock Breakdown</h3>
+              <div className="bg-surface-container-low border border-outline-variant/15 rounded-[40px] p-8 shadow-sm h-64"></div>
+            </section>
+          </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-6 border-t border-outline-variant/10">
-              <div>
-                <p className="text-[11px] font-black text-on-surface-variant uppercase mb-3">{t('results.your_answer')}</p>
-                <p className="text-sm text-on-surface opacity-80 leading-relaxed bg-surface-container-high p-4 rounded-2xl italic">
-                  {item?.answer || `[${t('results.skipped')}]`}
+          {/* Glowing Glass Blocker Card */}
+          <div className="absolute inset-0 flex items-center justify-center px-4">
+            <div className="max-w-2xl w-full bg-surface-container-low/90 backdrop-blur-xl border border-outline-variant/30 rounded-[40px] p-10 text-center shadow-2xl relative overflow-hidden group">
+              <div className="absolute inset-0 bg-gradient-to-tr from-primary/10 via-secondary/15 to-transparent opacity-50"></div>
+              
+              <div className="relative z-10">
+                <div className="w-20 h-20 mx-auto bg-gradient-to-tr from-[#FBBF24] to-[#F59E0B] rounded-3xl flex items-center justify-center mb-6 shadow-lg shadow-amber-500/20 badge-vip-animated border-none">
+                  <span className="material-symbols-outlined text-4xl text-black material-symbols-fill">workspace_premium</span>
+                </div>
+                
+                <h3 className="text-3xl sm:text-4xl font-black text-on-surface tracking-tighter mb-4">
+                  Mở khóa Advanced Analytics VIP
+                </h3>
+                <p className="text-on-surface-variant font-medium text-sm sm:text-base leading-relaxed mb-8 max-w-lg mx-auto">
+                  Nâng cấp lên tài khoản Premium VIP để truy cập biểu đồ Radar Chart năng lực chuyên sâu, bản kế hoạch phát triển cá nhân và nhận phản hồi chi tiết từ chuyên gia AI cho từng câu hỏi.
                 </p>
-                <p className="text-xs text-on-surface-variant mt-4 font-medium">{item?.feedback}</p>
 
-                <div className="mt-4 space-y-3">
-                  {item?.pros && item.pros.length > 0 && (
-                    <div className="p-3 bg-green-400/5 border border-green-400/10 rounded-xl">
-                      <p className="text-[9px] font-black text-green-400 uppercase mb-1">{t('results.strengths')}</p>
-                      <ul className="text-[11px] space-y-0.5 text-on-surface opacity-80">
-                        {item.pros.map((p, idx) => <li key={idx}>• {p}</li>)}
-                      </ul>
-                    </div>
-                  )}
-                  {item?.cons && item.cons.length > 0 && (
-                    <div className="p-3 bg-amber-400/5 border border-amber-400/10 rounded-xl">
-                      <p className="text-[9px] font-black text-amber-400 uppercase mb-1">{t('results.weaknesses')}</p>
-                      <ul className="text-[11px] space-y-0.5 text-on-surface opacity-80">
-                        {item.cons.map((c, idx) => <li key={idx}>• {c}</li>)}
-                      </ul>
-                    </div>
-                  )}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-md mx-auto mb-10 text-left">
+                  <div className="flex items-center gap-3 bg-surface-container/50 p-4 rounded-2xl border border-outline-variant/10">
+                    <span className="material-symbols-outlined text-primary text-[20px]">donut_large</span>
+                    <span className="text-xs font-bold text-on-surface">Radar Chart năng lực chuyên sâu</span>
+                  </div>
+                  <div className="flex items-center gap-3 bg-surface-container/50 p-4 rounded-2xl border border-outline-variant/10">
+                    <span className="material-symbols-outlined text-secondary text-[20px]">psychology</span>
+                    <span className="text-xs font-bold text-on-surface">Đánh giá chi tiết từng câu trả lời</span>
+                  </div>
+                  <div className="flex items-center gap-3 bg-surface-container/50 p-4 rounded-2xl border border-outline-variant/10">
+                    <span className="material-symbols-outlined text-green-400 text-[20px]">tips_and_updates</span>
+                    <span className="text-xs font-bold text-on-surface">Kế hoạch phát triển sự nghiệp</span>
+                  </div>
+                  <div className="flex items-center gap-3 bg-surface-container/50 p-4 rounded-2xl border border-outline-variant/10">
+                    <span className="material-symbols-outlined text-amber-400 text-[20px]">history_edu</span>
+                    <span className="text-xs font-bold text-on-surface">Insight sửa lỗi từ chuyên gia AI</span>
+                  </div>
                 </div>
-              </div>
-              <div className="bg-primary/5 p-6 rounded-3xl border border-primary/10">
-                <p className="text-[11px] font-black text-primary uppercase mb-3">{t('results.expert_insight')}</p>
-                <div className="text-sm text-on-surface leading-relaxed font-medium">
-                  {item?.correctReview}
-                </div>
+
+                <button 
+                  onClick={() => navigate('/upgrade')}
+                  className="bg-gradient-to-r from-[#6366F1] to-[#8B5CF6] text-white px-10 py-5 rounded-2xl font-black text-sm uppercase tracking-widest hover:shadow-lg hover:shadow-[#6366F1]/30 transition-all active:scale-95 flex items-center justify-center gap-3 mx-auto"
+                >
+                  <span className="material-symbols-outlined text-[18px]">rocket_launch</span>
+                  Nâng cấp VIP ngay
+                </button>
               </div>
             </div>
           </div>
-        ))}
-      </section>
+        </div>
+      ) : (
+        <>
+          {/* Suggestions Section */}
+          <section className="bg-surface-container-low border border-outline-variant/15 rounded-[40px] p-10 mb-12 shadow-sm">
+            <div className="flex items-center gap-3 mb-8">
+              <span className="material-symbols-outlined text-primary">tips_and_updates</span>
+              <h3 className="text-2xl font-black text-on-surface">{t('results.growth_plan')}</h3>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {evaluation?.improvements?.map((imp, i) => (
+                <div key={i} className="bg-surface-container-high p-6 rounded-3xl border border-outline-variant/10">
+                  <span className="text-2xl font-black text-primary opacity-20 block mb-2">0{i + 1}</span>
+                  <p className="text-sm font-bold text-on-surface leading-relaxed">{imp}</p>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          {/* Detailed Chat Analysis */}
+          <section className="space-y-6">
+            <h3 className="text-2xl font-black text-on-surface ml-4">{t('results.breakdown')}</h3>
+            {evaluation?.detailedFeedback?.map((item, i) => (
+              <div key={i} className="bg-surface-container-low border border-outline-variant/15 rounded-[40px] p-8 shadow-sm group hover:border-primary/30 transition-all">
+                <div className="flex flex-col sm:flex-row justify-between items-start mb-6 gap-4">
+                  <div className="max-w-2xl">
+                    <p className="text-[10px] font-black text-primary uppercase tracking-widest mb-2">{t('results.question')} {i + 1}</p>
+                    <h4 className="text-lg font-bold text-on-surface leading-tight">{item?.question}</h4>
+                  </div>
+                  <div className="flex flex-row sm:flex-col items-center sm:items-end justify-between w-full sm:w-auto">
+                    <span className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border ${item?.status === 'correct' ? 'bg-green-400/10 text-green-400 border-green-400/20' :
+                        item?.status === 'partially_correct' ? 'bg-amber-400/10 text-amber-400 border-amber-400/20' :
+                          'bg-red-400/10 text-red-400 border-red-400/20'
+                      }`}>
+                      {item?.status?.replace('_', ' ') || 'N/A'}
+                    </span>
+                    <span className="text-2xl font-black text-on-surface sm:mt-2">{item?.score || 0}/10</span>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-6 border-t border-outline-variant/10">
+                  <div>
+                    <p className="text-[11px] font-black text-on-surface-variant uppercase mb-3">{t('results.your_answer')}</p>
+                    <p className="text-sm text-on-surface opacity-80 leading-relaxed bg-surface-container-high p-4 rounded-2xl italic">
+                      {item?.answer || `[${t('results.skipped')}]`}
+                    </p>
+                    <p className="text-xs text-on-surface-variant mt-4 font-medium">{item?.feedback}</p>
+
+                    <div className="mt-4 space-y-3">
+                      {item?.pros && item.pros.length > 0 && (
+                        <div className="p-3 bg-green-400/5 border border-green-400/10 rounded-xl">
+                          <p className="text-[9px] font-black text-green-400 uppercase mb-1">{t('results.strengths')}</p>
+                          <ul className="text-[11px] space-y-0.5 text-on-surface opacity-80">
+                            {item.pros.map((p, idx) => <li key={idx}>• {p}</li>)}
+                          </ul>
+                        </div>
+                      )}
+                      {item?.cons && item.cons.length > 0 && (
+                        <div className="p-3 bg-amber-400/5 border border-amber-400/10 rounded-xl">
+                          <p className="text-[9px] font-black text-amber-400 uppercase mb-1">{t('results.weaknesses')}</p>
+                          <ul className="text-[11px] space-y-0.5 text-on-surface opacity-80">
+                            {item.cons.map((c, idx) => <li key={idx}>• {c}</li>)}
+                          </ul>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                  <div className="bg-primary/5 p-6 rounded-3xl border border-primary/10">
+                    <p className="text-[11px] font-black text-primary uppercase mb-3">{t('results.expert_insight')}</p>
+                    <div className="text-sm text-on-surface leading-relaxed font-medium">
+                      {item?.correctReview}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </section>
+        </>
+      )}
 
       {/* Congratulations Modal */}
       {showCongrats && (

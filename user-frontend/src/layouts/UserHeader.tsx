@@ -5,6 +5,7 @@ import { API_ENDPOINTS } from '../services/api.config';
 import * as NotificationService from '../services/NotificationService';
 import { socketService } from '../services/socket.service';
 import type { AppNotification } from '../services/NotificationService';
+import { fetchWithAuth } from '../services/fetchClient';
 
 const UserHeader = () => {
   const { t } = useTranslation();
@@ -26,6 +27,32 @@ const UserHeader = () => {
     };
     window.addEventListener('storage', handleStorageChange);
     window.addEventListener('userUpdate', handleStorageChange);
+
+    // Sync fresh user profile state from database
+    const fetchUserProfile = async () => {
+      const token = localStorage.getItem('token');
+      if (!token) return;
+      try {
+        const res = await fetchWithAuth(API_ENDPOINTS.AUTH.ME);
+        if (res.ok) {
+          const data = await res.json();
+          if (data.user) {
+            const user = data.user;
+            localStorage.setItem('userName', user.fullName || '');
+            localStorage.setItem('userAvatar', user.avatar || '');
+            localStorage.setItem('isVip', String(user.isVip || false));
+            localStorage.setItem('userId', user.id || user._id || '');
+            
+            // Sync with local state
+            setUserName(user.fullName || '');
+            setUserAvatar(user.avatar || '');
+            setIsVip(user.isVip || false);
+          }
+        }
+      } catch (err) {
+        console.error('Failed to sync user profile:', err);
+      }
+    };
 
     // Initial Fetch Notifications
     const fetchNotis = async () => {
@@ -74,6 +101,7 @@ const UserHeader = () => {
     };
 
     let cleanupFn: (() => void) | undefined;
+    fetchUserProfile();
     initNotifications().then(cleanup => {
       cleanupFn = cleanup;
     });
@@ -251,8 +279,20 @@ const UserHeader = () => {
               </span>
             )}
           </div>
-          <button onClick={() => setDropdownOpen(!dropdownOpen)} className="w-10 h-10 rounded-2xl overflow-hidden border border-outline-variant/30 hover:border-primary transition-all focus:outline-none bg-surface-container-high ring-2 ring-transparent hover:ring-primary/20 shadow-lg">
-            <img src={userAvatar || `https://ui-avatars.com/api/?name=${userName || 'U'}&background=6366f1&color=fff`} alt="avatar" className="w-full h-full object-cover" />
+          <button 
+            onClick={() => setDropdownOpen(!dropdownOpen)} 
+            className={`relative w-10 h-10 rounded-2xl flex items-center justify-center transition-all focus:outline-none bg-surface-container-high shadow-lg ${
+              isVip 
+                ? 'ring-2 ring-amber-400/90 ring-offset-2 ring-offset-background shadow-[0_0_15px_rgba(245,158,11,0.5)] border-none' 
+                : 'border border-outline-variant/30 hover:border-primary'
+            }`}
+          >
+            {isVip && (
+              <span className="absolute inset-0 rounded-2xl bg-gradient-to-tr from-amber-500 via-yellow-400 to-amber-300 opacity-90 blur-[1px] animate-pulse pointer-events-none"></span>
+            )}
+            <div className={`relative w-full h-full rounded-2xl overflow-hidden ${isVip ? 'p-[2px] bg-background' : ''}`}>
+              <img src={userAvatar || `https://ui-avatars.com/api/?name=${userName || 'U'}&background=6366f1&color=fff`} alt="avatar" className="w-full h-full object-cover rounded-2xl" />
+            </div>
           </button>
 
           {dropdownOpen && (
