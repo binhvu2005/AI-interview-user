@@ -47,7 +47,7 @@ const InterviewPage = () => {
 
   useEffect(() => {
     messagesRef.current = messages;
-    
+
     // Sync messages immediately to all spectators when a new message is added
     const roomCode = localStorage.getItem('spectator_room_code');
     const socket = socketService.getSocket();
@@ -65,17 +65,17 @@ const InterviewPage = () => {
       trickle: true,
       stream: stream,
       config: {
-          iceServers: [
-            { urls: 'stun:stun.l.google.com:19302' },
-            { urls: 'stun:stun1.l.google.com:19302' },
-            { urls: 'stun:stun2.l.google.com:19302' },
-            { urls: 'stun:stun3.l.google.com:19302' },
-            { urls: 'stun:stun4.l.google.com:19302' },
-            { urls: 'stun:global.stun.twilio.com:3478' },
-            { urls: 'stun:stun.voipbuster.com:3478' },
-            { urls: 'stun:stun.sipgate.net:3478' },
-            { urls: 'stun:stun.ekiga.net:3478' }
-          ]
+        iceServers: [
+          { urls: 'stun:stun.l.google.com:19302' },
+          { urls: 'stun:stun1.l.google.com:19302' },
+          { urls: 'stun:stun2.l.google.com:19302' },
+          { urls: 'stun:stun3.l.google.com:19302' },
+          { urls: 'stun:stun4.l.google.com:19302' },
+          { urls: 'stun:global.stun.twilio.com:3478' },
+          { urls: 'stun:stun.voipbuster.com:3478' },
+          { urls: 'stun:stun.sipgate.net:3478' },
+          { urls: 'stun:stun.ekiga.net:3478' }
+        ]
       }
     });
 
@@ -102,7 +102,7 @@ const InterviewPage = () => {
     socket.on('spectator-update', (list: any[]) => {
       console.log('[WebRTC] Spectators updated. Count:', list.length);
       setSpectators(list);
-      
+
       if (!stream) {
         console.warn('[WebRTC] Cannot create peer: Host stream is NULL!');
         return;
@@ -227,8 +227,8 @@ const InterviewPage = () => {
         } else {
           toast.error(t('interview.no_camera_support'));
         }
-      } catch (err) { 
-        toast.error(t('interview.camera_access_denied')); 
+      } catch (err) {
+        toast.error(t('interview.camera_access_denied'));
       } finally {
         setTimeout(() => {
           addMessage('ai', t('interview.welcome'));
@@ -401,12 +401,12 @@ const InterviewPage = () => {
           {/* Input Area */}
           <div className="p-8 bg-surface-container/50 backdrop-blur-3xl border-t border-outline-variant/10 shrink-0">
             <div className="flex items-center gap-4 bg-surface-container-high rounded-2xl p-2 pl-6 border border-outline-variant/20 focus-within:border-primary/50 transition-all">
-              <input 
-                value={userInput} 
-                onChange={(e) => setUserInput(e.target.value)} 
-                onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()} 
-                placeholder={t('interview.type_answer')} 
-                className="flex-1 bg-transparent border-none outline-none py-4 text-base text-on-surface placeholder:text-on-surface-variant/50" 
+              <input
+                value={userInput}
+                onChange={(e) => setUserInput(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
+                placeholder={t('interview.type_answer')}
+                className="flex-1 bg-transparent border-none outline-none py-4 text-base text-on-surface placeholder:text-on-surface-variant/50"
               />
               <div className="flex items-center gap-2 pr-2">
                 <button onMouseDown={startRecording} onMouseUp={stopRecording} onMouseLeave={stopRecording} className={`w-12 h-12 rounded-xl flex items-center justify-center transition-all ${isRecording ? 'bg-error text-on-error animate-pulse' : 'text-on-surface-variant hover:text-primary hover:bg-surface-container-highest'}`}>
@@ -424,14 +424,14 @@ const InterviewPage = () => {
         <div className="w-full lg:w-[380px] flex flex-col gap-6 shrink-0">
           {/* Camera Feed */}
           <div className="bg-surface-container-lowest rounded-[32px] overflow-hidden relative aspect-video lg:aspect-auto lg:h-[480px] border border-outline-variant/20 shadow-2xl group">
-            <video 
-              ref={videoRef} 
-              autoPlay 
-              playsInline 
-              muted 
-              className={`absolute inset-0 w-full h-full object-cover transform -scale-x-100 bg-black transition-opacity duration-300 ${isVideoOff ? 'opacity-0' : 'opacity-100'}`} 
+            <video
+              ref={videoRef}
+              autoPlay
+              playsInline
+              muted
+              className={`absolute inset-0 w-full h-full object-cover transform -scale-x-100 bg-black transition-opacity duration-300 ${isVideoOff ? 'opacity-0' : 'opacity-100'}`}
             />
-            
+
             {isVideoOff && (
               <div className="absolute inset-0 flex flex-col items-center justify-center bg-surface-container">
                 <span className="material-symbols-outlined text-6xl text-on-surface-variant/20">videocam_off</span>
@@ -440,26 +440,26 @@ const InterviewPage = () => {
             )}
 
             <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-3 opacity-0 group-hover:opacity-100 transition-opacity">
-              <button 
+              <button
                 onClick={() => {
                   const newMuted = !isMuted;
                   setIsMuted(newMuted);
                   if (stream) {
                     stream.getAudioTracks().forEach(track => track.enabled = !newMuted);
                   }
-                }} 
+                }}
                 className={`w-12 h-12 rounded-2xl flex items-center justify-center backdrop-blur-xl border ${isMuted ? 'bg-error/20 border-error/50 text-error' : 'bg-surface-container/60 border-outline-variant/20 text-on-surface'}`}
               >
                 <span className="material-symbols-outlined text-xl">{isMuted ? 'mic_off' : 'mic'}</span>
               </button>
-              <button 
+              <button
                 onClick={() => {
                   const newVideoOff = !isVideoOff;
                   setIsVideoOff(newVideoOff);
                   if (stream) {
                     stream.getVideoTracks().forEach(track => track.enabled = !newVideoOff);
                   }
-                }} 
+                }}
                 className={`w-12 h-12 rounded-2xl flex items-center justify-center backdrop-blur-xl border ${isVideoOff ? 'bg-error/20 border-error/50 text-error' : 'bg-surface-container/60 border-outline-variant/20 text-on-surface'}`}
               >
                 <span className="material-symbols-outlined text-xl">{isVideoOff ? 'videocam_off' : 'videocam'}</span>
@@ -482,40 +482,40 @@ const InterviewPage = () => {
           {/* Spectators Management */}
           {localStorage.getItem('spectator_room_code') && (
             <div className="flex-1 bg-surface-container-low rounded-[32px] p-6 border border-outline-variant/10 shadow-xl flex flex-col overflow-hidden">
-               <div className="flex items-center justify-between mb-4 shrink-0">
-                  <div className="flex items-center gap-2">
-                    <span className="material-symbols-outlined text-primary text-sm">group</span>
-                    <h3 className="font-black text-[10px] uppercase tracking-widest text-on-surface">{t('spectator.panel_title')} ({spectators.length})</h3>
-                  </div>
-                  <div className="bg-primary/10 text-primary px-3 py-1 rounded-full text-[10px] font-black tracking-widest border border-primary/20">
-                    {t('watch.room_code')}: {localStorage.getItem('spectator_room_code')}
-                  </div>
-               </div>
+              <div className="flex items-center justify-between mb-4 shrink-0">
+                <div className="flex items-center gap-2">
+                  <span className="material-symbols-outlined text-primary text-sm">group</span>
+                  <h3 className="font-black text-[10px] uppercase tracking-widest text-on-surface">{t('spectator.panel_title')} ({spectators.length})</h3>
+                </div>
+                <div className="bg-primary/10 text-primary px-3 py-1 rounded-full text-[10px] font-black tracking-widest border border-primary/20">
+                  {t('watch.room_code')}: {localStorage.getItem('spectator_room_code')}
+                </div>
+              </div>
 
-               <div className="flex-1 overflow-y-auto space-y-2 pr-2 scrollbar-none">
-                  {spectators.length > 0 ? spectators.map(spec => (
-                    <div key={spec.socketId} className="flex items-center justify-between p-3 bg-surface-container-high/50 rounded-2xl border border-outline-variant/5 group/item">
-                       <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-primary/20 to-secondary/20 flex items-center justify-center text-[10px] font-black text-primary border border-primary/10">
-                            {spec.name.charAt(0).toUpperCase()}
-                          </div>
-                          <span className="text-xs font-bold text-on-surface">{spec.name}</span>
-                       </div>
-                       <button 
-                         onClick={() => handleKick(spec.socketId)}
-                         className="w-8 h-8 rounded-xl bg-error/10 text-error flex items-center justify-center opacity-0 group-hover/item:opacity-100 transition-all hover:bg-error hover:text-on-error"
-                         title={t('spectator.kick_btn')}
-                       >
-                         <span className="material-symbols-outlined text-sm">person_remove</span>
-                       </button>
+              <div className="flex-1 overflow-y-auto space-y-2 pr-2 scrollbar-none">
+                {spectators.length > 0 ? spectators.map(spec => (
+                  <div key={spec.socketId} className="flex items-center justify-between p-3 bg-surface-container-high/50 rounded-2xl border border-outline-variant/5 group/item">
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-primary/20 to-secondary/20 flex items-center justify-center text-[10px] font-black text-primary border border-primary/10">
+                        {spec.name.charAt(0).toUpperCase()}
+                      </div>
+                      <span className="text-xs font-bold text-on-surface">{spec.name}</span>
                     </div>
-                  )) : (
-                    <div className="h-20 flex flex-col items-center justify-center opacity-30">
-                       <span className="material-symbols-outlined text-3xl mb-2">visibility_off</span>
-                       <p className="text-[9px] font-black uppercase tracking-widest">{t('spectator.panel_empty')}</p>
-                    </div>
-                  )}
-               </div>
+                    <button
+                      onClick={() => handleKick(spec.socketId)}
+                      className="w-8 h-8 rounded-xl bg-error/10 text-error flex items-center justify-center opacity-0 group-hover/item:opacity-100 transition-all hover:bg-error hover:text-on-error"
+                      title={t('spectator.kick_btn')}
+                    >
+                      <span className="material-symbols-outlined text-sm">person_remove</span>
+                    </button>
+                  </div>
+                )) : (
+                  <div className="h-20 flex flex-col items-center justify-center opacity-30">
+                    <span className="material-symbols-outlined text-3xl mb-2">visibility_off</span>
+                    <p className="text-[9px] font-black uppercase tracking-widest">{t('spectator.panel_empty')}</p>
+                  </div>
+                )}
+              </div>
             </div>
           )}
         </div>

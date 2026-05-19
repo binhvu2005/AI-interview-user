@@ -149,6 +149,19 @@ export const processInterviewChat = async (history: any[], cvData: string, jdTex
   const mins = parseInt(duration);
   const maxTechQuestions = mins <= 15 ? 6 : Math.min(15, 6 + Math.floor((mins - 15) / 5));
 
+  const isSeniorOrAbove = 
+    level.toLowerCase().includes('senior') || 
+    level.toLowerCase().includes('lead') || 
+    level.toLowerCase().includes('architect') || 
+    level.toLowerCase().includes('chuyên gia') || 
+    level.toLowerCase().includes('trưởng nhóm') || 
+    level.toLowerCase().includes('quản lý') ||
+    level.toLowerCase().includes('manager');
+
+  const theoryRatio = isSeniorOrAbove ? 0.3 : 0.6;
+  const theoryCount = Math.ceil((maxTechQuestions - 1) * theoryRatio);
+  const practiceCount = maxTechQuestions - 1 - theoryCount;
+
   let steeringInstruction = "";
   if (currentTurn === 0) {
     steeringInstruction = "PHASE: INTRO. Introduce Obsidian AI, welcome the candidate and ask for a BRIEF self-introduction (under 2 minutes).";
@@ -175,7 +188,7 @@ export const processInterviewChat = async (history: any[], cvData: string, jdTex
     ACTION REQUIRED:
     - If their previous answer was Excellent (>7/10), DO NOT probe. Ask a NEW MAIN QUESTION.
     - If their previous answer was Vague/Mediocre (4-7/10), you may ask ONE PROBING QUESTION to test depth.
-    - Keep in mind the structure: 3 Theory, 2 Practice, 1 Debug. Move towards the next phase when appropriate.
+    - Keep in mind the dynamic phase progression: first ${theoryCount} Theory questions, then ${practiceCount} Practice questions, and finally exactly 1 Debug Code question. Move towards the next phase when appropriate.
     `;
   }
 
@@ -184,9 +197,16 @@ export const processInterviewChat = async (history: any[], cvData: string, jdTex
 - POSITION: ${position} (${level})
 - DURATION: ${duration} mins
 - TOTAL AI MESSAGES SO FAR: ${currentTurn}
-- TARGET STRUCTURE: ${maxTechQuestions} MAIN questions (3 Theory, 2 Practice, 1 Debug)
+- TARGET STRUCTURE: ${maxTechQuestions} MAIN questions (${theoryCount} Theory, ${practiceCount} Practice, 1 Debug)
 - JD: ${jdText.substring(0, 1000)}
 - CV: ${cvData.substring(0, 3000)}
+
+### SESSION PHASE PROGRESSION (STRICTLY FOLLOW THIS)
+You must ask exactly ${maxTechQuestions} MAIN technical questions in total. Count the number of DISTINCT MAIN TECHNICAL TOPICS you have introduced so far (do not count the welcome/intro turn):
+- WELCOME PHASE (0 topics): Ask for a brief self-introduction.
+- THEORY PHASE (when you have introduced 0 to ${theoryCount - 1} distinct technical topics so far): Ask a simple theoretical question (Main Question 1 to ${theoryCount}).
+- PRACTICE PHASE (when you have introduced ${theoryCount} to ${theoryCount + practiceCount - 1} distinct technical topics so far): Ask a complex, high-scale system design scenario (Main Question ${theoryCount + 1} to ${theoryCount + practiceCount}).
+- DEBUG CODE PHASE (when you have introduced exactly ${maxTechQuestions - 1} distinct technical topics so far): Present a buggy block of code (Main Question ${maxTechQuestions} / Final Question). Once the candidate fully responds (including follow-up probing), set isFinished: true.
 
 ### HISTORY
 ${truncatedHistory.map(m => `${m.role.toUpperCase()}: ${m.content}`).join('\n')}
