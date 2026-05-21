@@ -1,20 +1,26 @@
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useSearchParams } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { API_ENDPOINTS } from '../../services/api.config';
 import { fetchWithAuth } from '../../services/fetchClient';
 
 const UpgradePage = () => {
   const { t, i18n } = useTranslation();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [isVip, setIsVip] = useState(false);
   const [vipPlan, setVipPlan] = useState('none');
   const [vipExpiresAt, setVipExpiresAt] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [processing, setProcessing] = useState(false);
+  const [isVerifyingPayment, setIsVerifyingPayment] = useState(false);
   const [isCheckoutModalOpen, setIsCheckoutModalOpen] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState('monthly'); // 'weekly', 'monthly', '3month'
   
   const isVi = i18n.language.startsWith('vi');
+
+  const status = searchParams.get('status');
+  const sessionId = searchParams.get('session_id');
 
   const checkVipStatus = async () => {
     try {
@@ -33,10 +39,54 @@ const UpgradePage = () => {
   };
 
   useEffect(() => {
-    checkVipStatus();
-  }, []);
+    const handleVerifyAndCheck = async () => {
+      if (status === 'success' && sessionId) {
+        setIsVerifyingPayment(true);
+        try {
+          const res = await fetchWithAuth(API_ENDPOINTS.PAYMENT.VERIFY_SESSION, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ sessionId })
+          });
+          
+          if (res.ok) {
+            const data = await res.json();
+            setIsVip(data.user.isVip || false);
+            setVipPlan(data.user.vipPlan || 'none');
+            setVipExpiresAt(data.user.vipExpiresAt || null);
+            
+            localStorage.setItem('isVip', 'true');
+            localStorage.setItem('userVip', 'true');
+            window.dispatchEvent(new Event('userUpdate'));
+            
+            toast.success(isVi ? 'Chúc mừng! Bạn đã nâng cấp thành công gói VIP! 🌟' : 'Congratulations! You successfully upgraded to VIP! 🌟');
+          } else {
+            const errData = await res.json().catch(() => ({}));
+            toast.error(errData.message || (isVi ? 'Xác thực thanh toán thất bại.' : 'Payment verification failed.'));
+          }
+        } catch (error) {
+          console.error('Verification error:', error);
+          toast.error(isVi ? 'Đã xảy ra lỗi kết nối khi xác thực.' : 'A connection error occurred during verification.');
+        } finally {
+          setIsVerifyingPayment(false);
+          setSearchParams({});
+        }
+      } else if (status === 'cancel') {
+        toast.error(isVi ? 'Thanh toán đã bị hủy.' : 'Payment was cancelled.');
+        setSearchParams({});
+        checkVipStatus();
+      } else {
+        checkVipStatus();
+      }
+    };
+
+    handleVerifyAndCheck();
+  }, [status, sessionId]);
 
   const handleUpgradeToggle = async (targetVipStatus: boolean, plan?: string) => {
+    // Downgrade only
+    if (targetVipStatus === true) return;
+
     setProcessing(true);
     try {
       const res = await fetchWithAuth(API_ENDPOINTS.AUTH.UPGRADE_VIP, {
@@ -55,18 +105,43 @@ const UpgradePage = () => {
         localStorage.setItem('isVip', data.isVip ? 'true' : 'false');
         localStorage.setItem('userVip', data.isVip ? 'true' : 'false');
         window.dispatchEvent(new Event('userUpdate'));
-
-        if (targetVipStatus) {
-          toast.success(isVi ? `Chúc mừng! Bạn đã nâng cấp thành công gói ${getPlanName(plan)}! 🌟` : `Congratulations! You successfully upgraded to ${getPlanName(plan)}! 🌟`);
-        } else {
-          toast.success(isVi ? 'Tài khoản của bạn đã được chuyển về gói thường.' : 'Your account has been downgraded to Standard.');
-        }
+        
+        toast.success(isVi ? 'Tài khoản của bạn đã được chuyển về gói thường.' : 'Your account has been downgraded to Standard.');
       } else {
         toast.error(isVi ? 'Thao tác thất bại. Vui lòng thử lại.' : 'Action failed. Please try again.');
       }
     } catch (error) {
       toast.error(isVi ? 'Đã xảy ra lỗi kết nối.' : 'A connection error occurred.');
     } finally {
+      setProcessing(false);
+    }
+  };
+
+  const handleInitiateStripeCheckout = async (plan: string) => {
+    setProcessing(true);
+    try {
+      const res = await fetchWithAuth(API_ENDPOINTS.PAYMENT.CREATE_CHECKOUT_SESSION, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ plan })
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        if (data.url) {
+          window.location.href = data.url;
+        } else {
+          toast.error(isVi ? 'Không lấy được liên kết thanh toán.' : 'Could not retrieve payment checkout URL.');
+          setProcessing(false);
+        }
+      } else {
+        const errData = await res.json().catch(() => ({}));
+        toast.error(errData.message || (isVi ? 'Thao tác thất bại. Vui lòng thử lại.' : 'Action failed. Please try again.'));
+        setProcessing(false);
+      }
+    } catch (error) {
+      console.error('Checkout error:', error);
+      toast.error(isVi ? 'Đã xảy ra lỗi kết nối.' : 'A connection error occurred.');
       setProcessing(false);
     }
   };
@@ -107,6 +182,22 @@ const UpgradePage = () => {
     return (
       <div className="p-20 text-center font-bold opacity-50 uppercase tracking-widest animate-pulse">
         {t('results.loading')}
+      </div>
+    );
+  }
+
+  if (isVerifyingPayment) {
+    return (
+      <div className="min-h-[60vh] flex flex-col items-center justify-center gap-6 p-20 text-center animate-in fade-in duration-500">
+        <div className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+        <h2 className="text-2xl font-black text-on-surface">
+          {isVi ? 'Đang xác thực thanh toán...' : 'Verifying payment...'}
+        </h2>
+        <p className="text-on-surface-variant max-w-sm mx-auto text-sm opacity-80 font-medium">
+          {isVi 
+            ? 'Vui lòng không đóng trình duyệt. Hệ thống đang đồng bộ giao dịch của bạn với Stripe.'
+            : 'Please do not close your browser. We are syncing your transaction with Stripe.'}
+        </p>
       </div>
     );
   }
@@ -376,7 +467,7 @@ const UpgradePage = () => {
               <button 
                 onClick={() => {
                   setIsCheckoutModalOpen(false);
-                  handleUpgradeToggle(true, selectedPlan);
+                  handleInitiateStripeCheckout(selectedPlan);
                 }}
                 disabled={processing}
                 className="w-full py-4 rounded-2xl bg-primary text-on-primary font-black text-xs uppercase tracking-widest shadow-xl shadow-primary/20 hover:shadow-primary/40 transition-all hover:scale-[1.01] active:scale-98"

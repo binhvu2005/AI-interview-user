@@ -9,6 +9,7 @@ import dataRoutes from './routes/data.routes';
 import interviewRoutes from './routes/interview.routes';
 import forumRoutes from './routes/forum.routes';
 import notificationRoutes from './routes/notification.routes';
+import paymentRoutes from './routes/payment.routes';
 
 dotenv.config();
 
@@ -37,6 +38,15 @@ app.use(cors({
   },
   credentials: true
 }));
+
+// Stripe Webhook endpoints must receive raw body to verify signature
+const webhookPaths = [
+  '/api/payment/webhook',
+  '/api/user/api/payment/webhook',
+  '/api/user/payment/webhook',
+  '/payment/webhook'
+];
+app.use(webhookPaths, express.raw({ type: 'application/json' }));
 
 app.use(express.json({ limit: '1mb' }));
 app.use(express.urlencoded({ extended: true, limit: '1mb' }));
@@ -90,6 +100,7 @@ app.use('/api/data', dataRoutes);
 app.use('/api/interviews', interviewRoutes);
 app.use('/api/forum', forumRoutes);
 app.use('/api/notifications', notificationRoutes);
+app.use('/api/payment', paymentRoutes);
 
 // 2. Proxy Fallback (When Nginx sends the full /api/user/api or /api/user path)
 app.use('/api/user/api/auth', authRoutes);
@@ -98,6 +109,7 @@ app.use('/api/user/api/data', dataRoutes);
 app.use('/api/user/api/interviews', interviewRoutes);
 app.use('/api/user/api/forum', forumRoutes);
 app.use('/api/user/api/notifications', notificationRoutes);
+app.use('/api/user/api/payment', paymentRoutes);
 
 app.use('/api/user/auth', authRoutes);
 app.use('/api/user/ai', aiRoutes);
@@ -105,6 +117,7 @@ app.use('/api/user/data', dataRoutes);
 app.use('/api/user/interviews', interviewRoutes);
 app.use('/api/user/forum', forumRoutes);
 app.use('/api/user/notifications', notificationRoutes);
+app.use('/api/user/payment', paymentRoutes);
 
 // 3. Simple Fallback (When Nginx strips /api but keep /auth)
 app.use('/auth', authRoutes);
@@ -113,6 +126,7 @@ app.use('/data', dataRoutes);
 app.use('/interviews', interviewRoutes);
 app.use('/forum', forumRoutes);
 app.use('/notifications', notificationRoutes);
+app.use('/payment', paymentRoutes);
 
 // Error Handler
 app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {

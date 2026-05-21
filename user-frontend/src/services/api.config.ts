@@ -43,5 +43,9 @@ export const API_ENDPOINTS = {
     GET_ALL: `${API_BASE_URL}/notifications`,
     READ: (id: string) => `${API_BASE_URL}/notifications/${id}/read`,
     READ_ALL: `${API_BASE_URL}/notifications/read-all`,
+  },
+  PAYMENT: {
+    CREATE_CHECKOUT_SESSION: `${API_BASE_URL}/payment/create-checkout-session`,
+    VERIFY_SESSION: `${API_BASE_URL}/payment/verify-session`,
   }
 };
