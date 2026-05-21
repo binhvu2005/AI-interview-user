@@ -23,6 +23,8 @@ const PreparationPage = () => {
   const [jdText, setJdText] = useState('');
   const [savedCVs, setSavedCVs] = useState<{ id: string, name: string, content?: string }[]>([]);
   const [selectedCVId, setSelectedCVId] = useState('');
+  const [isVip, setIsVip] = useState(false);
+  const [freeInterviewsLeft, setFreeInterviewsLeft] = useState<number | null>(null);
   
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
@@ -87,6 +89,8 @@ const PreparationPage = () => {
       if (res.ok) {
         const data = await res.json();
         setSavedCVs(data.savedCVs || []);
+        setIsVip(data.isVip || false);
+        setFreeInterviewsLeft(data.freeInterviewsLeft !== undefined ? data.freeInterviewsLeft : null);
       }
     } catch (err) {
       console.error('Failed to fetch vault', err);
@@ -176,6 +180,14 @@ const PreparationPage = () => {
   // Step 2: Generate Questions and Start
   const handleStartInterview = async () => {
     if (!analysisResult) return;
+    if (!isVip && freeInterviewsLeft !== null && freeInterviewsLeft <= 0) {
+      toast.error(isVi 
+        ? 'Bạn đã sử dụng hết giới hạn 3 lượt phỏng vấn miễn phí trong tháng này. Vui lòng nâng cấp lên gói VIP để tiếp tục!' 
+        : 'You have used all 3 free mock interviews for this month. Please upgrade to VIP to continue!'
+      );
+      navigate('/upgrade');
+      return;
+    }
 
     setIsGenerating(true);
     try {
@@ -215,7 +227,8 @@ const PreparationPage = () => {
 
         setShowInviteModal(true);
       } else {
-        throw new Error('Failed to generate interview questions');
+        const errData = await res.json().catch(() => ({}));
+        throw new Error(errData.message || 'Failed to generate interview questions');
       }
     } catch (err: any) {
       toast.error(err.message || 'Interview Service Error');
@@ -299,6 +312,54 @@ const PreparationPage = () => {
 
         {/* RIGHT COLUMN: Form Configs */}
         <div className="lg:col-span-7 flex flex-col gap-6">
+          
+          {/* Remaining Attempts Banner */}
+          {freeInterviewsLeft !== null && (
+            <div className={`p-5 rounded-[24px] border flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 transition-all ${
+              isVip 
+                ? 'bg-amber-500/10 border-amber-500/25 text-amber-500 shadow-sm shadow-amber-500/5'
+                : freeInterviewsLeft > 0 
+                  ? 'bg-primary/5 border-primary/15 text-primary' 
+                  : 'bg-red-500/10 border-red-500/20 text-red-500'
+            }`}>
+              <div className="flex items-center gap-3">
+                <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
+                  isVip ? 'bg-amber-500/20' : freeInterviewsLeft > 0 ? 'bg-primary/10' : 'bg-red-500/20'
+                }`}>
+                  <span className="material-symbols-outlined text-[22px]">
+                    {isVip ? 'workspace_premium' : freeInterviewsLeft > 0 ? 'hourglass_top' : 'lock'}
+                  </span>
+                </div>
+                <div>
+                  <p className="text-[11px] font-black uppercase tracking-widest opacity-80">
+                    {isVip 
+                      ? (isVi ? 'Gói Premium VIP' : 'Premium VIP Account') 
+                      : (isVi ? 'Tài khoản Miễn phí' : 'Free Account')}
+                  </p>
+                  <p className="text-xs font-bold mt-1 opacity-90">
+                    {isVip 
+                      ? (isVi ? 'Bạn có lượt phỏng vấn không giới hạn' : 'You have unlimited mock interviews')
+                      : (isVi 
+                          ? `Số lượt phỏng vấn miễn phí còn lại trong tháng: ${freeInterviewsLeft} / 3`
+                          : `Free mock interviews left this month: ${freeInterviewsLeft} / 3`
+                        )}
+                  </p>
+                </div>
+              </div>
+              {!isVip && (
+                <button 
+                  onClick={() => navigate('/upgrade')}
+                  className={`text-[10px] font-black uppercase tracking-widest px-5 py-2.5 rounded-xl transition-all active:scale-95 flex-shrink-0 cursor-pointer ${
+                    freeInterviewsLeft > 0 
+                      ? 'bg-primary text-on-primary hover:shadow-lg hover:shadow-primary/20' 
+                      : 'bg-red-500 text-white hover:shadow-lg hover:shadow-red-500/20'
+                  }`}
+                >
+                  {isVi ? 'Nâng cấp VIP ngay' : 'Upgrade VIP Now'}
+                </button>
+              )}
+            </div>
+          )}
           
           {/* Section: CV Mode (Toggle) */}
           <section className="bg-surface-container-low border border-outline-variant/20 rounded-[32px] p-8 shadow-sm">
@@ -536,14 +597,34 @@ const PreparationPage = () => {
                   ? 'Nếu bạn hài lòng với kết quả phân tích, hãy bắt đầu buổi phỏng vấn giả định để AI kiểm tra sâu hơn kỹ năng của bạn.' 
                   : 'Satisfied with the analysis? Start the mock interview for a deep cognitive evaluation.'}
               </p>
-              <button 
-                onClick={handleStartInterview} 
-                disabled={isGenerating}
-                className="group bg-on-surface text-surface px-14 py-5 rounded-full font-black text-lg transition-all active:scale-95 shadow-2xl flex items-center gap-4 disabled:opacity-50"
-              >
-                {isGenerating ? <span className="material-symbols-outlined animate-spin">progress_activity</span> : <span className="material-symbols-outlined">rocket_launch</span>}
-                {isGenerating ? (isVi ? 'Đang chuẩn bị câu hỏi...' : 'Preparing Questions...') : (isVi ? 'Bắt đầu phỏng vấn ngay' : 'Start Interview Now')}
-              </button>
+              {!isVip && freeInterviewsLeft !== null && freeInterviewsLeft <= 0 ? (
+                <div className="w-full max-w-md p-6 bg-red-500/10 border border-red-500/20 rounded-3xl text-center">
+                  <span className="material-symbols-outlined text-4xl text-red-500 mb-3 animate-pulse">lock</span>
+                  <p className="text-sm font-bold text-red-500 uppercase tracking-wider mb-2">
+                    {isVi ? 'Đã hết lượt phỏng vấn miễn phí' : 'No Free Attempts Left'}
+                  </p>
+                  <p className="text-xs text-on-surface-variant font-medium leading-relaxed mb-6">
+                    {isVi 
+                      ? 'Bạn đã hoàn thành 3 lượt phỏng vấn miễn phí trong tháng này. Hãy nâng cấp lên gói VIP để tiếp tục thực hiện các cuộc phỏng vấn giả định không giới hạn.'
+                      : 'You have completed all 3 free mock interviews this month. Please upgrade to VIP to unlock unlimited mock interviews.'}
+                  </p>
+                  <button 
+                    onClick={() => navigate('/upgrade')}
+                    className="w-full py-4 bg-red-500 hover:bg-red-600 text-white font-black text-xs uppercase tracking-widest rounded-2xl shadow-lg shadow-red-500/20 transition-all active:scale-95 cursor-pointer"
+                  >
+                    {isVi ? 'Nâng cấp VIP ngay' : 'Upgrade VIP Now'}
+                  </button>
+                </div>
+              ) : (
+                <button 
+                  onClick={handleStartInterview} 
+                  disabled={isGenerating}
+                  className="group bg-on-surface text-surface px-14 py-5 rounded-full font-black text-lg transition-all active:scale-95 shadow-2xl flex items-center gap-4 disabled:opacity-50"
+                >
+                  {isGenerating ? <span className="material-symbols-outlined animate-spin">progress_activity</span> : <span className="material-symbols-outlined">rocket_launch</span>}
+                  {isGenerating ? (isVi ? 'Đang chuẩn bị câu hỏi...' : 'Preparing Questions...') : (isVi ? 'Bắt đầu phỏng vấn ngay' : 'Start Interview Now')}
+                </button>
+              )}
             </div>
           </div>
         </div>

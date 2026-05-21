@@ -3,6 +3,7 @@ import { AuthRequest } from '../middlewares/auth.middleware';
 import * as AIService from '../services/ai.service';
 import { User } from '../models/user.model';
 import Interview from '../models/Interview';
+import { checkAndUpdateVipStatus } from '../utils/vip';
 
 // Phase 1: CV-JD Matching Analysis
 export const analyzeCVJD = async (req: AuthRequest, res: Response) => {
@@ -10,7 +11,7 @@ export const analyzeCVJD = async (req: AuthRequest, res: Response) => {
     const { cvData, jdText, position, level, lang } = req.body;
     const userId = req.user?.id;
     const user = await User.findById(userId);
-    const isVip = user?.isVip || false;
+    const isVip = user ? await checkAndUpdateVipStatus(user) : false;
 
     const result = await AIService.analyzeCVJDMatch(cvData || '', jdText, position, level, lang || 'vi', isVip);
     res.json(result);
@@ -30,7 +31,7 @@ export const generateQuestions = async (req: AuthRequest, res: Response) => {
     const { cvData, jdText, position, level, lang } = req.body;
     const userId = req.user?.id;
     const user = await User.findById(userId);
-    const isVip = user?.isVip || false;
+    const isVip = user ? await checkAndUpdateVipStatus(user) : false;
 
     // Check 3 free interviews limit first for non-VIP
     if (!isVip) {
@@ -65,7 +66,7 @@ export const chatWithAI = async (req: AuthRequest, res: Response) => {
     const { history, cvData, jdText, position, level, lang, duration } = req.body;
     const userId = req.user?.id;
     const user = await User.findById(userId);
-    const isVip = user?.isVip || false;
+    const isVip = user ? await checkAndUpdateVipStatus(user) : false;
 
     const result = await AIService.processInterviewChat(history, cvData || '', jdText, position, level, lang || 'vi', duration || '15', isVip);
     return res.status(200).json(result);

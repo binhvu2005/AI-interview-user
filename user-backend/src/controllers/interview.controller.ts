@@ -3,6 +3,7 @@ import mongoose from 'mongoose';
 import { AuthRequest } from '../middlewares/auth.middleware';
 import Interview from '../models/Interview';
 import { User } from '../models/user.model';
+import { checkAndUpdateVipStatus } from '../utils/vip';
 import * as AIService from '../services/ai.service';
 import * as EmailService from '../services/email.service';
 import { createNotification } from '../services/notification.service';
@@ -27,7 +28,7 @@ export const saveAndEvaluateInterview = async (req: AuthRequest, res: Response) 
     if (!userId) return res.status(401).json({ message: 'Unauthorized' });
 
     const dbUser = await User.findById(userId);
-    const isVip = dbUser?.isVip || false;
+    const isVip = dbUser ? await checkAndUpdateVipStatus(dbUser) : false;
 
     // 1. Get AI Evaluation
     console.log('[Evaluation] Starting AI analysis...');
@@ -127,7 +128,31 @@ export const getInterviewResult = async (req: AuthRequest, res: Response) => {
     // Populate user profile info (fullName, avatar, isVip) for display on Results & Showcase
     await interview.populate({ path: 'userId', select: 'fullName avatar isVip' });
 
-    res.json(interview);
+    // Check VIP status of the viewing user
+    let isViewerVip = false;
+    if (userId) {
+      const viewer = await User.findById(userId);
+      isViewerVip = viewer ? await checkAndUpdateVipStatus(viewer) : false;
+    }
+
+    const resultObj = interview.toObject() as any;
+
+    // If the viewer is not VIP, redact detailed evaluation details
+    if (!isViewerVip) {
+      if (resultObj.evaluation) {
+        resultObj.evaluation.detailedFeedback = [];
+        resultObj.evaluation.improvements = [];
+        resultObj.evaluation.breakdown = {
+          technical: 0,
+          problemSolving: 0,
+          coding: 0,
+          communication: 0,
+          architectureAndFit: 0
+        };
+      }
+    }
+
+    res.json(resultObj);
   } catch (err: any) {
     res.status(500).json({ message: 'Server error', error: err.message });
   }

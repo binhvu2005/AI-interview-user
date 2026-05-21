@@ -278,16 +278,23 @@ const ShowcaseDetailPage = () => {
             </section>
           </div>
 
+          {/* Glowing Glass Blocker Card */}
           <div className="absolute inset-0 flex items-center justify-center px-4">
-            <div className="max-w-2xl w-full bg-surface-container-low/90 backdrop-blur-xl border border-outline-variant/30 rounded-[40px] p-10 text-center shadow-2xl relative overflow-hidden group">
+            <div className="max-w-2xl w-full bg-surface-container-low/90 backdrop-blur-xl rounded-[40px] p-10 text-center shadow-2xl relative overflow-hidden group vip-card-glow">
               <div className="absolute inset-0 bg-gradient-to-tr from-primary/10 via-secondary/15 to-transparent opacity-50"></div>
+              
+              {/* Floating Sparkles & Stars */}
+              <span className="material-symbols-outlined absolute top-8 left-8 text-amber-400 text-lg opacity-40 animate-pulse" style={{ animationDelay: '0.2s', animationDuration: '2s' }}>star</span>
+              <span className="material-symbols-outlined absolute bottom-12 left-16 text-primary text-xl opacity-30 animate-bounce" style={{ animationDelay: '0.8s', animationDuration: '3s' }}>auto_awesome</span>
+              <span className="material-symbols-outlined absolute top-12 right-12 text-tertiary text-2xl opacity-40 animate-pulse" style={{ animationDelay: '0.5s', animationDuration: '2.5s' }}>auto_awesome</span>
+              <span className="material-symbols-outlined absolute bottom-8 right-8 text-amber-300 text-base opacity-50 animate-bounce" style={{ animationDelay: '0.1s', animationDuration: '4s' }}>star</span>
               
               <div className="relative z-10">
                 <div className="w-20 h-20 mx-auto bg-gradient-to-tr from-[#FBBF24] to-[#F59E0B] rounded-3xl flex items-center justify-center mb-6 shadow-lg shadow-amber-500/20 badge-vip-animated border-none">
                   <span className="material-symbols-outlined text-4xl text-black material-symbols-fill">workspace_premium</span>
                 </div>
                 
-                <h3 className="text-3xl sm:text-4xl font-black text-on-surface tracking-tighter mb-4">
+                <h3 className="text-3xl sm:text-4xl font-black tracking-tighter mb-4 vip-text-shimmer">
                   Mở khóa Advanced Analytics VIP
                 </h3>
                 <p className="text-on-surface-variant font-medium text-sm sm:text-base leading-relaxed mb-8 max-w-lg mx-auto">
