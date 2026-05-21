@@ -15,6 +15,9 @@ dotenv.config();
 
 const app = express();
 
+// Trust proxy for express-rate-limit behind Nginx
+app.set('trust proxy', 1);
+
 // Middlewares
 app.use(helmet({
   crossOriginResourcePolicy: { policy: "cross-origin" }
