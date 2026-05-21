@@ -3,12 +3,16 @@ import { AuthRequest } from '../middlewares/auth.middleware';
 import Stripe from 'stripe';
 import { User } from '../models/user.model';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '');
+const stripe = process.env.STRIPE_SECRET_KEY ? new Stripe(process.env.STRIPE_SECRET_KEY) : null;
 
 /**
  * Creates a Stripe Checkout Session for VIP subscription upgrade.
  */
 export const createCheckoutSession = async (req: AuthRequest, res: Response) => {
+  if (!stripe) {
+    return res.status(500).json({ message: 'Stripe is not configured on this server.' });
+  }
+
   try {
     const { plan } = req.body;
     const userId = req.user?.id;
@@ -101,6 +105,10 @@ const updateUserToVip = async (userId: string, plan: string): Promise<any> => {
  * Verifies a Stripe Checkout Session status immediately on user redirection.
  */
 export const verifySession = async (req: AuthRequest, res: Response) => {
+  if (!stripe) {
+    return res.status(500).json({ message: 'Stripe is not configured on this server.' });
+  }
+
   try {
     const { sessionId } = req.body;
     const userId = req.user?.id;
@@ -156,6 +164,10 @@ export const verifySession = async (req: AuthRequest, res: Response) => {
  * Handles incoming Stripe Webhook events to process payment async.
  */
 export const handleWebhook = async (req: any, res: Response) => {
+  if (!stripe) {
+    return res.status(500).send('Stripe is not configured on this server.');
+  }
+
   const sig = req.headers['stripe-signature'];
   const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
