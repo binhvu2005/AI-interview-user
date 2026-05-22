@@ -16,7 +16,7 @@ const TestPage = () => {
   const [detectedExpressions, setDetectedExpressions] = useState<{[key: string]: number}>({});
   const [faceCount, setFaceCount] = useState(0);
 
-  const MODEL_URL = 'https://justadudewhohacks.github.io/face-api.js/weights';
+  const MODEL_URL = 'https://cdn.jsdelivr.net/npm/@vladmandic/face-api/model';
   const detectionIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
   // Load face-api.js models from CDN
