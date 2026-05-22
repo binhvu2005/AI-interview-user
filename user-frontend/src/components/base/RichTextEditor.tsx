@@ -7,6 +7,7 @@ interface RichTextEditorProps {
   value: string;
   onChange: (content: string) => void;
   placeholder?: string;
+  readOnly?: boolean;
 }
 
 const modules = {
@@ -41,16 +42,17 @@ const formats = [
   'align', 'code-block'
 ];
 
-const RichTextEditor: React.FC<RichTextEditorProps> = ({ value, onChange, placeholder }) => {
+const RichTextEditor: React.FC<RichTextEditorProps> = ({ value, onChange, placeholder, readOnly = false }) => {
   return (
-    <div className="rich-text-editor-container">
+    <div className={`rich-text-editor-container ${readOnly ? 'read-only opacity-70 bg-surface-container-high/50 cursor-not-allowed' : ''}`}>
       <ReactQuill 
-        theme="snow"
+        theme={readOnly ? 'bubble' : 'snow'}
         value={value}
         onChange={onChange}
-        modules={modules}
+        modules={readOnly ? { toolbar: false } : modules}
         formats={formats}
         placeholder={placeholder}
+        readOnly={readOnly}
       />
     </div>
   );

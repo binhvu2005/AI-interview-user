@@ -373,10 +373,12 @@ const ShowcaseDetailPage = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-6 border-t border-outline-variant/10">
                   <div>
                     <p className="text-[11px] font-black text-on-surface-variant uppercase mb-3">{t('results.your_answer')}</p>
-                    <p className="text-sm text-on-surface opacity-80 leading-relaxed bg-surface-container-high p-4 rounded-2xl italic">
-                      {item?.answer || `[${t('results.skipped')}]`}
+                    <p className="text-sm text-on-surface opacity-80 leading-relaxed bg-surface-container-high p-4 rounded-2xl italic whitespace-pre-wrap">
+                      {item?.answer ? item.answer.replace(/\\n/g, '\n') : `[${t('results.skipped')}]`}
                     </p>
-                    <p className="text-xs text-on-surface-variant mt-4 font-medium">{item?.feedback}</p>
+                    <p className="text-xs text-on-surface-variant mt-4 font-medium whitespace-pre-wrap">
+                      {item?.feedback?.replace(/\\n/g, '\n')}
+                    </p>
 
                     <div className="mt-4 space-y-3">
                       {item?.pros && item.pros.length > 0 && (
@@ -399,8 +401,8 @@ const ShowcaseDetailPage = () => {
                   </div>
                   <div className="bg-primary/5 p-6 rounded-3xl border border-primary/10">
                     <p className="text-[11px] font-black text-primary uppercase mb-3">{t('results.expert_insight')}</p>
-                    <div className="text-sm text-on-surface leading-relaxed font-medium">
-                      {item?.correctReview}
+                    <div className="text-sm text-on-surface leading-relaxed font-medium whitespace-pre-wrap">
+                      {item?.correctReview?.replace(/\\n/g, '\n')}
                     </div>
                   </div>
                 </div>

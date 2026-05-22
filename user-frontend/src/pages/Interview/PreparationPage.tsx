@@ -33,6 +33,10 @@ const PreparationPage = () => {
   const [positions, setPositions] = useState<string[]>([]);
   const [levels, setLevels] = useState<string[]>([]);
 
+  // Job Description list and selected ID
+  const [jds, setJds] = useState<any[]>([]);
+  const [selectedJdId, setSelectedJdId] = useState('');
+
   // Spectator Mode
   const [showInviteModal, setShowInviteModal] = useState(false);
   const [roomCode, setRoomCode] = useState('');
@@ -64,6 +68,7 @@ const PreparationPage = () => {
   useEffect(() => {
     fetchVault();
     fetchSetupOptions();
+    fetchJDs();
   }, []);
 
   const fetchSetupOptions = async () => {
@@ -77,6 +82,43 @@ const PreparationPage = () => {
     } catch (err) {
       console.error('Failed to fetch setup options', err);
     }
+  };
+
+  const fetchJDs = async () => {
+    try {
+      const res = await fetchWithAuth(API_ENDPOINTS.JDS.GET_ALL);
+      if (res.ok) {
+        const data = await res.json();
+        setJds(data || []);
+      }
+    } catch (err) {
+      console.error('Failed to fetch JDs', err);
+    }
+  };
+
+  const handleJdSelect = (id: string) => {
+    setSelectedJdId(id);
+    if (!id) {
+      setSelectedPosition('');
+      setSelectedLevel('');
+      setJdText('');
+      return;
+    }
+    const jd = jds.find(j => j._id === id);
+    if (jd) {
+      setSelectedPosition(jd.position);
+      setSelectedLevel(jd.level);
+      setJdText(jd.content);
+      toast.success(isVi ? `Đã cấu hình tự động theo JD: ${jd.title}` : `Automatically configured from JD: ${jd.title}`);
+    }
+  };
+
+  const handleClearJd = () => {
+    setSelectedJdId('');
+    setSelectedPosition('');
+    setSelectedLevel('');
+    setJdText('');
+    toast.success(isVi ? 'Đã hủy chọn JD. Bạn có thể tự điền.' : 'Cleared JD selection. You can now configure manually.');
   };
 
   const fetchVault = async () => {
@@ -424,6 +466,56 @@ const PreparationPage = () => {
             </div>
           </section>
 
+          {/* Section: Job Description Selector */}
+          <section className="bg-surface-container-low border border-outline-variant/20 rounded-[32px] p-8 shadow-sm flex flex-col">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-3">
+                <span className="material-symbols-outlined text-[#818CF8] text-[20px]">list_alt</span>
+                <h3 className="text-sm font-bold text-on-surface tracking-tight">
+                  {isVi ? 'Mẫu mô tả công việc (JD)' : 'Job Description Template'}
+                </h3>
+              </div>
+              {selectedJdId && (
+                <button 
+                  onClick={handleClearJd} 
+                  className="text-[10px] font-black uppercase tracking-widest text-[#818CF8] hover:text-[#818CF8]/80 transition-colors flex items-center gap-1 cursor-pointer"
+                >
+                  <span className="material-symbols-outlined text-[14px]">undo</span>
+                  {isVi ? 'Tự điền thủ công' : 'Fill Manually'}
+                </button>
+              )}
+            </div>
+            
+            <div className="relative group">
+              <select 
+                value={selectedJdId} 
+                onChange={(e) => handleJdSelect(e.target.value)} 
+                className="w-full bg-surface border border-outline-variant/20 rounded-xl px-5 py-3.5 text-on-surface appearance-none text-sm font-medium focus:border-primary/50 transition-all outline-none"
+              >
+                <option value="">
+                  {isVi ? '-- Tùy chọn: Nhập thủ công mô tả công việc của bạn --' : '-- Optional: Enter your own JD manually --'}
+                </option>
+                {(selectedPosition && !selectedJdId
+                  ? jds.filter(jd => jd.position === selectedPosition)
+                  : jds
+                ).map(jd => (
+                  <option key={jd._id} value={jd._id}>
+                    {jd.title} ({jd.position} - {jd.level})
+                  </option>
+                ))}
+              </select>
+              <span className="material-symbols-outlined absolute right-5 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none text-[20px]">expand_more</span>
+            </div>
+            
+            {selectedPosition && !selectedJdId && jds.some(jd => jd.position === selectedPosition) && (
+              <p className="text-[10px] text-on-surface-variant font-medium mt-2 italic opacity-75">
+                {isVi 
+                  ? `Đang lọc các JD thuộc vị trí "${selectedPosition}"` 
+                  : `Filtering JDs for role "${selectedPosition}"`}
+              </p>
+            )}
+          </section>
+
           {/* Section: Role, Level, Duration */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             {/* Target Role & Level */}
@@ -433,7 +525,12 @@ const PreparationPage = () => {
                   <label className="text-[11px] font-bold text-on-surface-variant mb-2 block">{isVi ? 'Vị trí Mục tiêu' : 'Target Role'}</label>
                   <div className="relative group">
                     <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant text-[18px]">work</span>
-                    <select value={selectedPosition} onChange={(e) => setSelectedPosition(e.target.value)} className="w-full bg-surface border border-outline-variant/20 rounded-xl pl-12 pr-4 py-3.5 text-on-surface appearance-none text-sm font-medium focus:border-primary/50 transition-all outline-none">
+                    <select 
+                      value={selectedPosition} 
+                      onChange={(e) => setSelectedPosition(e.target.value)} 
+                      disabled={!!selectedJdId}
+                      className={`w-full bg-surface border border-outline-variant/20 rounded-xl pl-12 pr-4 py-3.5 text-on-surface appearance-none text-sm font-medium focus:border-primary/50 transition-all outline-none ${selectedJdId ? 'opacity-60 cursor-not-allowed' : ''}`}
+                    >
                         <option value="" disabled>{isVi ? 'VD: Frontend Developer' : 'e.g. Senior Product Designer'}</option>
                         {positions.map(p => <option key={p} value={p}>{p}</option>)}
                     </select>
@@ -443,7 +540,12 @@ const PreparationPage = () => {
                 <div>
                   <label className="text-[11px] font-bold text-on-surface-variant mb-2 block">{isVi ? 'Cấp độ' : 'Seniority'}</label>
                   <div className="relative group">
-                    <select value={selectedLevel} onChange={(e) => setSelectedLevel(e.target.value)} className="w-full bg-surface border border-outline-variant/20 rounded-xl px-5 py-3.5 text-on-surface appearance-none text-sm font-medium focus:border-primary/50 transition-all outline-none">
+                    <select 
+                      value={selectedLevel} 
+                      onChange={(e) => setSelectedLevel(e.target.value)} 
+                      disabled={!!selectedJdId}
+                      className={`w-full bg-surface border border-outline-variant/20 rounded-xl px-5 py-3.5 text-on-surface appearance-none text-sm font-medium focus:border-primary/50 transition-all outline-none ${selectedJdId ? 'opacity-60 cursor-not-allowed' : ''}`}
+                    >
                       <option value="" disabled>{isVi ? 'Chọn cấp độ...' : 'Select level'}</option>
                       {levels.map(l => <option key={l} value={l}>{l}</option>)}
                     </select>
@@ -483,13 +585,21 @@ const PreparationPage = () => {
           <section className="bg-surface-container-low border border-outline-variant/20 rounded-[32px] p-8 shadow-sm flex flex-col">
             <div className="flex items-center justify-between mb-4">
               <label className="text-[11px] font-bold text-on-surface-variant block">{isVi ? 'Mô tả Công việc (JD)' : 'Job Description'}</label>
-              <span className="text-[10px] text-on-surface-variant opacity-60">Rich Text</span>
+              {selectedJdId ? (
+                <span className="text-[10px] text-primary font-black uppercase tracking-wider flex items-center gap-1">
+                  <span className="material-symbols-outlined text-[12px]">lock</span>
+                  {isVi ? 'Đang Khóa theo JD' : 'Locked by JD'}
+                </span>
+              ) : (
+                <span className="text-[10px] text-on-surface-variant opacity-60">Rich Text</span>
+              )}
             </div>
             
             <div className="bg-surface rounded-2xl border border-outline-variant/20 overflow-hidden">
               <RichTextEditor 
                 value={jdText}
                 onChange={setJdText}
+                readOnly={!!selectedJdId}
                 placeholder={isVi ? 'Dán mô tả công việc (Job Description) vào đây...' : 'Paste target job description here...'}
               />
             </div>

@@ -47,5 +47,8 @@ export const API_ENDPOINTS = {
   PAYMENT: {
     CREATE_CHECKOUT_SESSION: `${API_BASE_URL}/payment/create-checkout-session`,
     VERIFY_SESSION: `${API_BASE_URL}/payment/verify-session`,
+  },
+  JDS: {
+    GET_ALL: `${API_BASE_URL}/jds`,
   }
 };

@@ -10,6 +10,7 @@ import interviewRoutes from './routes/interview.routes';
 import forumRoutes from './routes/forum.routes';
 import notificationRoutes from './routes/notification.routes';
 import paymentRoutes from './routes/payment.routes';
+import jdRoutes from './routes/jd.routes';
 
 dotenv.config();
 
@@ -104,6 +105,7 @@ app.use('/api/interviews', interviewRoutes);
 app.use('/api/forum', forumRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/payment', paymentRoutes);
+app.use('/api/jds', jdRoutes);
 
 // 2. Proxy Fallback (When Nginx sends the full /api/user/api or /api/user path)
 app.use('/api/user/api/auth', authRoutes);
@@ -113,6 +115,7 @@ app.use('/api/user/api/interviews', interviewRoutes);
 app.use('/api/user/api/forum', forumRoutes);
 app.use('/api/user/api/notifications', notificationRoutes);
 app.use('/api/user/api/payment', paymentRoutes);
+app.use('/api/user/api/jds', jdRoutes);
 
 app.use('/api/user/auth', authRoutes);
 app.use('/api/user/ai', aiRoutes);
@@ -121,6 +124,7 @@ app.use('/api/user/interviews', interviewRoutes);
 app.use('/api/user/forum', forumRoutes);
 app.use('/api/user/notifications', notificationRoutes);
 app.use('/api/user/payment', paymentRoutes);
+app.use('/api/user/jds', jdRoutes);
 
 // 3. Simple Fallback (When Nginx strips /api but keep /auth)
 app.use('/auth', authRoutes);
@@ -130,6 +134,7 @@ app.use('/interviews', interviewRoutes);
 app.use('/forum', forumRoutes);
 app.use('/notifications', notificationRoutes);
 app.use('/payment', paymentRoutes);
+app.use('/jds', jdRoutes);
 
 // Error Handler
 app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
