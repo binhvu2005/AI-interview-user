@@ -75,22 +75,22 @@ const UserFooter = () => {
     {
       title: t('footer.company'),
       links: [
-        { label: 'About', path: '#' },
-        { label: 'Blog', path: '#' }
+        { label: 'About', path: '/about' },
+        { label: 'Blog', path: '/blog' }
       ],
     },
     {
       title: t('footer.support'),
       links: [
-        { label: t('footer.contact'), path: '#' },
-        { label: t('sidebar.help'), path: '#' }
+        { label: t('footer.contact'), path: '/contact' },
+        { label: t('sidebar.help'), path: '/help' }
       ],
     },
     {
       title: t('footer.legal'),
       links: [
-        { label: t('footer.privacy'), path: '#' },
-        { label: t('footer.terms'), path: '#' }
+        { label: t('footer.privacy'), path: '/privacy' },
+        { label: t('footer.terms'), path: '/terms' }
       ],
     },
   ];
@@ -186,12 +186,18 @@ const UserFooter = () => {
 
           {/* Language & Legal links */}
           <div className="flex items-center gap-6">
-            <a href="#" className="text-[11px] text-on-surface-variant/50 hover:text-on-surface-variant transition-colors uppercase tracking-widest">
+            <button 
+              onClick={() => navigate('/privacy')} 
+              className="text-[11px] text-on-surface-variant/50 hover:text-on-surface-variant transition-colors uppercase tracking-widest cursor-pointer"
+            >
               {t('footer.privacy')}
-            </a>
-            <a href="#" className="text-[11px] text-on-surface-variant/50 hover:text-on-surface-variant transition-colors uppercase tracking-widest">
+            </button>
+            <button 
+              onClick={() => navigate('/terms')} 
+              className="text-[11px] text-on-surface-variant/50 hover:text-on-surface-variant transition-colors uppercase tracking-widest cursor-pointer"
+            >
               {t('footer.terms')}
-            </a>
+            </button>
           </div>
         </div>
       </div>

@@ -18,8 +18,15 @@ import JoinInterview from '../pages/Spectator/JoinInterview';
 import SpectatorPage from '../pages/Spectator/SpectatorPage';
 import ProtectedRoute from './ProtectedRoute';
 import MainLayout from '../layouts/MainLayout';
-
 import AuthLayout from '../layouts/AuthLayout';
+
+// Info pages
+import AboutPage from '../pages/Info/AboutPage';
+import BlogPage from '../pages/Info/BlogPage';
+import ContactPage from '../pages/Info/ContactPage';
+import HelpPage from '../pages/Info/HelpPage';
+import PrivacyPage from '../pages/Info/PrivacyPage';
+import TermsPage from '../pages/Info/TermsPage';
 
 export const AppRoutes = [
   { path: '/', element: <Navigate to="/dashboard" replace /> },
@@ -49,6 +56,17 @@ export const AppRoutes = [
     ]
   },
   {
+    element: <MainLayout />,
+    children: [
+      { path: '/about', element: <AboutPage /> },
+      { path: '/blog', element: <BlogPage /> },
+      { path: '/contact', element: <ContactPage /> },
+      { path: '/help', element: <HelpPage /> },
+      { path: '/privacy', element: <PrivacyPage /> },
+      { path: '/terms', element: <TermsPage /> },
+    ]
+  },
+  {
     path: '/interview',
     element: <ProtectedRoute><InterviewPage /></ProtectedRoute>
   },
@@ -57,3 +75,4 @@ export const AppRoutes = [
     element: <SpectatorPage />
   }
 ];
+
