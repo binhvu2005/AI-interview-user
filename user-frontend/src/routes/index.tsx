@@ -27,6 +27,7 @@ import ContactPage from '../pages/Info/ContactPage';
 import HelpPage from '../pages/Info/HelpPage';
 import PrivacyPage from '../pages/Info/PrivacyPage';
 import TermsPage from '../pages/Info/TermsPage';
+import TestPage from '../pages/Test/TestPage';
 
 export const AppRoutes = [
   { path: '/', element: <Navigate to="/dashboard" replace /> },
@@ -64,6 +65,7 @@ export const AppRoutes = [
       { path: '/help', element: <HelpPage /> },
       { path: '/privacy', element: <PrivacyPage /> },
       { path: '/terms', element: <TermsPage /> },
+      { path: '/test', element: <TestPage /> },
     ]
   },
   {
