@@ -373,66 +373,66 @@ const InterviewPage = () => {
   return (
     <div className={`h-screen flex flex-col ${isDark ? 'dark' : ''} bg-background text-on-surface transition-all overflow-hidden font-sans`}>
       {/* Header */}
-      <nav className="h-16 px-8 border-b border-outline-variant/10 flex justify-between items-center backdrop-blur-2xl shrink-0 z-50 bg-surface/50">
-        <div className="flex items-center gap-3 cursor-pointer" onClick={() => navigate('/')}>
-          <div className="w-8 h-8 rounded-[10px] bg-gradient-to-tr from-primary to-secondary flex items-center justify-center shadow-lg shadow-primary/20">
-            <span className="text-on-primary font-black text-xs tracking-tighter">OA</span>
+      <nav className="h-14 px-6 border-b border-white/[0.05] flex justify-between items-center backdrop-blur-2xl shrink-0 z-50 bg-background/80">
+        <div className="flex items-center gap-2.5 cursor-pointer" onClick={() => navigate('/')}>
+          <div className="w-7 h-7 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center">
+            <span className="text-primary font-semibold text-[10px] tracking-tight">OA</span>
           </div>
-          <span className="text-lg font-bold tracking-tight text-on-surface">Obsidian AI</span>
+          <span className="text-base font-bold tracking-tight text-on-surface">Obsidian AI</span>
         </div>
-        <div className="flex items-center gap-4">
-          <div className={`px-4 py-1.5 rounded-full font-mono text-xs font-black border ${timeLeft < 60 ? 'bg-error/10 border-error/30 text-error animate-pulse' : 'bg-surface-container-highest border-outline-variant/20 text-on-surface-variant'}`}>
+        <div className="flex items-center gap-3">
+          <div className={`px-3 py-1 rounded-full font-mono text-xs font-semibold border ${timeLeft < 60 ? 'bg-error/10 border-error/30 text-error animate-pulse' : 'bg-white/[0.02] border-white/[0.08] text-on-surface-variant'}`}>
             {formatTime(timeLeft)}
           </div>
-          <button onClick={() => setIsDark(!isDark)} className="w-9 h-9 rounded-full flex items-center justify-center hover:bg-surface-container-highest transition-colors border border-outline-variant/20 text-on-surface-variant">
+          <button onClick={() => setIsDark(!isDark)} className="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-white/[0.04] transition-colors border border-white/[0.08] text-on-surface-variant cursor-pointer">
             <span className="material-symbols-outlined text-lg">{isDark ? 'light_mode' : 'dark_mode'}</span>
           </button>
-          <button onClick={endInterview} className="bg-error/10 text-error px-5 py-2 rounded-xl font-black text-[10px] uppercase tracking-[0.2em] border border-error/20 hover:bg-error hover:text-on-error transition-all">{t('interview.exit')}</button>
+          <button onClick={endInterview} className="bg-red-500/10 text-red-500 px-4 py-1.5 rounded-lg font-semibold text-[10px] uppercase tracking-wider border border-red-500/20 hover:bg-red-500 hover:text-white transition-all cursor-pointer">{t('interview.exit')}</button>
         </div>
       </nav>
 
       <main className="flex-1 flex flex-col lg:flex-row p-6 gap-6 min-h-0 overflow-hidden">
         {/* Chat Area */}
-        <div className="flex-1 flex flex-col bg-surface-container-low rounded-[32px] border border-outline-variant/10 shadow-2xl relative overflow-hidden backdrop-blur-sm">
-          <div ref={scrollRef} className="flex-1 overflow-y-auto p-8 flex flex-col gap-6 scrollbar-none scroll-smooth">
+        <div className="flex-1 flex flex-col bg-[#121214]/40 backdrop-blur-2xl rounded-2xl border border-white/[0.05] shadow-xl relative overflow-hidden">
+          <div ref={scrollRef} className="flex-1 overflow-y-auto p-6 flex flex-col gap-5 scrollbar-none scroll-smooth">
             {messages.map((msg, idx) => (
               <div key={idx} className={`flex ${msg.role === 'ai' ? 'justify-start' : 'justify-end'} animate-in fade-in slide-in-from-bottom-2`}>
-                <div className={`max-w-[85%] p-6 rounded-[24px] ${msg.role === 'ai' ? 'bg-surface-container text-on-surface rounded-bl-none border border-outline-variant/10' : 'bg-primary text-on-primary rounded-br-none shadow-lg shadow-primary/20'}`}>
-                  <p className="text-[9px] font-black opacity-60 mb-2 uppercase tracking-[0.2em]">{msg.role === 'ai' ? 'Obsidian AI' : (isVi ? 'BẠN' : 'YOU')}</p>
-                  <p className="text-base leading-relaxed whitespace-pre-line">{msg.content}</p>
+                <div className={`max-w-[80%] p-4 rounded-xl border ${msg.role === 'ai' ? 'bg-white/[0.02] text-on-surface rounded-tl-sm border-white/[0.05] shadow-sm' : 'bg-white/[0.06] text-on-surface rounded-tr-sm border-white/[0.08] shadow-sm'}`}>
+                  <p className={`text-[9px] font-semibold mb-1 uppercase tracking-widest ${msg.role === 'ai' ? 'text-primary/90' : 'text-on-surface-variant/80'}`}>{msg.role === 'ai' ? 'Obsidian AI' : (isVi ? 'BẠN' : 'YOU')}</p>
+                  <p className="text-xs md:text-sm leading-relaxed whitespace-pre-line">{msg.content}</p>
                 </div>
               </div>
             ))}
             {isProcessing && (
               <div className="flex justify-start">
-                <div className="bg-surface-container px-6 py-4 rounded-full border border-outline-variant/10 flex items-center gap-3">
+                <div className="bg-white/[0.02] px-4 py-2.5 rounded-xl border border-white/[0.05] flex items-center gap-2.5">
                   <div className="flex gap-1">
                     <span className="w-1.5 h-1.5 bg-primary rounded-full animate-bounce"></span>
                     <span className="w-1.5 h-1.5 bg-primary rounded-full animate-bounce [animation-delay:0.2s]"></span>
                     <span className="w-1.5 h-1.5 bg-primary rounded-full animate-bounce [animation-delay:0.4s]"></span>
                   </div>
-                  <span className="text-[10px] font-black opacity-60 tracking-widest uppercase text-on-surface">{t('interview.thinking')}</span>
+                  <span className="text-[9px] font-semibold opacity-70 tracking-widest uppercase text-on-surface">{t('interview.thinking')}</span>
                 </div>
               </div>
             )}
           </div>
 
           {/* Input Area */}
-          <div className="p-8 bg-surface-container/50 backdrop-blur-3xl border-t border-outline-variant/10 shrink-0">
-            <div className="flex items-center gap-4 bg-surface-container-high rounded-2xl p-2 pl-6 border border-outline-variant/20 focus-within:border-primary/50 transition-all">
+          <div className="p-4 bg-white/[0.01] border-t border-white/[0.05] shrink-0">
+            <div className="flex items-center gap-3 bg-white/[0.02] border border-white/[0.08] rounded-lg p-1.5 pl-4 focus-within:border-primary/40 transition-all">
               <input
                 value={userInput}
                 onChange={(e) => setUserInput(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
                 placeholder={t('interview.type_answer')}
-                className="flex-1 bg-transparent border-none outline-none py-4 text-base text-on-surface placeholder:text-on-surface-variant/50"
+                className="flex-1 bg-transparent border-none outline-none py-2 text-xs font-medium text-on-surface placeholder:text-on-surface-variant/40"
               />
-              <div className="flex items-center gap-2 pr-2">
-                <button onMouseDown={startRecording} onMouseUp={stopRecording} onMouseLeave={stopRecording} className={`w-12 h-12 rounded-xl flex items-center justify-center transition-all ${isRecording ? 'bg-error text-on-error animate-pulse' : 'text-on-surface-variant hover:text-primary hover:bg-surface-container-highest'}`}>
-                  <span className="material-symbols-outlined text-[22px]">{isRecording ? 'graphic_eq' : 'mic'}</span>
+              <div className="flex items-center gap-2 pr-1">
+                <button onMouseDown={startRecording} onMouseUp={stopRecording} onMouseLeave={stopRecording} className={`w-9 h-9 rounded-lg flex items-center justify-center transition-all ${isRecording ? 'bg-red-500 text-white animate-pulse' : 'text-on-surface-variant hover:text-primary hover:bg-white/[0.04]'} cursor-pointer`}>
+                  <span className="material-symbols-outlined text-[18px]">{isRecording ? 'graphic_eq' : 'mic'}</span>
                 </button>
-                <button onClick={handleSendMessage} disabled={!userInput.trim() || isProcessing} className="w-12 h-12 bg-primary text-on-primary rounded-xl flex items-center justify-center shadow-lg shadow-primary/20 disabled:opacity-30 hover:scale-105 active:scale-95 transition-all">
-                  <span className="material-symbols-outlined text-[22px]">send</span>
+                <button onClick={handleSendMessage} disabled={!userInput.trim() || isProcessing} className="w-9 h-9 bg-white text-black hover:bg-neutral-200 rounded-lg flex items-center justify-center disabled:opacity-30 transition-all cursor-pointer animate-none">
+                  <span className="material-symbols-outlined text-[18px]">send</span>
                 </button>
               </div>
             </div>
@@ -442,7 +442,7 @@ const InterviewPage = () => {
         {/* Sidebar */}
         <div className="w-full lg:w-[380px] flex flex-col gap-6 shrink-0">
           {/* Camera Feed */}
-          <div className="bg-surface-container-lowest rounded-[32px] overflow-hidden relative aspect-video lg:aspect-auto lg:h-[480px] border border-outline-variant/20 shadow-2xl group">
+          <div className={`bg-[#121214]/40 backdrop-blur-2xl rounded-2xl overflow-hidden relative aspect-video lg:aspect-auto lg:h-[260px] border border-white/[0.05] shadow-xl group transition-all duration-500 ${!isMuted && !isVideoOff ? 'border-primary/20 ring-1 ring-primary/10 shadow-[0_0_15px_rgba(99,102,241,0.08)]' : ''}`}>
             <video
               ref={videoRef}
               autoPlay
@@ -452,13 +452,13 @@ const InterviewPage = () => {
             />
 
             {isVideoOff && (
-              <div className="absolute inset-0 flex flex-col items-center justify-center bg-surface-container">
-                <span className="material-symbols-outlined text-6xl text-on-surface-variant/20">videocam_off</span>
-                <p className="text-[10px] font-black text-on-surface-variant/60 mt-4 uppercase tracking-widest">{t('interview.camera_off')}</p>
+              <div className="absolute inset-0 flex flex-col items-center justify-center bg-[#09090b]">
+                <span className="material-symbols-outlined text-4xl text-on-surface-variant/20">videocam_off</span>
+                <p className="text-[10px] font-semibold text-on-surface-variant/60 mt-3 uppercase tracking-widest">{t('interview.camera_off')}</p>
               </div>
             )}
 
-            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-3 opacity-0 group-hover:opacity-100 transition-opacity">
+            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
               <button
                 onClick={() => {
                   const newMuted = !isMuted;
@@ -467,9 +467,9 @@ const InterviewPage = () => {
                     stream.getAudioTracks().forEach(track => track.enabled = !newMuted);
                   }
                 }}
-                className={`w-12 h-12 rounded-2xl flex items-center justify-center backdrop-blur-xl border ${isMuted ? 'bg-error/20 border-error/50 text-error' : 'bg-surface-container/60 border-outline-variant/20 text-on-surface'}`}
+                className={`w-9 h-9 rounded-lg flex items-center justify-center backdrop-blur-md border ${isMuted ? 'bg-error/15 border-error/30 text-error' : 'bg-black/40 border-white/[0.08] text-white hover:bg-black/60'} transition-all`}
               >
-                <span className="material-symbols-outlined text-xl">{isMuted ? 'mic_off' : 'mic'}</span>
+                <span className="material-symbols-outlined text-lg">{isMuted ? 'mic_off' : 'mic'}</span>
               </button>
               <button
                 onClick={() => {
@@ -479,59 +479,59 @@ const InterviewPage = () => {
                     stream.getVideoTracks().forEach(track => track.enabled = !newVideoOff);
                   }
                 }}
-                className={`w-12 h-12 rounded-2xl flex items-center justify-center backdrop-blur-xl border ${isVideoOff ? 'bg-error/20 border-error/50 text-error' : 'bg-surface-container/60 border-outline-variant/20 text-on-surface'}`}
+                className={`w-9 h-9 rounded-lg flex items-center justify-center backdrop-blur-md border ${isVideoOff ? 'bg-error/15 border-error/30 text-error' : 'bg-black/40 border-white/[0.08] text-white hover:bg-black/60'} transition-all`}
               >
-                <span className="material-symbols-outlined text-xl">{isVideoOff ? 'videocam_off' : 'videocam'}</span>
+                <span className="material-symbols-outlined text-lg">{isVideoOff ? 'videocam_off' : 'videocam'}</span>
               </button>
             </div>
           </div>
 
           {/* Timer Card */}
-          <div className="bg-primary/5 rounded-[32px] p-8 border border-primary/10 flex flex-col items-center justify-center text-center shadow-xl relative overflow-hidden group">
-            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-primary/40 to-transparent"></div>
-            <div className="flex items-center gap-3 mb-2 opacity-60">
-              <span className="material-symbols-outlined text-sm text-on-surface">timer</span>
-              <h3 className="font-black text-[10px] uppercase tracking-[0.3em] text-on-surface">{t('interview.time_remaining')}</h3>
+          <div className="bg-[#121214]/40 backdrop-blur-2xl rounded-2xl p-6 border border-white/[0.05] flex flex-col items-center justify-center text-center shadow-sm relative overflow-hidden group">
+            <div className="absolute top-0 left-0 w-full h-0.5 bg-gradient-to-r from-transparent via-primary/30 to-transparent"></div>
+            <div className="flex items-center gap-2 mb-2 opacity-60">
+              <span className="material-symbols-outlined text-xs text-on-surface">timer</span>
+              <h3 className="font-semibold text-[9px] uppercase tracking-widest text-on-surface">{t('interview.time_remaining')}</h3>
             </div>
-            <p className={`text-5xl font-black tracking-tighter ${timeLeft < 60 ? 'text-error animate-pulse' : 'text-primary'}`}>
+            <p className={`text-3xl font-bold tracking-tight ${timeLeft < 60 ? 'text-error animate-pulse' : 'text-primary'}`}>
               {formatTime(timeLeft)}
             </p>
           </div>
 
           {/* Spectators Management */}
           {localStorage.getItem('spectator_room_code') && (
-            <div className="flex-1 bg-surface-container-low rounded-[32px] p-6 border border-outline-variant/10 shadow-xl flex flex-col overflow-hidden">
+            <div className="flex-1 bg-[#121214]/40 backdrop-blur-2xl rounded-2xl p-5 border border-white/[0.05] shadow-xl flex flex-col overflow-hidden">
               <div className="flex items-center justify-between mb-4 shrink-0">
                 <div className="flex items-center gap-2">
-                  <span className="material-symbols-outlined text-primary text-sm">group</span>
-                  <h3 className="font-black text-[10px] uppercase tracking-widest text-on-surface">{t('spectator.panel_title')} ({spectators.length})</h3>
+                  <span className="material-symbols-outlined text-primary text-xs">group</span>
+                  <h3 className="font-semibold text-[9px] uppercase tracking-widest text-on-surface">{t('spectator.panel_title')} ({spectators.length})</h3>
                 </div>
-                <div className="bg-primary/10 text-primary px-3 py-1 rounded-full text-[10px] font-black tracking-widest border border-primary/20">
+                <div className="bg-primary/5 text-primary px-2.5 py-0.5 rounded-full text-[9px] font-semibold tracking-wider border border-primary/15">
                   {t('watch.room_code')}: {localStorage.getItem('spectator_room_code')}
                 </div>
               </div>
 
               <div className="flex-1 overflow-y-auto space-y-2 pr-2 scrollbar-none">
                 {spectators.length > 0 ? spectators.map(spec => (
-                  <div key={spec.socketId} className="flex items-center justify-between p-3 bg-surface-container-high/50 rounded-2xl border border-outline-variant/5 group/item">
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-primary/20 to-secondary/20 flex items-center justify-center text-[10px] font-black text-primary border border-primary/10">
+                  <div key={spec.socketId} className="flex items-center justify-between p-2 px-3 bg-white/[0.01] rounded-lg border border-white/[0.05] group/item">
+                    <div className="flex items-center gap-2.5">
+                      <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center text-[9px] font-semibold text-primary border border-primary/15">
                         {spec.name.charAt(0).toUpperCase()}
                       </div>
-                      <span className="text-xs font-bold text-on-surface">{spec.name}</span>
+                      <span className="text-xs font-medium text-on-surface">{spec.name}</span>
                     </div>
                     <button
                       onClick={() => handleKick(spec.socketId)}
-                      className="w-8 h-8 rounded-xl bg-error/10 text-error flex items-center justify-center opacity-0 group-hover/item:opacity-100 transition-all hover:bg-error hover:text-on-error"
+                      className="w-7 h-7 rounded-lg bg-red-500/10 text-red-500 flex items-center justify-center opacity-0 group-hover/item:opacity-100 transition-all hover:bg-red-500 hover:text-white"
                       title={t('spectator.kick_btn')}
                     >
-                      <span className="material-symbols-outlined text-sm">person_remove</span>
+                      <span className="material-symbols-outlined text-xs">person_remove</span>
                     </button>
                   </div>
                 )) : (
                   <div className="h-20 flex flex-col items-center justify-center opacity-30">
-                    <span className="material-symbols-outlined text-3xl mb-2">visibility_off</span>
-                    <p className="text-[9px] font-black uppercase tracking-widest">{t('spectator.panel_empty')}</p>
+                    <span className="material-symbols-outlined text-2xl mb-1">visibility_off</span>
+                    <p className="text-[9px] font-semibold uppercase tracking-widest">{t('spectator.panel_empty')}</p>
                   </div>
                 )}
               </div>
@@ -541,36 +541,36 @@ const InterviewPage = () => {
       </main>
 
       {showCheatModal && (
-        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/85 backdrop-blur-md animate-in fade-in duration-300">
-          <div className="bg-[#1e1f22] border border-red-500/30 rounded-[32px] p-8 max-w-md w-full text-center shadow-2xl relative overflow-hidden animate-in zoom-in-95 duration-300">
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-background/80 backdrop-blur-sm animate-in fade-in duration-300">
+          <div className="bg-[#09090b] border border-red-500/20 rounded-xl p-6 max-w-sm w-full text-center shadow-2xl relative overflow-hidden animate-in zoom-in-95 duration-300">
             {/* Red glowing decorative top bar */}
-            <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-red-500 via-red-400 to-red-500 shadow-[0_0_10px_rgba(239,68,68,0.5)]"></div>
+            <div className="absolute top-0 left-0 w-full h-0.5 bg-gradient-to-r from-red-500/20 via-red-500 to-red-500/20 shadow-[0_0_8px_rgba(239,68,68,0.3)]"></div>
             
-            <div className="w-16 h-16 rounded-full bg-red-500/10 border border-red-500/20 flex items-center justify-center mx-auto mb-6 text-red-500">
-              <span className="material-symbols-outlined text-3xl animate-bounce">warning</span>
+            <div className="w-12 h-12 rounded-lg bg-red-500/10 border border-red-500/20 flex items-center justify-center mx-auto mb-4 text-red-500">
+              <span className="material-symbols-outlined text-2xl animate-bounce">warning</span>
             </div>
             
-            <h3 className="text-xl font-black tracking-tight text-white mb-2 uppercase">
+            <h3 className="text-lg font-bold tracking-tight text-white mb-2 uppercase">
               {isVi ? '🚨 Cảnh Báo Vi Phạm' : '🚨 Proctoring Violation'}
             </h3>
             
-            <p className="text-sm text-gray-300 mb-6 leading-relaxed">
+            <p className="text-xs text-on-surface-variant font-medium mb-6 leading-relaxed">
               {isVi 
                 ? `Hệ thống Obsidian AI phát hiện bạn vừa rời khỏi màn hình phỏng vấn. Hành vi chuyển tab sẽ làm giảm nghiêm trọng điểm số thái độ trên báo cáo đánh giá.`
                 : `Obsidian AI detected that you left the interview screen. Tab switching will severely penalize your attitude score on the final report.`
               }
             </p>
             
-            <div className="bg-red-500/5 border border-red-500/10 rounded-2xl p-4 mb-6">
-              <p className="text-[10px] font-black text-red-400 uppercase tracking-widest mb-1">
+            <div className="bg-red-500/5 border border-red-500/15 rounded-lg p-3 mb-6">
+              <p className="text-[9px] font-semibold text-red-400 uppercase tracking-widest mb-0.5">
                 {isVi ? 'Tổng số lần vi phạm' : 'Total Violations'}
               </p>
-              <p className="text-3xl font-black text-red-500">{cheatCount} {isVi ? 'lần' : 'time(s)'}</p>
+              <p className="text-2xl font-bold text-red-500">{cheatCount} {isVi ? 'lần' : 'time(s)'}</p>
             </div>
             
             <button
               onClick={() => setShowCheatModal(false)}
-              className="w-full bg-red-600 text-white font-black py-4 rounded-2xl hover:bg-red-500 active:scale-95 transition-all text-xs uppercase tracking-widest shadow-lg shadow-red-500/20"
+              className="w-full bg-red-500 hover:bg-red-600 text-white font-semibold py-2.5 rounded-lg active:scale-[0.98] transition-all text-xs uppercase tracking-widest shadow-sm cursor-pointer"
             >
               {isVi ? 'Tôi đã hiểu và cam kết tập trung' : 'I understand & will focus'}
             </button>

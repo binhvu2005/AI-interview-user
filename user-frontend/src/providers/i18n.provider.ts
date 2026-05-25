@@ -395,6 +395,220 @@ const resources = {
         "cheat_warning": "WARNING: Tab switch detected! This will negatively impact your attitude score.",
         "no_camera_support": "Browser does not support camera/mic",
         "camera_access_denied": "Camera access denied"
+      },
+      "about_page": {
+        "title": "About Us",
+        "desc": "Obsidian AI is an AI-powered mock technical interview platform helping candidates conquer challenging technical assessments.",
+        "mission_title": "Our Mission",
+        "mission_desc": "We believe every developer deserves a fair, intuitive, and realistic preparation environment. Obsidian AI is designed to personalize your learning path, detect knowledge gaps, and provide deep technical feedback so you can walk into any interview room with absolute confidence.",
+        "feature_analytics_title": "Instant AI Analytics",
+        "feature_analytics_desc": "Get feedback, scoring, and paths for improvement instantly.",
+        "feature_jd_title": "Real JD Templates",
+        "feature_jd_desc": "Test against actual job description requirements.",
+        "feature_simulation_title": "Realistic Simulation",
+        "feature_simulation_desc": "Experience real interview pressure and follow-up questions.",
+        "team_title": "Our Founding Team",
+        "team_members": {
+          "binh_role": "Founder & Lead Engineer",
+          "binh_bio": "IT Student passionate about AI and Fullstack technologies.",
+          "assistant_role": "Co-Founder & AI Advisor",
+          "assistant_bio": "AI assistant specializing in evaluating and training programming skills."
+        }
+      },
+      "blog_page": {
+        "title": "Obsidian DevBlog",
+        "desc": "Insights on technical interviews, AI assessments, and engineering tips from the Obsidian AI team.",
+        "featured": "Featured Post",
+        "all_articles": "All Articles",
+        "no_articles": "No articles found in this category.",
+        "read_article": "Read Article",
+        "read": "Read",
+        "categories": {
+          "all": "All Posts",
+          "prep": "Interview Prep",
+          "ai": "AI Technology",
+          "update": "Product Updates"
+        },
+        "posts": {
+          "1": {
+            "title": "How AI is Revolutionizing Technical Interviews",
+            "excerpt": "Explore how large language models (LLMs) and real-time voice synthesis are changing the way developers prepare for high-stakes technical assessments.",
+            "author": "Vinh Vu",
+            "readTime": "5 min read"
+          },
+          "2": {
+            "title": "Mastering System Design: Key Topics to Study",
+            "excerpt": "A curated checklist of essential system design concepts to master, from database sharding and partitioning to message queues and custom caching layers.",
+            "author": "Obsidian Assistant",
+            "readTime": "8 min read"
+          },
+          "3": {
+            "title": "Obsidian AI v2.0 Release Notes",
+            "excerpt": "Introducing live spectator room codes, automated resume ATS analysis matching against job descriptions (JD), and enhanced AI cognitive follow-up questions.",
+            "author": "Vinh Vu",
+            "readTime": "3 min read"
+          },
+          "4": {
+            "title": "Top 5 Essential Soft Skills for Lead Engineer Interviews",
+            "excerpt": "Why structured communication, conflict resolution, and leadership paradigms matter just as much as code proficiency during engineering management interviews.",
+            "author": "Obsidian Assistant",
+            "readTime": "6 min read"
+          }
+        }
+      },
+      "contact_page": {
+        "title": "Contact Support",
+        "desc": "Our engineering team is always ready to answer your questions and troubleshoot issues.",
+        "channels_title": "Support Channels",
+        "channels_desc": "For webcam, audio connections, or VIP account issues, please reach out via any of the options below.",
+        "response_time_label": "Response Time",
+        "response_time_val": "24/7 (Within 24 Hours)",
+        "faq_cta_title": "Instant Answers with AI?",
+        "faq_cta_desc": "Browse our Help Center / FAQs to get instant resolutions to most common questions.",
+        "faq_cta_btn": "Open FAQs",
+        "form_title": "Send us a Message",
+        "form_name_label": "Full Name",
+        "form_name_placeholder": "John Doe",
+        "form_email_label": "Email Address",
+        "form_subject_label": "Subject",
+        "form_subject_placeholder": "e.g. Camera connection issue",
+        "form_message_label": "Message",
+        "form_message_placeholder": "Describe your issue in detail...",
+        "btn_sending": "Sending...",
+        "btn_send": "Send Message",
+        "toast_fill_fields": "Please fill in all fields.",
+        "toast_send_success": "Support request sent successfully! We will get back to you soon."
+      },
+      "help_page": {
+        "title": "Help Center",
+        "desc": "Find quick answers to common questions about our features, billing, and system operations.",
+        "search_placeholder": "Search questions...",
+        "no_questions": "No questions matching your search.",
+        "still_questions_title": "Still have questions?",
+        "still_questions_desc": "If you could not find the solution, contact our support team directly for personal assistance.",
+        "get_in_touch": "Get in Touch",
+        "categories": {
+          "all": "All Topics",
+          "start": "Getting Started",
+          "interview": "Mock Interview",
+          "vip": "VIP Packages",
+          "tech": "Technical Issues"
+        },
+        "faqs": {
+          "1": {
+            "question": "How do I start a mock interview?",
+            "answer": "Simply navigate to the \"Interview Prep\" section, upload your CV in PDF format, paste the Job Description (JD) details of your target role, select your seniority level, and click \"Initialize Sequence\" to begin."
+          },
+          "2": {
+            "question": "How does the AI interview simulator work?",
+            "answer": "Once launched, the AI analyzes your CV and JD to map required competencies. It then generates contextual questions. You can reply using audio/microphone or typing. The AI will dynamically analyze your responses and ask probing follow-up questions to test your depth before moving to the next topic."
+          },
+          "3": {
+            "question": "What are the benefits of the Premium VIP package?",
+            "answer": "Premium VIP unlocks unlimited mock interviews, gives access to our advanced intelligence model (GPT-4o) for high-fidelity evaluation, enables live Voice-to-Voice audio dialogue, and supports exporting detailed ATS CV analytics reports."
+          },
+          "4": {
+            "question": "How can I review my previous interview performance?",
+            "answer": "All completed interview sessions are saved in your \"Interview History\" (Results) tab. You can view overall assessment scores, ATS CV matches, strengths/weaknesses breakdown, and expert suggestions for every question answered."
+          },
+          "5": {
+            "question": "Do I need to grant camera and microphone access?",
+            "answer": "Yes, granting camera and microphone access is highly recommended for the most immersive experience, allowing the AI to analyze verbal pacing and body language. However, you can choose to disable the camera and complete the interview entirely using keyboard text inputs."
+          },
+          "6": {
+            "question": "Can I upload my CV in Docx format?",
+            "answer": "Currently, the platform only supports the PDF format to ensure layout preservation and structural accuracy during semantic parsing. You can easily save or convert your Word/Docx document to PDF before uploading it."
+          }
+        }
+      },
+      "privacy_page": {
+        "title": "Privacy Policy",
+        "desc": "Learn how we collect, safeguard, and respect your privacy throughout the platform.",
+        "last_updated": "Last Updated: May 22, 2026",
+        "intro": "Welcome to Obsidian AI. Your privacy is paramount. This statement describes in detail our practices regarding the acquisition, protection, and consumption of user data during mock interview simulations.",
+        "footer_contact": "If you have questions regarding this Privacy Policy, contact us at support@obsidianai.com",
+        "sections": {
+          "1": {
+            "title": "1. Information We Collect",
+            "content": "We collect information to provide better services to our users. This includes: Account Details (Name, email address, and encrypted passwords), Professional Resumes (CVs uploaded in PDF format), and Mock Interview Data (text responses, audio voice, or webcam video frames if authorized for pacing/body language analytics)."
+          },
+          "2": {
+            "title": "2. How We Use Your Information",
+            "content": "Your data is processed to execute the AI mock interview simulations, calculate ATS match percentages against target JDs, deliver performance reports to your email, and refine the accuracy of our cognitive evaluation algorithms."
+          },
+          "3": {
+            "title": "3. Data Security & Storage",
+            "content": "All CV files and voice recordings are safely encrypted during transmission and storage (encryption at rest & in transit). We do not share, sell, or rent your personal information to third parties, except for certified hosting and cloud service providers essential for platform operations."
+          },
+          "4": {
+            "title": "4. Your Rights & Control",
+            "content": "You maintain full ownership of your data. You can access the \"CV Vault\" to permanently delete any uploaded resume, review or purge your mock interview history, modify profile settings, or request full account termination at any time."
+          },
+          "5": {
+            "title": "5. Changes to This Policy",
+            "content": "We may update this privacy statement periodically to reflect system updates or legal changes. We will notify you of major revisions through dashboard banners or email updates."
+          }
+        }
+      },
+      "terms_page": {
+        "title": "Terms of Service",
+        "desc": "Please read the terms of service carefully before starting your interview preparation.",
+        "last_updated": "Last Updated: May 22, 2026",
+        "intro": "Welcome to Obsidian AI. By accessing and using our service, you agree to be bound by the terms outlined below. These regulations apply to all users, candidates, and spectators who access our services.",
+        "footer_contact": "If you have questions regarding these Terms, contact us at support@obsidianai.com",
+        "sections": {
+          "1": {
+            "title": "1. Acceptance of Terms",
+            "content": "By registering an account and using the Obsidian AI platform, you agree to comply with and be bound by these Terms of Service and our Privacy Policy. If you do not agree, please discontinue using the service immediately."
+          },
+          "2": {
+            "title": "2. Fair Use & Cheat Detection",
+            "content": "Obsidian AI is designed for personal learning and interview preparation. During mock sessions, our system monitors tab-switching events to calculate integrity indicators. You agree not to employ automated tools (bots), scrape data, or record/distribute session materials without written authorization."
+          },
+          "3": {
+            "title": "3. VIP Subscriptions & Billing",
+            "content": "Certain premium features require a VIP subscription. Subscription fees are billed monthly on a recurring basis until canceled. All payments made are non-refundable except in occurrences of severe platform defects verified by our technical staff."
+          },
+          "4": {
+            "title": "4. Limitations of AI Responsibility",
+            "content": "Scoring profiles, ATS CV matches, and expert insights are generated by AI algorithms for self-educational purposes. We make no representations or guarantees that utilizing this platform will result in passing real-world technical interviews or securing employment."
+          },
+          "5": {
+            "title": "5. Termination",
+            "content": "We reserve the right to suspend or terminate your account without notice if you violate these terms (e.g. system exploitation, executing denial of service attacks, or posting abusive content in the Forums)."
+          }
+        }
+      },
+      "test_page": {
+        "title": "Face-API.js Integration Test",
+        "desc": "Interactive testing component running in-browser facial landmarking and expression classification.",
+        "model_status": "Model Status",
+        "ai_models_label": "AI Models:",
+        "load_error": "Load Error",
+        "ready": "Ready",
+        "loading": "Loading...",
+        "camera_stream_label": "Camera Stream:",
+        "active": "Active",
+        "inactive": "Inactive",
+        "error_network": "Error: {{error}}. Verify network and CORS.",
+        "start_camera": "Start Camera",
+        "stop_camera": "Stop Camera",
+        "expression_analysis": "Expression Analysis",
+        "faces_detected": "Faces Detected:",
+        "no_face_detected": "No face details detected",
+        "video_placeholder": "Click \"Start Camera\" to authorize your device webcam and initialize detection overlays.",
+        "models_loaded": "Face detection models loaded successfully!",
+        "models_load_error": "Could not load models. Please verify connection.",
+        "camera_access_denied": "Camera access denied. Please grant permission.",
+        "expressions": {
+          "neutral": "Neutral",
+          "happy": "Happy",
+          "sad": "Sad",
+          "angry": "Angry",
+          "fearful": "Fearful",
+          "disgusted": "Disgusted",
+          "surprised": "Surprised"
+        }
       }
     }
   },
@@ -789,6 +1003,220 @@ const resources = {
         "cheat_warning": "CẢNH BÁO: Phát hiện chuyển tab! Hành vi này sẽ bị AI ghi nhận và trừ điểm thái độ.",
         "no_camera_support": "Trình duyệt không hỗ trợ camera/mic",
         "camera_access_denied": "Không thể truy cập Camera/Mic"
+      },
+      "about_page": {
+        "title": "Về Chúng Tôi",
+        "desc": "Obsidian AI là nền tảng phỏng vấn lập trình giả lập tích hợp trí tuệ nhân tạo, giúp các ứng viên vượt qua các kỳ đánh giá kỹ thuật đầy thách thức.",
+        "mission_title": "Sứ Mệnh Của Chúng Tôi",
+        "mission_desc": "Chúng tôi tin rằng mọi lập trình viên đều xứng đáng có một môi trường chuẩn bị phỏng vấn công bằng, trực quan và thực tế. Obsidian AI được thiết kế để cá nhân hóa lộ trình ôn luyện, phát hiện lỗ hổng kiến thức và cung cấp những phản hồi chuyên sâu giúp bạn tự tin nhất khi bước vào phòng phỏng vấn thực tế.",
+        "feature_analytics_title": "Phân Tích AI Tức Thì",
+        "feature_analytics_desc": "Nhận phản hồi chấm điểm và cải thiện ngay lập tức.",
+        "feature_jd_title": "Mẫu JD Thực Tế",
+        "feature_jd_desc": "Kiểm tra sát sườn theo từng yêu cầu công việc thực tế.",
+        "feature_simulation_title": "Mô Phỏng Chuyên Sâu",
+        "feature_simulation_desc": "Trải nghiệm áp lực phỏng vấn và câu hỏi vặn vẹo thật.",
+        "team_title": "Đội Ngũ Sáng Lập",
+        "team_members": {
+          "binh_role": "Sáng lập & Kỹ sư trưởng",
+          "binh_bio": "Sinh viên CNTT đam mê AI và công nghệ Fullstack.",
+          "assistant_role": "Đồng sáng lập & Cố vấn AI",
+          "assistant_bio": "Trợ lý AI chuyên sâu về đánh giá và đào tạo kỹ năng lập trình."
+        }
+      },
+      "blog_page": {
+        "title": "Nhật Ký Phát Triển",
+        "desc": "Nơi chia sẻ kiến thức phỏng vấn, cập nhật công nghệ AI và hướng dẫn lập trình từ đội ngũ Obsidian AI.",
+        "featured": "Bài viết nổi bật",
+        "all_articles": "Tất cả bài viết khác",
+        "no_articles": "Không tìm thấy bài viết nào.",
+        "read_article": "Đọc tiếp",
+        "read": "Đọc tiếp",
+        "categories": {
+          "all": "Tất cả bài viết",
+          "prep": "Luyện phỏng vấn",
+          "ai": "Công nghệ AI",
+          "update": "Bản cập nhật"
+        },
+        "posts": {
+          "1": {
+            "title": "Cách AI Đang Cách Mạng Hóa Phỏng Vấn Kỹ Thuật",
+            "excerpt": "Khám phá cách các mô hình ngôn ngữ lớn (LLM) và tổng hợp giọng nói thời gian thực thay đổi cách lập trình viên chuẩn bị cho các kỳ thi kỹ thuật đầy thử thách.",
+            "author": "Vũ Thanh Bình",
+            "readTime": "5 phút đọc"
+          },
+          "2": {
+            "title": "Chinh Phục Thiết Kế Hệ Thống: Các Chủ Đề Trọng Tâm",
+            "excerpt": "Danh sách các khái niệm thiết kế hệ thống cốt lõi cần nắm vững, từ phân mạch cơ sở dữ liệu (sharding) đến hàng đợi tin nhắn (message queues) và bộ nhớ đệm (caching).",
+            "author": "Obsidian Assistant",
+            "readTime": "8 phút đọc"
+          },
+          "3": {
+            "title": "Thông Tin Bản Cập Nhật Obsidian AI v2.0",
+            "excerpt": "Giới thiệu chế độ quan sát trực tiếp (live spectator mode), phân tích hồ sơ CV tự động theo mẫu mô tả công việc (JD), và cải tiến hệ thống câu hỏi truy vấn của AI.",
+            "author": "Vũ Thanh Bình",
+            "readTime": "3 phút đọc"
+          },
+          "4": {
+            "title": "Top 5 Kỹ Năng Mềm Quan Trọng Cho Kỹ Sư Trưởng / Leader",
+            "excerpt": "Tại sao khả năng giao tiếp truyền đạt, giải quyết xung đột và phương pháp lãnh đạo lại quan trọng ngang hàng với trình độ code trong phỏng vấn vị trí quản lý.",
+            "author": "Obsidian Assistant",
+            "readTime": "6 phút đọc"
+          }
+        }
+      },
+      "contact_page": {
+        "title": "Liên Hệ Hỗ Trợ",
+        "desc": "Đội ngũ kỹ thuật của Obsidian AI luôn sẵn sàng hỗ trợ giải đáp mọi thắc mắc và khắc phục sự cố.",
+        "channels_title": "Thông tin hỗ trợ",
+        "channels_desc": "Nếu bạn gặp sự cố kỹ thuật về kết nối camera, âm thanh hoặc gói thanh toán VIP, hãy nhắn cho chúng tôi qua các kênh dưới đây.",
+        "response_time_label": "Thời gian làm việc",
+        "response_time_val": "24/7 (Phản hồi trong 24h)",
+        "faq_cta_title": "Giải đáp tức thì với AI?",
+        "faq_cta_desc": "Hãy xem qua mục Trợ giúp (FAQ) để tìm nhanh lời giải đáp cho các câu hỏi thường gặp.",
+        "faq_cta_btn": "Xem FAQ",
+        "form_title": "Gửi yêu cầu trợ giúp",
+        "form_name_label": "Họ và tên",
+        "form_name_placeholder": "Nguyễn Văn A",
+        "form_email_label": "Địa chỉ Email",
+        "form_subject_label": "Chủ đề cần hỗ trợ",
+        "form_subject_placeholder": "VD: Lỗi thanh toán gói VIP",
+        "form_message_label": "Nội dung chi tiết",
+        "form_message_placeholder": "Mô tả chi tiết sự cố bạn đang gặp phải...",
+        "btn_sending": "Đang gửi...",
+        "btn_send": "Gửi tin nhắn",
+        "toast_fill_fields": "Vui lòng điền đầy đủ các thông tin.",
+        "toast_send_success": "Đã gửi yêu cầu hỗ trợ thành công! Chúng tôi sẽ phản hồi sớm nhất."
+      },
+      "help_page": {
+        "title": "Trung Tâm Trợ Giúp",
+        "desc": "Tìm kiếm câu trả lời nhanh chóng cho các câu hỏi thường gặp về cách hoạt động của hệ thống.",
+        "search_placeholder": "Tìm kiếm câu hỏi...",
+        "no_questions": "Không tìm thấy câu hỏi phù hợp.",
+        "still_questions_title": "Vẫn còn câu hỏi thắc mắc?",
+        "still_questions_desc": "Đừng ngần ngại liên hệ trực tiếp với bộ phận chăm sóc khách hàng của chúng tôi để được giải đáp tận tình.",
+        "get_in_touch": "Liên hệ với chúng tôi",
+        "categories": {
+          "all": "Tất cả chủ đề",
+          "start": "Bắt đầu",
+          "interview": "Phỏng vấn",
+          "vip": "Tài khoản VIP",
+          "tech": "Kỹ thuật"
+        },
+        "faqs": {
+          "1": {
+            "question": "Làm thế nào để bắt đầu một buổi phỏng vấn thử?",
+            "answer": "Bạn chỉ cần truy cập vào mục \"Luyện phỏng vấn\", tải lên CV của bạn định dạng PDF, dán nội dung mô tả công việc (JD) bạn đang hướng tới, chọn vị trí và cấp bậc thích hợp. Sau đó nhấn \"Khởi tạo Phiên\" để bắt đầu."
+          },
+          "2": {
+            "question": "Hệ thống phỏng vấn AI hoạt động như thế nào?",
+            "answer": "Sau khi khởi động, AI sẽ sử dụng mô hình ngôn ngữ tiên tiến để phân tích CV & JD của bạn nhằm trích xuất các kỹ năng cần thiết. AI sẽ đưa ra câu hỏi, bạn trả lời bằng giọng nói hoặc gõ chữ. AI sẽ liên tục đặt câu hỏi đào sâu hoặc vặn vẹo (follow-up questions) dựa trên những gì bạn trả lời trước khi chuyển sang câu hỏi tiếp theo."
+          },
+          "3": {
+            "question": "Tài khoản Premium VIP có lợi ích gì?",
+            "answer": "Tài khoản VIP sẽ mở khóa số lượt phỏng vấn không giới hạn, sử dụng mô hình AI cao cấp nhất (GPT-4o) để phân tích chi tiết hơn, hỗ trợ tương tác nói chuyện qua giọng nói thời gian thực (Voice-to-Voice), và cho phép xuất/tải báo cáo phân tích CV nâng cao không giới hạn."
+          },
+          "4": {
+            "question": "Làm thế nào tôi có thể xem lại kết quả phỏng vấn trước đây?",
+            "answer": "Tất cả các phiên phỏng vấn đã hoàn tất đều được lưu trữ trong \"Lịch sử Phỏng vấn\" (Results). Tại đó bạn có thể xem điểm số tổng, điểm độ khớp CV, và bảng phân tích ưu nhược điểm chi tiết từng câu trả lời cùng gợi ý cải thiện từ chuyên gia AI."
+          },
+          "5": {
+            "question": "Tôi có cần cấp quyền sử dụng camera và micro không?",
+            "answer": "Có, để đảm bảo trải nghiệm chân thực nhất và giúp AI phân tích phong thái phỏng vấn (pacing, nhịp độ thở, filler words), bạn nên cấp quyền truy cập webcam và mic. Tuy nhiên, nếu không muốn, bạn vẫn có thể tắt camera và nhập câu trả lời bằng văn bản."
+          },
+          "6": {
+            "question": "Tôi có thể tải lên file CV định dạng Docx không?",
+            "answer": "Hiện tại hệ thống chỉ hỗ trợ phân tích và hiển thị trực tiếp file định dạng PDF để đảm bảo tính nhất quán về bố cục hiển thị và cấu trúc văn bản. Bạn có thể dễ dàng chuyển đổi file Word/Docx của mình sang PDF trước khi tải lên."
+          }
+        }
+      },
+      "privacy_page": {
+        "title": "Chính Sách Bảo Mật",
+        "desc": "Tìm hiểu cách chúng tôi thu thập, bảo vệ thông tin và tôn trọng quyền riêng tư của bạn.",
+        "last_updated": "Cập nhật lần cuối: 22 tháng 5, 2026",
+        "intro": "Chào mừng bạn đến với Obsidian AI. Việc bảo vệ thông tin cá nhân và dữ liệu của bạn là ưu tiên hàng đầu của chúng tôi. Tài liệu này mô tả chi tiết cách thức chúng tôi xử lý thông tin cá nhân thu thập được trong quá trình bạn sử dụng hệ thống phỏng vấn giả lập của chúng tôi.",
+        "footer_contact": "Mọi thắc mắc về Chính sách bảo mật, vui lòng gửi email về support@obsidianai.com",
+        "sections": {
+          "1": {
+            "title": "1. Thông tin chúng tôi thu thập",
+            "content": "Chúng tôi thu thập thông tin để cung cấp dịch vụ tốt hơn cho người dùng. Bao gồm: Thông tin tài khoản (Họ tên, email, mật khẩu mã hóa), Hồ sơ cá nhân (CV/Resume tải lên định dạng PDF), và Dữ liệu phiên phỏng vấn (Nội dung câu trả lời, bản ghi âm giọng nói hoặc hình ảnh camera nếu được cấp quyền để phân tích phong thái)."
+          },
+          "2": {
+            "title": "2. Cách chúng tôi sử dụng thông tin",
+            "content": "Dữ liệu của bạn được dùng để chạy quy trình phỏng vấn thử nghiệm bằng trí tuệ nhân tạo, đối khớp CV & JD để phát hiện khoảng trống kỹ năng, gửi báo cáo phân tích hiệu suất qua email của bạn, và cải thiện độ chính xác của các thuật toán nhận dạng giọng nói hoặc phản hồi phỏng vấn của chúng tôi."
+          },
+          "3": {
+            "title": "3. Bảo mật & Lưu trữ dữ liệu",
+            "content": "Tất cả dữ liệu hồ sơ CV và bản ghi âm giọng nói của bạn được mã hóa an toàn khi truyền tải và lưu trữ (encryption at rest & in transit). Chúng tôi cam kết không chia sẻ thông tin cá nhân của bạn với bên thứ ba ngoại trừ các nhà cung cấp dịch vụ xử lý dữ liệu đám mây đáng tin cậy phục vụ vận hành hệ thống."
+          },
+          "4": {
+            "title": "4. Quyền kiểm soát của bạn",
+            "content": "Bạn có toàn quyền kiểm soát dữ liệu cá nhân của mình. Bạn có thể truy cập \"Kho lưu trữ CV\" để xóa vĩnh viễn bất kỳ CV nào đã tải lên, xem lại hoặc xóa lịch sử phỏng vấn, chỉnh sửa thông tin cá nhân trong mục cài đặt, hoặc yêu cầu xóa bỏ hoàn toàn tài khoản bất kỳ lúc nào."
+          },
+          "5": {
+            "title": "5. Thay đổi chính sách bảo mật",
+            "content": "Chúng tôi có thể cập nhật chính sách bảo mật này theo thời gian để phù hợp với sự thay đổi về mặt kỹ thuật hoặc pháp lý. Mọi thay đổi lớn sẽ được thông báo rõ ràng trên trang chủ hoặc gửi email trực tiếp tới bạn."
+          }
+        }
+      },
+      "terms_page": {
+        "title": "Điều Khoản Dịch Vụ",
+        "desc": "Vui lòng đọc kỹ các điều khoản sử dụng hệ thống trước khi bắt đầu hành trình ôn luyện.",
+        "last_updated": "Cập nhật lần cuối: 22 tháng 5, 2026",
+        "intro": "Chào mừng bạn đến với Obsidian AI. Khi truy cập và sử dụng dịch vụ của chúng tôi, bạn được xem là đã đồng ý và chịu sự ràng buộc bởi các điều khoản nêu dưới đây. Các điều khoản này áp dụng cho toàn bộ người dùng đăng ký hoặc tham gia phòng phỏng vấn của chúng tôi.",
+        "footer_contact": "Mọi câu hỏi liên quan đến Điều khoản dịch vụ, vui lòng liên hệ support@obsidianai.com",
+        "sections": {
+          "1": {
+            "title": "1. Chấp nhận các Điều khoản",
+            "content": "Bằng việc đăng ký tài khoản và sử dụng nền tảng Obsidian AI, bạn đồng ý tuân thủ các Điều khoản dịch vụ này cùng Chính sách bảo mật của chúng tôi. Nếu bạn không đồng ý với bất kỳ phần nào, vui lòng ngừng sử dụng dịch vụ ngay lập tức."
+          },
+          "2": {
+            "title": "2. Quy tắc sử dụng công bằng & Phát hiện gian lận",
+            "content": "Obsidian AI được thiết kế cho mục đích học tập cá nhân. Trong các phiên phỏng vấn thử nghiệm, hệ thống của chúng tôi giám sát hành vi chuyển tab để đánh giá thái độ trung thực. Bạn đồng ý không sử dụng các công cụ tự động (bots), cào dữ liệu (scraping), hoặc các hình thức quay màn hình phân phối nội dung bất hợp pháp."
+          },
+          "3": {
+            "title": "3. Thanh toán gói VIP & Gia hạn",
+            "content": "Một số tính năng nâng cao yêu cầu đăng ký gói VIP trả phí. Chi phí đăng ký được tính theo tháng và có thể tự động gia hạn trừ khi bạn hủy trước ngày thanh toán tiếp theo. Tất cả các giao dịch mua gói dịch vụ đều không được hoàn lại tiền trừ trường hợp lỗi hệ thống phát sinh từ phía chúng tôi."
+          },
+          "4": {
+            "title": "4. Giới hạn trách nhiệm của AI",
+            "content": "Kết quả chấm điểm, độ khớp CV, và các lời khuyên chuyên gia đều do trí tuệ nhân tạo (AI) tính toán mang tính chất tham khảo học tập. Chúng tôi không cam kết hoặc đảm bảo rằng bạn chắc chắn sẽ vượt qua các kỳ phỏng vấn thực tế hoặc tìm được việc làm nhờ sử dụng nền tảng này."
+          },
+          "5": {
+            "title": "5. Chấm dứt quyền sử dụng",
+            "content": "Chúng tôi bảo lưu quyền đình chỉ hoặc chấm dứt vĩnh viễn tài khoản của bạn mà không cần báo trước nếu phát hiện hành vi vi phạm nghiêm trọng (như gian lận hệ thống, tấn công từ chối dịch vụ DDoS, hoặc quấy rối thành viên khác trên Diễn đàn)."
+          }
+        }
+      },
+      "test_page": {
+        "title": "Thử nghiệm Face-API.js",
+        "desc": "Trang kiểm tra nhận diện khuôn mặt và cảm xúc thời gian thực sử dụng mạng nơ-ron cục bộ.",
+        "model_status": "Trạng thái mô hình",
+        "ai_models_label": "Mô hình AI:",
+        "load_error": "Lỗi Tải",
+        "ready": "Đã Sẵn Sàng",
+        "loading": "Đang Tải...",
+        "camera_stream_label": "Camera stream:",
+        "active": "Hoạt Động",
+        "inactive": "Đang Tắt",
+        "error_network": "Lỗi: {{error}}. Kiểm tra cấu hình CORS/Mạng.",
+        "start_camera": "Mở Camera",
+        "stop_camera": "Tắt Camera",
+        "expression_analysis": "Phân Tích Cảm Xúc",
+        "faces_detected": "Số khuôn mặt:",
+        "no_face_detected": "Chưa nhận diện được khuôn mặt",
+        "video_placeholder": "Bấm nút \"Mở Camera\" để truyền nguồn cấp video và thực thi kiểm tra khuôn mặt.",
+        "models_loaded": "Đã tải xong mô hình nhận diện khuôn mặt!",
+        "models_load_error": "Không thể tải mô hình. Vui lòng kiểm tra kết nối mạng.",
+        "camera_access_denied": "Không thể truy cập camera. Vui lòng cấp quyền.",
+        "expressions": {
+          "neutral": "Bình thường",
+          "happy": "Vui vẻ",
+          "sad": "Buồn bã",
+          "angry": "Giận dữ",
+          "fearful": "Sợ hãi",
+          "disgusted": "Ghê tởm",
+          "surprised": "Ngạc nhiên"
+        }
       }
     }
   }

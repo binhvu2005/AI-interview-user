@@ -4,8 +4,7 @@ import * as faceapi from 'face-api.js';
 import { toast } from 'react-hot-toast';
 
 const TestPage = () => {
-  const { i18n } = useTranslation();
-  const isVi = i18n.language.startsWith('vi');
+  const { t } = useTranslation();
 
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -30,11 +29,11 @@ const TestPage = () => {
           faceapi.nets.faceExpressionNet.loadFromUri(MODEL_URL)
         ]);
         setModelsLoaded(true);
-        toast.success(isVi ? 'Đã tải xong mô hình nhận diện khuôn mặt!' : 'Face detection models loaded successfully!');
+        toast.success(t('test_page.models_loaded'));
       } catch (err: any) {
         console.error('Error loading models:', err);
         setLoadingError(err.message || 'CORS or Network Error');
-        toast.error(isVi ? 'Không thể tải mô hình. Vui lòng kiểm tra kết nối mạng.' : 'Could not load models. Please verify connection.');
+        toast.error(t('test_page.models_load_error'));
       }
     };
     loadModels();
@@ -57,7 +56,7 @@ const TestPage = () => {
       }
     } catch (err: any) {
       console.error('Camera access error:', err);
-      toast.error(isVi ? 'Không thể truy cập camera. Vui lòng cấp quyền.' : 'Camera access denied. Please grant permission.');
+      toast.error(t('test_page.camera_access_denied'));
     }
   };
 
@@ -142,12 +141,10 @@ const TestPage = () => {
           <span className="material-symbols-outlined text-primary text-2xl">face</span>
         </div>
         <h1 className="text-3xl font-black tracking-tighter mb-2 text-on-surface">
-          {isVi ? 'Thử nghiệm Face-API.js' : 'Face-API.js Integration Test'}
+          {t('test_page.title')}
         </h1>
         <p className="text-on-surface-variant font-medium text-sm max-w-lg mx-auto leading-relaxed">
-          {isVi 
-            ? 'Trang kiểm tra nhận diện khuôn mặt và cảm xúc thời gian thực sử dụng mạng nơ-ron cục bộ.'
-            : 'Interactive testing component running in-browser facial landmarking and expression classification.'}
+          {t('test_page.desc')}
         </p>
       </div>
 
@@ -156,36 +153,34 @@ const TestPage = () => {
         <div className="space-y-6">
           <div className="bg-surface-container-low border border-outline-variant/15 rounded-3xl p-6 shadow-sm space-y-6">
             <h2 className="text-lg font-black text-on-surface">
-              {isVi ? 'Trạng thái mô hình' : 'Model Status'}
+              {t('test_page.model_status')}
             </h2>
 
             {/* Model State Indicators */}
             <div className="space-y-3">
               <div className="flex items-center justify-between text-xs">
-                <span className="font-bold text-on-surface-variant/80 uppercase">{isVi ? 'Mô hình AI:' : 'AI Models:'}</span>
+                <span className="font-bold text-on-surface-variant/80 uppercase">{t('test_page.ai_models_label')}</span>
                 {loadingError ? (
-                  <span className="text-red-400 font-bold uppercase">{isVi ? 'Lỗi Tải' : 'Load Error'}</span>
+                  <span className="text-red-400 font-bold uppercase">{t('test_page.load_error')}</span>
                 ) : modelsLoaded ? (
-                  <span className="text-green-400 font-bold uppercase">{isVi ? 'Đã Sẵn Sàng' : 'Ready'}</span>
+                  <span className="text-green-400 font-bold uppercase">{t('test_page.ready')}</span>
                 ) : (
-                  <span className="text-yellow-400 font-bold uppercase animate-pulse">{isVi ? 'Đang Tải...' : 'Loading...'}</span>
+                  <span className="text-yellow-400 font-bold uppercase animate-pulse">{t('test_page.loading')}</span>
                 )}
               </div>
               <div className="flex items-center justify-between text-xs">
-                <span className="font-bold text-on-surface-variant/80 uppercase">{isVi ? 'Camera stream:' : 'Camera Stream:'}</span>
+                <span className="font-bold text-on-surface-variant/80 uppercase">{t('test_page.camera_stream_label')}</span>
                 {streamActive ? (
-                  <span className="text-green-400 font-bold uppercase">{isVi ? 'Hoạt Động' : 'Active'}</span>
+                  <span className="text-green-400 font-bold uppercase">{t('test_page.active')}</span>
                 ) : (
-                  <span className="text-on-surface-variant/40 font-bold uppercase">{isVi ? 'Đang Tắt' : 'Inactive'}</span>
+                  <span className="text-on-surface-variant/40 font-bold uppercase">{t('test_page.inactive')}</span>
                 )}
               </div>
             </div>
 
             {loadingError && (
               <div className="p-3 bg-red-500/10 border border-red-500/20 rounded-xl text-xs text-red-400">
-                {isVi 
-                  ? `Lỗi: ${loadingError}. Kiểm tra cấu hình CORS/Mạng.` 
-                  : `Error: ${loadingError}. Verify network and CORS.`}
+                {t('test_page.error_network', { error: loadingError })}
               </div>
             )}
 
@@ -198,7 +193,7 @@ const TestPage = () => {
                   className="w-full bg-primary text-on-primary py-3 rounded-2xl text-xs font-black uppercase tracking-wider hover:bg-primary/95 transition-all shadow-md shadow-primary/10 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                 >
                   <span className="material-symbols-outlined text-[16px]">videocam</span>
-                  {isVi ? 'Mở Camera' : 'Start Camera'}
+                  {t('test_page.start_camera')}
                 </button>
               ) : (
                 <button
@@ -206,7 +201,7 @@ const TestPage = () => {
                   className="w-full bg-red-600 text-white py-3 rounded-2xl text-xs font-black uppercase tracking-wider hover:bg-red-700 transition-all shadow-md flex items-center justify-center gap-2"
                 >
                   <span className="material-symbols-outlined text-[16px]">videocam_off</span>
-                  {isVi ? 'Tắt Camera' : 'Stop Camera'}
+                  {t('test_page.stop_camera')}
                 </button>
               )}
             </div>
@@ -215,24 +210,24 @@ const TestPage = () => {
           {/* Real-time Predictions */}
           <div className="bg-surface-container-low border border-outline-variant/15 rounded-3xl p-6 shadow-sm space-y-4">
             <h2 className="text-lg font-black text-on-surface">
-              {isVi ? 'Phân Tích Cảm Xúc' : 'Expression Analysis'}
+              {t('test_page.expression_analysis')}
             </h2>
             <div className="space-y-3">
               <div className="flex justify-between text-xs border-b border-outline-variant/10 pb-2">
-                <span className="font-bold text-on-surface-variant">{isVi ? 'Số khuôn mặt:' : 'Faces Detected:'}</span>
+                <span className="font-bold text-on-surface-variant">{t('test_page.faces_detected')}</span>
                 <span className="font-black text-primary text-sm">{faceCount}</span>
               </div>
 
               {Object.keys(detectedExpressions).length === 0 ? (
                 <p className="text-xs text-on-surface-variant/40 italic py-4 text-center">
-                  {isVi ? 'Chưa nhận diện được khuôn mặt' : 'No face details detected'}
+                  {t('test_page.no_face_detected')}
                 </p>
               ) : (
                 <div className="space-y-2 pt-2">
                   {Object.entries(detectedExpressions).map(([expr, val]) => (
                     <div key={expr} className="space-y-1">
                       <div className="flex justify-between text-xs uppercase font-bold">
-                        <span className="text-on-surface-variant">{isVi ? translateExpression(expr) : expr}</span>
+                        <span className="text-on-surface-variant">{t(`test_page.expressions.${expr}`, { defaultValue: expr })}</span>
                         <span className="text-on-surface">{(val * 100).toFixed(0)}%</span>
                       </div>
                       <div className="h-1.5 w-full bg-surface-container rounded-full overflow-hidden">
@@ -256,9 +251,7 @@ const TestPage = () => {
               <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-6 space-y-3 z-10 bg-surface-container-lowest/80 backdrop-blur-sm">
                 <span className="material-symbols-outlined text-on-surface-variant/30 text-5xl">videocam_off</span>
                 <p className="text-xs text-on-surface-variant max-w-xs leading-relaxed">
-                  {isVi 
-                    ? 'Bấm nút "Mở Camera" để truyền nguồn cấp video và thực thi kiểm tra khuôn mặt.' 
-                    : 'Click "Start Camera" to authorize your device webcam and initialize detection overlays.'}
+                  {t('test_page.video_placeholder')}
                 </p>
               </div>
             )}
@@ -285,20 +278,6 @@ const TestPage = () => {
       </div>
     </div>
   );
-};
-
-// Simple translations helper for facial expressions
-const translateExpression = (expr: string): string => {
-  const mapping: {[key: string]: string} = {
-    neutral: 'Bình thường',
-    happy: 'Vui vẻ',
-    sad: 'Buồn bã',
-    angry: 'Giận dữ',
-    fearful: 'Sợ hãi',
-    disgusted: 'Ghê tởm',
-    surprised: 'Ngạc nhiên'
-  };
-  return mapping[expr] || expr;
 };
 
 export default TestPage;

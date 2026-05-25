@@ -158,48 +158,48 @@ const UserHeader = () => {
   };
 
   return (
-    <nav className="fixed top-0 w-full z-50 bg-surface/80 backdrop-blur-2xl text-primary font-manrope tracking-tight shadow-sm border-b border-outline-variant/5 flex justify-between items-center px-8 h-16">
+    <nav className="fixed top-0 w-full z-50 bg-background/80 backdrop-blur-3xl text-on-surface font-sans shadow-[0_1px_0_0_rgba(255,255,255,0.03)] border-none flex justify-between items-center px-8 h-14 transition-all duration-300">
       <div className="flex items-center gap-8">
         <div className="flex items-center gap-2 cursor-pointer group" onClick={() => navigate('/')}>
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center">
-              <span className="material-symbols-outlined text-primary text-[20px]">psychiatry</span>
+            <div className="w-8 h-8 rounded-lg bg-white/[0.04] border border-white/[0.08] flex items-center justify-center">
+              <span className="material-symbols-outlined text-primary text-[18px]">psychiatry</span>
             </div>
-            <span className="text-xl font-black tracking-tighter text-on-surface">
+            <span className="text-sm font-semibold tracking-tight text-on-surface">
               {t('app_name') || 'Obsidian AI'}
             </span>
           </div>
         </div>
-        <div className="flex gap-8 items-center ml-4">
-          <a onClick={() => navigate('/dashboard')} className="text-on-surface-variant hover:text-on-surface transition-colors duration-300 cursor-pointer font-bold text-sm uppercase tracking-widest">{t('nav.dashboard')}</a>
-          <a onClick={() => navigate('/preparation')} className="text-on-surface-variant hover:text-on-surface transition-colors duration-300 cursor-pointer font-bold text-sm uppercase tracking-widest">{t('nav.preparation')}</a>
-          <a onClick={() => navigate('/forum')} className="text-on-surface-variant hover:text-on-surface transition-colors duration-300 cursor-pointer font-bold text-sm uppercase tracking-widest">{t('forum.title')}</a>
-          <a onClick={() => navigate('/join')} className="text-on-surface-variant hover:text-on-surface transition-colors duration-300 cursor-pointer font-bold text-sm uppercase tracking-widest">{t('nav.watch') || 'Xem'}</a>
-          <a onClick={() => navigate('/showcase')} className="text-on-surface-variant hover:text-on-surface transition-colors duration-300 cursor-pointer font-bold text-sm uppercase tracking-widest">{t('showcase.title')}</a>
-          <a onClick={() => navigate('/upgrade')} className="bg-primary/10 text-primary px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border border-primary/20 hover:bg-primary hover:text-on-primary transition-all duration-300 flex items-center gap-1.5 group cursor-pointer">
-            <span className="material-symbols-outlined text-[16px] animate-pulse">workspace_premium</span>
+        <div className="flex gap-6 items-center ml-4">
+          <a onClick={() => navigate('/dashboard')} className="text-on-surface-variant hover:text-on-surface transition-colors duration-200 cursor-pointer font-medium text-xs tracking-wide">{t('nav.dashboard')}</a>
+          <a onClick={() => navigate('/preparation')} className="text-on-surface-variant hover:text-on-surface transition-colors duration-200 cursor-pointer font-medium text-xs tracking-wide">{t('nav.preparation')}</a>
+          <a onClick={() => navigate('/forum')} className="text-on-surface-variant hover:text-on-surface transition-colors duration-200 cursor-pointer font-medium text-xs tracking-wide">{t('forum.title')}</a>
+          <a onClick={() => navigate('/join')} className="text-on-surface-variant hover:text-on-surface transition-colors duration-200 cursor-pointer font-medium text-xs tracking-wide">{t('nav.watch') || 'Xem'}</a>
+          <a onClick={() => navigate('/showcase')} className="text-on-surface-variant hover:text-on-surface transition-colors duration-200 cursor-pointer font-medium text-xs tracking-wide">{t('showcase.title')}</a>
+          <a onClick={() => navigate('/upgrade')} className="bg-primary/10 text-primary px-3 py-1 rounded-lg text-[10px] font-bold tracking-widest border border-primary/20 hover:bg-primary hover:text-on-primary transition-all duration-200 flex items-center gap-1.5 group cursor-pointer">
+            <span className="material-symbols-outlined text-[14px]">workspace_premium</span>
             {t('nav.upgrade')}
           </a>
         </div>
       </div>
       <div className="flex items-center gap-2 sm:gap-4">
         <button
-          className="sm:hidden w-10 h-10 flex items-center justify-center text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high rounded-xl transition-all focus:outline-none"
+          className="sm:hidden w-8 h-8 flex items-center justify-center text-on-surface-variant hover:text-on-surface hover:bg-surface-container rounded-lg transition-all focus:outline-none"
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
         >
-          <span className="material-symbols-outlined text-[24px]">{mobileMenuOpen ? 'close' : 'menu'}</span>
+          <span className="material-symbols-outlined text-[20px]">{mobileMenuOpen ? 'close' : 'menu'}</span>
         </button>
         
         {/* Notification Bell */}
         <div className="relative">
           <button 
             onClick={() => { setNotiOpen(!notiOpen); setDropdownOpen(false); }}
-            className={`w-10 h-10 flex items-center justify-center rounded-xl transition-all ${notiOpen ? 'bg-primary/10 text-primary' : 'text-on-surface-variant hover:bg-surface-container-high'}`}
+            className={`w-8 h-8 flex items-center justify-center rounded-lg transition-all ${notiOpen ? 'bg-primary/10 text-primary' : 'text-on-surface-variant hover:bg-surface-container'}`}
           >
-            <span className={`material-symbols-outlined text-[24px] ${unreadCount > 0 ? 'animate-pulse' : ''}`}>notifications</span>
+            <span className={`material-symbols-outlined text-[20px] ${unreadCount > 0 ? 'animate-pulse' : ''}`}>notifications</span>
             {unreadCount > 0 && (
-              <span className="absolute top-1 right-1 w-4 h-4 bg-error text-on-error text-[10px] font-black rounded-full flex items-center justify-center border-2 border-surface">
-                {unreadCount > 9 ? '9+' : unreadCount}
+              <span className="absolute top-0 right-0 w-3 h-3 bg-error text-on-error text-[8px] font-bold rounded-full flex items-center justify-center border border-background">
+                {unreadCount > 9 ? '9' : unreadCount}
               </span>
             )}
           </button>
@@ -266,60 +266,57 @@ const UserHeader = () => {
 
         <div className="flex items-center gap-3 relative">
           <div className="flex flex-col items-end mr-1 justify-center">
-            <span className="text-sm font-bold text-on-surface leading-tight max-w-[120px] truncate mb-1">
+            <span className="text-xs font-medium text-on-surface leading-tight max-w-[120px] truncate mb-0.5">
               {userName || 'User'}
             </span>
             {isVip ? (
-              <span className="text-[9px] uppercase tracking-widest badge-vip-animated px-2 py-0.5 rounded-full flex items-center gap-0.5 leading-none shadow-sm shadow-yellow-500/20">
-                <span className="material-symbols-outlined text-[10px] material-symbols-fill">workspace_premium</span> VIP MEMBER
+              <span className="text-[8px] uppercase tracking-widest badge-vip-animated px-1.5 py-0.5 rounded flex items-center gap-0.5 leading-none">
+                <span className="material-symbols-outlined text-[9px] material-symbols-fill">workspace_premium</span> VIP
               </span>
             ) : (
-              <span className="text-[9px] uppercase tracking-widest badge-normal-animated px-2 py-0.5 rounded-full flex items-center leading-none shadow-sm">
+              <span className="text-[8px] uppercase tracking-widest badge-normal-animated px-1.5 py-0.5 rounded flex items-center leading-none">
                 NORMAL
               </span>
             )}
           </div>
           <button 
             onClick={() => setDropdownOpen(!dropdownOpen)} 
-            className={`relative w-10 h-10 rounded-2xl flex items-center justify-center transition-all focus:outline-none bg-surface-container-high shadow-lg ${
+            className={`relative w-8 h-8 rounded-lg flex items-center justify-center transition-all duration-300 focus:outline-none bg-surface-container-high ${
               isVip 
-                ? 'ring-2 ring-amber-400/90 ring-offset-2 ring-offset-background shadow-[0_0_15px_rgba(245,158,11,0.5)] border-none' 
-                : 'border border-outline-variant/30 hover:border-primary'
+                ? 'ring-1 ring-amber-400/40 shadow-[0_0_10px_rgba(212,175,55,0.2)] border-none' 
+                : 'border border-outline-variant/25 hover:border-primary'
             }`}
           >
-            {isVip && (
-              <span className="absolute inset-0 rounded-2xl bg-gradient-to-tr from-amber-500 via-yellow-400 to-amber-300 opacity-90 blur-[1px] animate-pulse pointer-events-none"></span>
-            )}
-            <div className={`relative w-full h-full rounded-2xl overflow-hidden ${isVip ? 'p-[2px] bg-background' : ''}`}>
-              <img src={userAvatar || `https://ui-avatars.com/api/?name=${userName || 'U'}&background=6366f1&color=fff`} alt="avatar" className="w-full h-full object-cover rounded-2xl" />
+            <div className="relative w-full h-full rounded-lg overflow-hidden">
+              <img src={userAvatar || `https://ui-avatars.com/api/?name=${userName || 'U'}&background=818cf8&color=fff`} alt="avatar" className="w-full h-full object-cover rounded-lg" />
             </div>
           </button>
 
           {dropdownOpen && (
             <>
               <div className="fixed inset-0 z-40" onClick={() => setDropdownOpen(false)}></div>
-              <div className="absolute top-14 right-0 w-56 bg-surface-container-low border border-outline-variant/15 rounded-2xl shadow-2xl py-2 flex flex-col z-50 animate-in fade-in zoom-in-95 duration-200">
-                <div className="px-4 py-3 border-b border-outline-variant/10 mb-1">
-                  <p className="text-xs font-bold text-on-surface truncate mb-1">{userName}</p>
+              <div className="absolute top-11 right-0 w-48 bg-surface-container border border-outline-variant/10 rounded-xl shadow-xl py-1.5 flex flex-col z-50 animate-in fade-in slide-in-from-top-1 duration-200">
+                <div className="px-4 py-2 border-b border-outline-variant/10 mb-1">
+                  <p className="text-xs font-medium text-on-surface truncate mb-0.5">{userName}</p>
                   {isVip ? (
-                    <span className="text-[9px] uppercase tracking-widest badge-vip-animated px-2 py-0.5 rounded-full inline-flex items-center gap-0.5 leading-none">
-                      <span className="material-symbols-outlined text-[10px] material-symbols-fill">workspace_premium</span> VIP
+                    <span className="text-[8px] uppercase tracking-widest badge-vip-animated px-1.5 py-0.5 rounded inline-flex items-center gap-0.5 leading-none">
+                      <span className="material-symbols-outlined text-[9px] material-symbols-fill">workspace_premium</span> VIP
                     </span>
                   ) : (
-                    <span className="text-[9px] uppercase tracking-widest badge-normal-animated px-2 py-0.5 rounded-full inline-flex leading-none">
+                    <span className="text-[8px] uppercase tracking-widest badge-normal-animated px-1.5 py-0.5 rounded inline-flex leading-none">
                       NORMAL
                     </span>
                   )}
                 </div>
-                <a onClick={() => { setDropdownOpen(false); navigate('/profile'); }} className="px-4 py-2.5 text-xs text-on-surface hover:bg-primary/10 hover:text-primary transition-colors flex items-center gap-3 cursor-pointer font-bold uppercase tracking-widest">
-                  <span className="material-symbols-outlined text-[20px]">account_circle</span> {t('nav.profile')}
+                <a onClick={() => { setDropdownOpen(false); navigate('/profile'); }} className="px-4 py-2 text-xs text-on-surface hover:bg-white/[0.04] transition-colors flex items-center gap-2.5 cursor-pointer font-medium">
+                  <span className="material-symbols-outlined text-[16px] text-on-surface-variant">account_circle</span> {t('nav.profile')}
                 </a>
-                <a onClick={() => { setDropdownOpen(false); navigate('/settings'); }} className="px-4 py-2.5 text-xs text-on-surface hover:bg-primary/10 hover:text-primary transition-colors flex items-center gap-3 cursor-pointer font-bold uppercase tracking-widest">
-                  <span className="material-symbols-outlined text-[20px]">tune</span> {t('nav.settings')}
+                <a onClick={() => { setDropdownOpen(false); navigate('/settings'); }} className="px-4 py-2 text-xs text-on-surface hover:bg-white/[0.04] transition-colors flex items-center gap-2.5 cursor-pointer font-medium">
+                  <span className="material-symbols-outlined text-[16px] text-on-surface-variant">tune</span> {t('nav.settings')}
                 </a>
                 <div className="h-px bg-outline-variant/10 my-1 mx-4"></div>
-                <button onClick={handleLogout} className="px-4 py-2.5 text-xs text-error hover:bg-error/10 transition-colors flex items-center gap-3 w-full text-left font-bold uppercase tracking-widest">
-                  <span className="material-symbols-outlined text-[20px]">logout</span> {t('nav.logout')}
+                <button onClick={handleLogout} className="px-4 py-2 text-xs text-error hover:bg-error/10 transition-colors flex items-center gap-2.5 w-full text-left font-medium">
+                  <span className="material-symbols-outlined text-[16px]">logout</span> {t('nav.logout')}
                 </button>
               </div>
             </>

@@ -318,17 +318,17 @@ const PreparationPage = () => {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 md:px-8 py-10 pb-20">
+    <div className="max-w-6xl mx-auto px-4 md:px-8 py-10 pb-20">
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
         
         {/* LEFT COLUMN: Header & Visuals */}
         <div className="lg:col-span-5 flex flex-col justify-start">
-          <div className="mb-6 inline-flex items-center gap-2 px-3 py-1 rounded-full bg-surface-container-high border border-outline-variant/20 text-[10px] font-black uppercase tracking-widest text-[#818CF8] w-max">
+          <div className="mb-6 inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/[0.04] border border-white/[0.08] text-[10px] font-semibold uppercase tracking-widest text-[#818CF8] w-max">
             <span className="w-1.5 h-1.5 rounded-full bg-[#818CF8]"></span>
             SESSION CONFIG
           </div>
           
-          <h1 className="text-5xl md:text-6xl font-black tracking-tighter mb-6 text-on-surface leading-[1.1]">
+          <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-6 text-on-surface leading-[1.15] font-sans">
             {isVi ? (
               <>Thiết lập<br/><span className="text-[#818CF8]">Thử thách.</span></>
             ) : (
@@ -343,7 +343,7 @@ const PreparationPage = () => {
           </p>
 
           {/* Portal Visual / Image */}
-          <div className="relative w-full max-w-[320px] aspect-video rounded-3xl overflow-hidden border border-outline-variant/20 bg-surface flex items-center justify-center">
+          <div className="relative w-full max-w-[320px] aspect-video rounded-xl overflow-hidden border border-white/[0.06] bg-surface flex items-center justify-center shadow-lg">
             <img 
               src="https://lh3.googleusercontent.com/aida-public/AB6AXuD32B3zsG7GlRzewrExD_1b0nFeHX8LOCFNWFWhyXhMQ9H-ZgG4l_fjlUIFHoCZo4PHeZKmPhBKU4-cRKl6nYxpfXaFxK2YM9Q-7zsCBvm_CTT-1vZLMrAFpievj5nGDc7FarPZDMF1fcR4HJuazMmJrHiTJZDpZpdX2uEra0sSZWPlNC34-8VIXlYfY6g8lQ-JC77jcRcckAMqvbfFpVY3nkcRpB1oYWqiA0tDgcv3xWbCUudreSOGbVn24EYDRqLN1Wi13_UabU57" 
               alt="Preparation Graphic" 
@@ -357,28 +357,28 @@ const PreparationPage = () => {
           
           {/* Remaining Attempts Banner */}
           {freeInterviewsLeft !== null && (
-            <div className={`p-5 rounded-[24px] border flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 transition-all ${
+            <div className={`p-4 rounded-xl border flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 transition-all ${
               isVip 
-                ? 'bg-amber-500/10 border-amber-500/25 text-amber-500 shadow-sm shadow-amber-500/5'
+                ? 'bg-amber-500/5 border-amber-500/20 text-amber-500 shadow-sm'
                 : freeInterviewsLeft > 0 
-                  ? 'bg-primary/5 border-primary/15 text-primary' 
-                  : 'bg-red-500/10 border-red-500/20 text-red-500'
+                  ? 'bg-[#121214]/60 border-white/[0.05] text-on-surface shadow-md' 
+                  : 'bg-red-500/5 border-red-500/15 text-red-500'
             }`}>
               <div className="flex items-center gap-3">
-                <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
-                  isVip ? 'bg-amber-500/20' : freeInterviewsLeft > 0 ? 'bg-primary/10' : 'bg-red-500/20'
+                <div className={`w-9 h-9 rounded-lg flex items-center justify-center ${
+                  isVip ? 'bg-amber-500/15' : freeInterviewsLeft > 0 ? 'bg-primary/10' : 'bg-red-500/15'
                 }`}>
-                  <span className="material-symbols-outlined text-[22px]">
+                  <span className="material-symbols-outlined text-[20px]">
                     {isVip ? 'workspace_premium' : freeInterviewsLeft > 0 ? 'hourglass_top' : 'lock'}
                   </span>
                 </div>
                 <div>
-                  <p className="text-[11px] font-black uppercase tracking-widest opacity-80">
+                  <p className="text-[10px] font-semibold uppercase tracking-widest opacity-80">
                     {isVip 
                       ? (isVi ? 'Gói Premium VIP' : 'Premium VIP Account') 
                       : (isVi ? 'Tài khoản Miễn phí' : 'Free Account')}
                   </p>
-                  <p className="text-xs font-bold mt-1 opacity-90">
+                  <p className="text-xs font-medium mt-0.5 opacity-95">
                     {isVip 
                       ? (isVi ? 'Bạn có lượt phỏng vấn không giới hạn' : 'You have unlimited mock interviews')
                       : (isVi 
@@ -391,10 +391,10 @@ const PreparationPage = () => {
               {!isVip && (
                 <button 
                   onClick={() => navigate('/upgrade')}
-                  className={`text-[10px] font-black uppercase tracking-widest px-5 py-2.5 rounded-xl transition-all active:scale-95 flex-shrink-0 cursor-pointer ${
+                  className={`text-[9px] font-semibold uppercase tracking-widest px-4 py-2 rounded-lg transition-all active:scale-[0.98] flex-shrink-0 cursor-pointer ${
                     freeInterviewsLeft > 0 
-                      ? 'bg-primary text-on-primary hover:shadow-lg hover:shadow-primary/20' 
-                      : 'bg-red-500 text-white hover:shadow-lg hover:shadow-red-500/20'
+                      ? 'bg-primary text-on-primary hover:bg-primary-dim' 
+                      : 'bg-red-500 text-white hover:bg-red-600'
                   }`}
                 >
                   {isVi ? 'Nâng cấp VIP ngay' : 'Upgrade VIP Now'}
@@ -404,42 +404,42 @@ const PreparationPage = () => {
           )}
           
           {/* Section: CV Mode (Toggle) */}
-          <section className="bg-surface-container-low border border-outline-variant/20 rounded-[32px] p-8 shadow-sm">
+          <section className="bg-[#121214]/40 backdrop-blur-2xl border border-white/[0.05] rounded-xl p-6 shadow-md">
             <div className="flex items-center gap-3 mb-6">
-              <span className="material-symbols-outlined text-[#818CF8] text-[20px]">badge</span>
-              <h3 className="text-base font-bold text-on-surface tracking-tight">{isVi ? 'Hồ sơ Ứng viên (CV)' : 'Candidate Profile (CV)'}</h3>
+              <span className="material-symbols-outlined text-[#818CF8] text-[18px]">badge</span>
+              <h3 className="text-sm font-semibold text-on-surface tracking-tight">{isVi ? 'Hồ sơ Ứng viên (CV)' : 'Candidate Profile (CV)'}</h3>
             </div>
             
-            <div className="bg-surface-container border border-outline-variant/20 p-1.5 rounded-2xl flex mb-6">
+            <div className="bg-white/[0.02] border border-white/[0.06] p-1 rounded-lg flex mb-6">
               <button 
                 onClick={() => setCvMode('upload')} 
-                className={`flex-1 py-3 text-xs font-bold rounded-xl transition-all flex items-center justify-center gap-2 ${cvMode === 'upload' ? 'bg-surface-container-highest text-on-surface shadow-sm border border-outline-variant/20' : 'text-on-surface-variant hover:text-on-surface'}`}
+                className={`flex-1 py-2 text-[11px] font-medium rounded-lg transition-all flex items-center justify-center gap-2 ${cvMode === 'upload' ? 'bg-white/[0.06] text-on-surface shadow-sm border border-white/[0.08]' : 'text-on-surface-variant hover:text-on-surface'}`}
               >
-                <span className="material-symbols-outlined text-[16px]">upload_file</span>
+                <span className="material-symbols-outlined text-[14px]">upload_file</span>
                 {isVi ? 'Tải lên CV' : 'Upload CV'}
               </button>
               <button 
                 onClick={() => setCvMode('vault')} 
-                className={`flex-1 py-3 text-xs font-bold rounded-xl transition-all flex items-center justify-center gap-2 ${cvMode === 'vault' ? 'bg-surface-container-highest text-on-surface shadow-sm border border-outline-variant/20' : 'text-on-surface-variant hover:text-on-surface'}`}
+                className={`flex-1 py-2 text-[11px] font-medium rounded-lg transition-all flex items-center justify-center gap-2 ${cvMode === 'vault' ? 'bg-white/[0.06] text-on-surface shadow-sm border border-white/[0.08]' : 'text-on-surface-variant hover:text-on-surface'}`}
               >
-                <span className="material-symbols-outlined text-[16px]">folder_shared</span>
+                <span className="material-symbols-outlined text-[14px]">folder_shared</span>
                 {isVi ? 'Chọn từ Kho (Vault)' : 'Select from Vault'}
               </button>
             </div>
 
-            <div className="min-h-[100px] flex flex-col justify-center">
+            <div className="min-h-[80px] flex flex-col justify-center">
               {cvMode === 'vault' ? (
                 <div className="relative group">
-                  <select className="w-full bg-surface border border-outline-variant/20 rounded-xl px-5 py-4 text-on-surface appearance-none text-sm font-medium focus:border-[#818CF8]/50 transition-all outline-none" onChange={(e) => setSelectedCVId(e.target.value)} value={selectedCVId}>
+                  <select className="w-full bg-white/[0.02] border border-white/[0.08] rounded-lg px-4 py-3 text-on-surface appearance-none text-xs font-medium focus:border-primary/50 transition-all outline-none" onChange={(e) => setSelectedCVId(e.target.value)} value={selectedCVId}>
                     <option value="" disabled>{isVi ? 'Chọn CV từ kho...' : 'Select CV from vault...'}</option>
                     {savedCVs.map(cv => <option key={cv.id} value={cv.id}>{cv.name}</option>)}
                   </select>
-                  <span className="material-symbols-outlined absolute right-5 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none text-[20px]">expand_more</span>
+                  <span className="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none text-[18px]">expand_more</span>
                 </div>
               ) : (
-                <label className={`flex flex-col items-center justify-center border-2 border-dashed rounded-2xl p-6 cursor-pointer transition-all ${cvFile ? 'border-primary bg-primary/5' : 'border-outline-variant/30 bg-surface hover:border-primary/50'}`}>
-                  <span className={`material-symbols-outlined text-3xl mb-2 ${cvFile ? 'text-primary' : 'text-on-surface-variant'}`}>{cvFile ? 'check_circle' : 'cloud_upload'}</span>
-                  <p className="text-sm font-bold text-on-surface">{cvFile ? cvFile.name : (isVi ? 'Kéo thả PDF hoặc bấm để chọn' : 'Drop PDF or click to browse')}</p>
+                <label className={`flex flex-col items-center justify-center border border-dashed rounded-lg p-5 cursor-pointer transition-all ${cvFile ? 'border-primary bg-primary/5' : 'border-white/[0.1] bg-white/[0.01] hover:border-primary/40'}`}>
+                  <span className={`material-symbols-outlined text-2xl mb-2 ${cvFile ? 'text-primary' : 'text-on-surface-variant'}`}>{cvFile ? 'check_circle' : 'cloud_upload'}</span>
+                  <p className="text-xs font-medium text-on-surface">{cvFile ? cvFile.name : (isVi ? 'Kéo thả PDF hoặc bấm để chọn' : 'Drop PDF or click to browse')}</p>
                   <input 
                     type="file" 
                     className="hidden" 
@@ -448,14 +448,14 @@ const PreparationPage = () => {
                       const file = e.target.files?.[0] || null;
                       if (file) {
                         if (file.type !== 'application/pdf') {
-                          toast.error(t('setup.pdf_only'));
-                          e.target.value = '';
-                          return;
+                           toast.error(t('setup.pdf_only'));
+                           e.target.value = '';
+                           return;
                         }
                         if (file.size > 5 * 1024 * 1024) {
-                          toast.error(t('setup.pdf_size_error'));
-                          e.target.value = '';
-                          return;
+                           toast.error(t('setup.pdf_size_error'));
+                           e.target.value = '';
+                           return;
                         }
                       }
                       setCvFile(file);
@@ -467,20 +467,20 @@ const PreparationPage = () => {
           </section>
 
           {/* Section: Job Description Selector */}
-          <section className="bg-surface-container-low border border-outline-variant/20 rounded-[32px] p-8 shadow-sm flex flex-col">
+          <section className="bg-[#121214]/40 backdrop-blur-2xl border border-white/[0.05] rounded-xl p-6 shadow-sm flex flex-col">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-3">
-                <span className="material-symbols-outlined text-[#818CF8] text-[20px]">list_alt</span>
-                <h3 className="text-sm font-bold text-on-surface tracking-tight">
+                <span className="material-symbols-outlined text-[#818CF8] text-[18px]">list_alt</span>
+                <h3 className="text-sm font-semibold text-on-surface tracking-tight">
                   {isVi ? 'Mẫu mô tả công việc (JD)' : 'Job Description Template'}
                 </h3>
               </div>
               {selectedJdId && (
                 <button 
                   onClick={handleClearJd} 
-                  className="text-[10px] font-black uppercase tracking-widest text-[#818CF8] hover:text-[#818CF8]/80 transition-colors flex items-center gap-1 cursor-pointer"
+                  className="text-[9px] font-semibold uppercase tracking-wider text-[#818CF8] hover:text-[#818CF8]/80 transition-colors flex items-center gap-1 cursor-pointer"
                 >
-                  <span className="material-symbols-outlined text-[14px]">undo</span>
+                  <span className="material-symbols-outlined text-[12px]">undo</span>
                   {isVi ? 'Tự điền thủ công' : 'Fill Manually'}
                 </button>
               )}
@@ -490,7 +490,7 @@ const PreparationPage = () => {
               <select 
                 value={selectedJdId} 
                 onChange={(e) => handleJdSelect(e.target.value)} 
-                className="w-full bg-surface border border-outline-variant/20 rounded-xl px-5 py-3.5 text-on-surface appearance-none text-sm font-medium focus:border-primary/50 transition-all outline-none"
+                className="w-full bg-white/[0.02] border border-white/[0.08] rounded-lg px-4 py-3 text-on-surface appearance-none text-xs font-medium focus:border-primary/50 transition-all outline-none"
               >
                 <option value="">
                   {isVi ? '-- Tùy chọn: Nhập thủ công mô tả công việc của bạn --' : '-- Optional: Enter your own JD manually --'}
@@ -504,11 +504,11 @@ const PreparationPage = () => {
                   </option>
                 ))}
               </select>
-              <span className="material-symbols-outlined absolute right-5 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none text-[20px]">expand_more</span>
+              <span className="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none text-[18px]">expand_more</span>
             </div>
             
             {selectedPosition && !selectedJdId && jds.some(jd => jd.position === selectedPosition) && (
-              <p className="text-[10px] text-on-surface-variant font-medium mt-2 italic opacity-75">
+              <p className="text-[9px] text-on-surface-variant font-medium mt-2 italic opacity-60">
                 {isVi 
                   ? `Đang lọc các JD thuộc vị trí "${selectedPosition}"` 
                   : `Filtering JDs for role "${selectedPosition}"`}
@@ -519,17 +519,17 @@ const PreparationPage = () => {
           {/* Section: Role, Level, Duration */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             {/* Target Role & Level */}
-            <section className="bg-surface-container-low border border-outline-variant/20 rounded-[32px] p-8 shadow-sm flex flex-col justify-between">
+            <section className="bg-[#121214]/40 backdrop-blur-2xl border border-white/[0.05] rounded-xl p-6 shadow-sm flex flex-col justify-between">
               <div className="space-y-6">
                 <div>
-                  <label className="text-[11px] font-bold text-on-surface-variant mb-2 block">{isVi ? 'Vị trí Mục tiêu' : 'Target Role'}</label>
+                  <label className="text-[10px] font-semibold text-on-surface-variant mb-2 block">{isVi ? 'Vị trí Mục tiêu' : 'Target Role'}</label>
                   <div className="relative group">
-                    <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant text-[18px]">work</span>
+                    <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant text-[16px]">work</span>
                     <select 
                       value={selectedPosition} 
                       onChange={(e) => setSelectedPosition(e.target.value)} 
                       disabled={!!selectedJdId}
-                      className={`w-full bg-surface border border-outline-variant/20 rounded-xl pl-12 pr-4 py-3.5 text-on-surface appearance-none text-sm font-medium focus:border-primary/50 transition-all outline-none ${selectedJdId ? 'opacity-60 cursor-not-allowed' : ''}`}
+                      className={`w-full bg-white/[0.02] border border-white/[0.08] rounded-lg pl-10 pr-4 py-2.5 text-on-surface appearance-none text-xs font-medium focus:border-primary/50 transition-all outline-none ${selectedJdId ? 'opacity-50 cursor-not-allowed' : ''}`}
                     >
                         <option value="" disabled>{isVi ? 'VD: Frontend Developer' : 'e.g. Senior Product Designer'}</option>
                         {positions.map(p => <option key={p} value={p}>{p}</option>)}
@@ -538,31 +538,31 @@ const PreparationPage = () => {
                 </div>
 
                 <div>
-                  <label className="text-[11px] font-bold text-on-surface-variant mb-2 block">{isVi ? 'Cấp độ' : 'Seniority'}</label>
+                  <label className="text-[10px] font-semibold text-on-surface-variant mb-2 block">{isVi ? 'Cấp độ' : 'Seniority'}</label>
                   <div className="relative group">
                     <select 
                       value={selectedLevel} 
                       onChange={(e) => setSelectedLevel(e.target.value)} 
                       disabled={!!selectedJdId}
-                      className={`w-full bg-surface border border-outline-variant/20 rounded-xl px-5 py-3.5 text-on-surface appearance-none text-sm font-medium focus:border-primary/50 transition-all outline-none ${selectedJdId ? 'opacity-60 cursor-not-allowed' : ''}`}
+                      className={`w-full bg-white/[0.02] border border-white/[0.08] rounded-lg px-4 py-2.5 text-on-surface appearance-none text-xs font-medium focus:border-primary/50 transition-all outline-none ${selectedJdId ? 'opacity-50 cursor-not-allowed' : ''}`}
                     >
                       <option value="" disabled>{isVi ? 'Chọn cấp độ...' : 'Select level'}</option>
                       {levels.map(l => <option key={l} value={l}>{l}</option>)}
                     </select>
-                    <span className="material-symbols-outlined absolute right-5 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none text-[20px]">expand_more</span>
+                    <span className="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none text-[18px]">expand_more</span>
                   </div>
                 </div>
               </div>
             </section>
 
             {/* Duration */}
-            <section className="bg-surface-container-low border border-outline-variant/20 rounded-[32px] p-8 shadow-sm flex flex-col justify-center">
+            <section className="bg-[#121214]/40 backdrop-blur-2xl border border-white/[0.05] rounded-xl p-6 shadow-sm flex flex-col justify-center">
                <div className="text-center mb-6">
-                 <div className="w-12 h-12 rounded-2xl bg-surface-container-highest flex items-center justify-center mx-auto mb-4 border border-outline-variant/10 shadow-inner">
-                    <span className="material-symbols-outlined text-[#818CF8] text-[24px]">hourglass_empty</span>
+                 <div className="w-10 h-10 rounded-lg bg-white/[0.04] border border-white/[0.08] flex items-center justify-center mx-auto mb-4 shadow-inner">
+                    <span className="material-symbols-outlined text-[#818CF8] text-[20px]">hourglass_empty</span>
                  </div>
-                 <h3 className="text-sm font-bold text-on-surface tracking-tight">{isVi ? 'Thời lượng Phỏng vấn' : 'Interview Duration'}</h3>
-                 <p className="text-xs text-on-surface-variant mt-1">{isVi ? 'Chọn thời gian làm bài' : 'Set session length'}</p>
+                 <h3 className="text-xs font-semibold text-on-surface tracking-tight">{isVi ? 'Thời lượng Phỏng vấn' : 'Interview Duration'}</h3>
+                 <p className="text-[10px] text-on-surface-variant mt-1">{isVi ? 'Chọn thời gian làm bài' : 'Set session length'}</p>
                </div>
                
                <div className="relative group">
@@ -572,30 +572,30 @@ const PreparationPage = () => {
                       setSelectedDuration(e.target.value);
                       localStorage.setItem('interview_duration', e.target.value);
                     }} 
-                    className="w-full bg-surface border border-outline-variant/20 rounded-xl px-5 py-3.5 text-on-surface appearance-none text-sm font-medium focus:border-primary/50 transition-all outline-none text-center"
+                    className="w-full bg-white/[0.02] border border-white/[0.08] rounded-lg px-4 py-2.5 text-on-surface appearance-none text-xs font-medium focus:border-primary/50 transition-all outline-none text-center"
                   >
                     {[15, 20, 25, 30, 45, 60].map(m => <option key={m} value={m}>{m} {isVi ? 'Phút' : 'Minutes'}</option>)}
                   </select>
-                  <span className="material-symbols-outlined absolute right-5 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none text-[20px]">expand_more</span>
+                  <span className="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none text-[18px]">expand_more</span>
                </div>
             </section>
           </div>
 
           {/* Section: Job Description */}
-          <section className="bg-surface-container-low border border-outline-variant/20 rounded-[32px] p-8 shadow-sm flex flex-col">
+          <section className="bg-[#121214]/40 backdrop-blur-2xl border border-white/[0.05] rounded-xl p-6 shadow-sm flex flex-col">
             <div className="flex items-center justify-between mb-4">
-              <label className="text-[11px] font-bold text-on-surface-variant block">{isVi ? 'Mô tả Công việc (JD)' : 'Job Description'}</label>
+              <label className="text-[10px] font-semibold text-on-surface-variant block">{isVi ? 'Mô tả Công việc (JD)' : 'Job Description'}</label>
               {selectedJdId ? (
-                <span className="text-[10px] text-primary font-black uppercase tracking-wider flex items-center gap-1">
-                  <span className="material-symbols-outlined text-[12px]">lock</span>
+                <span className="text-[9px] text-primary font-semibold uppercase tracking-wider flex items-center gap-1">
+                  <span className="material-symbols-outlined text-[10px]">lock</span>
                   {isVi ? 'Đang Khóa theo JD' : 'Locked by JD'}
                 </span>
               ) : (
-                <span className="text-[10px] text-on-surface-variant opacity-60">Rich Text</span>
+                <span className="text-[9px] text-on-surface-variant/50">Rich Text</span>
               )}
             </div>
             
-            <div className="bg-surface rounded-2xl border border-outline-variant/20 overflow-hidden">
+            <div className="bg-surface border border-white/[0.08] rounded-lg overflow-hidden">
               <RichTextEditor 
                 value={jdText}
                 onChange={setJdText}
@@ -610,14 +610,14 @@ const PreparationPage = () => {
             <button 
               onClick={handleAnalyzeMatch} 
               disabled={isAnalyzing} 
-              className="bg-gradient-to-r from-[#6366F1] to-[#8B5CF6] text-white px-10 py-4 rounded-2xl font-bold text-sm tracking-wide flex items-center justify-center gap-3 hover:shadow-lg hover:shadow-[#6366F1]/20 transition-all active:scale-95 disabled:opacity-50 w-full sm:w-auto"
+              className="bg-white text-black hover:bg-neutral-200 px-6 py-3 rounded-lg font-semibold text-xs tracking-wider transition-all duration-300 hover:-translate-y-0.5 active:scale-[0.98] flex items-center justify-center gap-3 disabled:opacity-50 w-full sm:w-auto"
             >
               {isAnalyzing ? (isVi ? 'Đang phân tích...' : 'Analyzing...') : (isVi ? 'Phân tích Độ khớp' : 'Initialize Sequence')}
-              {isAnalyzing ? <span className="material-symbols-outlined animate-spin text-[18px]">progress_activity</span> : <span className="material-symbols-outlined text-[18px]">arrow_forward</span>}
+              {isAnalyzing ? <span className="material-symbols-outlined animate-spin text-[16px]">progress_activity</span> : <span className="material-symbols-outlined text-[16px]">arrow_forward</span>}
             </button>
             <button 
               onClick={handleQuickTest}
-              className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant opacity-40 hover:opacity-100 transition-opacity mt-4 mr-4"
+              className="text-[10px] font-semibold uppercase tracking-widest text-on-surface-variant opacity-40 hover:opacity-100 transition-opacity mt-4 mr-4"
             >
               [ Quick Test - Bypass AI ]
             </button>
@@ -630,67 +630,67 @@ const PreparationPage = () => {
       {analysisResult && (
         <div className="mt-16 space-y-8 animate-in fade-in slide-in-from-bottom-6 duration-700 max-w-5xl mx-auto">
           {/* Score & Summary */}
-          <div className="bg-surface-container-low border border-outline-variant/15 rounded-[40px] p-10 shadow-lg">
+          <div className="bg-[#121214]/40 backdrop-blur-2xl border border-white/[0.05] rounded-xl p-8 shadow-xl">
             <div className="flex flex-col md:flex-row gap-10 items-center">
-              <div className="relative w-48 h-48 flex items-center justify-center flex-shrink-0">
-                  <div className="absolute inset-0 bg-primary/10 rounded-full blur-2xl"></div>
+              <div className="relative w-40 h-40 flex items-center justify-center flex-shrink-0">
+                  <div className="absolute inset-0 bg-primary/5 rounded-full blur-2xl"></div>
                   <svg className="w-full h-full transform -rotate-90">
-                    <circle cx="96" cy="96" r="80" fill="none" stroke="currentColor" strokeWidth="10" className="text-outline-variant/10" />
-                    <circle cx="96" cy="96" r="80" fill="none" stroke="var(--color-primary)" strokeWidth="10" strokeLinecap="round" strokeDasharray={`${analysisResult.matchScore * 5} 502`} />
+                    <circle cx="80" cy="80" r="70" fill="none" stroke="currentColor" strokeWidth="4" className="text-white/[0.04]" />
+                    <circle cx="80" cy="80" r="70" fill="none" stroke="var(--color-primary)" strokeWidth="4" strokeLinecap="round" strokeDasharray={`${analysisResult.matchScore * 4.4} 440`} />
                   </svg>
                   <div className="absolute inset-0 flex flex-col items-center justify-center">
-                    <span className="text-5xl font-black text-on-surface">{analysisResult.matchScore}%</span>
-                    <span className="text-[10px] font-black uppercase tracking-widest opacity-40">{t('analysis.score')}</span>
+                    <span className="text-3xl font-bold text-on-surface">{analysisResult.matchScore}%</span>
+                    <span className="text-[9px] font-semibold uppercase tracking-wider opacity-40">{t('analysis.score')}</span>
                   </div>
               </div>
               <div className="flex-1">
                 <div className="flex items-center gap-3 mb-4">
-                  <h2 className="text-3xl font-black text-on-surface tracking-tighter">{t('analysis.title')}</h2>
+                  <h2 className="text-xl font-bold text-on-surface tracking-tight">{t('analysis.title')}</h2>
                   {analysisResult?.interviewRecommendation?.shouldInterview ? (
-                    <span className="px-3 py-1 bg-green-400/10 text-green-400 text-[10px] font-black uppercase tracking-widest border border-green-400/20 rounded-full">{t('analysis.recommended')}</span>
+                    <span className="px-2.5 py-0.5 bg-green-400/10 text-green-400 text-[9px] font-semibold uppercase tracking-wider border border-green-400/20 rounded-full">{t('analysis.recommended')}</span>
                   ) : (
-                    <span className="px-3 py-1 bg-amber-400/10 text-amber-400 text-[10px] font-black uppercase tracking-widest border border-amber-400/20 rounded-full">{t('analysis.caution')}</span>
+                    <span className="px-2.5 py-0.5 bg-amber-400/10 text-amber-400 text-[9px] font-semibold uppercase tracking-wider border border-amber-400/20 rounded-full">{t('analysis.caution')}</span>
                   )}
                 </div>
-                <p className="text-on-surface-variant leading-relaxed text-base italic mb-6">"{analysisResult?.summary}"</p>
+                <p className="text-on-surface-variant/80 leading-relaxed text-sm italic mb-6">"{analysisResult?.summary}"</p>
               </div>
             </div>
 
             {/* Grid Details */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-12 pt-10 border-t border-outline-variant/10">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8 pt-8 border-t border-white/[0.05]">
               <div className="space-y-6">
                 <div>
-                  <h5 className="text-[11px] font-black text-green-400 uppercase tracking-widest mb-4 flex items-center gap-2">
+                  <h5 className="text-[10px] font-semibold text-green-400 uppercase tracking-widest mb-4 flex items-center gap-2">
                     <span className="material-symbols-outlined text-sm">check_circle</span> {isVi ? 'Điểm mạnh' : 'Strengths'}
                   </h5>
                   <div className="space-y-3">
-                    {analysisResult?.strengths?.map((s, i) => <div key={i} className="text-sm text-on-surface leading-relaxed flex items-start gap-3"><span className="w-1.5 h-1.5 rounded-full bg-green-400 mt-1.5 flex-shrink-0"></span>{s}</div>)}
+                    {analysisResult?.strengths?.map((s, i) => <div key={i} className="text-xs text-on-surface-variant/90 leading-relaxed flex items-start gap-2.5"><span className="w-1 h-1 rounded-full bg-green-400 mt-2 flex-shrink-0"></span>{s}</div>)}
                   </div>
                 </div>
                 <div>
-                  <h5 className="text-[11px] font-black text-amber-400 uppercase tracking-widest mb-4 flex items-center gap-2">
+                  <h5 className="text-[10px] font-semibold text-amber-400 uppercase tracking-widest mb-4 flex items-center gap-2">
                     <span className="material-symbols-outlined text-sm">warning</span> {isVi ? 'Điểm yếu / Cần cải thiện' : 'Weaknesses'}
                   </h5>
                   <div className="space-y-3">
-                    {analysisResult?.weaknesses?.map((s, i) => <div key={i} className="text-sm text-on-surface leading-relaxed flex items-start gap-3"><span className="w-1.5 h-1.5 rounded-full bg-amber-400 mt-1.5 flex-shrink-0"></span>{s}</div>)}
+                    {analysisResult?.weaknesses?.map((s, i) => <div key={i} className="text-xs text-on-surface-variant/90 leading-relaxed flex items-start gap-2.5"><span className="w-1 h-1 rounded-full bg-amber-400 mt-2 flex-shrink-0"></span>{s}</div>)}
                   </div>
                 </div>
               </div>
 
               <div className="space-y-6">
-                  <div className="p-6 bg-surface-container rounded-[24px] border border-outline-variant/10">
-                    <h5 className="text-[11px] font-black text-primary uppercase tracking-widest mb-4">{isVi ? 'Phân tích kinh nghiệm' : 'Experience Analysis'}</h5>
+                  <div className="p-5 bg-white/[0.02] rounded-xl border border-white/[0.05]">
+                    <h5 className="text-[10px] font-semibold text-primary uppercase tracking-widest mb-4">{isVi ? 'Phân tích kinh nghiệm' : 'Experience Analysis'}</h5>
                     <div className="space-y-4">
-                      <div className="flex justify-between text-xs"><span className="opacity-50">Yêu cầu JD:</span><span className="font-bold">{analysisResult?.experienceAnalysis?.required}</span></div>
-                      <div className="flex justify-between text-xs"><span className="opacity-50">Ứng viên có:</span><span className="font-bold text-primary">{analysisResult?.experienceAnalysis?.candidate}</span></div>
-                      <p className="text-xs text-on-surface-variant pt-2 border-t border-outline-variant/10">{analysisResult?.experienceAnalysis?.gap}</p>
+                      <div className="flex justify-between text-xs"><span className="opacity-50">Yêu cầu JD:</span><span className="font-semibold">{analysisResult?.experienceAnalysis?.required}</span></div>
+                      <div className="flex justify-between text-xs"><span className="opacity-50">Ứng viên có:</span><span className="font-semibold text-primary">{analysisResult?.experienceAnalysis?.candidate}</span></div>
+                      <p className="text-xs text-on-surface-variant pt-2 border-t border-white/[0.05]">{analysisResult?.experienceAnalysis?.gap}</p>
                     </div>
                   </div>
-                  <div className="p-6 bg-surface-container rounded-[24px] border border-outline-variant/10">
-                    <h5 className="text-[11px] font-black text-secondary uppercase tracking-widest mb-4">{isVi ? 'Gợi ý cải thiện CV' : 'CV Improvement'}</h5>
+                  <div className="p-5 bg-white/[0.02] rounded-xl border border-white/[0.05]">
+                    <h5 className="text-[10px] font-semibold text-secondary uppercase tracking-widest mb-4">{isVi ? 'Gợi ý cải thiện CV' : 'CV Improvement'}</h5>
                     <div className="space-y-3">
                       {analysisResult?.improvementSuggestions?.map((s, i) => (
-                        <div key={i} className="text-xs text-on-surface leading-relaxed flex items-start gap-2">
+                        <div key={i} className="text-xs text-on-surface-variant leading-relaxed flex items-start gap-2">
                           <span className="material-symbols-outlined text-[14px] text-secondary">tips_and_updates</span>
                           {s}
                         </div>
@@ -701,26 +701,26 @@ const PreparationPage = () => {
             </div>
 
             {/* Final Step Action */}
-            <div className="mt-12 pt-8 border-t border-outline-variant/10 flex flex-col items-center gap-6">
-              <p className="text-sm text-on-surface-variant font-medium text-center max-w-lg">
+            <div className="mt-8 pt-6 border-t border-white/[0.05] flex flex-col items-center gap-6">
+              <p className="text-xs text-on-surface-variant/80 font-medium text-center max-w-lg">
                 {isVi 
                   ? 'Nếu bạn hài lòng với kết quả phân tích, hãy bắt đầu buổi phỏng vấn giả định để AI kiểm tra sâu hơn kỹ năng của bạn.' 
                   : 'Satisfied with the analysis? Start the mock interview for a deep cognitive evaluation.'}
               </p>
               {!isVip && freeInterviewsLeft !== null && freeInterviewsLeft <= 0 ? (
-                <div className="w-full max-w-md p-6 bg-red-500/10 border border-red-500/20 rounded-3xl text-center">
-                  <span className="material-symbols-outlined text-4xl text-red-500 mb-3 animate-pulse">lock</span>
-                  <p className="text-sm font-bold text-red-500 uppercase tracking-wider mb-2">
+                <div className="w-full max-w-sm p-5 bg-error/5 border border-error/15 rounded-xl text-center shadow-lg">
+                  <span className="material-symbols-outlined text-3xl text-red-500 mb-3 animate-pulse">lock</span>
+                  <p className="text-xs font-semibold text-red-500 uppercase tracking-widest mb-2">
                     {isVi ? 'Đã hết lượt phỏng vấn miễn phí' : 'No Free Attempts Left'}
                   </p>
-                  <p className="text-xs text-on-surface-variant font-medium leading-relaxed mb-6">
+                  <p className="text-[11px] text-on-surface-variant/75 font-medium leading-relaxed mb-6">
                     {isVi 
                       ? 'Bạn đã hoàn thành 3 lượt phỏng vấn miễn phí trong tháng này. Hãy nâng cấp lên gói VIP để tiếp tục thực hiện các cuộc phỏng vấn giả định không giới hạn.'
                       : 'You have completed all 3 free mock interviews this month. Please upgrade to VIP to unlock unlimited mock interviews.'}
                   </p>
                   <button 
                     onClick={() => navigate('/upgrade')}
-                    className="w-full py-4 bg-red-500 hover:bg-red-600 text-white font-black text-xs uppercase tracking-widest rounded-2xl shadow-lg shadow-red-500/20 transition-all active:scale-95 cursor-pointer"
+                    className="w-full py-3 bg-red-500 hover:bg-red-600 text-white font-semibold text-xs uppercase tracking-widest rounded-lg shadow-sm transition-all active:scale-[0.98] cursor-pointer"
                   >
                     {isVi ? 'Nâng cấp VIP ngay' : 'Upgrade VIP Now'}
                   </button>
@@ -729,9 +729,9 @@ const PreparationPage = () => {
                 <button 
                   onClick={handleStartInterview} 
                   disabled={isGenerating}
-                  className="group bg-on-surface text-surface px-14 py-5 rounded-full font-black text-lg transition-all active:scale-95 shadow-2xl flex items-center gap-4 disabled:opacity-50"
+                  className="group bg-white text-black hover:bg-neutral-200 px-8 py-3.5 rounded-lg font-semibold text-sm transition-all duration-300 hover:-translate-y-0.5 active:scale-[0.98] shadow-md flex items-center gap-3 disabled:opacity-50"
                 >
-                  {isGenerating ? <span className="material-symbols-outlined animate-spin">progress_activity</span> : <span className="material-symbols-outlined">rocket_launch</span>}
+                  {isGenerating ? <span className="material-symbols-outlined animate-spin text-[16px]">progress_activity</span> : <span className="material-symbols-outlined text-[16px]">rocket_launch</span>}
                   {isGenerating ? (isVi ? 'Đang chuẩn bị câu hỏi...' : 'Preparing Questions...') : (isVi ? 'Bắt đầu phỏng vấn ngay' : 'Start Interview Now')}
                 </button>
               )}
@@ -742,36 +742,36 @@ const PreparationPage = () => {
 
       {/* Spectator Invite Modal */}
       {showInviteModal && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-surface/80 backdrop-blur-md animate-in fade-in duration-300">
-          <div className="bg-surface-container-low border border-outline-variant/20 rounded-[32px] p-8 max-w-md w-full shadow-2xl relative overflow-hidden text-center animate-in zoom-in-95 duration-500">
-            <div className="w-20 h-20 mx-auto bg-gradient-to-tr from-[#6366F1] to-[#8B5CF6] rounded-2xl flex items-center justify-center mb-6 shadow-lg shadow-primary/20">
-              <span className="material-symbols-outlined text-4xl text-white">group_add</span>
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-background/85 backdrop-blur-sm animate-in fade-in duration-300">
+          <div className="bg-surface-container border border-white/[0.06] rounded-xl p-6 max-w-sm w-full shadow-2xl relative overflow-hidden text-center animate-in zoom-in-95 duration-300">
+            <div className="w-14 h-14 mx-auto bg-primary/10 border border-primary/20 text-primary rounded-xl flex items-center justify-center mb-6">
+              <span className="material-symbols-outlined text-2xl text-primary">group_add</span>
             </div>
             
-            <h3 className="text-3xl font-black text-on-surface tracking-tighter mb-2">
+            <h3 className="text-xl font-bold text-on-surface tracking-tight mb-2">
               {t('spectator.invite_title')}
             </h3>
-            <p className="text-on-surface-variant font-medium text-sm leading-relaxed mb-8">
+            <p className="text-on-surface-variant font-medium text-xs leading-relaxed mb-6">
               {t('spectator.invite_desc')}
             </p>
 
-            <div className="bg-surface-container-high rounded-2xl p-6 mb-8 border border-outline-variant/10">
-               <p className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">{t('spectator.room_code_label')}</p>
-               <div className="text-4xl font-black text-primary tracking-[0.2em]">{roomCode}</div>
+            <div className="bg-white/[0.02] rounded-lg p-5 mb-6 border border-white/[0.06]">
+               <p className="text-[9px] font-semibold uppercase tracking-wider text-on-surface-variant mb-2">{t('spectator.room_code_label')}</p>
+               <div className="text-3xl font-black text-primary tracking-[0.2em]">{roomCode}</div>
                
                {spectators.length > 0 && (
-                 <div className="mt-4 pt-4 border-t border-outline-variant/10">
-                   <p className="text-[9px] font-black uppercase tracking-widest text-on-surface-variant mb-3 flex items-center justify-center gap-2">
-                     <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
-                     {spectators.length} {isVi ? 'Người đang chờ' : 'People Waiting'}
-                   </p>
-                   <div className="flex flex-wrap justify-center gap-2 max-h-[100px] overflow-y-auto custom-scrollbar">
-                     {spectators.map(s => (
-                       <div key={s.socketId} className="px-3 py-1 bg-surface rounded-lg border border-outline-variant/10 text-[10px] font-bold text-on-surface">
-                         {s.name}
-                       </div>
-                     ))}
-                   </div>
+                 <div className="mt-4 pt-4 border-t border-white/[0.05]">
+                    <p className="text-[9px] font-semibold uppercase tracking-wider text-on-surface-variant mb-3 flex items-center justify-center gap-2">
+                      <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
+                      {spectators.length} {isVi ? 'Người đang chờ' : 'People Waiting'}
+                    </p>
+                    <div className="flex flex-wrap justify-center gap-2 max-h-[100px] overflow-y-auto custom-scrollbar">
+                      {spectators.map(s => (
+                        <div key={s.socketId} className="px-3 py-1 bg-surface rounded-lg border border-outline-variant/10 text-[9px] font-semibold text-on-surface">
+                          {s.name}
+                        </div>
+                      ))}
+                    </div>
                  </div>
                )}
             </div>
@@ -782,7 +782,7 @@ const PreparationPage = () => {
                   toast.success(t('spectator.modal_success'));
                   navigate('/interview');
                 }}
-                className="w-full py-4 rounded-xl bg-primary text-on-primary font-black text-sm uppercase tracking-widest hover:bg-primary/90 transition-colors shadow-lg shadow-primary/20 flex justify-center items-center gap-2"
+                className="w-full py-2.5 rounded-lg bg-primary text-on-primary font-semibold text-xs uppercase tracking-widest hover:bg-primary-dim transition-colors shadow-md flex justify-center items-center gap-2"
               >
                 <span className="material-symbols-outlined text-sm">rocket_launch</span>
                 {t('spectator.btn_start_share')}
@@ -792,7 +792,7 @@ const PreparationPage = () => {
                   localStorage.removeItem('spectator_room_code');
                   navigate('/interview');
                 }}
-                className="w-full py-4 rounded-xl bg-surface-container-high text-on-surface font-bold text-xs uppercase tracking-widest hover:bg-outline-variant/20 transition-colors"
+                className="w-full py-2.5 rounded-lg bg-white/[0.04] border border-white/[0.08] text-on-surface font-semibold text-xs uppercase tracking-widest hover:bg-white/[0.08] transition-colors"
               >
                 {t('spectator.btn_private')}
               </button>
