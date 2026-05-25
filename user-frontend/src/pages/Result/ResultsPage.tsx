@@ -198,10 +198,10 @@ const ResultsPage = () => {
       <div className="max-w-6xl mx-auto pb-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
         <header className="mb-8 flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
           <div>
-            <h1 className="text-4xl font-black text-on-surface tracking-tighter mb-2">
+            <h1 className="text-3xl font-bold text-on-surface tracking-tight mb-2">
               {t('results.title')}
             </h1>
-            <p className="text-sm text-on-surface-variant font-medium opacity-70">
+            <p className="text-xs text-on-surface-variant font-medium opacity-70">
               {t('results.subtitle')}
             </p>
           </div>
@@ -213,7 +213,7 @@ const ResultsPage = () => {
               <input
                 type="text"
                 placeholder={t('results.search_placeholder')}
-                className="pl-9 pr-4 py-2.5 bg-surface-container-low border border-outline-variant/20 rounded-xl text-xs font-bold text-on-surface focus:border-primary transition-all outline-none min-w-[240px]"
+                className="pl-9 pr-4 py-2 bg-white/[0.02] border border-white/[0.08] rounded-lg text-xs font-semibold text-on-surface focus:border-primary transition-all outline-none min-w-[240px]"
                 value={searchTerm}
                 onChange={(e) => { setSearchTerm(e.target.value); setPage(1); }}
               />
@@ -221,7 +221,7 @@ const ResultsPage = () => {
 
             {/* Sorting */}
             <select
-              className="px-4 py-2.5 bg-surface-container-low border border-outline-variant/20 rounded-xl text-xs font-bold text-on-surface focus:border-primary outline-none transition-all cursor-pointer"
+              className="px-4 py-2 bg-white/[0.02] border border-white/[0.08] rounded-lg text-xs font-semibold text-on-surface focus:border-primary outline-none transition-all cursor-pointer"
               value={sortBy}
               onChange={(e) => { setSortBy(e.target.value as any); setPage(1); }}
             >
@@ -234,7 +234,7 @@ const ResultsPage = () => {
             {/* Reset */}
             <button
               onClick={handleReset}
-              className="w-10 h-10 rounded-xl bg-surface-container-high text-on-surface-variant border border-outline-variant/10 flex items-center justify-center hover:bg-outline-variant/20 transition-all"
+              className="w-9 h-9 rounded-lg bg-white/[0.02] border border-white/[0.08] text-on-surface-variant flex items-center justify-center hover:bg-white/[0.04] transition-all cursor-pointer"
               title={t('results.sort_newest')}
             >
               <span className="material-symbols-outlined text-[20px]">restart_alt</span>
@@ -245,58 +245,58 @@ const ResultsPage = () => {
         {/* Dashboard Metrics Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
           {/* Card 1: Total Interviews */}
-          <div className="bg-surface-container-low border border-outline-variant/10 rounded-[32px] p-8 shadow-sm flex flex-col justify-between group hover:border-primary/30 transition-all relative overflow-hidden">
+          <div className="bg-[#121214]/40 backdrop-blur-2xl border border-white/[0.05] rounded-xl p-6 shadow-sm flex flex-col justify-between group hover:border-primary/20 transition-all relative overflow-hidden">
             <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full -mr-16 -mt-16 blur-2xl group-hover:bg-primary/10 transition-colors"></div>
-            <div className="flex items-center gap-4 mb-6 relative z-10">
-              <div className="w-12 h-12 rounded-2xl bg-primary/10 text-primary flex items-center justify-center group-hover:scale-110 transition-transform">
-                <span className="material-symbols-outlined text-[24px]">bar_chart</span>
+            <div className="flex items-center gap-3.5 mb-5 relative z-10">
+              <div className="w-10 h-10 rounded-lg bg-primary/10 text-primary flex items-center justify-center group-hover:scale-105 transition-transform border border-primary/20">
+                <span className="material-symbols-outlined text-[20px]">bar_chart</span>
               </div>
-              <span className="text-on-surface-variant text-xs font-black uppercase tracking-widest opacity-60">{t('results.total_interviews') || 'Total Interviews'}</span>
+              <span className="text-on-surface-variant text-[10px] font-semibold uppercase tracking-widest opacity-80">{t('results.total_interviews') || 'Total Interviews'}</span>
             </div>
             <div className="relative z-10">
-              <div className="text-5xl font-black text-on-surface tracking-tighter mb-2">{totalInterviewsCount}</div>
-              <div className="flex items-center gap-2 text-secondary text-xs font-bold">
-                <span className="material-symbols-outlined text-[16px]">trending_up</span>
-                <span className="bg-secondary/10 px-2 py-0.5 rounded-full">+{recentCount} {t('results.this_week') || 'this week'}</span>
+              <div className="text-3xl font-bold text-on-surface tracking-tight mb-1.5">{totalInterviewsCount}</div>
+              <div className="flex items-center gap-2 text-secondary text-xs font-semibold">
+                <span className="material-symbols-outlined text-[14px]">trending_up</span>
+                <span className="bg-secondary/10 px-2 py-0.5 rounded-md">+{recentCount} {t('results.this_week') || 'this week'}</span>
               </div>
             </div>
           </div>
 
           {/* Card 2: Average Score */}
-          <div className="bg-surface-container-low border border-outline-variant/10 rounded-[32px] p-8 shadow-sm flex flex-col justify-between group hover:border-secondary/30 transition-all relative overflow-hidden">
+          <div className="bg-[#121214]/40 backdrop-blur-2xl border border-white/[0.05] rounded-xl p-6 shadow-sm flex flex-col justify-between group hover:border-secondary/20 transition-all relative overflow-hidden">
             <div className="absolute top-0 right-0 w-32 h-32 bg-secondary/5 rounded-full -mr-16 -mt-16 blur-2xl group-hover:bg-secondary/10 transition-colors"></div>
-            <div className="flex items-center gap-4 mb-6 relative z-10">
-              <div className="w-12 h-12 rounded-2xl bg-secondary/10 text-secondary flex items-center justify-center group-hover:scale-110 transition-transform">
-                <span className="material-symbols-outlined text-[24px]">psychiatry</span>
+            <div className="flex items-center gap-3.5 mb-5 relative z-10">
+              <div className="w-10 h-10 rounded-lg bg-secondary/10 text-secondary flex items-center justify-center group-hover:scale-105 transition-transform border border-secondary/20">
+                <span className="material-symbols-outlined text-[20px]">psychiatry</span>
               </div>
-              <span className="text-on-surface-variant text-xs font-black uppercase tracking-widest opacity-60">{t('results.average_score') || 'Average Score'}</span>
+              <span className="text-on-surface-variant text-[10px] font-semibold uppercase tracking-widest opacity-80">{t('results.average_score') || 'Average Score'}</span>
             </div>
             <div className="relative z-10">
-              <div className="text-5xl font-black text-on-surface tracking-tighter mb-2">{avgScore} <span className="text-2xl text-on-surface-variant opacity-30 font-medium">/100</span></div>
-              <div className="flex items-center gap-2 text-primary text-xs font-bold">
-                <span className="material-symbols-outlined text-[16px]">show_chart</span>
-                <span className="bg-primary/10 px-2 py-0.5 rounded-full">{avgScore >= 80 ? 'Top 15% of cohort' : 'Average range'}</span>
+              <div className="text-3xl font-bold text-on-surface tracking-tight mb-1.5">{avgScore} <span className="text-lg text-on-surface-variant opacity-40 font-medium">/100</span></div>
+              <div className="flex items-center gap-2 text-primary text-xs font-semibold">
+                <span className="material-symbols-outlined text-[14px]">show_chart</span>
+                <span className="bg-primary/10 px-2 py-0.5 rounded-md">{avgScore >= 80 ? 'Top 15% of cohort' : 'Average range'}</span>
               </div>
             </div>
           </div>
 
           {/* Card 3: Match Rate */}
-          <div className="bg-surface-container-low border border-outline-variant/10 rounded-[32px] p-8 shadow-sm flex flex-col justify-between group hover:border-tertiary/30 transition-all relative overflow-hidden">
+          <div className="bg-[#121214]/40 backdrop-blur-2xl border border-white/[0.05] rounded-xl p-6 shadow-sm flex flex-col justify-between group hover:border-tertiary/20 transition-all relative overflow-hidden">
             <div className="absolute top-0 right-0 w-32 h-32 bg-tertiary/5 rounded-full -mr-16 -mt-16 blur-2xl group-hover:bg-tertiary/10 transition-colors"></div>
-            <div className="flex items-center justify-between mb-6 relative z-10">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-2xl bg-tertiary/10 text-tertiary flex items-center justify-center group-hover:scale-110 transition-transform">
-                  <span className="material-symbols-outlined text-[24px]">fact_check</span>
+            <div className="flex items-center justify-between mb-5 relative z-10">
+              <div className="flex items-center gap-3.5">
+                <div className="w-10 h-10 rounded-lg bg-tertiary/10 text-tertiary flex items-center justify-center group-hover:scale-105 transition-transform border border-tertiary/20">
+                  <span className="material-symbols-outlined text-[20px]">fact_check</span>
                 </div>
-                <span className="text-on-surface-variant text-xs font-black uppercase tracking-widest opacity-60">{t('results.match_rate') || 'Match Rate (CV vs JD)'}</span>
+                <span className="text-on-surface-variant text-[10px] font-semibold uppercase tracking-widest opacity-80">{t('results.match_rate') || 'Match Rate (CV vs JD)'}</span>
               </div>
-              <span className="bg-tertiary/10 text-tertiary text-[9px] font-black uppercase tracking-widest px-2 py-1 rounded-lg border border-tertiary/20">
+              <span className="bg-tertiary/10 text-tertiary text-[9px] font-semibold uppercase tracking-widest px-2 py-0.5 rounded-md border border-tertiary/20">
                 CURRENT TARGET
               </span>
             </div>
             <div className="relative z-10">
-              <div className="text-5xl font-black text-on-surface tracking-tighter mb-4">{avgMatchRate}%</div>
-              <div className="w-full h-2 bg-surface-container-high rounded-full overflow-hidden">
+              <div className="text-3xl font-bold text-on-surface tracking-tight mb-3.5">{avgMatchRate}%</div>
+              <div className="w-full h-1.5 bg-surface-container rounded-full overflow-hidden">
                 <div 
                   className="h-full bg-gradient-to-r from-primary to-tertiary rounded-full shadow-[0_0_10px_rgba(81,69,205,0.3)]" 
                   style={{ width: `${avgMatchRate}%` }}
@@ -306,55 +306,55 @@ const ResultsPage = () => {
           </div>
         </div>
 
-        <div className="bg-surface-container-low border border-outline-variant/15 rounded-[32px] overflow-hidden shadow-sm">
+        <div className="bg-[#121214]/40 backdrop-blur-2xl border border-white/[0.05] rounded-xl overflow-hidden shadow-md">
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="bg-surface-container-high/50 text-on-surface-variant text-[10px] font-black uppercase tracking-widest border-b border-outline-variant/10">
-                  <th className="px-8 py-6">{t('results.table_pos')}</th>
-                  <th className="px-6 py-6">{t('results.table_level')}</th>
-                  <th className="px-6 py-6 text-center">{t('results.table_cv')}</th>
-                  <th className="px-6 py-6 text-center">{t('results.table_int')}</th>
-                  <th className="px-6 py-6 text-center">{t('results.table_total')}</th>
-                  <th className="px-6 py-6">{t('results.table_date')}</th>
-                  <th className="px-8 py-6 text-right">{t('results.table_action')}</th>
+                <tr className="bg-white/[0.02] text-on-surface-variant text-[9px] font-semibold uppercase tracking-widest border-b border-white/[0.05]">
+                  <th className="px-6 py-4">{t('results.table_pos')}</th>
+                  <th className="px-6 py-4">{t('results.table_level')}</th>
+                  <th className="px-6 py-4 text-center">{t('results.table_cv')}</th>
+                  <th className="px-6 py-4 text-center">{t('results.table_int')}</th>
+                  <th className="px-6 py-4 text-center">{t('results.table_total')}</th>
+                  <th className="px-6 py-4">{t('results.table_date')}</th>
+                  <th className="px-6 py-4 text-right">{t('results.table_action')}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-outline-variant/10">
                 {paginated.length > 0 ? (
                   paginated.map(int => (
-                    <tr key={int._id} className="hover:bg-primary/5 transition-colors group">
-                      <td className="px-8 py-6">
-                        <div className="font-bold text-on-surface text-sm truncate max-w-[200px]">{int.position}</div>
+                    <tr key={int._id} className="hover:bg-white/[0.02] transition-colors group">
+                      <td className="px-6 py-4">
+                        <div className="font-semibold text-on-surface text-xs truncate max-w-[200px]">{int.position}</div>
                       </td>
-                      <td className="px-6 py-6">
-                        <div className="text-[10px] font-black text-primary uppercase tracking-widest opacity-60">{int.level}</div>
+                      <td className="px-6 py-4">
+                        <div className="text-[9px] font-semibold text-primary uppercase tracking-wider">{int.level}</div>
                       </td>
-                      <td className="px-6 py-6">
+                      <td className="px-6 py-4">
                         <div className="flex flex-col items-center gap-1">
-                          <span className="text-sm font-black text-secondary">{int.matchScore}%</span>
-                          <div className="w-16 h-1 bg-surface-container-highest rounded-full overflow-hidden">
+                          <span className="text-xs font-bold text-secondary">{int.matchScore}%</span>
+                          <div className="w-16 h-1 bg-white/[0.04] rounded-full overflow-hidden">
                             <div className="h-full bg-secondary" style={{ width: `${int.matchScore}%` }}></div>
                           </div>
                         </div>
                       </td>
-                      <td className="px-6 py-6 text-center">
-                        <span className="text-sm font-black text-on-surface">{int.evaluation?.totalScore || 0}</span>
+                      <td className="px-6 py-4 text-center">
+                        <span className="text-xs font-semibold text-on-surface">{int.evaluation?.totalScore || 0}</span>
                       </td>
-                      <td className="px-6 py-6 text-center">
-                        <div className="inline-flex w-10 h-10 rounded-xl bg-primary/10 items-center justify-center text-primary font-black text-sm">
+                      <td className="px-6 py-4 text-center">
+                        <div className="inline-flex w-8 h-8 rounded-lg bg-primary/10 items-center justify-center text-primary font-semibold text-xs border border-primary/20">
                           {Math.round(((int.matchScore + (int.evaluation?.totalScore || 0)) / 2))}
                         </div>
                       </td>
-                      <td className="px-6 py-6">
+                      <td className="px-6 py-4">
                         <span className="text-xs text-on-surface-variant font-medium">
                           {new Date(int.createdAt).toLocaleDateString()}
                         </span>
                       </td>
-                      <td className="px-8 py-6 text-right">
+                      <td className="px-6 py-4 text-right">
                         <button
                           onClick={() => navigate(`/results/${int._id}`)}
-                          className="bg-on-surface text-surface px-5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest hover:scale-105 active:scale-95 transition-all shadow-md"
+                          className="bg-white text-black hover:bg-neutral-200 px-4 py-1.5 rounded-lg text-[9px] font-semibold uppercase tracking-wider transition-all active:scale-[0.98] cursor-pointer shadow-sm"
                         >
                           {t('results.view_report')}
                         </button>
@@ -375,21 +375,21 @@ const ResultsPage = () => {
 
         {/* Pagination */}
         {totalPages > 1 && (
-          <div className="flex justify-center items-center gap-4 mt-12">
+          <div className="flex justify-center items-center gap-4 mt-8">
             <button
               disabled={page === 1}
               onClick={() => setPage(p => p - 1)}
-              className="w-12 h-12 rounded-full border border-outline-variant/20 flex items-center justify-center disabled:opacity-30 hover:bg-surface-container-high transition-all"
+              className="w-9 h-9 rounded-lg border border-white/[0.08] flex items-center justify-center disabled:opacity-30 hover:bg-white/[0.04] transition-all cursor-pointer"
             >
-              <span className="material-symbols-outlined">chevron_left</span>
+              <span className="material-symbols-outlined text-base">chevron_left</span>
             </button>
-            <span className="text-xs font-black tracking-widest uppercase opacity-60">{t('results.page')} {page} / {totalPages}</span>
+            <span className="text-xs font-semibold tracking-wider uppercase opacity-85">{t('results.page')} {page} / {totalPages}</span>
             <button
               disabled={page === totalPages}
               onClick={() => setPage(p => p + 1)}
-              className="w-12 h-12 rounded-full border border-outline-variant/20 flex items-center justify-center disabled:opacity-30 hover:bg-surface-container-high transition-all"
+              className="w-9 h-9 rounded-lg border border-white/[0.08] flex items-center justify-center disabled:opacity-30 hover:bg-white/[0.04] transition-all cursor-pointer"
             >
-              <span className="material-symbols-outlined">chevron_right</span>
+              <span className="material-symbols-outlined text-base">chevron_right</span>
             </button>
           </div>
         )}
@@ -404,93 +404,92 @@ const ResultsPage = () => {
   return (
     <div className="max-w-6xl mx-auto pb-8 animate-in fade-in duration-700">
       {/* Header Section */}
-      <header className="mb-12 flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
+      <header className="mb-10 flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
         <div>
-          <button onClick={() => navigate('/results')} className="flex items-center gap-2 text-primary text-xs font-black uppercase tracking-widest mb-4 hover:opacity-70 transition-opacity">
+          <button onClick={() => navigate('/results')} className="flex items-center gap-2 text-primary text-xs font-semibold uppercase tracking-wider mb-3 hover:opacity-75 transition-opacity cursor-pointer">
             <span className="material-symbols-outlined text-sm">arrow_back</span>
             {t('results.back')}
           </button>
-          <h1 className="text-5xl font-black tracking-tighter mb-2 text-on-surface">
+          <h1 className="text-3xl font-bold tracking-tight mb-2 text-on-surface">
             {t('results.report_title')}
           </h1>
-          <p className="text-on-surface-variant opacity-70">
+          <p className="text-xs text-on-surface-variant font-medium opacity-70">
             {interview.position} • {interview.level} • {new Date(interview.createdAt).toLocaleDateString()}
           </p>
         </div>
-        <div className="flex gap-4">
+        <div className="flex gap-3">
           <button 
             onClick={handleShare} 
             disabled={isSharing}
-            className={`px-6 py-3 rounded-full text-xs font-black uppercase tracking-widest flex items-center gap-2 transition-all shadow-md active:scale-95 disabled:opacity-50 ${
+            className={`px-4 py-2 rounded-lg text-xs font-semibold uppercase tracking-wider flex items-center gap-2 transition-all shadow-sm active:scale-[0.98] disabled:opacity-50 cursor-pointer ${
               interview.isPublic 
-                ? 'bg-surface-container-high text-on-surface-variant border border-outline-variant/20 hover:bg-outline-variant/10'
-                : 'bg-gradient-to-r from-secondary to-primary text-on-primary hover:shadow-primary/30'
+                ? 'bg-white/[0.02] text-on-surface border border-white/[0.08] hover:bg-white/[0.04]'
+                : 'bg-primary text-on-primary hover:bg-primary-dim'
             }`}
           >
             {isSharing ? <span className="material-symbols-outlined animate-spin text-sm">progress_activity</span> : <span className="material-symbols-outlined text-sm">{interview.isPublic ? 'visibility_off' : 'military_tech'}</span>}
             {interview.isPublic ? (t('showcase.unshare') || 'Gỡ khỏi Showcase') : (t('showcase.share') || 'Chia sẻ lên Showcase')}
           </button>
-          <button onClick={() => navigate('/preparation')} className="bg-surface-container-high text-on-surface px-6 py-3 rounded-full text-xs font-black uppercase tracking-widest hover:bg-outline-variant/20 transition-all border border-outline-variant/10 shadow-sm active:scale-95">
+          <button onClick={() => navigate('/preparation')} className="bg-white/[0.02] text-on-surface border border-white/[0.08] px-4 py-2 rounded-lg text-xs font-semibold uppercase tracking-wider hover:bg-white/[0.04] transition-all shadow-sm active:scale-[0.98] cursor-pointer">
             {t('results.retry')}
           </button>
         </div>
       </header>
 
       {/* Hero Score Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
-        <div className="lg:col-span-2 bg-surface-container-low border border-outline-variant/15 rounded-[40px] p-10 shadow-lg flex flex-col md:flex-row items-center gap-10 relative overflow-hidden">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-10">
+        <div className="lg:col-span-2 bg-[#121214]/40 backdrop-blur-2xl border border-white/[0.05] rounded-xl p-8 shadow-xl flex flex-col md:flex-row items-center gap-10 relative overflow-hidden">
           <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full -translate-y-1/2 translate-x-1/2 blur-3xl"></div>
 
-          <div className="relative w-48 h-48 flex items-center justify-center flex-shrink-0">
+          <div className="relative w-40 h-40 flex items-center justify-center flex-shrink-0">
             <svg className="w-full h-full transform -rotate-90">
-              <circle cx="96" cy="96" r="85" fill="none" stroke="currentColor" strokeWidth="12" className="text-outline-variant/10" />
-              <circle cx="96" cy="96" r="85" fill="none" stroke="var(--color-primary)" strokeWidth="12" strokeLinecap="round" strokeDasharray={`${(evaluation?.totalScore || 0) * 5.34} 534`} />
+              <circle cx="80" cy="80" r="70" fill="none" stroke="currentColor" strokeWidth="4" className="text-white/[0.04]" />
+              <circle cx="80" cy="80" r="70" fill="none" stroke="var(--color-primary)" strokeWidth="4" strokeLinecap="round" strokeDasharray={`${(evaluation?.totalScore || 0) * 4.4} 440`} />
             </svg>
             <div className="absolute inset-0 flex flex-col items-center justify-center">
-              <span className="text-6xl font-black text-on-surface">{evaluation?.totalScore || 0}</span>
-              <span className="text-[10px] font-black uppercase tracking-widest opacity-40">{evaluation?.decision || 'Evaluation'}</span>
+              <span className="text-4xl font-bold text-on-surface">{evaluation?.totalScore || 0}</span>
+              <span className="text-[9px] font-semibold uppercase tracking-wider opacity-40">{evaluation?.decision || 'Evaluation'}</span>
             </div>
           </div>
 
           <div className="flex-1">
             <div className="flex items-center gap-3 mb-2">
-              <h3 className="text-2xl font-black text-on-surface">{t('results.overall')}</h3>
+              <h3 className="text-xl font-bold text-on-surface">{t('results.overall')}</h3>
               {evaluation?.decision && (
-                <span className={`px-3 py-1 rounded-full text-[10px] font-black tracking-widest border ${
-                  evaluation.decision.includes('STRONG') ? 'bg-green-400/20 text-green-400 border-green-400/30' :
-                  evaluation.decision.includes('REJECT') ? 'bg-red-400/20 text-red-400 border-red-400/30' :
-                  'bg-primary/20 text-primary border-primary/30'
+                <span className={`px-2.5 py-0.5 rounded-md text-[9px] font-semibold tracking-wider border ${
+                  evaluation.decision.includes('STRONG') ? 'bg-green-400/10 text-green-400 border-green-400/20' :
+                  evaluation.decision.includes('REJECT') ? 'bg-red-400/10 text-red-400 border-red-400/20' :
+                  'bg-primary/10 text-primary border-primary/20'
                 }`}>
                   {evaluation.decision}
                 </span>
               )}
             </div>
-            <p className="text-on-surface-variant leading-relaxed italic">"{evaluation?.summary || t('results.loading')}"</p>
+            <p className="text-on-surface-variant/80 text-sm leading-relaxed italic">"{evaluation?.summary || t('results.loading')}"</p>
             <div className="mt-6 flex items-center gap-4">
-              <div className="px-4 py-2 bg-primary/10 rounded-xl border border-primary/20">
-                <p className="text-[10px] font-black uppercase text-primary mb-1">CV Match</p>
-                <p className="text-xl font-black text-on-surface">{interview?.matchScore || 0}%</p>
+              <div className="px-3 py-1.5 bg-primary/5 rounded-lg border border-primary/15">
+                <p className="text-[9px] font-semibold uppercase text-primary mb-0.5">CV Match</p>
+                <p className="text-lg font-bold text-on-surface">{interview?.matchScore || 0}%</p>
               </div>
-              <div className="px-4 py-2 bg-secondary/10 rounded-xl border border-secondary/20">
-                <p className="text-[10px] font-black uppercase text-secondary mb-1">Interview</p>
-                <p className="text-xl font-black text-on-surface">{(evaluation?.totalScore || 0)}/100</p>
+              <div className="px-3 py-1.5 bg-secondary/5 rounded-lg border border-secondary/15">
+                <p className="text-[9px] font-semibold uppercase text-secondary mb-0.5">Interview</p>
+                <p className="text-lg font-bold text-on-surface">{(evaluation?.totalScore || 0)}/100</p>
               </div>
             </div>
           </div>
         </div>
 
-
-        <div className="bg-surface-container-low border border-outline-variant/15 rounded-[32px] sm:rounded-[40px] p-6 sm:p-8 shadow-sm">
-          <h4 className="text-[11px] font-black uppercase tracking-widest text-on-surface-variant mb-6">{t('results.key_highlights')}</h4>
+        <div className="bg-[#121214]/40 backdrop-blur-2xl border border-white/[0.05] rounded-xl p-6 shadow-sm">
+          <h4 className="text-[10px] font-semibold uppercase tracking-widest text-on-surface-variant mb-4">{t('results.key_highlights')}</h4>
           <div className="space-y-4">
-            <div className="p-4 bg-green-400/5 border border-green-400/10 rounded-2xl">
-              <p className="text-[10px] font-black text-green-400 uppercase mb-2">{t('results.strengths')}</p>
+            <div className="p-4 bg-green-400/5 border border-green-400/10 rounded-xl">
+              <p className="text-[9px] font-semibold text-green-400 uppercase mb-2">{t('results.strengths')}</p>
               <ul className="text-xs space-y-1 text-on-surface opacity-80">
                 {evaluation?.pros?.length ? evaluation.pros.map((p, i) => <li key={i}>• {p}</li>) : <li>{t('results.loading')}</li>}
               </ul>
             </div>
-            <div className="p-4 bg-amber-400/5 border border-amber-400/10 rounded-2xl">
-              <p className="text-[10px] font-black text-amber-400 uppercase mb-2">{t('results.weaknesses')}</p>
+            <div className="p-4 bg-amber-400/5 border border-amber-400/10 rounded-xl">
+              <p className="text-[9px] font-semibold text-amber-400 uppercase mb-2">{t('results.weaknesses')}</p>
               <ul className="text-xs space-y-1 text-on-surface opacity-80">
                 {evaluation?.cons?.length ? evaluation.cons.map((c, i) => <li key={i}>• {c}</li>) : <li>{t('results.loading')}</li>}
               </ul>
@@ -531,9 +530,9 @@ const ResultsPage = () => {
                     architectureAndFit: 'Architecture'
                   };
                   return (
-                    <div key={key} className="flex justify-between items-center bg-surface-container-high/50 px-3 py-2 rounded-lg border border-outline-variant/5">
-                      <span className="text-[9px] font-bold uppercase opacity-50">{labels[key] || key}</span>
-                      <span className="text-[10px] font-black text-primary">{val}/10</span>
+                    <div key={key} className="flex justify-between items-center bg-white/[0.02] border border-white/[0.08] px-3 py-2 rounded-lg">
+                      <span className="text-[9px] font-semibold uppercase opacity-60">{labels[key] || key}</span>
+                      <span className="text-[10px] font-semibold text-primary">{val}/10</span>
                     </div>
                   );
                 })}
@@ -544,31 +543,31 @@ const ResultsPage = () => {
       </div>
       {/* Suggestions and Breakdown Sections - Blocker for non-VIPs */}
       {!isVip ? (
-        <div className="relative mt-12">
+        <div className="relative mt-10">
           {/* Blurred Background Mockups of suggestions & detailed reviews */}
           <div className="filter blur-md pointer-events-none select-none opacity-20">
             {/* suggestions */}
-            <section className="bg-surface-container-low border border-outline-variant/15 rounded-[40px] p-10 mb-12 shadow-sm">
-              <div className="flex items-center gap-3 mb-8">
+            <section className="bg-[#121214]/40 border border-white/[0.05] rounded-xl p-8 mb-10 shadow-sm">
+              <div className="flex items-center gap-3 mb-6">
                 <span className="material-symbols-outlined text-primary">tips_and_updates</span>
-                <h3 className="text-2xl font-black text-on-surface">Mock Plan</h3>
+                <h3 className="text-xl font-bold text-on-surface">Mock Plan</h3>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div className="bg-surface-container-high p-6 rounded-3xl border border-outline-variant/10 h-28"></div>
-                <div className="bg-surface-container-high p-6 rounded-3xl border border-outline-variant/10 h-28"></div>
-                <div className="bg-surface-container-high p-6 rounded-3xl border border-outline-variant/10 h-28"></div>
+                <div className="bg-white/[0.02] border border-white/[0.05] p-6 rounded-xl h-28"></div>
+                <div className="bg-white/[0.02] border border-white/[0.05] p-6 rounded-xl h-28"></div>
+                <div className="bg-white/[0.02] border border-white/[0.05] p-6 rounded-xl h-28"></div>
               </div>
             </section>
             {/* detailed breakdown */}
             <section className="space-y-6">
-              <h3 className="text-2xl font-black text-on-surface ml-4">Mock Breakdown</h3>
-              <div className="bg-surface-container-low border border-outline-variant/15 rounded-[40px] p-8 shadow-sm h-64"></div>
+              <h3 className="text-xl font-bold text-on-surface ml-4">Mock Breakdown</h3>
+              <div className="bg-[#121214]/40 border border-white/[0.05] rounded-xl p-8 shadow-sm h-64"></div>
             </section>
           </div>
 
           {/* Glowing Glass Blocker Card */}
           <div className="absolute inset-0 flex items-center justify-center px-4">
-            <div className="max-w-2xl w-full bg-surface-container-low/90 backdrop-blur-xl rounded-[40px] p-10 text-center shadow-2xl relative overflow-hidden group vip-card-glow">
+            <div className="max-w-2xl w-full bg-[#09090b]/90 backdrop-blur-xl border border-white/[0.08] rounded-xl p-8 text-center shadow-2xl relative overflow-hidden group">
               <div className="absolute inset-0 bg-gradient-to-tr from-primary/10 via-secondary/15 to-transparent opacity-50"></div>
               
               {/* Floating Sparkles & Stars */}
@@ -578,41 +577,41 @@ const ResultsPage = () => {
               <span className="material-symbols-outlined absolute bottom-8 right-8 text-amber-300 text-base opacity-50 animate-bounce" style={{ animationDelay: '0.1s', animationDuration: '4s' }}>star</span>
               
               <div className="relative z-10">
-                <div className="w-20 h-20 mx-auto bg-gradient-to-tr from-[#FBBF24] to-[#F59E0B] rounded-3xl flex items-center justify-center mb-6 shadow-lg shadow-amber-500/20 badge-vip-animated border-none">
-                  <span className="material-symbols-outlined text-4xl text-black material-symbols-fill">workspace_premium</span>
+                <div className="w-16 h-16 mx-auto bg-amber-500/10 border border-amber-500/30 text-amber-500 rounded-xl flex items-center justify-center mb-6 shadow-md">
+                  <span className="material-symbols-outlined text-3xl text-amber-500 material-symbols-fill">workspace_premium</span>
                 </div>
                 
-                <h3 className="text-3xl sm:text-4xl font-black tracking-tighter mb-4 vip-text-shimmer">
+                <h3 className="text-2xl sm:text-3xl font-bold tracking-tight mb-4 vip-text-shimmer">
                   Mở khóa Advanced Analytics VIP
                 </h3>
-                <p className="text-on-surface-variant font-medium text-sm sm:text-base leading-relaxed mb-8 max-w-lg mx-auto">
+                <p className="text-on-surface-variant font-medium text-xs sm:text-sm leading-relaxed mb-8 max-w-lg mx-auto">
                   Nâng cấp lên tài khoản Premium VIP để truy cập biểu đồ Radar Chart năng lực chuyên sâu, bản kế hoạch phát triển cá nhân và nhận phản hồi chi tiết từ chuyên gia AI cho từng câu hỏi.
                 </p>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-md mx-auto mb-10 text-left">
-                  <div className="flex items-center gap-3 bg-surface-container/50 p-4 rounded-2xl border border-outline-variant/10">
-                    <span className="material-symbols-outlined text-primary text-[20px]">donut_large</span>
-                    <span className="text-xs font-bold text-on-surface">Radar Chart năng lực chuyên sâu</span>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-md mx-auto mb-8 text-left">
+                  <div className="flex items-center gap-3 bg-white/[0.01] p-3 rounded-lg border border-white/[0.05]">
+                    <span className="material-symbols-outlined text-primary text-[18px]">donut_large</span>
+                    <span className="text-xs font-semibold text-on-surface">Radar Chart năng lực chuyên sâu</span>
                   </div>
-                  <div className="flex items-center gap-3 bg-surface-container/50 p-4 rounded-2xl border border-outline-variant/10">
-                    <span className="material-symbols-outlined text-secondary text-[20px]">psychology</span>
-                    <span className="text-xs font-bold text-on-surface">Đánh giá chi tiết từng câu trả lời</span>
+                  <div className="flex items-center gap-3 bg-white/[0.01] p-3 rounded-lg border border-white/[0.05]">
+                    <span className="material-symbols-outlined text-secondary text-[18px]">psychology</span>
+                    <span className="text-xs font-semibold text-on-surface">Đánh giá chi tiết từng câu trả lời</span>
                   </div>
-                  <div className="flex items-center gap-3 bg-surface-container/50 p-4 rounded-2xl border border-outline-variant/10">
-                    <span className="material-symbols-outlined text-green-400 text-[20px]">tips_and_updates</span>
-                    <span className="text-xs font-bold text-on-surface">Kế hoạch phát triển sự nghiệp</span>
+                  <div className="flex items-center gap-3 bg-white/[0.01] p-3 rounded-lg border border-white/[0.05]">
+                    <span className="material-symbols-outlined text-green-400 text-[18px]">tips_and_updates</span>
+                    <span className="text-xs font-semibold text-on-surface">Kế hoạch phát triển sự nghiệp</span>
                   </div>
-                  <div className="flex items-center gap-3 bg-surface-container/50 p-4 rounded-2xl border border-outline-variant/10">
-                    <span className="material-symbols-outlined text-amber-400 text-[20px]">history_edu</span>
-                    <span className="text-xs font-bold text-on-surface">Insight sửa lỗi từ chuyên gia AI</span>
+                  <div className="flex items-center gap-3 bg-white/[0.01] p-3 rounded-lg border border-white/[0.05]">
+                    <span className="material-symbols-outlined text-amber-400 text-[18px]">history_edu</span>
+                    <span className="text-xs font-semibold text-on-surface">Insight sửa lỗi từ chuyên gia AI</span>
                   </div>
                 </div>
 
                 <button 
                   onClick={() => navigate('/upgrade')}
-                  className="bg-gradient-to-r from-[#6366F1] to-[#8B5CF6] text-white px-10 py-5 rounded-2xl font-black text-sm uppercase tracking-widest hover:shadow-lg hover:shadow-[#6366F1]/30 transition-all active:scale-95 flex items-center justify-center gap-3 mx-auto"
+                  className="bg-white text-black hover:bg-neutral-200 px-8 py-3 rounded-lg font-semibold text-xs uppercase tracking-widest transition-all active:scale-[0.98] flex items-center justify-center gap-2.5 mx-auto cursor-pointer"
                 >
-                  <span className="material-symbols-outlined text-[18px]">rocket_launch</span>
+                  <span className="material-symbols-outlined text-[16px]">rocket_launch</span>
                   Nâng cấp VIP ngay
                 </button>
               </div>
@@ -622,16 +621,16 @@ const ResultsPage = () => {
       ) : (
         <>
           {/* Suggestions Section */}
-          <section className="bg-surface-container-low border border-outline-variant/15 rounded-[40px] p-10 mb-12 shadow-sm">
-            <div className="flex items-center gap-3 mb-8">
+          <section className="bg-[#121214]/40 backdrop-blur-2xl border border-white/[0.05] rounded-xl p-8 mb-10 shadow-sm">
+            <div className="flex items-center gap-3 mb-6">
               <span className="material-symbols-outlined text-primary">tips_and_updates</span>
-              <h3 className="text-2xl font-black text-on-surface">{t('results.growth_plan')}</h3>
+              <h3 className="text-xl font-bold text-on-surface">{t('results.growth_plan')}</h3>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {evaluation?.improvements?.map((imp, i) => (
-                <div key={i} className="bg-surface-container-high p-6 rounded-3xl border border-outline-variant/10">
-                  <span className="text-2xl font-black text-primary opacity-20 block mb-2">0{i + 1}</span>
-                  <p className="text-sm font-bold text-on-surface leading-relaxed">{imp}</p>
+                <div key={i} className="bg-white/[0.02] border border-white/[0.05] p-5 rounded-xl">
+                  <span className="text-lg font-bold text-primary opacity-30 block mb-2">0{i + 1}</span>
+                  <p className="text-xs font-semibold text-on-surface leading-relaxed">{imp}</p>
                 </div>
               ))}
             </div>
@@ -639,57 +638,57 @@ const ResultsPage = () => {
 
           {/* Detailed Chat Analysis */}
           <section className="space-y-6">
-            <h3 className="text-2xl font-black text-on-surface ml-4">{t('results.breakdown')}</h3>
+            <h3 className="text-xl font-bold text-on-surface ml-4">{t('results.breakdown')}</h3>
             {evaluation?.detailedFeedback?.map((item, i) => (
-              <div key={i} className="bg-surface-container-low border border-outline-variant/15 rounded-[40px] p-8 shadow-sm group hover:border-primary/30 transition-all">
+              <div key={i} className="bg-[#121214]/40 border border-white/[0.05] rounded-xl p-6 shadow-sm group hover:border-primary/20 transition-all">
                 <div className="flex flex-col sm:flex-row justify-between items-start mb-6 gap-4">
                   <div className="max-w-2xl">
-                    <p className="text-[10px] font-black text-primary uppercase tracking-widest mb-2">{t('results.question')} {i + 1}</p>
-                    <h4 className="text-lg font-bold text-on-surface leading-tight">{item?.question}</h4>
+                    <p className="text-[9px] font-semibold text-primary uppercase tracking-widest mb-1.5">{t('results.question')} {i + 1}</p>
+                    <h4 className="text-base font-bold text-on-surface leading-snug">{item?.question}</h4>
                   </div>
                   <div className="flex flex-row sm:flex-col items-center sm:items-end justify-between w-full sm:w-auto">
-                    <span className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border ${item?.status === 'correct' ? 'bg-green-400/10 text-green-400 border-green-400/20' :
+                    <span className={`px-2.5 py-0.5 rounded-md text-[9px] font-semibold uppercase tracking-wider border ${item?.status === 'correct' ? 'bg-green-400/10 text-green-400 border-green-400/20' :
                         item?.status === 'partially_correct' ? 'bg-amber-400/10 text-amber-400 border-amber-400/20' :
                           'bg-red-400/10 text-red-400 border-red-400/20'
                       }`}>
                       {item?.status?.replace('_', ' ') || 'N/A'}
                     </span>
-                    <span className="text-2xl font-black text-on-surface sm:mt-2">{item?.score || 0}/10</span>
+                    <span className="text-xl font-bold text-on-surface sm:mt-1.5">{item?.score || 0}/10</span>
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-6 border-t border-outline-variant/10">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-6 border-t border-white/[0.05]">
                   <div>
-                    <p className="text-[11px] font-black text-on-surface-variant uppercase mb-3">{t('results.your_answer')}</p>
-                    <p className="text-sm text-on-surface opacity-80 leading-relaxed bg-surface-container-high p-4 rounded-2xl italic whitespace-pre-wrap">
+                    <p className="text-[9px] font-semibold text-on-surface-variant uppercase tracking-wider mb-2.5">{t('results.your_answer')}</p>
+                    <p className="text-xs text-on-surface opacity-80 leading-relaxed bg-white/[0.01] border border-white/[0.05] p-4 rounded-lg italic whitespace-pre-wrap">
                       {item?.answer ? item.answer.replace(/\\n/g, '\n') : `[${t('results.skipped')}]`}
                     </p>
-                    <p className="text-xs text-on-surface-variant mt-4 font-medium whitespace-pre-wrap">
+                    <p className="text-xs text-on-surface-variant mt-4 font-medium whitespace-pre-wrap leading-relaxed">
                       {item?.feedback?.replace(/\\n/g, '\n')}
                     </p>
 
                     <div className="mt-4 space-y-3">
                       {item?.pros && item.pros.length > 0 && (
-                        <div className="p-3 bg-green-400/5 border border-green-400/10 rounded-xl">
-                          <p className="text-[9px] font-black text-green-400 uppercase mb-1">{t('results.strengths')}</p>
-                          <ul className="text-[11px] space-y-0.5 text-on-surface opacity-80">
+                        <div className="p-3 bg-green-400/5 border border-green-400/10 rounded-lg">
+                          <p className="text-[8px] font-semibold text-green-400 uppercase tracking-wider mb-1">{t('results.strengths')}</p>
+                          <ul className="text-xs space-y-0.5 text-on-surface opacity-80">
                             {item.pros.map((p, idx) => <li key={idx}>• {p}</li>)}
                           </ul>
                         </div>
                       )}
                       {item?.cons && item.cons.length > 0 && (
-                        <div className="p-3 bg-amber-400/5 border border-amber-400/10 rounded-xl">
-                          <p className="text-[9px] font-black text-amber-400 uppercase mb-1">{t('results.weaknesses')}</p>
-                          <ul className="text-[11px] space-y-0.5 text-on-surface opacity-80">
+                        <div className="p-3 bg-amber-400/5 border border-amber-400/10 rounded-lg">
+                          <p className="text-[8px] font-semibold text-amber-400 uppercase tracking-wider mb-1">{t('results.weaknesses')}</p>
+                          <ul className="text-xs space-y-0.5 text-on-surface opacity-80">
                             {item.cons.map((c, idx) => <li key={idx}>• {c}</li>)}
                           </ul>
                         </div>
                       )}
                     </div>
                   </div>
-                  <div className="bg-primary/5 p-6 rounded-3xl border border-primary/10">
-                    <p className="text-[11px] font-black text-primary uppercase mb-3">{t('results.expert_insight')}</p>
-                    <div className="text-sm text-on-surface leading-relaxed font-medium whitespace-pre-wrap">
+                  <div className="bg-primary/5 p-5 rounded-lg border border-primary/10">
+                    <p className="text-[9px] font-semibold text-primary uppercase tracking-wider mb-2.5">{t('results.expert_insight')}</p>
+                    <div className="text-xs text-on-surface leading-relaxed font-medium whitespace-pre-wrap">
                       {item?.correctReview?.replace(/\\n/g, '\n')}
                     </div>
                   </div>
@@ -702,9 +701,9 @@ const ResultsPage = () => {
 
       {/* Congratulations Modal */}
       {showCongrats && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-surface/80 backdrop-blur-md animate-in fade-in duration-300">
-          <div className="bg-surface-container-low border border-outline-variant/20 rounded-[32px] p-8 max-w-md w-full shadow-2xl relative overflow-hidden text-center animate-in zoom-in-95 duration-500">
-            {/* Simple CSS Confetti Background Effect */}
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background/80 backdrop-blur-sm animate-in fade-in duration-300">
+          <div className="bg-[#09090b] border border-white/[0.05] rounded-xl p-6 max-w-sm w-full shadow-2xl relative overflow-hidden text-center animate-in zoom-in-95 duration-300">
+            {/* Simple Confetti Background Effect */}
             <div className="absolute top-0 left-0 w-full h-full pointer-events-none overflow-hidden opacity-30">
               <div className="absolute top-[-10%] left-[20%] w-3 h-3 bg-primary rounded-full animate-bounce" style={{ animationDelay: '0.1s', animationDuration: '2s' }}></div>
               <div className="absolute top-[-10%] left-[50%] w-4 h-4 bg-secondary rotate-45 animate-bounce" style={{ animationDelay: '0.5s', animationDuration: '2.5s' }}></div>
@@ -712,21 +711,21 @@ const ResultsPage = () => {
               <div className="absolute top-[20%] left-[-10%] w-4 h-4 bg-amber-400 rotate-12 animate-pulse" style={{ animationDelay: '0.7s', animationDuration: '3s' }}></div>
             </div>
 
-            <div className="w-20 h-20 mx-auto bg-gradient-to-tr from-primary to-secondary rounded-2xl flex items-center justify-center mb-6 shadow-lg shadow-primary/20">
-              <span className="material-symbols-outlined text-4xl text-on-primary">military_tech</span>
+            <div className="w-14 h-14 mx-auto bg-primary/10 border border-primary/20 rounded-xl flex items-center justify-center mb-6 shadow-sm">
+              <span className="material-symbols-outlined text-3xl text-primary">military_tech</span>
             </div>
             
-            <h3 className="text-3xl font-black text-on-surface tracking-tighter mb-2">
+            <h3 className="text-xl font-bold text-on-surface tracking-tight mb-2">
               {t('results.congrats_title')}
             </h3>
-            <p className="text-on-surface-variant font-medium text-sm leading-relaxed mb-8">
+            <p className="text-on-surface-variant font-medium text-xs leading-relaxed mb-6">
               {t('results.congrats_desc', { score: interview?.evaluation?.totalScore })}
             </p>
 
-            <div className="flex gap-4">
+            <div className="flex gap-3">
               <button 
                 onClick={closeCongratsModal}
-                className="flex-1 py-3.5 rounded-xl bg-surface-container-high text-on-surface font-bold text-xs uppercase tracking-widest hover:bg-outline-variant/20 transition-colors"
+                className="flex-1 py-2.5 rounded-lg bg-white/[0.02] border border-white/[0.08] text-on-surface font-semibold text-xs uppercase tracking-widest hover:bg-white/[0.04] transition-colors cursor-pointer"
               >
                 {t('results.congrats_later')}
               </button>
@@ -736,7 +735,7 @@ const ResultsPage = () => {
                   closeCongratsModal();
                 }}
                 disabled={isSharing}
-                className="flex-1 py-3.5 rounded-xl bg-primary text-on-primary font-bold text-xs uppercase tracking-widest hover:bg-primary/90 transition-colors shadow-lg shadow-primary/20 flex justify-center items-center gap-2"
+                className="flex-1 py-2.5 rounded-lg bg-primary text-on-primary font-semibold text-xs uppercase tracking-widest hover:bg-primary-dim transition-colors shadow-sm flex justify-center items-center gap-2 cursor-pointer"
               >
                 {isSharing ? <span className="material-symbols-outlined animate-spin text-sm">progress_activity</span> : <span className="material-symbols-outlined text-sm">rocket_launch</span>}
                 {t('results.congrats_share')}

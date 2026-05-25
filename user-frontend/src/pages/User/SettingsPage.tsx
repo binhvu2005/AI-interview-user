@@ -78,76 +78,72 @@ const SettingsPage = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="max-w-4xl pb-12 animate-in fade-in slide-in-from-bottom-4 duration-700">
+    <div className="max-w-4xl pb-12 animate-in fade-in slide-in-from-bottom-4 duration-500">
       <header className="mb-10 relative">
-        <div className="absolute -top-10 -left-10 w-40 h-40 bg-primary/10 blur-[80px] rounded-full pointer-events-none"></div>
-        <h1 className="text-4xl font-black text-on-surface tracking-tighter mb-3 font-headline">{t('settings.title')}</h1>
-        <p className="text-sm text-on-surface-variant font-medium opacity-60 max-w-xl leading-relaxed">{t('settings.desc')}</p>
+        <div className="absolute -top-10 -left-10 w-40 h-40 bg-white/[0.01] blur-[80px] rounded-full pointer-events-none"></div>
+        <h1 className="text-3xl font-semibold text-on-surface tracking-tight mb-2 font-sans">{t('settings.title')}</h1>
+        <p className="text-sm text-on-surface-variant/70 font-medium max-w-xl leading-relaxed">{t('settings.desc')}</p>
       </header>
 
       <div className="space-y-6">
         {/* Appearance Group */}
-        <div className="bg-surface-container-low border border-outline-variant/15 rounded-[32px] p-2 overflow-hidden shadow-sm">
-          <div className="px-6 py-4 border-b border-outline-variant/5">
-            <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-on-surface-variant opacity-50">{isVi ? 'GIAO DIỆN' : 'APPEARANCE'}</h3>
+        <div className="bg-[#09090b]/40 backdrop-blur-md border border-white/[0.06] rounded-xl overflow-hidden shadow-sm">
+          <div className="px-6 py-3.5 border-b border-white/[0.06] bg-[#121214]/30">
+            <h3 className="text-[11px] font-semibold uppercase tracking-wider text-on-surface-variant/60">{isVi ? 'GIAO DIỆN' : 'APPEARANCE'}</h3>
           </div>
 
-          <div className="p-4 space-y-2">
+          <div className="divide-y divide-white/[0.05]">
             {/* Theme Toggle Card */}
-            <div className="flex items-center justify-between p-5 bg-surface-container-lowest rounded-2xl border border-outline-variant/10 group hover:border-primary/30 transition-all duration-300">
+            <div className="flex items-center justify-between p-5 bg-transparent group transition-all duration-300 hover:bg-white/[0.01]">
               <div className="flex items-center gap-4">
-                <div className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all duration-500 ${isDark ? 'bg-primary/10 text-primary' : 'bg-amber-400/10 text-amber-500'}`}>
-                  <span className="material-symbols-outlined text-2xl group-hover:rotate-12 transition-transform">
+                <div className={`w-10 h-10 rounded-lg flex items-center justify-center border transition-all duration-300 ${isDark ? 'bg-white/[0.04] text-white border-white/[0.08]' : 'bg-amber-400/5 text-amber-500 border-amber-500/10'}`}>
+                  <span className="material-symbols-outlined text-xl group-hover:rotate-12 transition-transform">
                     {isDark ? 'dark_mode' : 'light_mode'}
                   </span>
                 </div>
                 <div>
-                  <h4 className="font-bold text-sm text-on-surface">{t('settings.darkmode')}</h4>
-                  <p className="text-[11px] text-on-surface-variant mt-0.5 font-medium opacity-70">{t('settings.darkmode_desc')}</p>
+                  <h4 className="font-semibold text-sm text-on-surface">{t('settings.darkmode')}</h4>
+                  <p className="text-[11px] text-on-surface-variant/60 mt-0.5 font-medium">{t('settings.darkmode_desc')}</p>
                 </div>
               </div>
               <button
                 onClick={toggleTheme}
-                className={`w-14 h-8 rounded-full relative transition-all duration-500 shadow-inner group/toggle ${isDark ? 'bg-primary' : 'bg-surface-container-highest'}`}
+                className={`w-9 h-5 rounded-full relative transition-all duration-200 border border-transparent ${isDark ? 'bg-white' : 'bg-white/[0.08] border-white/[0.08]'}`}
               >
-                <div className={`w-6 h-6 rounded-full bg-white absolute top-1 shadow-md transition-all duration-500 transform flex items-center justify-center ${isDark ? 'translate-x-7' : 'translate-x-1'}`}>
-                  <span className="material-symbols-outlined text-[14px] text-primary opacity-0 group-hover/toggle:opacity-100 transition-opacity">
-                    {isDark ? 'check' : 'circle'}
-                  </span>
-                </div>
+                <div className={`w-4 h-4 rounded-full absolute top-[2px] transition-transform duration-200 ${isDark ? 'translate-x-[18px] bg-black' : 'translate-x-[2px] bg-white/60'}`} />
               </button>
             </div>
 
             {/* Language Selection Card */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between p-5 bg-surface-container-lowest rounded-2xl border border-outline-variant/10 group hover:border-primary/30 transition-all duration-300 gap-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between p-5 bg-transparent group transition-all duration-300 hover:bg-white/[0.01] gap-4">
               <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-2xl bg-tertiary/10 flex items-center justify-center text-tertiary transition-transform group-hover:scale-110">
-                  <span className="material-symbols-outlined text-2xl">language</span>
+                <div className="w-10 h-10 rounded-lg bg-white/[0.04] border border-white/[0.08] flex items-center justify-center text-white transition-transform group-hover:scale-105">
+                  <span className="material-symbols-outlined text-xl">language</span>
                 </div>
                 <div>
-                  <h4 className="font-bold text-sm text-on-surface">{t('settings.language')}</h4>
-                  <p className="text-[11px] text-on-surface-variant mt-0.5 font-medium opacity-70">{t('settings.language_desc')}</p>
+                  <h4 className="font-semibold text-sm text-on-surface">{t('settings.language')}</h4>
+                  <p className="text-[11px] text-on-surface-variant/60 mt-0.5 font-medium">{t('settings.language_desc')}</p>
                 </div>
               </div>
-              <div className="flex bg-surface-container-high p-1 rounded-xl border border-outline-variant/10">
+              <div className="flex bg-[#121214] p-1 rounded-lg border border-white/[0.06]">
                 <button
                   onClick={() => setLanguage('vi')}
-                  className={`px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all flex items-center gap-2 ${currentLang === 'vi'
-                      ? 'bg-surface-container-lowest text-primary shadow-sm ring-1 ring-primary/10'
-                      : 'text-on-surface-variant hover:text-on-surface'
+                  className={`px-3 py-1 text-[11px] font-semibold tracking-wide rounded-md transition-all flex items-center gap-1.5 ${currentLang === 'vi'
+                      ? 'bg-white/[0.08] text-white shadow-sm'
+                      : 'text-on-surface-variant/50 hover:text-on-surface'
                     }`}
                 >
-                  <span className="text-base">🇻🇳</span>
+                  <span className="text-sm">🇻🇳</span>
                   TIẾNG VIỆT
                 </button>
                 <button
                   onClick={() => setLanguage('en')}
-                  className={`px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all flex items-center gap-2 ${currentLang === 'en'
-                      ? 'bg-surface-container-lowest text-primary shadow-sm ring-1 ring-primary/10'
-                      : 'text-on-surface-variant hover:text-on-surface'
+                  className={`px-3 py-1 text-[11px] font-semibold tracking-wide rounded-md transition-all flex items-center gap-1.5 ${currentLang === 'en'
+                      ? 'bg-white/[0.08] text-white shadow-sm'
+                      : 'text-on-surface-variant/50 hover:text-on-surface'
                     }`}
                 >
-                  <span className="text-base">🇬🇧</span>
+                  <span className="text-sm">🇬🇧</span>
                   ENGLISH
                 </button>
               </div>
@@ -156,48 +152,44 @@ const SettingsPage = () => {
         </div>
 
         {/* Notifications Group */}
-        <div className="bg-surface-container-low border border-outline-variant/15 rounded-[32px] p-2 overflow-hidden shadow-sm">
-          <div className="px-6 py-4 border-b border-outline-variant/5">
-            <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-on-surface-variant opacity-50">{isVi ? 'THÔNG BÁO' : 'NOTIFICATIONS'}</h3>
+        <div className="bg-[#09090b]/40 backdrop-blur-md border border-white/[0.06] rounded-xl overflow-hidden shadow-sm">
+          <div className="px-6 py-3.5 border-b border-white/[0.06] bg-[#121214]/30">
+            <h3 className="text-[11px] font-semibold uppercase tracking-wider text-on-surface-variant/60">{isVi ? 'THÔNG BÁO' : 'NOTIFICATIONS'}</h3>
           </div>
 
-          <div className="p-4">
-            <div className={`flex items-center justify-between p-5 bg-surface-container-lowest rounded-2xl border border-outline-variant/10 transition-all duration-300 ${!isVip ? 'opacity-70 cursor-not-allowed grayscale' : 'hover:border-primary/30 group'}`}>
+          <div className="p-5">
+            <div className={`flex items-center justify-between bg-transparent transition-all duration-300 ${!isVip ? 'opacity-50 cursor-not-allowed grayscale' : 'group'}`}>
               <div className="flex items-center gap-4">
-                <div className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all duration-500 ${emailNotifications ? 'bg-primary/10 text-primary' : 'bg-surface-container-highest text-on-surface-variant'}`}>
-                  <span className="material-symbols-outlined text-2xl group-hover:rotate-12 transition-transform">notifications_active</span>
+                <div className={`w-10 h-10 rounded-lg flex items-center justify-center border transition-all duration-300 ${emailNotifications ? 'bg-white/[0.04] text-white border-white/[0.08]' : 'bg-white/[0.01] text-on-surface-variant/60 border-white/[0.04]'}`}>
+                  <span className="material-symbols-outlined text-xl group-hover:rotate-12 transition-transform">notifications_active</span>
                 </div>
                 <div>
-                  <h4 className="font-bold text-sm text-on-surface flex items-center gap-2">
+                  <h4 className="font-semibold text-sm text-on-surface flex items-center gap-2">
                     {t('settings.email_notif')}
-                    {!isVip && <span className="text-[9px] bg-amber-500/20 text-amber-600 px-2 py-0.5 rounded-full uppercase tracking-tighter font-black">VIP ONLY</span>}
+                    {!isVip && <span className="text-[9px] bg-amber-500/10 text-amber-400 border border-amber-500/20 px-2 py-0.5 rounded font-semibold tracking-wider">VIP ONLY</span>}
                   </h4>
-                  <p className="text-[11px] text-on-surface-variant mt-0.5 font-medium opacity-70">{t('settings.email_notif_desc')}</p>
+                  <p className="text-[11px] text-on-surface-variant/60 mt-0.5 font-medium">{t('settings.email_notif_desc')}</p>
                 </div>
               </div>
               <button
                 onClick={toggleEmailNotifications}
                 disabled={!isVip}
-                className={`w-14 h-8 rounded-full relative transition-all duration-500 shadow-inner group/toggle ${emailNotifications ? 'bg-primary' : 'bg-surface-container-highest'}`}
+                className={`w-9 h-5 rounded-full relative transition-all duration-200 border border-transparent ${emailNotifications ? 'bg-white' : 'bg-white/[0.08] border-white/[0.08]'}`}
               >
-                <div className={`w-6 h-6 rounded-full bg-white absolute top-1 shadow-md transition-all duration-500 transform flex items-center justify-center ${emailNotifications ? 'translate-x-7' : 'translate-x-1'}`}>
-                  <span className="material-symbols-outlined text-[14px] text-primary opacity-0 group-hover/toggle:opacity-100 transition-opacity">
-                    {emailNotifications ? 'check' : 'close'}
-                  </span>
-                </div>
+                <div className={`w-4 h-4 rounded-full absolute top-[2px] transition-transform duration-200 ${emailNotifications ? 'translate-x-[18px] bg-black' : 'translate-x-[2px] bg-white/60'}`} />
               </button>
             </div>
           </div>
         </div>
 
         {/* Account Safety Info */}
-        <div className="p-8 bg-gradient-to-br from-primary/5 to-secondary/5 border border-primary/10 rounded-[32px] flex flex-col md:flex-row items-center gap-6">
-          <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-            <span className="material-symbols-outlined text-3xl text-primary">security</span>
+        <div className="p-6 bg-[#09090b]/30 border border-white/[0.06] rounded-xl flex flex-col md:flex-row items-center gap-5 relative overflow-hidden">
+          <div className="w-10 h-10 rounded-lg bg-white/[0.04] border border-white/[0.08] flex items-center justify-center shrink-0 text-white">
+            <span className="material-symbols-outlined text-xl">security</span>
           </div>
-          <div>
-            <h4 className="font-bold text-on-surface mb-1">{isVi ? 'Bảo mật tài khoản' : 'Account Security'}</h4>
-            <p className="text-xs text-on-surface-variant leading-relaxed opacity-70">
+          <div className="flex-1">
+            <h4 className="font-semibold text-sm text-on-surface mb-1">{isVi ? 'Bảo mật tài khoản' : 'Account Security'}</h4>
+            <p className="text-xs text-on-surface-variant/60 leading-relaxed">
               {isVi
                 ? 'Chúng tôi sử dụng mã hóa đầu cuối để bảo vệ dữ liệu phỏng vấn và thông tin cá nhân của bạn. Bạn có thể đổi mật khẩu trong mục Hồ sơ.'
                 : 'We use end-to-end encryption to protect your interview data and personal info. Change your password in the Profile section.'}
@@ -205,7 +197,7 @@ const SettingsPage = () => {
           </div>
           <button
             onClick={() => navigate('/profile')}
-            className="md:ml-auto px-6 py-3 bg-surface-container-high text-on-surface rounded-xl text-[10px] font-black uppercase tracking-widest border border-outline-variant/10 hover:bg-primary hover:text-on-primary transition-all whitespace-nowrap"
+            className="md:ml-auto px-4 py-2 bg-white text-black hover:bg-neutral-200 rounded-lg text-xs font-semibold tracking-wide transition-all whitespace-nowrap active:scale-[0.98]"
           >
             {isVi ? 'ĐẾN HỒ SƠ' : 'GO TO PROFILE'}
           </button>

@@ -145,40 +145,40 @@ const SpectatorPage = () => {
   return (
     <div className="h-screen bg-background text-on-surface flex flex-col overflow-hidden font-sans">
       {/* Header */}
-      <div className="h-16 px-6 bg-surface/10 backdrop-blur-md border-b border-white/5 flex items-center justify-between z-50 shrink-0">
+      <div className="h-14 px-6 bg-white/[0.02] backdrop-blur-xl border-b border-white/[0.06] flex items-center justify-between z-50 shrink-0">
         <div className="flex items-center gap-3">
-           <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
-             <span className="material-symbols-outlined text-white text-sm">visibility</span>
+           <div className="w-6 h-6 rounded-md bg-white/[0.04] border border-white/[0.08] flex items-center justify-center text-primary">
+             <span className="material-symbols-outlined text-[16px]">visibility</span>
            </div>
            <div>
-              <p className="text-white text-xs font-black uppercase tracking-widest">{t('watch.status_live')}</p>
-              <p className="text-white/40 text-[10px] font-bold uppercase tracking-tight">{t('watch.room_code')}: {code}</p>
+              <p className="text-white text-xs font-semibold uppercase tracking-wider">{t('watch.status_live')}</p>
+              <p className="text-on-surface-variant/50 text-[10px] uppercase tracking-wider mt-0.5">{t('watch.room_code')}: {code}</p>
            </div>
         </div>
         <button 
           onClick={() => navigate('/join')}
-          className="bg-white/5 hover:bg-white/10 text-white px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all"
+          className="bg-white/[0.04] text-on-surface border border-white/[0.08] hover:bg-white/[0.08] px-4 py-2 rounded-lg text-xs font-semibold transition-all hover:-translate-y-0.5 active:scale-[0.98]"
         >
           {t('watch.btn_leave')}
         </button>
       </div>
 
       {/* Main Two-Column Layout */}
-      <main className="flex-1 flex flex-col lg:flex-row p-6 gap-6 min-h-0 overflow-hidden relative">
+      <main className="flex-1 flex flex-col lg:flex-row p-6 gap-6 min-h-0 overflow-hidden relative bg-[#030303]">
         {connecting && (
           <div className="absolute inset-0 z-50 flex flex-col items-center justify-center bg-black/85 backdrop-blur-md p-6">
-             <div className="relative w-24 h-24 flex items-center justify-center mb-6">
-                <div className="absolute inset-0 border-4 border-primary/20 rounded-full"></div>
-                <div className="absolute inset-0 border-4 border-t-primary rounded-full animate-spin"></div>
-                <span className="material-symbols-outlined text-4xl text-primary">sensors</span>
+             <div className="relative w-16 h-16 flex items-center justify-center mb-6">
+                <div className="absolute inset-0 border-2 border-white/[0.04] rounded-full"></div>
+                <div className="absolute inset-0 border-2 border-t-white rounded-full animate-spin"></div>
+                <span className="material-symbols-outlined text-2xl text-white/80">sensors</span>
              </div>
-             <p className="text-white font-black text-sm uppercase tracking-[0.4em] mb-2">{t('watch.waiting_host') || 'PHÒNG CHỜ'}</p>
-             <p className="text-white/40 text-[10px] font-bold uppercase tracking-widest animate-pulse mb-8">{t('watch.waiting_host_desc') || 'Đang chờ người phỏng vấn bắt đầu...'}</p>
+             <p className="text-white font-semibold text-sm uppercase tracking-[0.3em] mb-1.5">{t('watch.waiting_host') || 'PHÒNG CHỜ'}</p>
+             <p className="text-on-surface-variant/60 text-xs font-medium tracking-wide animate-pulse mb-8">{t('watch.waiting_host_desc') || 'Đang chờ người phỏng vấn bắt đầu...'}</p>
              
              {/* Manual Retry/Join Button after 5s */}
              <button 
                onClick={() => window.location.reload()}
-               className="px-6 py-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-full text-white text-[10px] font-black uppercase tracking-widest transition-all"
+               className="px-4 py-2 bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] rounded-lg text-white text-xs font-semibold transition-all active:scale-[0.98]"
              >
                {isVi ? 'Thử kết nối lại' : 'Retry Connection'}
              </button>
@@ -186,30 +186,30 @@ const SpectatorPage = () => {
         )}
 
         {/* Left Column: Chat Area */}
-        <div className="flex-1 flex flex-col bg-surface-container-low rounded-[32px] border border-outline-variant/10 shadow-2xl relative overflow-hidden backdrop-blur-sm">
-          <div className="p-6 border-b border-outline-variant/10 shrink-0 bg-surface/50 backdrop-blur-sm">
-            <h3 className="font-black text-xs uppercase tracking-widest text-primary flex items-center gap-2">
+        <div className="flex-1 flex flex-col bg-[#09090b]/40 backdrop-blur-md rounded-xl border border-white/[0.06] shadow-xl relative overflow-hidden">
+          <div className="p-4 border-b border-white/[0.06] shrink-0 bg-[#09090b]/50 backdrop-blur-sm">
+            <h3 className="font-semibold text-xs uppercase tracking-wider text-primary flex items-center gap-2">
               <span className="material-symbols-outlined text-sm">forum</span>
               {isVi ? 'HỘI THOẠI PHỎNG VẤN' : 'INTERVIEW CHAT LOG'}
             </h3>
           </div>
 
-          <div ref={scrollRef} className="flex-1 overflow-y-auto p-8 flex flex-col gap-6 scrollbar-none scroll-smooth">
+          <div ref={scrollRef} className="flex-1 overflow-y-auto p-6 flex flex-col gap-5 scrollbar-none scroll-smooth">
             {messages.length > 0 ? (
               messages.map((msg, idx) => (
                 <div key={idx} className={`flex ${msg.role === 'ai' ? 'justify-start' : 'justify-end'} animate-in fade-in slide-in-from-bottom-2`}>
-                  <div className={`max-w-[85%] p-6 rounded-[24px] ${msg.role === 'ai' ? 'bg-surface-container text-on-surface rounded-bl-none border border-outline-variant/10' : 'bg-primary text-on-primary rounded-br-none shadow-lg shadow-primary/20'}`}>
-                    <p className="text-[9px] font-black opacity-60 mb-2 uppercase tracking-[0.2em]">
+                  <div className={`max-w-[85%] p-4 rounded-xl ${msg.role === 'ai' ? 'bg-white/[0.04] border border-white/[0.06] text-on-surface rounded-bl-none' : 'bg-white text-black rounded-br-none shadow-sm shadow-white/5'}`}>
+                    <p className="text-[9px] font-semibold opacity-60 mb-1.5 uppercase tracking-wider">
                       {msg.role === 'ai' ? 'Obsidian AI' : (isVi ? 'ỨNG VIÊN' : 'CANDIDATE')}
                     </p>
-                    <p className="text-base leading-relaxed">{msg.content}</p>
+                    <p className="text-sm leading-relaxed font-sans">{msg.content}</p>
                   </div>
                 </div>
               ))
             ) : (
-              <div className="flex-1 flex flex-col items-center justify-center opacity-30">
-                <span className="material-symbols-outlined text-5xl mb-4">chat_bubble_outline</span>
-                <p className="text-xs font-black uppercase tracking-widest">
+              <div className="flex-1 flex flex-col items-center justify-center opacity-40 py-20">
+                <span className="material-symbols-outlined text-4xl mb-3 text-white/40">chat_bubble_outline</span>
+                <p className="text-xs font-semibold uppercase tracking-wider text-on-surface-variant/50">
                   {isVi ? 'Đang chờ tin nhắn đầu tiên...' : 'Waiting for first message...'}
                 </p>
               </div>
@@ -218,9 +218,9 @@ const SpectatorPage = () => {
         </div>
 
         {/* Right Column: Video Sidebar */}
-        <div className="w-full lg:w-[380px] flex flex-col gap-6 shrink-0">
+        <div className="w-full lg:w-[360px] flex flex-col gap-6 shrink-0">
           {/* Camera Feed */}
-          <div className="bg-surface-container-lowest rounded-[32px] overflow-hidden relative aspect-video lg:aspect-auto lg:h-[320px] border border-outline-variant/20 shadow-2xl group flex items-center justify-center">
+          <div className="bg-black rounded-xl overflow-hidden relative aspect-video lg:aspect-auto lg:h-[300px] border border-white/[0.08] shadow-xl group flex items-center justify-center">
             <video 
               ref={remoteVideoRef} 
               autoPlay 
@@ -230,30 +230,29 @@ const SpectatorPage = () => {
 
             {!remoteStream && !connecting && (
               <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/80">
-                 <span className="material-symbols-outlined text-5xl text-white/10 mb-4">videocam_off</span>
-                 <p className="text-white/20 font-black text-xs uppercase tracking-widest">{t('watch.no_signal')}</p>
+                 <span className="material-symbols-outlined text-4xl text-white/10 mb-3">videocam_off</span>
+                 <p className="text-white/20 font-semibold text-[11px] uppercase tracking-wider">{t('watch.no_signal')}</p>
               </div>
             )}
 
             {/* Live Indicator overlay */}
             {!connecting && remoteStream && (
-              <div className="absolute top-4 left-4 z-10 flex items-center gap-2 bg-black/60 backdrop-blur-md px-3 py-1.5 rounded-full border border-red-500/30">
-                <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
-                <span className="text-white text-[9px] font-black uppercase tracking-widest">{t('spectator.live_tag') || 'LIVE'}</span>
+              <div className="absolute top-4 left-4 z-10 flex items-center gap-1.5 bg-black/60 backdrop-blur-md px-2.5 py-1 rounded-full border border-red-500/20">
+                <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse"></span>
+                <span className="text-white text-[9px] font-semibold uppercase tracking-wider">{t('spectator.live_tag') || 'LIVE'}</span>
               </div>
             )}
           </div>
 
           {/* Info Card */}
-          <div className="bg-primary/5 rounded-[32px] p-8 border border-primary/10 flex flex-col items-center justify-center text-center shadow-xl relative overflow-hidden group">
-            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-primary/40 to-transparent"></div>
-            <div className="w-12 h-12 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center mb-4">
-              <span className="material-symbols-outlined text-primary text-xl font-bold">badge</span>
+          <div className="bg-white/[0.02] border border-white/[0.06] rounded-xl p-6 flex flex-col items-center justify-center text-center shadow-sm relative overflow-hidden group">
+            <div className="w-10 h-10 rounded-lg bg-white/[0.04] border border-white/[0.08] flex items-center justify-center mb-4">
+              <span className="material-symbols-outlined text-primary text-lg font-bold">badge</span>
             </div>
-            <h4 className="text-sm font-black uppercase tracking-widest text-on-surface mb-1">
+            <h4 className="text-xs font-semibold uppercase tracking-wider text-on-surface mb-1">
               {isVi ? 'TRẠNG THÁI THEO DÕI' : 'MONITORING SESSION'}
             </h4>
-            <p className="text-xs text-on-surface-variant font-medium max-w-[240px]">
+            <p className="text-xs text-on-surface-variant/60 font-medium leading-relaxed max-w-[260px]">
               {isVi 
                 ? 'Bạn đang theo dõi buổi phỏng vấn giả định trực tiếp của Obsidian AI.' 
                 : 'You are spectating a live mock interview session powered by Obsidian AI.'}
@@ -261,8 +260,8 @@ const SpectatorPage = () => {
           </div>
 
           {/* Warning Card */}
-          <div className="p-6 bg-surface-container-low border border-outline-variant/10 rounded-[24px] shadow-sm">
-             <p className="text-on-surface-variant/60 text-[10px] leading-relaxed font-medium">
+          <div className="p-5 bg-white/[0.02] border border-white/[0.06] rounded-xl shadow-sm">
+             <p className="text-on-surface-variant/50 text-[11px] leading-relaxed font-medium">
                {t('watch.footer_warning') || 'Lưu ý: Mọi hành vi quay phim, sao chép nội dung câu hỏi và câu trả lời đều bị nghiêm cấm để bảo vệ quyền sở hữu trí tuệ.'}
              </p>
           </div>
