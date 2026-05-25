@@ -33,6 +33,17 @@ const SettingsPage = () => {
     fetchUserData();
   }, []);
 
+  React.useEffect(() => {
+    const handleThemeChange = () => {
+      const theme = localStorage.getItem('theme');
+      setIsDark(theme === 'dark');
+    };
+    window.addEventListener('themeChange', handleThemeChange);
+    return () => {
+      window.removeEventListener('themeChange', handleThemeChange);
+    };
+  }, []);
+
   const toggleEmailNotifications = async () => {
     if (!isVip) {
       toast.error(isVi ? 'Tính năng này chỉ dành cho thành viên VIP' : 'This feature is for VIP members only');
@@ -66,6 +77,7 @@ const SettingsPage = () => {
     localStorage.setItem('theme', next ? 'dark' : 'light');
     if (next) document.documentElement.classList.add('dark');
     else document.documentElement.classList.remove('dark');
+    window.dispatchEvent(new Event('themeChange'));
   };
 
   const setLanguage = (lang: string) => {
@@ -87,16 +99,16 @@ const SettingsPage = () => {
 
       <div className="space-y-6">
         {/* Appearance Group */}
-        <div className="bg-[#09090b]/40 backdrop-blur-md border border-white/[0.06] rounded-xl overflow-hidden shadow-sm">
-          <div className="px-6 py-3.5 border-b border-white/[0.06] bg-[#121214]/30">
+        <div className="bg-surface border border-outline-variant/60 rounded-xl overflow-hidden shadow-sm">
+          <div className="px-6 py-3.5 border-b border-outline-variant/50 bg-surface-container-low/40">
             <h3 className="text-[11px] font-semibold uppercase tracking-wider text-on-surface-variant/60">{isVi ? 'GIAO DIỆN' : 'APPEARANCE'}</h3>
           </div>
 
-          <div className="divide-y divide-white/[0.05]">
+          <div className="divide-y divide-outline-variant/50">
             {/* Theme Toggle Card */}
-            <div className="flex items-center justify-between p-5 bg-transparent group transition-all duration-300 hover:bg-white/[0.01]">
+            <div className="flex items-center justify-between p-5 bg-transparent group transition-all duration-300 hover:bg-surface-container-low/20">
               <div className="flex items-center gap-4">
-                <div className={`w-10 h-10 rounded-lg flex items-center justify-center border transition-all duration-300 ${isDark ? 'bg-white/[0.04] text-white border-white/[0.08]' : 'bg-amber-400/5 text-amber-500 border-amber-500/10'}`}>
+                <div className={`w-10 h-10 rounded-lg flex items-center justify-center border transition-all duration-300 ${isDark ? 'bg-primary/5 text-primary border-primary/10' : 'bg-amber-400/5 text-amber-500 border-amber-500/10'}`}>
                   <span className="material-symbols-outlined text-xl group-hover:rotate-12 transition-transform">
                     {isDark ? 'dark_mode' : 'light_mode'}
                   </span>
@@ -108,16 +120,16 @@ const SettingsPage = () => {
               </div>
               <button
                 onClick={toggleTheme}
-                className={`w-9 h-5 rounded-full relative transition-all duration-200 border border-transparent ${isDark ? 'bg-white' : 'bg-white/[0.08] border-white/[0.08]'}`}
+                className={`w-9 h-5 rounded-full relative transition-all duration-200 border border-outline-variant/60 ${isDark ? 'bg-primary' : 'bg-surface-container'}`}
               >
-                <div className={`w-4 h-4 rounded-full absolute top-[2px] transition-transform duration-200 ${isDark ? 'translate-x-[18px] bg-black' : 'translate-x-[2px] bg-white/60'}`} />
+                <div className={`w-3.5 h-3.5 rounded-full absolute top-[2px] transition-transform duration-200 ${isDark ? 'translate-x-[16px] bg-white' : 'translate-x-[2px] bg-on-surface-variant/50'}`} />
               </button>
             </div>
 
             {/* Language Selection Card */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between p-5 bg-transparent group transition-all duration-300 hover:bg-white/[0.01] gap-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between p-5 bg-transparent group transition-all duration-300 hover:bg-surface-container-low/20 gap-4">
               <div className="flex items-center gap-4">
-                <div className="w-10 h-10 rounded-lg bg-white/[0.04] border border-white/[0.08] flex items-center justify-center text-white transition-transform group-hover:scale-105">
+                <div className="w-10 h-10 rounded-lg bg-primary/5 border border-primary/10 flex items-center justify-center text-primary transition-transform group-hover:scale-105">
                   <span className="material-symbols-outlined text-xl">language</span>
                 </div>
                 <div>
@@ -125,11 +137,11 @@ const SettingsPage = () => {
                   <p className="text-[11px] text-on-surface-variant/60 mt-0.5 font-medium">{t('settings.language_desc')}</p>
                 </div>
               </div>
-              <div className="flex bg-[#121214] p-1 rounded-lg border border-white/[0.06]">
+              <div className="flex bg-surface-container p-1 rounded-lg border border-outline-variant/60">
                 <button
                   onClick={() => setLanguage('vi')}
                   className={`px-3 py-1 text-[11px] font-semibold tracking-wide rounded-md transition-all flex items-center gap-1.5 ${currentLang === 'vi'
-                      ? 'bg-white/[0.08] text-white shadow-sm'
+                      ? 'bg-surface text-on-surface shadow-sm border border-outline-variant/50'
                       : 'text-on-surface-variant/50 hover:text-on-surface'
                     }`}
                 >
@@ -139,7 +151,7 @@ const SettingsPage = () => {
                 <button
                   onClick={() => setLanguage('en')}
                   className={`px-3 py-1 text-[11px] font-semibold tracking-wide rounded-md transition-all flex items-center gap-1.5 ${currentLang === 'en'
-                      ? 'bg-white/[0.08] text-white shadow-sm'
+                      ? 'bg-surface text-on-surface shadow-sm border border-outline-variant/50'
                       : 'text-on-surface-variant/50 hover:text-on-surface'
                     }`}
                 >
@@ -152,15 +164,15 @@ const SettingsPage = () => {
         </div>
 
         {/* Notifications Group */}
-        <div className="bg-[#09090b]/40 backdrop-blur-md border border-white/[0.06] rounded-xl overflow-hidden shadow-sm">
-          <div className="px-6 py-3.5 border-b border-white/[0.06] bg-[#121214]/30">
+        <div className="bg-surface border border-outline-variant/60 rounded-xl overflow-hidden shadow-sm">
+          <div className="px-6 py-3.5 border-b border-outline-variant/50 bg-surface-container-low/40">
             <h3 className="text-[11px] font-semibold uppercase tracking-wider text-on-surface-variant/60">{isVi ? 'THÔNG BÁO' : 'NOTIFICATIONS'}</h3>
           </div>
 
           <div className="p-5">
             <div className={`flex items-center justify-between bg-transparent transition-all duration-300 ${!isVip ? 'opacity-50 cursor-not-allowed grayscale' : 'group'}`}>
               <div className="flex items-center gap-4">
-                <div className={`w-10 h-10 rounded-lg flex items-center justify-center border transition-all duration-300 ${emailNotifications ? 'bg-white/[0.04] text-white border-white/[0.08]' : 'bg-white/[0.01] text-on-surface-variant/60 border-white/[0.04]'}`}>
+                <div className={`w-10 h-10 rounded-lg flex items-center justify-center border transition-all duration-300 ${emailNotifications ? 'bg-primary/5 text-primary border-primary/10' : 'bg-surface-container-low text-on-surface-variant/60 border-outline-variant/60'}`}>
                   <span className="material-symbols-outlined text-xl group-hover:rotate-12 transition-transform">notifications_active</span>
                 </div>
                 <div>
@@ -174,17 +186,17 @@ const SettingsPage = () => {
               <button
                 onClick={toggleEmailNotifications}
                 disabled={!isVip}
-                className={`w-9 h-5 rounded-full relative transition-all duration-200 border border-transparent ${emailNotifications ? 'bg-white' : 'bg-white/[0.08] border-white/[0.08]'}`}
+                className={`w-9 h-5 rounded-full relative transition-all duration-200 border border-outline-variant/60 ${emailNotifications ? 'bg-primary' : 'bg-surface-container'}`}
               >
-                <div className={`w-4 h-4 rounded-full absolute top-[2px] transition-transform duration-200 ${emailNotifications ? 'translate-x-[18px] bg-black' : 'translate-x-[2px] bg-white/60'}`} />
+                <div className={`w-3.5 h-3.5 rounded-full absolute top-[2px] transition-transform duration-200 ${emailNotifications ? 'translate-x-[16px] bg-white' : 'translate-x-[2px] bg-on-surface-variant/50'}`} />
               </button>
             </div>
           </div>
         </div>
 
         {/* Account Safety Info */}
-        <div className="p-6 bg-[#09090b]/30 border border-white/[0.06] rounded-xl flex flex-col md:flex-row items-center gap-5 relative overflow-hidden">
-          <div className="w-10 h-10 rounded-lg bg-white/[0.04] border border-white/[0.08] flex items-center justify-center shrink-0 text-white">
+        <div className="p-6 bg-surface border border-outline-variant/60 rounded-xl flex flex-col md:flex-row items-center gap-5 relative overflow-hidden">
+          <div className="w-10 h-10 rounded-lg bg-primary/5 border border-primary/10 flex items-center justify-center shrink-0 text-primary">
             <span className="material-symbols-outlined text-xl">security</span>
           </div>
           <div className="flex-1">
@@ -197,7 +209,7 @@ const SettingsPage = () => {
           </div>
           <button
             onClick={() => navigate('/profile')}
-            className="md:ml-auto px-4 py-2 bg-white text-black hover:bg-neutral-200 rounded-lg text-xs font-semibold tracking-wide transition-all whitespace-nowrap active:scale-[0.98]"
+            className="btn-primary md:ml-auto px-4 py-2 text-xs tracking-wide whitespace-nowrap"
           >
             {isVi ? 'ĐẾN HỒ SƠ' : 'GO TO PROFILE'}
           </button>

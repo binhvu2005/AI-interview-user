@@ -245,10 +245,10 @@ const ResultsPage = () => {
         {/* Dashboard Metrics Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
           {/* Card 1: Total Interviews */}
-          <div className="bg-[#121214]/40 backdrop-blur-2xl border border-white/[0.05] rounded-xl p-6 shadow-sm flex flex-col justify-between group hover:border-primary/20 transition-all relative overflow-hidden">
+          <div className="bento-card p-6 relative overflow-hidden group">
             <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full -mr-16 -mt-16 blur-2xl group-hover:bg-primary/10 transition-colors"></div>
             <div className="flex items-center gap-3.5 mb-5 relative z-10">
-              <div className="w-10 h-10 rounded-lg bg-primary/10 text-primary flex items-center justify-center group-hover:scale-105 transition-transform border border-primary/20">
+              <div className="w-10 h-10 rounded-lg bg-primary/5 text-primary flex items-center justify-center group-hover:scale-[1.03] transition-transform border border-primary/10">
                 <span className="material-symbols-outlined text-[20px]">bar_chart</span>
               </div>
               <span className="text-on-surface-variant text-[10px] font-semibold uppercase tracking-widest opacity-80">{t('results.total_interviews') || 'Total Interviews'}</span>
@@ -263,10 +263,10 @@ const ResultsPage = () => {
           </div>
 
           {/* Card 2: Average Score */}
-          <div className="bg-[#121214]/40 backdrop-blur-2xl border border-white/[0.05] rounded-xl p-6 shadow-sm flex flex-col justify-between group hover:border-secondary/20 transition-all relative overflow-hidden">
+          <div className="bento-card p-6 relative overflow-hidden group">
             <div className="absolute top-0 right-0 w-32 h-32 bg-secondary/5 rounded-full -mr-16 -mt-16 blur-2xl group-hover:bg-secondary/10 transition-colors"></div>
             <div className="flex items-center gap-3.5 mb-5 relative z-10">
-              <div className="w-10 h-10 rounded-lg bg-secondary/10 text-secondary flex items-center justify-center group-hover:scale-105 transition-transform border border-secondary/20">
+              <div className="w-10 h-10 rounded-lg bg-secondary/5 text-secondary flex items-center justify-center group-hover:scale-[1.03] transition-transform border border-secondary/10">
                 <span className="material-symbols-outlined text-[20px]">psychiatry</span>
               </div>
               <span className="text-on-surface-variant text-[10px] font-semibold uppercase tracking-widest opacity-80">{t('results.average_score') || 'Average Score'}</span>
@@ -281,16 +281,16 @@ const ResultsPage = () => {
           </div>
 
           {/* Card 3: Match Rate */}
-          <div className="bg-[#121214]/40 backdrop-blur-2xl border border-white/[0.05] rounded-xl p-6 shadow-sm flex flex-col justify-between group hover:border-tertiary/20 transition-all relative overflow-hidden">
+          <div className="bento-card p-6 relative overflow-hidden group">
             <div className="absolute top-0 right-0 w-32 h-32 bg-tertiary/5 rounded-full -mr-16 -mt-16 blur-2xl group-hover:bg-tertiary/10 transition-colors"></div>
             <div className="flex items-center justify-between mb-5 relative z-10">
               <div className="flex items-center gap-3.5">
-                <div className="w-10 h-10 rounded-lg bg-tertiary/10 text-tertiary flex items-center justify-center group-hover:scale-105 transition-transform border border-tertiary/20">
+                <div className="w-10 h-10 rounded-lg bg-tertiary/5 text-tertiary flex items-center justify-center group-hover:scale-[1.03] transition-transform border border-tertiary/10">
                   <span className="material-symbols-outlined text-[20px]">fact_check</span>
                 </div>
                 <span className="text-on-surface-variant text-[10px] font-semibold uppercase tracking-widest opacity-80">{t('results.match_rate') || 'Match Rate (CV vs JD)'}</span>
               </div>
-              <span className="bg-tertiary/10 text-tertiary text-[9px] font-semibold uppercase tracking-widest px-2 py-0.5 rounded-md border border-tertiary/20">
+              <span className="bg-tertiary/10 text-tertiary text-[9px] font-semibold uppercase tracking-widest px-2 py-0.5 rounded-md border border-tertiary/10">
                 CURRENT TARGET
               </span>
             </div>
@@ -306,11 +306,11 @@ const ResultsPage = () => {
           </div>
         </div>
 
-        <div className="bg-[#121214]/40 backdrop-blur-2xl border border-white/[0.05] rounded-xl overflow-hidden shadow-md">
+        <div className="bg-surface border border-outline-variant/60 rounded-xl overflow-hidden shadow-sm">
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="bg-white/[0.02] text-on-surface-variant text-[9px] font-semibold uppercase tracking-widest border-b border-white/[0.05]">
+                <tr className="bg-surface-container-low/40 text-on-surface-variant text-[9px] font-semibold uppercase tracking-widest border-b border-outline-variant/60">
                   <th className="px-6 py-4">{t('results.table_pos')}</th>
                   <th className="px-6 py-4">{t('results.table_level')}</th>
                   <th className="px-6 py-4 text-center">{t('results.table_cv')}</th>
@@ -354,7 +354,7 @@ const ResultsPage = () => {
                       <td className="px-6 py-4 text-right">
                         <button
                           onClick={() => navigate(`/results/${int._id}`)}
-                          className="bg-white text-black hover:bg-neutral-200 px-4 py-1.5 rounded-lg text-[9px] font-semibold uppercase tracking-wider transition-all active:scale-[0.98] cursor-pointer shadow-sm"
+                          className="btn-primary px-4 py-1.5 text-[9px] uppercase tracking-wider shadow-sm"
                         >
                           {t('results.view_report')}
                         </button>
@@ -438,12 +438,12 @@ const ResultsPage = () => {
 
       {/* Hero Score Section */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-10">
-        <div className="lg:col-span-2 bg-[#121214]/40 backdrop-blur-2xl border border-white/[0.05] rounded-xl p-8 shadow-xl flex flex-col md:flex-row items-center gap-10 relative overflow-hidden">
+        <div className="lg:col-span-2 bg-surface border border-outline-variant/60 rounded-xl p-8 shadow-sm flex flex-col md:flex-row items-center gap-10 relative overflow-hidden">
           <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full -translate-y-1/2 translate-x-1/2 blur-3xl"></div>
 
           <div className="relative w-40 h-40 flex items-center justify-center flex-shrink-0">
             <svg className="w-full h-full transform -rotate-90">
-              <circle cx="80" cy="80" r="70" fill="none" stroke="currentColor" strokeWidth="4" className="text-white/[0.04]" />
+              <circle cx="80" cy="80" r="70" fill="none" stroke="currentColor" strokeWidth="4" className="text-on-surface/5" />
               <circle cx="80" cy="80" r="70" fill="none" stroke="var(--color-primary)" strokeWidth="4" strokeLinecap="round" strokeDasharray={`${(evaluation?.totalScore || 0) * 4.4} 440`} />
             </svg>
             <div className="absolute inset-0 flex flex-col items-center justify-center">
@@ -479,7 +479,7 @@ const ResultsPage = () => {
           </div>
         </div>
 
-        <div className="bg-[#121214]/40 backdrop-blur-2xl border border-white/[0.05] rounded-xl p-6 shadow-sm">
+        <div className="bg-surface border border-outline-variant/60 rounded-xl p-6 shadow-sm">
           <h4 className="text-[10px] font-semibold uppercase tracking-widest text-on-surface-variant mb-4">{t('results.key_highlights')}</h4>
           <div className="space-y-4">
             <div className="p-4 bg-green-400/5 border border-green-400/10 rounded-xl">
@@ -547,27 +547,27 @@ const ResultsPage = () => {
           {/* Blurred Background Mockups of suggestions & detailed reviews */}
           <div className="filter blur-md pointer-events-none select-none opacity-20">
             {/* suggestions */}
-            <section className="bg-[#121214]/40 border border-white/[0.05] rounded-xl p-8 mb-10 shadow-sm">
+            <section className="bg-surface border border-outline-variant/60 rounded-xl p-8 mb-10 shadow-sm">
               <div className="flex items-center gap-3 mb-6">
                 <span className="material-symbols-outlined text-primary">tips_and_updates</span>
                 <h3 className="text-xl font-bold text-on-surface">Mock Plan</h3>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div className="bg-white/[0.02] border border-white/[0.05] p-6 rounded-xl h-28"></div>
-                <div className="bg-white/[0.02] border border-white/[0.05] p-6 rounded-xl h-28"></div>
-                <div className="bg-white/[0.02] border border-white/[0.05] p-6 rounded-xl h-28"></div>
+                <div className="bg-surface-container-low/40 border border-outline-variant/60 p-6 rounded-xl h-28"></div>
+                <div className="bg-surface-container-low/40 border border-outline-variant/60 p-6 rounded-xl h-28"></div>
+                <div className="bg-surface-container-low/40 border border-outline-variant/60 p-6 rounded-xl h-28"></div>
               </div>
             </section>
             {/* detailed breakdown */}
             <section className="space-y-6">
               <h3 className="text-xl font-bold text-on-surface ml-4">Mock Breakdown</h3>
-              <div className="bg-[#121214]/40 border border-white/[0.05] rounded-xl p-8 shadow-sm h-64"></div>
+              <div className="bg-surface border border-outline-variant/60 rounded-xl p-8 shadow-sm h-64"></div>
             </section>
           </div>
 
           {/* Glowing Glass Blocker Card */}
           <div className="absolute inset-0 flex items-center justify-center px-4">
-            <div className="max-w-2xl w-full bg-[#09090b]/90 backdrop-blur-xl border border-white/[0.08] rounded-xl p-8 text-center shadow-2xl relative overflow-hidden group">
+            <div className="max-w-2xl w-full bg-surface border border-outline-variant/80 rounded-xl p-8 text-center shadow-2xl relative overflow-hidden group">
               <div className="absolute inset-0 bg-gradient-to-tr from-primary/10 via-secondary/15 to-transparent opacity-50"></div>
               
               {/* Floating Sparkles & Stars */}
@@ -589,19 +589,19 @@ const ResultsPage = () => {
                 </p>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-md mx-auto mb-8 text-left">
-                  <div className="flex items-center gap-3 bg-white/[0.01] p-3 rounded-lg border border-white/[0.05]">
+                  <div className="flex items-center gap-3 bg-surface-container-low/30 p-3 rounded-lg border border-outline-variant/60">
                     <span className="material-symbols-outlined text-primary text-[18px]">donut_large</span>
                     <span className="text-xs font-semibold text-on-surface">Radar Chart năng lực chuyên sâu</span>
                   </div>
-                  <div className="flex items-center gap-3 bg-white/[0.01] p-3 rounded-lg border border-white/[0.05]">
+                  <div className="flex items-center gap-3 bg-surface-container-low/30 p-3 rounded-lg border border-outline-variant/60">
                     <span className="material-symbols-outlined text-secondary text-[18px]">psychology</span>
                     <span className="text-xs font-semibold text-on-surface">Đánh giá chi tiết từng câu trả lời</span>
                   </div>
-                  <div className="flex items-center gap-3 bg-white/[0.01] p-3 rounded-lg border border-white/[0.05]">
+                  <div className="flex items-center gap-3 bg-surface-container-low/30 p-3 rounded-lg border border-outline-variant/60">
                     <span className="material-symbols-outlined text-green-400 text-[18px]">tips_and_updates</span>
                     <span className="text-xs font-semibold text-on-surface">Kế hoạch phát triển sự nghiệp</span>
                   </div>
-                  <div className="flex items-center gap-3 bg-white/[0.01] p-3 rounded-lg border border-white/[0.05]">
+                  <div className="flex items-center gap-3 bg-surface-container-low/30 p-3 rounded-lg border border-outline-variant/60">
                     <span className="material-symbols-outlined text-amber-400 text-[18px]">history_edu</span>
                     <span className="text-xs font-semibold text-on-surface">Insight sửa lỗi từ chuyên gia AI</span>
                   </div>
@@ -609,7 +609,7 @@ const ResultsPage = () => {
 
                 <button 
                   onClick={() => navigate('/upgrade')}
-                  className="bg-white text-black hover:bg-neutral-200 px-8 py-3 rounded-lg font-semibold text-xs uppercase tracking-widest transition-all active:scale-[0.98] flex items-center justify-center gap-2.5 mx-auto cursor-pointer"
+                  className="btn-primary px-8 py-3 text-xs uppercase tracking-widest flex items-center justify-center gap-2.5 mx-auto"
                 >
                   <span className="material-symbols-outlined text-[16px]">rocket_launch</span>
                   Nâng cấp VIP ngay
@@ -621,14 +621,14 @@ const ResultsPage = () => {
       ) : (
         <>
           {/* Suggestions Section */}
-          <section className="bg-[#121214]/40 backdrop-blur-2xl border border-white/[0.05] rounded-xl p-8 mb-10 shadow-sm">
+          <section className="bg-surface border border-outline-variant/60 rounded-xl p-8 mb-10 shadow-sm">
             <div className="flex items-center gap-3 mb-6">
               <span className="material-symbols-outlined text-primary">tips_and_updates</span>
               <h3 className="text-xl font-bold text-on-surface">{t('results.growth_plan')}</h3>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {evaluation?.improvements?.map((imp, i) => (
-                <div key={i} className="bg-white/[0.02] border border-white/[0.05] p-5 rounded-xl">
+                <div key={i} className="bg-surface-container-low/40 border border-outline-variant/60 p-5 rounded-xl">
                   <span className="text-lg font-bold text-primary opacity-30 block mb-2">0{i + 1}</span>
                   <p className="text-xs font-semibold text-on-surface leading-relaxed">{imp}</p>
                 </div>
@@ -640,7 +640,7 @@ const ResultsPage = () => {
           <section className="space-y-6">
             <h3 className="text-xl font-bold text-on-surface ml-4">{t('results.breakdown')}</h3>
             {evaluation?.detailedFeedback?.map((item, i) => (
-              <div key={i} className="bg-[#121214]/40 border border-white/[0.05] rounded-xl p-6 shadow-sm group hover:border-primary/20 transition-all">
+              <div key={i} className="bg-surface border border-outline-variant/60 rounded-xl p-6 shadow-sm group hover:border-primary/20 hover:shadow-md transition-all duration-300">
                 <div className="flex flex-col sm:flex-row justify-between items-start mb-6 gap-4">
                   <div className="max-w-2xl">
                     <p className="text-[9px] font-semibold text-primary uppercase tracking-widest mb-1.5">{t('results.question')} {i + 1}</p>
@@ -702,7 +702,7 @@ const ResultsPage = () => {
       {/* Congratulations Modal */}
       {showCongrats && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background/80 backdrop-blur-sm animate-in fade-in duration-300">
-          <div className="bg-[#09090b] border border-white/[0.05] rounded-xl p-6 max-w-sm w-full shadow-2xl relative overflow-hidden text-center animate-in zoom-in-95 duration-300">
+          <div className="bg-surface border border-outline-variant/80 rounded-xl p-6 max-w-sm w-full shadow-2xl relative overflow-hidden text-center animate-in zoom-in-95 duration-300">
             {/* Simple Confetti Background Effect */}
             <div className="absolute top-0 left-0 w-full h-full pointer-events-none overflow-hidden opacity-30">
               <div className="absolute top-[-10%] left-[20%] w-3 h-3 bg-primary rounded-full animate-bounce" style={{ animationDelay: '0.1s', animationDuration: '2s' }}></div>

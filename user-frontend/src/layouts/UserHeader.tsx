@@ -18,8 +18,29 @@ const UserHeader = () => {
   const [notifications, setNotifications] = useState<AppNotification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [notiOpen, setNotiOpen] = useState(false);
+  const [isDark, setIsDark] = useState<boolean>(() => {
+    const theme = localStorage.getItem('theme');
+    return theme === 'dark' || (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches);
+  });
+
+  const toggleTheme = () => {
+    const next = !isDark;
+    setIsDark(next);
+    localStorage.setItem('theme', next ? 'dark' : 'light');
+    if (next) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+    window.dispatchEvent(new Event('themeChange'));
+  };
 
   useEffect(() => {
+    const handleThemeChange = () => {
+      const theme = localStorage.getItem('theme');
+      setIsDark(theme === 'dark');
+    };
+    window.addEventListener('themeChange', handleThemeChange);
     const handleStorageChange = () => {
       setUserName(localStorage.getItem('userName'));
       setUserAvatar(localStorage.getItem('userAvatar'));
@@ -110,6 +131,7 @@ const UserHeader = () => {
       if (cleanupFn) cleanupFn();
       window.removeEventListener('storage', handleStorageChange);
       window.removeEventListener('userUpdate', handleStorageChange);
+      window.removeEventListener('themeChange', handleThemeChange);
     };
   }, []);
 
@@ -190,6 +212,17 @@ const UserHeader = () => {
           <span className="material-symbols-outlined text-[20px]">{mobileMenuOpen ? 'close' : 'menu'}</span>
         </button>
         
+        {/* Quick Theme Toggle */}
+        <button
+          onClick={toggleTheme}
+          className="w-8 h-8 flex items-center justify-center rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all focus:outline-none"
+          title={isDark ? "Switch to Light Mode" : "Switch to Dark Mode"}
+        >
+          <span className="material-symbols-outlined text-[20px]">
+            {isDark ? 'light_mode' : 'dark_mode'}
+          </span>
+        </button>
+
         {/* Notification Bell */}
         <div className="relative">
           <button 

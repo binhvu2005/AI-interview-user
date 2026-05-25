@@ -114,9 +114,9 @@ const VaultPage = () => {
         <button 
           onClick={handleAddClick}
           disabled={uploading}
-          className="bg-white text-black hover:bg-neutral-200 px-5 py-2.5 rounded-lg text-xs font-semibold uppercase tracking-wider flex items-center gap-2 hover:-translate-y-0.5 active:scale-[0.98] transition-all disabled:opacity-50 shadow-sm"
+          className="btn-primary px-5 py-2.5 text-xs tracking-wider flex items-center gap-2 shadow-sm"
         >
-          <span className="material-symbols-outlined text-[18px]">{uploading ? 'sync' : 'cloud_upload'}</span>
+          <span className="material-symbols-outlined text-[18px]">{uploading ? 'sync animate-spin' : 'cloud_upload'}</span>
           {uploading ? t('setup.analyzing') : t('vault_page.upload_btn')}
         </button>
         <input type="file" ref={fileInputRef} onChange={handleFileChange} accept=".pdf" className="hidden" />
@@ -125,10 +125,10 @@ const VaultPage = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {savedCVs.length > 0 ? (
           savedCVs.map(cv => (
-            <div key={cv.id} className="bg-surface-container-low/50 backdrop-blur-md border border-white/[0.06] rounded-xl p-6 group hover:border-white/[0.12] transition-all duration-300 shadow-sm relative overflow-hidden">
-              <div className="absolute top-0 right-0 w-24 h-24 bg-white/[0.01] rounded-full -translate-y-1/2 translate-x-1/2 blur-2xl group-hover:bg-white/[0.03] transition-colors pointer-events-none"></div>
+            <div key={cv.id} className="bento-card p-6 relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-24 h-24 bg-primary/5 rounded-full -translate-y-1/2 translate-x-1/2 blur-2xl transition-colors pointer-events-none"></div>
               
-              <div className="w-10 h-10 rounded-lg bg-white/[0.04] border border-white/[0.08] flex items-center justify-center text-white mb-5 group-hover:scale-105 transition-all duration-300">
+              <div className="w-10 h-10 rounded-lg bg-primary/5 border border-primary/10 flex items-center justify-center text-primary mb-5 group-hover:scale-105 transition-all duration-300">
                 <span className="material-symbols-outlined text-xl">picture_as_pdf</span>
               </div>
               
@@ -137,10 +137,10 @@ const VaultPage = () => {
                 {t('vault_page.date_prefix')} {new Date(cv.uploadDate).toLocaleDateString()}
               </p>
               
-              <div className="flex items-center justify-between pt-4 border-t border-white/[0.06]">
+              <div className="flex items-center justify-between pt-4 border-t border-outline-variant/50">
                 <button 
                   onClick={() => setSelectedCV(cv)} 
-                  className="bg-white/[0.04] text-on-surface border border-white/[0.08] hover:bg-white/[0.08] px-4 py-2 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 active:scale-[0.98]"
+                  className="btn-secondary px-4 py-2 text-xs flex items-center gap-1.5"
                 >
                   <span className="material-symbols-outlined text-[16px]">visibility</span>
                   {t('vault_page.view_original')}
@@ -155,8 +155,8 @@ const VaultPage = () => {
             </div>
           ))
         ) : (
-          <div className="col-span-full flex flex-col items-center justify-center py-20 bg-surface-container-low/40 border border-dashed border-white/[0.08] rounded-xl">
-            <span className="material-symbols-outlined text-4xl text-on-surface-variant/20 mb-4">cloud_upload</span>
+          <div className="col-span-full flex flex-col items-center justify-center py-20 bg-surface-container-low/40 border border-dashed border-outline-variant/60 rounded-xl">
+            <span className="material-symbols-outlined text-4xl text-on-surface-variant/20 mb-4 animate-pulse">cloud_upload</span>
             <p className="text-xs font-medium text-on-surface-variant/50 uppercase tracking-wider">{t('vault_page.empty_state')}</p>
           </div>
         )}
@@ -164,41 +164,41 @@ const VaultPage = () => {
 
       {/* PDF Viewer Modal */}
       {selectedCV && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-8 bg-black/85 backdrop-blur-sm animate-in fade-in duration-300">
-          <div className="bg-[#09090b] w-full max-w-5xl h-full rounded-xl shadow-2xl border border-white/[0.08] overflow-hidden flex flex-col animate-in zoom-in-95 duration-300">
-            <div className="px-6 py-4 border-b border-white/[0.06] flex justify-between items-center bg-[#121214]/50">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-8 bg-black/80 backdrop-blur-sm animate-in fade-in duration-300">
+          <div className="bg-surface w-full max-w-5xl h-full rounded-2xl shadow-2xl border border-outline-variant/60 overflow-hidden flex flex-col animate-in zoom-in-95 duration-300">
+            <div className="px-6 py-4 border-b border-outline-variant/50 flex justify-between items-center bg-surface-container-low/50">
               <div className="flex items-center gap-3.5">
-                <div className="w-10 h-10 rounded-lg bg-white/[0.04] border border-white/[0.08] flex items-center justify-center text-white">
+                <div className="w-10 h-10 rounded-lg bg-primary/5 border border-primary/10 flex items-center justify-center text-primary">
                   <span className="material-symbols-outlined text-xl">picture_as_pdf</span>
                 </div>
                 <div>
                   <h2 className="text-base font-semibold text-on-surface tracking-tight truncate max-w-md">{selectedCV.name}</h2>
-                  <p className="text-[9px] font-semibold text-white/40 uppercase tracking-wider mt-0.5">{t('vault_page.preview_title')}</p>
+                  <p className="text-[9px] font-semibold text-on-surface-variant/60 uppercase tracking-wider mt-0.5">{t('vault_page.preview_title')}</p>
                 </div>
               </div>
               <button 
                 onClick={() => setSelectedCV(null)} 
-                className="w-10 h-10 rounded-full flex items-center justify-center bg-white/[0.04] border border-white/[0.08] text-on-surface-variant/80 hover:text-on-surface hover:rotate-90 transition-all duration-300"
+                className="w-10 h-10 rounded-full flex items-center justify-center bg-surface-container border border-outline-variant text-on-surface-variant hover:text-on-surface hover:rotate-90 transition-all duration-300"
               >
                 <span className="material-symbols-outlined text-xl">close</span>
               </button>
             </div>
             
-            <div className="flex-1 bg-[#030303] overflow-hidden relative">
+            <div className="flex-1 bg-surface-container-lowest overflow-hidden relative">
                {selectedCV.pdfData ? (
                  <iframe src={`data:application/pdf;base64,${selectedCV.pdfData}#toolbar=0`} className="w-full h-full border-none opacity-90" title={selectedCV.name} />
                ) : (
-                 <div className="absolute inset-0 flex flex-col items-center justify-center text-white/30 space-y-4 text-center">
+                 <div className="absolute inset-0 flex flex-col items-center justify-center text-on-surface-variant/30 space-y-4 text-center">
                     <span className="material-symbols-outlined text-5xl opacity-40">error</span>
                     <p className="text-xs font-semibold uppercase tracking-[0.2em]">No PDF Data</p>
                  </div>
                )}
             </div>
             
-            <div className="p-4 border-t border-white/[0.06] bg-[#121214]/50 flex justify-end">
+            <div className="p-4 border-t border-outline-variant/50 bg-surface-container-low/50 flex justify-end">
                 <button 
                   onClick={() => setSelectedCV(null)} 
-                  className="bg-white text-black hover:bg-neutral-200 px-6 py-2 rounded-lg font-semibold text-xs uppercase tracking-wider transition-all"
+                  className="btn-primary px-6 py-2 text-xs uppercase tracking-wider"
                 >
                   {t('vault_page.close_preview')}
                 </button>
@@ -209,8 +209,8 @@ const VaultPage = () => {
 
       {/* Delete Confirmation Modal */}
       {deleteConfirmId && (
-        <div className="fixed inset-0 z-[110] flex items-center justify-center p-6 bg-black/85 backdrop-blur-sm animate-in fade-in duration-300">
-          <div className="bg-[#09090b] w-full max-w-sm rounded-xl shadow-2xl border border-white/[0.08] overflow-hidden animate-in zoom-in-95 duration-300">
+        <div className="fixed inset-0 z-[110] flex items-center justify-center p-6 bg-black/80 backdrop-blur-sm animate-in fade-in duration-300">
+          <div className="bg-surface w-full max-w-sm rounded-2xl shadow-2xl border border-outline-variant/60 overflow-hidden animate-in zoom-in-95 duration-300">
             <div className="p-6 text-center">
               <div className="w-12 h-12 rounded-full bg-error/10 flex items-center justify-center text-error mx-auto mb-4">
                 <span className="material-symbols-outlined text-2xl">delete_forever</span>
@@ -220,7 +220,7 @@ const VaultPage = () => {
               <div className="flex gap-3">
                 <button 
                   onClick={() => setDeleteConfirmId(null)} 
-                  className="flex-1 bg-white/[0.04] text-on-surface border border-white/[0.08] hover:bg-white/[0.08] px-4 py-2.5 rounded-lg font-semibold text-xs uppercase tracking-wider transition-all"
+                  className="flex-1 btn-secondary px-4 py-2.5 text-xs uppercase tracking-wider"
                 >
                   {t('vault_page.cancel')}
                 </button>

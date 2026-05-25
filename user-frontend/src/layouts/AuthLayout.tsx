@@ -15,10 +15,22 @@ const AuthLayout = () => {
     }
   }, [isDark]);
 
+  useEffect(() => {
+    const handleThemeChange = () => {
+      const theme = localStorage.getItem('theme');
+      setIsDark(theme === 'dark');
+    };
+    window.addEventListener('themeChange', handleThemeChange);
+    return () => {
+      window.removeEventListener('themeChange', handleThemeChange);
+    };
+  }, []);
+
   const toggleTheme = () => {
     const next = !isDark;
     setIsDark(next);
     localStorage.setItem('theme', next ? 'dark' : 'light');
+    window.dispatchEvent(new Event('themeChange'));
   };
 
   const toggleLanguage = () => {

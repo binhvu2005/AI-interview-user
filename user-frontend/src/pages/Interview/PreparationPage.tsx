@@ -318,12 +318,12 @@ const PreparationPage = () => {
   };
 
   return (
-    <div className="max-w-6xl mx-auto px-4 md:px-8 py-10 pb-20">
+    <div className="max-w-6xl mx-auto px-4 md:px-8 py-10 pb-20 animate-fade-in">
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
         
         {/* LEFT COLUMN: Header & Visuals */}
-        <div className="lg:col-span-5 flex flex-col justify-start">
-          <div className="mb-6 inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/[0.04] border border-white/[0.08] text-[10px] font-semibold uppercase tracking-widest text-[#818CF8] w-max">
+        <div className="lg:col-span-5 flex flex-col justify-start animate-fade-in delay-1">
+          <div className="mb-6 inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#818CF8]/10 border border-[#818CF8]/25 text-[10px] font-semibold uppercase tracking-widest text-[#818CF8] w-max">
             <span className="w-1.5 h-1.5 rounded-full bg-[#818CF8]"></span>
             SESSION CONFIG
           </div>
@@ -343,25 +343,25 @@ const PreparationPage = () => {
           </p>
 
           {/* Portal Visual / Image */}
-          <div className="relative w-full max-w-[320px] aspect-video rounded-xl overflow-hidden border border-white/[0.06] bg-surface flex items-center justify-center shadow-lg">
+          <div className="relative w-full max-w-[320px] aspect-video rounded-2xl overflow-hidden border border-outline-variant/60 bg-surface flex items-center justify-center shadow-md hover:shadow-lg transition-shadow duration-300">
             <img 
               src="https://lh3.googleusercontent.com/aida-public/AB6AXuD32B3zsG7GlRzewrExD_1b0nFeHX8LOCFNWFWhyXhMQ9H-ZgG4l_fjlUIFHoCZo4PHeZKmPhBKU4-cRKl6nYxpfXaFxK2YM9Q-7zsCBvm_CTT-1vZLMrAFpievj5nGDc7FarPZDMF1fcR4HJuazMmJrHiTJZDpZpdX2uEra0sSZWPlNC34-8VIXlYfY6g8lQ-JC77jcRcckAMqvbfFpVY3nkcRpB1oYWqiA0tDgcv3xWbCUudreSOGbVn24EYDRqLN1Wi13_UabU57" 
               alt="Preparation Graphic" 
-              className="w-full h-full object-cover opacity-80" 
+              className="w-full h-full object-cover opacity-80 hover:scale-102 transition-transform duration-700 ease-out" 
             />
           </div>
         </div>
 
         {/* RIGHT COLUMN: Form Configs */}
-        <div className="lg:col-span-7 flex flex-col gap-6">
+        <div className="lg:col-span-7 flex flex-col gap-6 animate-fade-in delay-2">
           
           {/* Remaining Attempts Banner */}
           {freeInterviewsLeft !== null && (
-            <div className={`p-4 rounded-xl border flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 transition-all ${
+            <div className={`p-4 rounded-2xl border flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 transition-all duration-500 ease-out ${
               isVip 
                 ? 'bg-amber-500/5 border-amber-500/20 text-amber-500 shadow-sm'
                 : freeInterviewsLeft > 0 
-                  ? 'bg-[#121214]/60 border-white/[0.05] text-on-surface shadow-md' 
+                  ? 'bg-surface border-outline-variant text-on-surface shadow-sm hover:shadow-md' 
                   : 'bg-red-500/5 border-red-500/15 text-red-500'
             }`}>
               <div className="flex items-center gap-3">
@@ -393,7 +393,7 @@ const PreparationPage = () => {
                   onClick={() => navigate('/upgrade')}
                   className={`text-[9px] font-semibold uppercase tracking-widest px-4 py-2 rounded-lg transition-all active:scale-[0.98] flex-shrink-0 cursor-pointer ${
                     freeInterviewsLeft > 0 
-                      ? 'bg-primary text-on-primary hover:bg-primary-dim' 
+                      ? 'bg-primary text-on-primary hover:bg-primary-dim shadow-sm' 
                       : 'bg-red-500 text-white hover:bg-red-600'
                   }`}
                 >
@@ -403,24 +403,24 @@ const PreparationPage = () => {
             </div>
           )}
           
-          {/* Section: CV Mode (Toggle) */}
-          <section className="bg-[#121214]/40 backdrop-blur-2xl border border-white/[0.05] rounded-xl p-6 shadow-md">
+          {/* Section: CV Profile (CV) */}
+          <section className="bento-card p-6">
             <div className="flex items-center gap-3 mb-6">
               <span className="material-symbols-outlined text-[#818CF8] text-[18px]">badge</span>
               <h3 className="text-sm font-semibold text-on-surface tracking-tight">{isVi ? 'Hồ sơ Ứng viên (CV)' : 'Candidate Profile (CV)'}</h3>
             </div>
             
-            <div className="bg-white/[0.02] border border-white/[0.06] p-1 rounded-lg flex mb-6">
+            <div className="bg-surface-container border border-outline-variant/50 p-1 rounded-xl flex mb-6">
               <button 
                 onClick={() => setCvMode('upload')} 
-                className={`flex-1 py-2 text-[11px] font-medium rounded-lg transition-all flex items-center justify-center gap-2 ${cvMode === 'upload' ? 'bg-white/[0.06] text-on-surface shadow-sm border border-white/[0.08]' : 'text-on-surface-variant hover:text-on-surface'}`}
+                className={`flex-1 py-2 text-[11px] font-semibold rounded-lg transition-all flex items-center justify-center gap-2 ${cvMode === 'upload' ? 'bg-surface text-on-surface shadow-sm border border-outline-variant' : 'text-on-surface-variant/70 hover:text-on-surface'}`}
               >
                 <span className="material-symbols-outlined text-[14px]">upload_file</span>
                 {isVi ? 'Tải lên CV' : 'Upload CV'}
               </button>
               <button 
                 onClick={() => setCvMode('vault')} 
-                className={`flex-1 py-2 text-[11px] font-medium rounded-lg transition-all flex items-center justify-center gap-2 ${cvMode === 'vault' ? 'bg-white/[0.06] text-on-surface shadow-sm border border-white/[0.08]' : 'text-on-surface-variant hover:text-on-surface'}`}
+                className={`flex-1 py-2 text-[11px] font-semibold rounded-lg transition-all flex items-center justify-center gap-2 ${cvMode === 'vault' ? 'bg-surface text-on-surface shadow-sm border border-outline-variant' : 'text-on-surface-variant/70 hover:text-on-surface'}`}
               >
                 <span className="material-symbols-outlined text-[14px]">folder_shared</span>
                 {isVi ? 'Chọn từ Kho (Vault)' : 'Select from Vault'}
@@ -430,15 +430,15 @@ const PreparationPage = () => {
             <div className="min-h-[80px] flex flex-col justify-center">
               {cvMode === 'vault' ? (
                 <div className="relative group">
-                  <select className="w-full bg-white/[0.02] border border-white/[0.08] rounded-lg px-4 py-3 text-on-surface appearance-none text-xs font-medium focus:border-primary/50 transition-all outline-none" onChange={(e) => setSelectedCVId(e.target.value)} value={selectedCVId}>
+                  <select className="form-select w-full px-4 py-3 text-xs font-medium appearance-none" onChange={(e) => setSelectedCVId(e.target.value)} value={selectedCVId}>
                     <option value="" disabled>{isVi ? 'Chọn CV từ kho...' : 'Select CV from vault...'}</option>
                     {savedCVs.map(cv => <option key={cv.id} value={cv.id}>{cv.name}</option>)}
                   </select>
                   <span className="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none text-[18px]">expand_more</span>
                 </div>
               ) : (
-                <label className={`flex flex-col items-center justify-center border border-dashed rounded-lg p-5 cursor-pointer transition-all ${cvFile ? 'border-primary bg-primary/5' : 'border-white/[0.1] bg-white/[0.01] hover:border-primary/40'}`}>
-                  <span className={`material-symbols-outlined text-2xl mb-2 ${cvFile ? 'text-primary' : 'text-on-surface-variant'}`}>{cvFile ? 'check_circle' : 'cloud_upload'}</span>
+                <label className={`flex flex-col items-center justify-center border border-dashed rounded-xl p-6 cursor-pointer transition-all duration-300 ${cvFile ? 'border-primary bg-primary/5' : 'border-outline-variant bg-surface-container-low hover:border-primary/30 hover:bg-surface-container-high'}`}>
+                  <span className={`material-symbols-outlined text-2xl mb-2 ${cvFile ? 'text-primary animate-pulse' : 'text-on-surface-variant'}`}>{cvFile ? 'check_circle' : 'cloud_upload'}</span>
                   <p className="text-xs font-medium text-on-surface">{cvFile ? cvFile.name : (isVi ? 'Kéo thả PDF hoặc bấm để chọn' : 'Drop PDF or click to browse')}</p>
                   <input 
                     type="file" 
@@ -466,8 +466,8 @@ const PreparationPage = () => {
             </div>
           </section>
 
-          {/* Section: Job Description Selector */}
-          <section className="bg-[#121214]/40 backdrop-blur-2xl border border-white/[0.05] rounded-xl p-6 shadow-sm flex flex-col">
+          {/* Section: Job Description Template Selector */}
+          <section className="bento-card p-6 flex flex-col">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-3">
                 <span className="material-symbols-outlined text-[#818CF8] text-[18px]">list_alt</span>
@@ -490,7 +490,7 @@ const PreparationPage = () => {
               <select 
                 value={selectedJdId} 
                 onChange={(e) => handleJdSelect(e.target.value)} 
-                className="w-full bg-white/[0.02] border border-white/[0.08] rounded-lg px-4 py-3 text-on-surface appearance-none text-xs font-medium focus:border-primary/50 transition-all outline-none"
+                className="form-select w-full px-4 py-3 text-xs font-medium appearance-none"
               >
                 <option value="">
                   {isVi ? '-- Tùy chọn: Nhập thủ công mô tả công việc của bạn --' : '-- Optional: Enter your own JD manually --'}
@@ -519,17 +519,17 @@ const PreparationPage = () => {
           {/* Section: Role, Level, Duration */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             {/* Target Role & Level */}
-            <section className="bg-[#121214]/40 backdrop-blur-2xl border border-white/[0.05] rounded-xl p-6 shadow-sm flex flex-col justify-between">
+            <section className="bento-card p-6 flex flex-col justify-between">
               <div className="space-y-6">
                 <div>
-                  <label className="text-[10px] font-semibold text-on-surface-variant mb-2 block">{isVi ? 'Vị trí Mục tiêu' : 'Target Role'}</label>
+                  <label className="text-xs font-semibold text-on-surface-variant/70 mb-2 block">{isVi ? 'Vị trí Mục tiêu' : 'Target Role'}</label>
                   <div className="relative group">
                     <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant text-[16px]">work</span>
                     <select 
                       value={selectedPosition} 
                       onChange={(e) => setSelectedPosition(e.target.value)} 
                       disabled={!!selectedJdId}
-                      className={`w-full bg-white/[0.02] border border-white/[0.08] rounded-lg pl-10 pr-4 py-2.5 text-on-surface appearance-none text-xs font-medium focus:border-primary/50 transition-all outline-none ${selectedJdId ? 'opacity-50 cursor-not-allowed' : ''}`}
+                      className={`form-select w-full pl-10 pr-4 py-2.5 text-xs font-medium appearance-none ${selectedJdId ? 'opacity-50 cursor-not-allowed' : ''}`}
                     >
                         <option value="" disabled>{isVi ? 'VD: Frontend Developer' : 'e.g. Senior Product Designer'}</option>
                         {positions.map(p => <option key={p} value={p}>{p}</option>)}
@@ -538,13 +538,13 @@ const PreparationPage = () => {
                 </div>
 
                 <div>
-                  <label className="text-[10px] font-semibold text-on-surface-variant mb-2 block">{isVi ? 'Cấp độ' : 'Seniority'}</label>
+                  <label className="text-xs font-semibold text-on-surface-variant/70 mb-2 block">{isVi ? 'Cấp độ' : 'Seniority'}</label>
                   <div className="relative group">
                     <select 
                       value={selectedLevel} 
                       onChange={(e) => setSelectedLevel(e.target.value)} 
                       disabled={!!selectedJdId}
-                      className={`w-full bg-white/[0.02] border border-white/[0.08] rounded-lg px-4 py-2.5 text-on-surface appearance-none text-xs font-medium focus:border-primary/50 transition-all outline-none ${selectedJdId ? 'opacity-50 cursor-not-allowed' : ''}`}
+                      className={`form-select w-full px-4 py-2.5 text-xs font-medium appearance-none ${selectedJdId ? 'opacity-50 cursor-not-allowed' : ''}`}
                     >
                       <option value="" disabled>{isVi ? 'Chọn cấp độ...' : 'Select level'}</option>
                       {levels.map(l => <option key={l} value={l}>{l}</option>)}
@@ -556,9 +556,9 @@ const PreparationPage = () => {
             </section>
 
             {/* Duration */}
-            <section className="bg-[#121214]/40 backdrop-blur-2xl border border-white/[0.05] rounded-xl p-6 shadow-sm flex flex-col justify-center">
+            <section className="bento-card p-6 flex flex-col justify-center">
                <div className="text-center mb-6">
-                 <div className="w-10 h-10 rounded-lg bg-white/[0.04] border border-white/[0.08] flex items-center justify-center mx-auto mb-4 shadow-inner">
+                 <div className="w-10 h-10 rounded-xl bg-surface-container-low border border-outline-variant flex items-center justify-center mx-auto mb-4 shadow-inner">
                     <span className="material-symbols-outlined text-[#818CF8] text-[20px]">hourglass_empty</span>
                  </div>
                  <h3 className="text-xs font-semibold text-on-surface tracking-tight">{isVi ? 'Thời lượng Phỏng vấn' : 'Interview Duration'}</h3>
@@ -572,7 +572,7 @@ const PreparationPage = () => {
                       setSelectedDuration(e.target.value);
                       localStorage.setItem('interview_duration', e.target.value);
                     }} 
-                    className="w-full bg-white/[0.02] border border-white/[0.08] rounded-lg px-4 py-2.5 text-on-surface appearance-none text-xs font-medium focus:border-primary/50 transition-all outline-none text-center"
+                    className="form-select w-full px-4 py-2.5 text-xs font-medium appearance-none text-center"
                   >
                     {[15, 20, 25, 30, 45, 60].map(m => <option key={m} value={m}>{m} {isVi ? 'Phút' : 'Minutes'}</option>)}
                   </select>
@@ -581,8 +581,8 @@ const PreparationPage = () => {
             </section>
           </div>
 
-          {/* Section: Job Description */}
-          <section className="bg-[#121214]/40 backdrop-blur-2xl border border-white/[0.05] rounded-xl p-6 shadow-sm flex flex-col">
+          {/* Section: Job Description Rich Editor */}
+          <section className="bento-card p-6 flex flex-col">
             <div className="flex items-center justify-between mb-4">
               <label className="text-[10px] font-semibold text-on-surface-variant block">{isVi ? 'Mô tả Công việc (JD)' : 'Job Description'}</label>
               {selectedJdId ? (
@@ -595,7 +595,7 @@ const PreparationPage = () => {
               )}
             </div>
             
-            <div className="bg-surface border border-white/[0.08] rounded-lg overflow-hidden">
+            <div className="bg-surface border border-outline-variant rounded-xl overflow-hidden focus-within:ring-2 focus-within:ring-primary/10 focus-within:border-primary transition-all duration-200">
               <RichTextEditor 
                 value={jdText}
                 onChange={setJdText}
@@ -610,14 +610,14 @@ const PreparationPage = () => {
             <button 
               onClick={handleAnalyzeMatch} 
               disabled={isAnalyzing} 
-              className="bg-white text-black hover:bg-neutral-200 px-6 py-3 rounded-lg font-semibold text-xs tracking-wider transition-all duration-300 hover:-translate-y-0.5 active:scale-[0.98] flex items-center justify-center gap-3 disabled:opacity-50 w-full sm:w-auto"
+              className="btn-primary px-6 py-3 text-xs tracking-wider hover:-translate-y-0.5 active:scale-[0.98] flex items-center justify-center gap-3 disabled:opacity-50 w-full sm:w-auto shadow-md"
             >
               {isAnalyzing ? (isVi ? 'Đang phân tích...' : 'Analyzing...') : (isVi ? 'Phân tích Độ khớp' : 'Initialize Sequence')}
               {isAnalyzing ? <span className="material-symbols-outlined animate-spin text-[16px]">progress_activity</span> : <span className="material-symbols-outlined text-[16px]">arrow_forward</span>}
             </button>
             <button 
               onClick={handleQuickTest}
-              className="text-[10px] font-semibold uppercase tracking-widest text-on-surface-variant opacity-40 hover:opacity-100 transition-opacity mt-4 mr-4"
+              className="text-[10px] font-semibold uppercase tracking-widest text-on-surface-variant opacity-40 hover:opacity-100 transition-opacity mt-4 mr-4 cursor-pointer"
             >
               [ Quick Test - Bypass AI ]
             </button>
@@ -630,12 +630,12 @@ const PreparationPage = () => {
       {analysisResult && (
         <div className="mt-16 space-y-8 animate-in fade-in slide-in-from-bottom-6 duration-700 max-w-5xl mx-auto">
           {/* Score & Summary */}
-          <div className="bg-[#121214]/40 backdrop-blur-2xl border border-white/[0.05] rounded-xl p-8 shadow-xl">
+          <div className="bento-card p-8">
             <div className="flex flex-col md:flex-row gap-10 items-center">
               <div className="relative w-40 h-40 flex items-center justify-center flex-shrink-0">
                   <div className="absolute inset-0 bg-primary/5 rounded-full blur-2xl"></div>
                   <svg className="w-full h-full transform -rotate-90">
-                    <circle cx="80" cy="80" r="70" fill="none" stroke="currentColor" strokeWidth="4" className="text-white/[0.04]" />
+                    <circle cx="80" cy="80" r="70" fill="none" stroke="currentColor" strokeWidth="4" className="text-on-surface/5" />
                     <circle cx="80" cy="80" r="70" fill="none" stroke="var(--color-primary)" strokeWidth="4" strokeLinecap="round" strokeDasharray={`${analysisResult.matchScore * 4.4} 440`} />
                   </svg>
                   <div className="absolute inset-0 flex flex-col items-center justify-center">
@@ -657,7 +657,7 @@ const PreparationPage = () => {
             </div>
 
             {/* Grid Details */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8 pt-8 border-t border-white/[0.05]">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8 pt-8 border-t border-outline-variant/50">
               <div className="space-y-6">
                 <div>
                   <h5 className="text-[10px] font-semibold text-green-400 uppercase tracking-widest mb-4 flex items-center gap-2">
@@ -678,15 +678,15 @@ const PreparationPage = () => {
               </div>
 
               <div className="space-y-6">
-                  <div className="p-5 bg-white/[0.02] rounded-xl border border-white/[0.05]">
+                  <div className="p-5 bg-surface-container-low rounded-xl border border-outline-variant/50">
                     <h5 className="text-[10px] font-semibold text-primary uppercase tracking-widest mb-4">{isVi ? 'Phân tích kinh nghiệm' : 'Experience Analysis'}</h5>
                     <div className="space-y-4">
                       <div className="flex justify-between text-xs"><span className="opacity-50">Yêu cầu JD:</span><span className="font-semibold">{analysisResult?.experienceAnalysis?.required}</span></div>
                       <div className="flex justify-between text-xs"><span className="opacity-50">Ứng viên có:</span><span className="font-semibold text-primary">{analysisResult?.experienceAnalysis?.candidate}</span></div>
-                      <p className="text-xs text-on-surface-variant pt-2 border-t border-white/[0.05]">{analysisResult?.experienceAnalysis?.gap}</p>
+                      <p className="text-xs text-on-surface-variant pt-2 border-t border-outline-variant/50">{analysisResult?.experienceAnalysis?.gap}</p>
                     </div>
                   </div>
-                  <div className="p-5 bg-white/[0.02] rounded-xl border border-white/[0.05]">
+                  <div className="p-5 bg-surface-container-low rounded-xl border border-outline-variant/50">
                     <h5 className="text-[10px] font-semibold text-secondary uppercase tracking-widest mb-4">{isVi ? 'Gợi ý cải thiện CV' : 'CV Improvement'}</h5>
                     <div className="space-y-3">
                       {analysisResult?.improvementSuggestions?.map((s, i) => (
@@ -701,14 +701,14 @@ const PreparationPage = () => {
             </div>
 
             {/* Final Step Action */}
-            <div className="mt-8 pt-6 border-t border-white/[0.05] flex flex-col items-center gap-6">
+            <div className="mt-8 pt-6 border-t border-outline-variant/50 flex flex-col items-center gap-6">
               <p className="text-xs text-on-surface-variant/80 font-medium text-center max-w-lg">
                 {isVi 
                   ? 'Nếu bạn hài lòng với kết quả phân tích, hãy bắt đầu buổi phỏng vấn giả định để AI kiểm tra sâu hơn kỹ năng của bạn.' 
                   : 'Satisfied with the analysis? Start the mock interview for a deep cognitive evaluation.'}
               </p>
               {!isVip && freeInterviewsLeft !== null && freeInterviewsLeft <= 0 ? (
-                <div className="w-full max-w-sm p-5 bg-error/5 border border-error/15 rounded-xl text-center shadow-lg">
+                <div className="w-full max-w-sm p-5 bg-red-500/5 border border-red-500/15 rounded-xl text-center shadow-lg">
                   <span className="material-symbols-outlined text-3xl text-red-500 mb-3 animate-pulse">lock</span>
                   <p className="text-xs font-semibold text-red-500 uppercase tracking-widest mb-2">
                     {isVi ? 'Đã hết lượt phỏng vấn miễn phí' : 'No Free Attempts Left'}
@@ -729,7 +729,7 @@ const PreparationPage = () => {
                 <button 
                   onClick={handleStartInterview} 
                   disabled={isGenerating}
-                  className="group bg-white text-black hover:bg-neutral-200 px-8 py-3.5 rounded-lg font-semibold text-sm transition-all duration-300 hover:-translate-y-0.5 active:scale-[0.98] shadow-md flex items-center gap-3 disabled:opacity-50"
+                  className="btn-primary group px-8 py-3.5 text-sm hover:-translate-y-0.5 shadow-md flex items-center gap-3"
                 >
                   {isGenerating ? <span className="material-symbols-outlined animate-spin text-[16px]">progress_activity</span> : <span className="material-symbols-outlined text-[16px]">rocket_launch</span>}
                   {isGenerating ? (isVi ? 'Đang chuẩn bị câu hỏi...' : 'Preparing Questions...') : (isVi ? 'Bắt đầu phỏng vấn ngay' : 'Start Interview Now')}
@@ -743,9 +743,9 @@ const PreparationPage = () => {
       {/* Spectator Invite Modal */}
       {showInviteModal && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-background/85 backdrop-blur-sm animate-in fade-in duration-300">
-          <div className="bg-surface-container border border-white/[0.06] rounded-xl p-6 max-w-sm w-full shadow-2xl relative overflow-hidden text-center animate-in zoom-in-95 duration-300">
+          <div className="bg-surface border border-outline-variant/60 rounded-xl p-6 max-w-sm w-full shadow-2xl relative overflow-hidden text-center animate-in zoom-in-95 duration-300">
             <div className="w-14 h-14 mx-auto bg-primary/10 border border-primary/20 text-primary rounded-xl flex items-center justify-center mb-6">
-              <span className="material-symbols-outlined text-2xl text-primary">group_add</span>
+              <span className="material-symbols-outlined text-2xl text-primary animate-bounce">group_add</span>
             </div>
             
             <h3 className="text-xl font-bold text-on-surface tracking-tight mb-2">
@@ -755,22 +755,22 @@ const PreparationPage = () => {
               {t('spectator.invite_desc')}
             </p>
 
-            <div className="bg-white/[0.02] rounded-lg p-5 mb-6 border border-white/[0.06]">
+            <div className="bg-surface-container-low rounded-lg p-5 mb-6 border border-outline-variant/60">
                <p className="text-[9px] font-semibold uppercase tracking-wider text-on-surface-variant mb-2">{t('spectator.room_code_label')}</p>
                <div className="text-3xl font-black text-primary tracking-[0.2em]">{roomCode}</div>
                
                {spectators.length > 0 && (
-                 <div className="mt-4 pt-4 border-t border-white/[0.05]">
+                 <div className="mt-4 pt-4 border-t border-outline-variant/50">
                     <p className="text-[9px] font-semibold uppercase tracking-wider text-on-surface-variant mb-3 flex items-center justify-center gap-2">
-                      <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
-                      {spectators.length} {isVi ? 'Người đang chờ' : 'People Waiting'}
+                       <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
+                       {spectators.length} {isVi ? 'Người đang chờ' : 'People Waiting'}
                     </p>
                     <div className="flex flex-wrap justify-center gap-2 max-h-[100px] overflow-y-auto custom-scrollbar">
-                      {spectators.map(s => (
-                        <div key={s.socketId} className="px-3 py-1 bg-surface rounded-lg border border-outline-variant/10 text-[9px] font-semibold text-on-surface">
-                          {s.name}
-                        </div>
-                      ))}
+                       {spectators.map(s => (
+                         <div key={s.socketId} className="px-3 py-1 bg-surface rounded-lg border border-outline-variant text-[9px] font-semibold text-on-surface animate-in zoom-in-90">
+                           {s.name}
+                         </div>
+                       ))}
                     </div>
                  </div>
                )}
@@ -782,7 +782,7 @@ const PreparationPage = () => {
                   toast.success(t('spectator.modal_success'));
                   navigate('/interview');
                 }}
-                className="w-full py-2.5 rounded-lg bg-primary text-on-primary font-semibold text-xs uppercase tracking-widest hover:bg-primary-dim transition-colors shadow-md flex justify-center items-center gap-2"
+                className="btn-primary w-full py-2.5 text-xs uppercase tracking-widest shadow-md flex justify-center items-center gap-2"
               >
                 <span className="material-symbols-outlined text-sm">rocket_launch</span>
                 {t('spectator.btn_start_share')}
@@ -792,7 +792,7 @@ const PreparationPage = () => {
                   localStorage.removeItem('spectator_room_code');
                   navigate('/interview');
                 }}
-                className="w-full py-2.5 rounded-lg bg-white/[0.04] border border-white/[0.08] text-on-surface font-semibold text-xs uppercase tracking-widest hover:bg-white/[0.08] transition-colors"
+                className="btn-secondary w-full py-2.5 text-xs uppercase tracking-widest"
               >
                 {t('spectator.btn_private')}
               </button>

@@ -134,7 +134,7 @@ const DashboardPage = () => {
 
 
   return (
-    <div className="relative flex-1 overflow-hidden">
+    <div className="relative flex-1 overflow-hidden bg-grid-pattern pt-6">
       {/* Global Particle Background (Top Area) */}
       <div
         ref={containerRef}
@@ -154,7 +154,7 @@ const DashboardPage = () => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center mb-24 mt-1 relative p-8 lg:p-0">
           {/* Text Side */}
           <div className="relative z-10 animate-fade-in">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/[0.04] text-primary text-[10px] font-semibold tracking-widest uppercase mb-6 border border-white/[0.08]">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/5 text-primary text-[10px] font-semibold tracking-widest uppercase mb-6 border border-primary/10">
               <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span>
               {t('dashboard.tag')}
             </div>
@@ -168,11 +168,11 @@ const DashboardPage = () => {
               {t('dashboard.desc')}
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
-              <button onClick={() => navigate('/preparation')} className="bg-white text-black font-semibold px-6 py-3 rounded-lg hover:bg-neutral-200 hover:-translate-y-0.5 active:scale-[0.98] transition-all flex items-center justify-center gap-2 group shadow-sm text-sm w-full sm:w-auto">
+              <button onClick={() => navigate('/preparation')} className="btn-primary px-6 py-3 shadow-sm text-sm w-full sm:w-auto flex items-center justify-center gap-2 group">
                 {t('dashboard.btn_start')}
                 <span className="material-symbols-outlined text-[18px] group-hover:translate-x-1 transition-transform">arrow_forward</span>
               </button>
-              <button onClick={() => navigate('/join')} className="bg-white/[0.04] text-on-surface border border-white/[0.08] hover:bg-white/[0.08] hover:-translate-y-0.5 active:scale-[0.98] transition-all font-semibold px-6 py-3 rounded-lg flex items-center justify-center gap-2 text-sm w-full sm:w-auto">
+              <button onClick={() => navigate('/join')} className="btn-secondary px-6 py-3 text-sm w-full sm:w-auto flex items-center justify-center gap-2">
                 <span className="material-symbols-outlined text-[18px]">visibility</span>
                 {t('join.title')}
               </button>
@@ -183,11 +183,11 @@ const DashboardPage = () => {
           <div className="relative lg:h-[500px]">
             {/* Glow behind image */}
             <div className="absolute inset-0 bg-gradient-to-tr from-primary/10 to-secondary/10 blur-[80px] rounded-full z-0 pointer-events-none animate-pulse-slow"></div>
-            <div className="relative z-10 w-full h-full bg-surface-container/30 backdrop-blur-md border border-white/[0.06] rounded-xl shadow-xl p-2 overflow-hidden">
-              <div className="w-full h-full bg-surface-container-low rounded-lg overflow-hidden relative border border-white/[0.05]">
+            <div className="relative z-10 w-full h-full bg-surface-container/30 backdrop-blur-md border border-outline-variant/60 rounded-xl shadow-xl p-2 overflow-hidden">
+              <div className="w-full h-full bg-surface-container-low rounded-lg overflow-hidden relative border border-outline-variant/50">
                 {/* Fake Browser Interface */}
                 <div className="absolute inset-0 bg-background flex flex-col">
-                  <div className="h-10 border-b border-white/[0.05] flex items-center px-4 gap-2">
+                  <div className="h-10 border-b border-outline-variant/50 flex items-center px-4 gap-2">
                     <div className="w-2.5 h-2.5 rounded-full bg-error/80"></div>
                     <div className="w-2.5 h-2.5 rounded-full bg-amber-500/80"></div>
                     <div className="w-2.5 h-2.5 rounded-full bg-green-500/80"></div>
@@ -201,7 +201,7 @@ const DashboardPage = () => {
             </div>
 
             {/* Floating Badge */}
-            <div className="absolute -bottom-4 -left-4 bg-surface-container/90 backdrop-blur-md border border-white/[0.06] rounded-xl p-3.5 shadow-xl flex items-center gap-4 z-20">
+            <div className="absolute -bottom-4 -left-4 bg-surface/90 backdrop-blur-md border border-outline-variant/60 rounded-xl p-3.5 shadow-xl flex items-center gap-4 z-20">
               <div className="w-10 h-10 rounded-lg bg-primary/10 text-primary flex items-center justify-center">
                 <span className="material-symbols-outlined text-[20px]">mic</span>
               </div>
@@ -223,9 +223,9 @@ const DashboardPage = () => {
 
         {/* Bento Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pb-20">
-          <div className="bg-[#121214]/40 backdrop-blur-2xl rounded-xl p-6 border border-white/[0.05] hover:border-white/[0.12] transition-all duration-300 hover:-translate-y-0.5 group shadow-lg flex flex-col justify-between animate-fade-in delay-2">
+          <div className="bento-card p-6 group flex flex-col justify-between animate-fade-in delay-2">
             <div>
-              <div className="w-10 h-10 rounded-lg bg-white/[0.04] border border-white/[0.08] flex items-center justify-center mb-6 text-on-surface-variant group-hover:text-primary transition-colors">
+              <div className="w-10 h-10 rounded-lg bg-primary/5 border border-primary/10 flex items-center justify-center mb-6 text-primary transition-all duration-300">
                 <span className="material-symbols-outlined text-[20px]">forum</span>
               </div>
               <h3 className="text-lg font-semibold text-on-surface mb-2 font-sans">{t('dashboard.card1_title')}</h3>
@@ -240,21 +240,21 @@ const DashboardPage = () => {
             </div>
           </div>
 
-          <div className="bg-[#121214]/40 backdrop-blur-2xl rounded-xl p-6 border border-white/[0.05] hover:border-white/[0.12] transition-all duration-300 hover:-translate-y-0.5 group shadow-lg flex flex-col justify-between animate-fade-in delay-3">
+          <div className="bento-card p-6 group flex flex-col justify-between animate-fade-in delay-3">
             <div>
-              <div className="w-10 h-10 rounded-lg bg-white/[0.04] border border-white/[0.08] flex items-center justify-center mb-6 text-on-surface-variant group-hover:text-secondary transition-colors">
+              <div className="w-10 h-10 rounded-lg bg-secondary/5 border border-secondary/10 flex items-center justify-center mb-6 text-secondary transition-all duration-300">
                 <span className="material-symbols-outlined text-[20px]">document_scanner</span>
               </div>
               <h3 className="text-lg font-semibold text-on-surface mb-2 font-sans">{t('dashboard.card2_title')}</h3>
               <p className="text-xs text-on-surface-variant leading-relaxed mb-6">{t('dashboard.card2_desc')}</p>
             </div>
-            <div className="mt-auto bg-white/[0.02] rounded-lg p-3 flex justify-between items-center border border-white/[0.05]">
+            <div className="mt-auto bg-surface-container-low border border-outline-variant/60 rounded-lg p-3 flex justify-between items-center">
               <span className="text-[10px] font-semibold text-on-surface-variant tracking-wider uppercase">Match Score</span>
               <span className="text-xl font-bold text-secondary font-sans">87%</span>
             </div>
           </div>
 
-          <div className="md:col-span-2 bg-[#121214]/40 backdrop-blur-2xl rounded-xl p-6 border border-white/[0.05] hover:border-white/[0.12] transition-all duration-300 hover:-translate-y-0.5 flex flex-col md:flex-row items-center gap-8 group shadow-lg animate-fade-in delay-4">
+          <div className="md:col-span-2 bento-card p-6 flex flex-col md:flex-row items-center gap-8 group animate-fade-in delay-4">
             <div className="flex-1">
               <div className="flex items-center gap-3 mb-4">
                 <span className="material-symbols-outlined text-tertiary text-[24px]">auto_graph</span>
@@ -262,7 +262,7 @@ const DashboardPage = () => {
               </div>
               <p className="text-xs text-on-surface-variant leading-relaxed max-w-md">{t('dashboard.card3_desc')}</p>
             </div>
-            <div className="w-full md:w-80 bg-background border border-white/[0.06] rounded-xl p-4 shadow-md relative overflow-hidden group-hover:-translate-y-1 transition-transform duration-500">
+            <div className="w-full md:w-80 bg-surface-container-lowest border border-outline-variant/60 rounded-xl p-4 shadow-sm relative overflow-hidden group-hover:-translate-y-1 transition-transform duration-500">
               <div className="absolute top-0 left-0 w-1 h-full bg-secondary"></div>
               <span className="text-[9px] font-semibold text-secondary tracking-wider uppercase mb-1.5 block">{t('dashboard.insight_title')}</span>
               <p className="text-xs text-on-surface-variant italic">{t('dashboard.insight_desc')}</p>
@@ -282,7 +282,7 @@ const DashboardPage = () => {
         {/* Social Proof & Stats Section (Bento Style) */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8 animate-fade-in delay-4">
           {/* Large Card: Success Stories */}
-          <div className="lg:col-span-2 bg-[#121214]/40 backdrop-blur-2xl rounded-xl p-8 border border-white/[0.05] flex flex-col justify-between relative overflow-hidden group hover:border-white/[0.12] transition-all duration-300 hover:-translate-y-0.5 shadow-lg">
+          <div className="lg:col-span-2 bento-card p-8 flex flex-col justify-between relative overflow-hidden group">
             <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 blur-[100px] -mr-32 -mt-32 group-hover:bg-primary/10 transition-colors"></div>
             <div className="relative z-10">
               <h3 className="text-2xl lg:text-3xl font-semibold text-on-surface tracking-tight leading-snug mb-4 max-w-md font-sans">
@@ -299,7 +299,7 @@ const DashboardPage = () => {
                 {[1, 2, 3].map((i) => (
                   <img key={i} src={`https://i.pravatar.cc/100?img=${i + 10}`} alt="User" className="w-8 h-8 rounded-full border border-background" />
                 ))}
-                <div className="w-8 h-8 rounded-full bg-white/[0.04] border border-white/[0.08] flex items-center justify-center text-[9px] font-bold text-on-surface-variant">
+                <div className="w-8 h-8 rounded-full bg-surface-container border border-outline-variant flex items-center justify-center text-[9px] font-bold text-on-surface-variant">
                   +9k
                 </div>
               </div>
@@ -309,7 +309,7 @@ const DashboardPage = () => {
           {/* Right Side Column */}
           <div className="flex flex-col gap-6">
             {/* Top Wide-ish Card: Productivity */}
-            <div className="bg-[#121214]/40 backdrop-blur-2xl rounded-xl p-6 border border-white/[0.05] flex flex-col justify-between h-full group relative overflow-hidden hover:border-white/[0.12] transition-all duration-300 hover:-translate-y-0.5 shadow-lg">
+            <div className="bento-card p-6 flex flex-col justify-between h-full group relative overflow-hidden">
               <div className="absolute top-0 right-0 p-5">
                 <div className="w-8 h-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center group-hover:scale-105 group-hover:bg-primary group-hover:text-white transition-all duration-300">
                   <span className="material-symbols-outlined text-[18px]">rocket_launch</span>
@@ -323,12 +323,12 @@ const DashboardPage = () => {
 
             {/* Bottom Two Squares */}
             <div className="grid grid-cols-2 gap-6">
-              <div className="bg-[#121214]/40 backdrop-blur-2xl rounded-xl p-5 border border-white/[0.05] flex flex-col items-center justify-center text-center hover:border-white/[0.12] transition-all">
+              <div className="bento-card p-5 flex flex-col items-center justify-center text-center hover:scale-[1.02] transition-transform duration-300">
                 <span className="text-2xl font-bold text-primary mb-0.5 font-sans">98%</span>
                 <span className="text-[9px] font-semibold text-on-surface-variant tracking-wider uppercase">{isVi ? 'Tỉ lệ hài lòng' : 'Satisfaction rate'}</span>
               </div>
 
-              <div className="bg-primary/5 backdrop-blur-2xl rounded-xl p-5 border border-primary/20 flex flex-col items-center justify-center text-center group hover:bg-primary/10 transition-all">
+              <div className="bg-primary/5 border border-primary/20 rounded-2xl p-5 flex flex-col items-center justify-center text-center group hover:bg-primary/10 hover:scale-[1.02] transition-all duration-300">
                 <span className="text-xl font-bold text-primary mb-0.5 font-sans">24/7</span>
                 <span className="text-[9px] font-semibold text-primary/80 tracking-wider uppercase">{isVi ? 'Hỗ trợ mọi lúc' : 'Always here'}</span>
               </div>

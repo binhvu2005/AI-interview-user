@@ -192,13 +192,13 @@ const ProfilePage = () => {
            <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
               <button 
                 onClick={() => setShowPasswordForm(true)}
-                className="bg-white/[0.04] text-on-surface border border-white/[0.08] hover:bg-white/[0.08] px-4 py-2.5 rounded-lg text-xs font-semibold hover:-translate-y-0.5 active:scale-[0.98] transition-all w-full sm:w-auto"
+                className="btn-secondary px-4 py-2.5 text-xs hover:-translate-y-0.5 w-full sm:w-auto"
               >
                 {t('profile_page.change_pwd')}
               </button>
               <button 
                 onClick={() => setIsEditing(true)}
-                className="bg-white text-black hover:bg-neutral-200 px-4 py-2.5 rounded-lg text-xs font-semibold hover:-translate-y-0.5 active:scale-[0.98] transition-all w-full sm:w-auto shadow-sm"
+                className="btn-primary px-4 py-2.5 text-xs hover:-translate-y-0.5 w-full sm:w-auto shadow-sm"
               >
                 {t('profile_page.save_changes')}
               </button>
@@ -207,7 +207,7 @@ const ProfilePage = () => {
       </header>
 
       {showPasswordForm ? (
-        <div className="bg-[#09090b]/40 backdrop-blur-md border border-white/[0.06] rounded-xl p-8 shadow-xl max-w-md mx-auto animate-in zoom-in-95 duration-300">
+        <div className="bg-surface border border-outline-variant/60 rounded-xl p-8 shadow-xl max-w-md mx-auto animate-in zoom-in-95 duration-300">
            <h2 className="text-base font-semibold text-on-surface mb-6 uppercase tracking-wider">{t('profile_page.pwd_modal.title')}</h2>
            <form onSubmit={handleChangePassword} className="space-y-5">
               <div className="space-y-1.5">
@@ -218,7 +218,7 @@ const ProfilePage = () => {
                   placeholder="••••••••"
                   value={pwdForm.oldPassword}
                   onChange={e => setPwdForm({...pwdForm, oldPassword: e.target.value})}
-                  className="w-full bg-[#121214]/60 border border-white/[0.08] rounded-lg px-4 py-2.5 text-sm text-on-surface focus:ring-1 focus:ring-primary/40 focus:border-primary/40 outline-none transition-all" 
+                  className="form-input w-full px-4 py-2.5 text-sm" 
                 />
               </div>
               <div className="space-y-1.5">
@@ -229,7 +229,7 @@ const ProfilePage = () => {
                   placeholder="••••••••"
                   value={pwdForm.newPassword}
                   onChange={e => setPwdForm({...pwdForm, newPassword: e.target.value})}
-                  className="w-full bg-[#121214]/60 border border-white/[0.08] rounded-lg px-4 py-2.5 text-sm text-on-surface focus:ring-1 focus:ring-primary/40 focus:border-primary/40 outline-none transition-all" 
+                  className="form-input w-full px-4 py-2.5 text-sm" 
                 />
               </div>
               <div className="space-y-1.5">
@@ -240,21 +240,21 @@ const ProfilePage = () => {
                   placeholder="••••••••"
                   value={pwdForm.confirmPassword}
                   onChange={e => setPwdForm({...pwdForm, confirmPassword: e.target.value})}
-                  className="w-full bg-[#121214]/60 border border-white/[0.08] rounded-lg px-4 py-2.5 text-sm text-on-surface focus:ring-1 focus:ring-primary/40 focus:border-primary/40 outline-none transition-all" 
+                  className="form-input w-full px-4 py-2.5 text-sm" 
                 />
               </div>
               <div className="flex gap-3 pt-3">
                  <button 
                    type="button" 
                    onClick={() => setShowPasswordForm(false)}
-                   className="flex-1 bg-white/[0.04] text-on-surface border border-white/[0.08] hover:bg-white/[0.08] py-2 rounded-lg font-semibold text-xs"
+                   className="flex-1 btn-secondary py-2 text-xs"
                  >
                    {t('profile_page.pwd_modal.cancel')}
                  </button>
                  <button 
                    type="submit" 
                    disabled={saving}
-                   className="flex-1 bg-white text-black hover:bg-neutral-200 py-2 rounded-lg font-semibold text-xs disabled:opacity-50"
+                   className="flex-1 btn-primary py-2 text-xs disabled:opacity-50"
                  >
                    {saving ? t('setup.analyzing') : t('profile_page.pwd_modal.submit')}
                  </button>
@@ -262,7 +262,7 @@ const ProfilePage = () => {
            </form>
         </div>
       ) : (
-        <div className="bg-[#09090b]/40 backdrop-blur-md border border-white/[0.06] rounded-xl p-6 md:p-8 shadow-sm">
+        <div className="bg-surface border border-outline-variant/60 rounded-xl p-6 md:p-8 shadow-sm">
           <div className="flex flex-col lg:flex-row gap-10 items-center lg:items-start">
              <div className="flex flex-col items-center gap-3 shrink-0">
                 <div 
@@ -270,10 +270,10 @@ const ProfilePage = () => {
                   className={`relative w-36 h-36 rounded-2xl flex items-center justify-center transition-all ${
                     userData.isVip 
                       ? 'ring-2 ring-amber-500/50 ring-offset-2 ring-offset-background shadow-md' 
-                      : 'border border-white/[0.08]'
+                      : 'border border-outline-variant/60'
                   } ${isEditing ? 'cursor-pointer hover:scale-[1.02] active:scale-[0.98]' : 'cursor-default'}`}
                 >
-                  <div className="relative w-full h-full rounded-2xl overflow-hidden bg-[#121214]/80">
+                  <div className="relative w-full h-full rounded-2xl overflow-hidden bg-surface-container-low">
                     <img alt="avatar" className="w-full h-full object-cover rounded-2xl" src={userData.avatar || `https://ui-avatars.com/api/?name=${userData.fullName || 'U'}&background=6366f1&size=256`} />
                     {isEditing && (
                       <div className="absolute inset-0 bg-black/60 flex items-center justify-center transition-opacity hover:opacity-100 opacity-80">
@@ -301,12 +301,12 @@ const ProfilePage = () => {
                    placeholder={t('profile_page.fullname')}
                    value={userData.fullName} 
                    onChange={(e) => setUserData({...userData, fullName: e.target.value})} 
-                   className={`w-full bg-[#121214]/60 border border-white/[0.08] rounded-lg px-4 py-2.5 text-sm text-on-surface outline-none transition-all font-medium ${!isEditing ? 'opacity-50 cursor-not-allowed' : 'focus:ring-1 focus:ring-primary/40 focus:border-primary/40'}`} 
+                   className={`form-input w-full px-4 py-2.5 text-sm font-medium ${!isEditing ? 'opacity-50 cursor-not-allowed' : ''}`} 
                  />
                </div>
                <div className="space-y-1.5">
                  <label className="text-xs font-semibold tracking-wide text-on-surface-variant/60 ml-1">{t('profile_page.email')}</label>
-                 <input type="email" value={userData.email} readOnly className="w-full bg-[#121214]/30 border border-white/[0.04] rounded-lg px-4 py-2.5 text-sm text-on-surface-variant/60 cursor-not-allowed font-medium" />
+                 <input type="email" value={userData.email} readOnly className="form-input w-full px-4 py-2.5 text-sm text-on-surface-variant/60 cursor-not-allowed font-medium opacity-60 bg-surface-container-low/50" />
                </div>
                <div className="space-y-1.5">
                  <label className="text-xs font-semibold tracking-wide text-on-surface-variant/60 ml-1">{t('profile_page.phone')}</label>
@@ -316,7 +316,7 @@ const ProfilePage = () => {
                    placeholder={t('profile_page.phone_placeholder')}
                    value={userData.phoneNumber} 
                    onChange={(e) => setUserData({...userData, phoneNumber: e.target.value})} 
-                   className={`w-full bg-[#121214]/60 border border-white/[0.08] rounded-lg px-4 py-2.5 text-sm text-on-surface outline-none transition-all font-medium ${!isEditing ? 'opacity-50 cursor-not-allowed' : 'focus:ring-1 focus:ring-primary/40 focus:border-primary/40'}`} 
+                   className={`form-input w-full px-4 py-2.5 text-sm font-medium ${!isEditing ? 'opacity-50 cursor-not-allowed' : ''}`} 
                  />
                </div>
                <div className="space-y-1.5">
@@ -327,7 +327,7 @@ const ProfilePage = () => {
                    placeholder={t('profile_page.role_placeholder')}
                    value={userData.targetRole} 
                    onChange={(e) => setUserData({...userData, targetRole: e.target.value})} 
-                   className={`w-full bg-[#121214]/60 border border-white/[0.08] rounded-lg px-4 py-2.5 text-sm text-on-surface outline-none transition-all font-medium ${!isEditing ? 'opacity-50 cursor-not-allowed' : 'focus:ring-1 focus:ring-primary/40 focus:border-primary/40'}`} 
+                   className={`form-input w-full px-4 py-2.5 text-sm font-medium ${!isEditing ? 'opacity-50 cursor-not-allowed' : ''}`} 
                  />
                </div>
                <div className="md:col-span-2 space-y-1.5">
@@ -338,25 +338,25 @@ const ProfilePage = () => {
                    value={userData.bio} 
                    onChange={(e) => setUserData({...userData, bio: e.target.value})} 
                    rows={3} 
-                   className={`w-full bg-[#121214]/60 border border-white/[0.08] rounded-lg px-4 py-2.5 text-sm text-on-surface outline-none transition-all resize-none font-medium ${!isEditing ? 'opacity-50 cursor-not-allowed' : 'focus:ring-1 focus:ring-primary/40 focus:border-primary/40'}`} 
+                   className={`form-input w-full px-4 py-2.5 text-sm resize-none font-medium ${!isEditing ? 'opacity-50 cursor-not-allowed' : ''}`} 
                  ></textarea>
                </div>
              </div>
           </div>
 
           {isEditing && (
-            <div className="flex justify-end gap-3 mt-8 pt-6 border-t border-white/[0.06]">
+            <div className="flex justify-end gap-3 mt-8 pt-6 border-t border-outline-variant/50">
               <button 
                 type="button" 
                 onClick={() => { setIsEditing(false); fetchProfile(); }}
-                className="bg-white/[0.04] text-on-surface border border-white/[0.08] hover:bg-white/[0.08] px-5 py-2 rounded-lg font-semibold text-xs transition-all"
+                className="btn-secondary px-5 py-2 text-xs"
               >
                 {t('profile_page.pwd_modal.cancel')}
               </button>
               <button 
                 onClick={handleSaveProfile}
                 disabled={saving} 
-                className="bg-white text-black hover:bg-neutral-200 px-6 py-2 rounded-lg font-semibold text-xs transition-all disabled:opacity-50 shadow-sm"
+                className="btn-primary px-6 py-2 text-xs disabled:opacity-50 shadow-sm"
               >
                 {saving ? t('settings.save') + '...' : t('profile_page.save_changes')}
               </button>
@@ -367,16 +367,16 @@ const ProfilePage = () => {
 
       {/* Contribution Heatmap */}
       {!showPasswordForm && (
-        <div className="mt-8 bg-[#09090b]/40 backdrop-blur-md border border-white/[0.06] rounded-xl p-6 md:p-8 shadow-sm overflow-hidden">
+        <div className="mt-8 bg-surface border border-outline-variant/60 rounded-xl p-6 md:p-8 shadow-sm overflow-hidden">
           <div className="flex items-center justify-between mb-8">
             <div className="flex items-center gap-2">
-              <span className="material-symbols-outlined text-white/80 text-xl">calendar_month</span>
+              <span className="material-symbols-outlined text-on-surface-variant/80 text-xl">calendar_month</span>
               <h3 className="text-sm font-semibold text-on-surface uppercase tracking-wider">Hoạt động luyện tập</h3>
             </div>
             <div className="flex items-center gap-2 text-[10px] font-semibold text-on-surface-variant/60">
               <span>Ít</span>
               <div className="flex gap-1">
-                <div className="w-2.5 h-2.5 rounded-sm bg-white/[0.04] border border-white/[0.06]"></div>
+                <div className="w-2.5 h-2.5 rounded-sm bg-surface-container border border-outline-variant/60"></div>
                 <div className="w-2.5 h-2.5 rounded-sm bg-[#6366f1]/20"></div>
                 <div className="w-2.5 h-2.5 rounded-sm bg-[#6366f1]/60"></div>
                 <div className="w-2.5 h-2.5 rounded-sm bg-[#6366f1]"></div>

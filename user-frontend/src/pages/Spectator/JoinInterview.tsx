@@ -33,12 +33,12 @@ const JoinInterview = () => {
 
   return (
     <div className="min-h-[calc(100vh-160px)] flex items-center justify-center p-6 bg-transparent">
-      <div className="max-w-md w-full bg-[#09090b]/40 backdrop-blur-md border border-white/[0.06] rounded-xl p-8 shadow-2xl animate-in zoom-in-95 duration-500">
-        <div className="w-16 h-16 mx-auto bg-white/[0.04] border border-white/[0.08] rounded-xl flex items-center justify-center mb-6 shadow-sm overflow-hidden">
+      <div className="max-w-md w-full bg-surface border border-outline-variant/60 rounded-xl p-8 shadow-2xl animate-in zoom-in-95 duration-500">
+        <div className="w-16 h-16 mx-auto bg-primary/5 border border-primary/10 rounded-xl flex items-center justify-center mb-6 shadow-sm overflow-hidden text-primary">
           {userAvatar ? (
              <img src={userAvatar} alt="avatar" className="w-full h-full object-cover" />
           ) : (
-            <span className="material-symbols-outlined text-3xl text-white/80">visibility</span>
+            <span className="material-symbols-outlined text-3xl text-primary">visibility</span>
           )}
         </div>
         
@@ -56,13 +56,13 @@ const JoinInterview = () => {
               value={code}
               onChange={(e) => setCode(e.target.value.toUpperCase())}
               placeholder={t('join.code_placeholder')}
-              className="w-full bg-[#121214]/60 border border-white/[0.08] rounded-lg px-4 py-3 text-center text-2xl font-bold tracking-[0.2em] text-white focus:ring-1 focus:ring-primary/40 focus:border-primary/40 outline-none transition-all placeholder:text-white/10"
+              className="form-input w-full px-4 py-3 text-center text-2xl font-bold tracking-[0.2em] focus:ring-2 focus:ring-primary/10 transition-all placeholder:text-on-surface-variant/20"
             />
           </div>
 
           <button 
             onClick={handleJoin}
-            className="w-full py-3 bg-white text-black hover:bg-neutral-200 rounded-lg font-semibold text-xs uppercase tracking-wider transition-all active:scale-[0.98] shadow-sm mt-4"
+            className="btn-primary w-full py-3 text-xs uppercase tracking-wider shadow-sm mt-4"
           >
             {t('join.btn_join')}
           </button>

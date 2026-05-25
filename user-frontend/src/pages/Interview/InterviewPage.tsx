@@ -393,11 +393,11 @@ const InterviewPage = () => {
 
       <main className="flex-1 flex flex-col lg:flex-row p-6 gap-6 min-h-0 overflow-hidden">
         {/* Chat Area */}
-        <div className="flex-1 flex flex-col bg-[#121214]/40 backdrop-blur-2xl rounded-2xl border border-white/[0.05] shadow-xl relative overflow-hidden">
+        <div className="flex-1 flex flex-col bg-surface border border-outline-variant/60 rounded-2xl shadow-sm relative overflow-hidden">
           <div ref={scrollRef} className="flex-1 overflow-y-auto p-6 flex flex-col gap-5 scrollbar-none scroll-smooth">
             {messages.map((msg, idx) => (
               <div key={idx} className={`flex ${msg.role === 'ai' ? 'justify-start' : 'justify-end'} animate-in fade-in slide-in-from-bottom-2`}>
-                <div className={`max-w-[80%] p-4 rounded-xl border ${msg.role === 'ai' ? 'bg-white/[0.02] text-on-surface rounded-tl-sm border-white/[0.05] shadow-sm' : 'bg-white/[0.06] text-on-surface rounded-tr-sm border-white/[0.08] shadow-sm'}`}>
+                <div className={`max-w-[80%] p-4 rounded-xl border ${msg.role === 'ai' ? 'bg-surface-container-low/50 text-on-surface rounded-tl-sm border-outline-variant/60 shadow-sm' : 'bg-surface text-on-surface rounded-tr-sm border-outline-variant shadow-sm'}`}>
                   <p className={`text-[9px] font-semibold mb-1 uppercase tracking-widest ${msg.role === 'ai' ? 'text-primary/90' : 'text-on-surface-variant/80'}`}>{msg.role === 'ai' ? 'Obsidian AI' : (isVi ? 'BẠN' : 'YOU')}</p>
                   <p className="text-xs md:text-sm leading-relaxed whitespace-pre-line">{msg.content}</p>
                 </div>
@@ -405,11 +405,11 @@ const InterviewPage = () => {
             ))}
             {isProcessing && (
               <div className="flex justify-start">
-                <div className="bg-white/[0.02] px-4 py-2.5 rounded-xl border border-white/[0.05] flex items-center gap-2.5">
+                <div className="bg-surface-container-low/50 px-4 py-2.5 rounded-xl border border-outline-variant/60 flex items-center gap-2.5">
                   <div className="flex gap-1">
                     <span className="w-1.5 h-1.5 bg-primary rounded-full animate-bounce"></span>
-                    <span className="w-1.5 h-1.5 bg-primary rounded-full animate-bounce [animation-delay:0.2s]"></span>
-                    <span className="w-1.5 h-1.5 bg-primary rounded-full animate-bounce [animation-delay:0.4s]"></span>
+                    <span className="w-1.5 h-1.5 bg-primary rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></span>
+                    <span className="w-1.5 h-1.5 bg-primary rounded-full animate-bounce" style={{ animationDelay: '0.4s' }}></span>
                   </div>
                   <span className="text-[9px] font-semibold opacity-70 tracking-widest uppercase text-on-surface">{t('interview.thinking')}</span>
                 </div>
@@ -418,8 +418,8 @@ const InterviewPage = () => {
           </div>
 
           {/* Input Area */}
-          <div className="p-4 bg-white/[0.01] border-t border-white/[0.05] shrink-0">
-            <div className="flex items-center gap-3 bg-white/[0.02] border border-white/[0.08] rounded-lg p-1.5 pl-4 focus-within:border-primary/40 transition-all">
+          <div className="p-4 bg-surface-container-low/10 border-t border-outline-variant/60 shrink-0">
+            <div className="flex items-center gap-3 bg-surface border border-outline-variant rounded-lg p-1.5 pl-4 focus-within:ring-2 focus-within:ring-primary/10 focus-within:border-primary transition-all duration-200">
               <input
                 value={userInput}
                 onChange={(e) => setUserInput(e.target.value)}
@@ -428,10 +428,19 @@ const InterviewPage = () => {
                 className="flex-1 bg-transparent border-none outline-none py-2 text-xs font-medium text-on-surface placeholder:text-on-surface-variant/40"
               />
               <div className="flex items-center gap-2 pr-1">
-                <button onMouseDown={startRecording} onMouseUp={stopRecording} onMouseLeave={stopRecording} className={`w-9 h-9 rounded-lg flex items-center justify-center transition-all ${isRecording ? 'bg-red-500 text-white animate-pulse' : 'text-on-surface-variant hover:text-primary hover:bg-white/[0.04]'} cursor-pointer`}>
+                <button
+                  onMouseDown={startRecording}
+                  onMouseUp={stopRecording}
+                  onMouseLeave={stopRecording}
+                  className={`w-9 h-9 rounded-lg flex items-center justify-center transition-all ${isRecording ? 'bg-red-500 text-white animate-pulse' : 'text-on-surface-variant hover:text-primary hover:bg-surface-container-low/40'} cursor-pointer`}
+                >
                   <span className="material-symbols-outlined text-[18px]">{isRecording ? 'graphic_eq' : 'mic'}</span>
                 </button>
-                <button onClick={handleSendMessage} disabled={!userInput.trim() || isProcessing} className="w-9 h-9 bg-white text-black hover:bg-neutral-200 rounded-lg flex items-center justify-center disabled:opacity-30 transition-all cursor-pointer animate-none">
+                <button 
+                  onClick={handleSendMessage}
+                  disabled={isProcessing || !userInput.trim()}
+                  className="btn-primary w-9 h-9 flex items-center justify-center disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+                >
                   <span className="material-symbols-outlined text-[18px]">send</span>
                 </button>
               </div>
@@ -442,7 +451,7 @@ const InterviewPage = () => {
         {/* Sidebar */}
         <div className="w-full lg:w-[380px] flex flex-col gap-6 shrink-0">
           {/* Camera Feed */}
-          <div className={`bg-[#121214]/40 backdrop-blur-2xl rounded-2xl overflow-hidden relative aspect-video lg:aspect-auto lg:h-[260px] border border-white/[0.05] shadow-xl group transition-all duration-500 ${!isMuted && !isVideoOff ? 'border-primary/20 ring-1 ring-primary/10 shadow-[0_0_15px_rgba(99,102,241,0.08)]' : ''}`}>
+          <div className={`bg-surface rounded-2xl overflow-hidden relative aspect-video lg:aspect-auto lg:h-[260px] border border-outline-variant/60 shadow-sm group transition-all duration-500 ${!isMuted && !isVideoOff ? 'border-primary/20 ring-1 ring-primary/10 shadow-[0_0_15px_rgba(99,102,241,0.08)]' : ''}`}>
             <video
               ref={videoRef}
               autoPlay
@@ -452,7 +461,7 @@ const InterviewPage = () => {
             />
 
             {isVideoOff && (
-              <div className="absolute inset-0 flex flex-col items-center justify-center bg-[#09090b]">
+              <div className="absolute inset-0 flex flex-col items-center justify-center bg-surface-container-low">
                 <span className="material-symbols-outlined text-4xl text-on-surface-variant/20">videocam_off</span>
                 <p className="text-[10px] font-semibold text-on-surface-variant/60 mt-3 uppercase tracking-widest">{t('interview.camera_off')}</p>
               </div>
@@ -487,7 +496,7 @@ const InterviewPage = () => {
           </div>
 
           {/* Timer Card */}
-          <div className="bg-[#121214]/40 backdrop-blur-2xl rounded-2xl p-6 border border-white/[0.05] flex flex-col items-center justify-center text-center shadow-sm relative overflow-hidden group">
+          <div className="bg-surface rounded-2xl p-6 border border-outline-variant/60 flex flex-col items-center justify-center text-center shadow-sm relative overflow-hidden group">
             <div className="absolute top-0 left-0 w-full h-0.5 bg-gradient-to-r from-transparent via-primary/30 to-transparent"></div>
             <div className="flex items-center gap-2 mb-2 opacity-60">
               <span className="material-symbols-outlined text-xs text-on-surface">timer</span>
@@ -500,7 +509,7 @@ const InterviewPage = () => {
 
           {/* Spectators Management */}
           {localStorage.getItem('spectator_room_code') && (
-            <div className="flex-1 bg-[#121214]/40 backdrop-blur-2xl rounded-2xl p-5 border border-white/[0.05] shadow-xl flex flex-col overflow-hidden">
+            <div className="flex-1 bg-surface rounded-2xl p-5 border border-outline-variant/60 shadow-sm flex flex-col overflow-hidden">
               <div className="flex items-center justify-between mb-4 shrink-0">
                 <div className="flex items-center gap-2">
                   <span className="material-symbols-outlined text-primary text-xs">group</span>
@@ -513,7 +522,7 @@ const InterviewPage = () => {
 
               <div className="flex-1 overflow-y-auto space-y-2 pr-2 scrollbar-none">
                 {spectators.length > 0 ? spectators.map(spec => (
-                  <div key={spec.socketId} className="flex items-center justify-between p-2 px-3 bg-white/[0.01] rounded-lg border border-white/[0.05] group/item">
+                  <div key={spec.socketId} className="flex items-center justify-between p-2 px-3 bg-surface-container-low rounded-lg border border-outline-variant/60 group/item">
                     <div className="flex items-center gap-2.5">
                       <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center text-[9px] font-semibold text-primary border border-primary/15">
                         {spec.name.charAt(0).toUpperCase()}
@@ -542,7 +551,7 @@ const InterviewPage = () => {
 
       {showCheatModal && (
         <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-background/80 backdrop-blur-sm animate-in fade-in duration-300">
-          <div className="bg-[#09090b] border border-red-500/20 rounded-xl p-6 max-w-sm w-full text-center shadow-2xl relative overflow-hidden animate-in zoom-in-95 duration-300">
+          <div className="bg-surface border border-red-500/20 rounded-xl p-6 max-w-sm w-full text-center shadow-2xl relative overflow-hidden animate-in zoom-in-95 duration-300">
             {/* Red glowing decorative top bar */}
             <div className="absolute top-0 left-0 w-full h-0.5 bg-gradient-to-r from-red-500/20 via-red-500 to-red-500/20 shadow-[0_0_8px_rgba(239,68,68,0.3)]"></div>
             
