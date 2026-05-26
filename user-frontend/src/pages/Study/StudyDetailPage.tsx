@@ -29,6 +29,8 @@ export default function StudyDetailPage() {
   const [highScore, setHighScore] = useState<number | null>(null);
   const [tocOpen, setTocOpen] = useState(false);
   const contentRef = useRef<HTMLDivElement>(null);
+  interface TOCItem { id: string; text: string; level: number; }
+  const [tocItems, setTocItems] = useState<TOCItem[]>([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -55,20 +57,65 @@ export default function StudyDetailPage() {
 
   useEffect(() => {
     if (!material) return;
+    const timer = setTimeout(() => {
+      if (!contentRef.current) return;
+      const headingElements = contentRef.current.querySelectorAll('h2, h3, h4');
+      const items: TOCItem[] = [];
+      headingElements.forEach((el, index) => {
+        const text = el.textContent?.trim() || '';
+        if (!text) return;
+        const tagName = el.tagName.toLowerCase();
+        let id = '';
+        if (tagName === 'h2') {
+          const parentSection = el.closest('section');
+          if (parentSection && parentSection.id) {
+            id = parentSection.id;
+          } else {
+            id = el.id || `h2-${index}`;
+            el.id = id;
+          }
+        } else {
+          if (el.id) {
+            id = el.id;
+          } else {
+            const slugified = text
+              .toLowerCase()
+              .replace(/[^a-z0-9\s-]/g, '')
+              .trim()
+              .replace(/\s+/g, '-');
+            id = slugified ? `h-${slugified}-${index}` : `h-${tagName}-${index}`;
+            el.id = id;
+          }
+        }
+        el.classList.add('scroll-mt-24');
+        items.push({ id, text, level: parseInt(tagName.substring(1)) || 2 });
+      });
+      setTocItems(items);
+    }, 50);
+    return () => clearTimeout(timer);
+  }, [material]);
+
+  useEffect(() => {
+    if (tocItems.length === 0) return;
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) setActiveSection(entry.target.id);
       });
-    }, { rootMargin: '-80px 0px -60% 0px', threshold: 0.1 });
-
-    const sections = contentRef.current?.querySelectorAll('[data-section]');
-    sections?.forEach(el => observer.observe(el));
+    }, { rootMargin: '-100px 0px -75% 0px', threshold: 0 });
+    tocItems.forEach(item => {
+      const el = document.getElementById(item.id);
+      if (el) observer.observe(el);
+    });
     return () => observer.disconnect();
-  }, [material]);
+  }, [tocItems]);
 
   const scrollTo = (id: string) => {
     const el = document.getElementById(id);
-    if (el) { el.scrollIntoView({ behavior: 'smooth', block: 'start' }); setTocOpen(false); }
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      setActiveSection(id);
+      setTocOpen(false);
+    }
   };
 
   if (loading) return (
@@ -86,15 +133,6 @@ export default function StudyDetailPage() {
       <button onClick={() => navigate('/study')} className="mt-4 text-primary text-sm font-semibold hover:underline cursor-pointer">← {t('study.back')}</button>
     </div>
   );
-
-  const tocItems = [
-    { id: 'overview', title: t('study.overview'), icon: 'info' },
-    ...(material.keyFeatures.length > 0 ? [{ id: 'features', title: t('study.key_features'), icon: 'star' }] : []),
-    ...material.sections.sort((a, b) => a.order - b.order).map(s => ({ id: `section-${s.id}`, title: s.title, icon: 'article' })),
-    ...(material.directoryStructure ? [{ id: 'directory', title: t('study.directory_structure'), icon: 'folder' }] : []),
-    ...(material.installation ? [{ id: 'installation', title: t('study.installation'), icon: 'terminal' }] : []),
-    ...(material.resources.length > 0 ? [{ id: 'resources', title: t('study.resources'), icon: 'link' }] : []),
-  ];
 
   return (
     <div className="min-h-screen pb-20 animate-fade-in bg-background text-on-surface">
@@ -151,48 +189,6 @@ export default function StudyDetailPage() {
         </div>
 
         <div className="flex gap-8 relative">
-          {/* TOC - Desktop Sticky Sidebar */}
-          <aside className="hidden lg:block w-56 flex-shrink-0">
-            <div className="sticky top-20">
-              <div className="text-[9px] font-bold uppercase tracking-widest text-on-surface-variant mb-3 px-2">{t('study.toc')}</div>
-              <nav className="flex flex-col gap-0.5">
-                {tocItems.map(item => (
-                  <button key={item.id} onClick={() => scrollTo(item.id)}
-                    className={`flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium text-left transition-all cursor-pointer ${
-                      activeSection === item.id
-                        ? 'bg-primary/10 text-primary font-semibold'
-                        : 'text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface'
-                    }`}>
-                    <span className="material-symbols-outlined text-[14px]">{item.icon}</span>
-                    <span className="truncate">{item.title}</span>
-                  </button>
-                ))}
-              </nav>
-            </div>
-          </aside>
-
-          {/* TOC - Mobile Dropdown */}
-          <div className="lg:hidden fixed bottom-4 right-4 z-50">
-            <button onClick={() => setTocOpen(!tocOpen)}
-              className="w-12 h-12 rounded-full bg-primary text-on-primary shadow-lg shadow-primary/30 flex items-center justify-center cursor-pointer hover:scale-105 transition-transform">
-              <span className="material-symbols-outlined">{tocOpen ? 'close' : 'toc'}</span>
-            </button>
-            {tocOpen && (
-              <div className="absolute bottom-16 right-0 w-64 bg-surface-container border border-outline-variant/30 rounded-xl shadow-2xl p-3 animate-in fade-in slide-in-from-bottom-2 duration-200">
-                <div className="text-[9px] font-bold uppercase tracking-widest text-on-surface-variant mb-2 px-2">{t('study.toc')}</div>
-                {tocItems.map(item => (
-                  <button key={item.id} onClick={() => scrollTo(item.id)}
-                    className={`flex items-center gap-2 w-full px-3 py-2 rounded-lg text-xs font-medium text-left transition-all cursor-pointer ${
-                      activeSection === item.id ? 'bg-primary/10 text-primary' : 'text-on-surface-variant hover:bg-surface-container-high'
-                    }`}>
-                    <span className="material-symbols-outlined text-[14px]">{item.icon}</span>
-                    {item.title}
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
-
           {/* Content */}
           <div ref={contentRef} className="flex-1 min-w-0 space-y-10">
             {/* Overview */}
@@ -306,8 +302,83 @@ export default function StudyDetailPage() {
               </button>
             </div>
           </div>
+
+          {/* TOC - Desktop Sticky Sidebar */}
+          <aside className="hidden lg:block w-60 flex-shrink-0">
+            <div className="sticky top-24 max-h-[calc(100vh-8rem)] overflow-y-auto pr-2 scrollbar-thin">
+              <div className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-4 px-3">
+                {t('study.toc') || 'Mục lục'}
+              </div>
+              <nav className="relative border-l border-outline-variant/30 flex flex-col gap-1">
+                {tocItems.map(item => {
+                  const isActive = activeSection === item.id;
+                  const indentClass = item.level === 3 ? 'pl-6' : item.level === 4 ? 'pl-9' : 'pl-3';
+                  
+                  return (
+                    <button
+                      key={item.id}
+                      onClick={() => scrollTo(item.id)}
+                      className={`group flex items-center py-1.5 pr-2 -ml-[1px] border-l transition-all text-left cursor-pointer text-xs ${indentClass} ${
+                        isActive
+                          ? 'border-primary text-primary font-semibold'
+                          : 'border-transparent text-on-surface-variant hover:text-on-surface hover:border-outline-variant'
+                      }`}
+                    >
+                      <span className="truncate leading-relaxed">{item.text}</span>
+                    </button>
+                  );
+                })}
+              </nav>
+            </div>
+          </aside>
         </div>
       </div>
+
+      {/* Floating TOC Button for Mobile */}
+      <div className="fixed bottom-6 right-6 lg:hidden z-40">
+        <button
+          onClick={() => setTocOpen(!tocOpen)}
+          className="w-12 h-12 rounded-full bg-primary text-on-primary shadow-lg flex items-center justify-center cursor-pointer hover:bg-primary-dim transition-transform duration-200 active:scale-95"
+        >
+          <span className="material-symbols-outlined">{tocOpen ? 'close' : 'menu_book'}</span>
+        </button>
+      </div>
+
+      {/* Mobile TOC Drawer Overlay */}
+      {tocOpen && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 lg:hidden" onClick={() => setTocOpen(false)}>
+          <div
+            className="fixed right-0 top-0 bottom-0 w-72 bg-surface-container shadow-2xl p-6 flex flex-col animate-slide-in-right"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between mb-6">
+              <span className="text-sm font-bold uppercase tracking-wider text-on-surface">{t('study.toc') || 'Mục lục'}</span>
+              <button onClick={() => setTocOpen(false)} className="text-on-surface-variant hover:text-on-surface cursor-pointer">
+                <span className="material-symbols-outlined">close</span>
+              </button>
+            </div>
+            <nav className="flex-1 overflow-y-auto border-l border-outline-variant/30 flex flex-col gap-1 pr-2">
+              {tocItems.map(item => {
+                const isActive = activeSection === item.id;
+                const indentClass = item.level === 3 ? 'pl-6' : item.level === 4 ? 'pl-9' : 'pl-3';
+                return (
+                  <button
+                    key={item.id}
+                    onClick={() => scrollTo(item.id)}
+                    className={`group flex items-center py-2 pr-2 -ml-[1px] border-l transition-all text-left cursor-pointer text-xs ${indentClass} ${
+                      isActive
+                        ? 'border-primary text-primary font-semibold'
+                        : 'border-transparent text-on-surface-variant hover:text-on-surface'
+                    }`}
+                  >
+                    <span className="truncate leading-relaxed">{item.text}</span>
+                  </button>
+                );
+              })}
+            </nav>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
