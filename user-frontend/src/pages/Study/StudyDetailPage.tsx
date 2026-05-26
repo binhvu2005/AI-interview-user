@@ -31,6 +31,20 @@ export default function StudyDetailPage() {
   const contentRef = useRef<HTMLDivElement>(null);
   interface TOCItem { id: string; text: string; level: number; }
   const [tocItems, setTocItems] = useState<TOCItem[]>([]);
+  const [allMaterials, setAllMaterials] = useState<StudyDetail[]>([]);
+
+  useEffect(() => {
+    const fetchAllMaterials = async () => {
+      try {
+        const res = await fetch(`${API_ENDPOINTS.STUDY_MATERIALS.GET_ALL}?limit=50`);
+        if (res.ok) {
+          const data = await res.json();
+          setAllMaterials(data.items || []);
+        }
+      } catch (err) { console.error(err); }
+    };
+    fetchAllMaterials();
+  }, []);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -155,7 +169,7 @@ export default function StudyDetailPage() {
         </div>
       </div>
 
-      <div className="max-w-6xl mx-auto px-4 md:px-8 mt-6">
+      <div className="max-w-7xl mx-auto px-4 md:px-8 mt-6">
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
           <div>
@@ -189,6 +203,35 @@ export default function StudyDetailPage() {
         </div>
 
         <div className="flex gap-8 relative">
+          {/* TOC - Desktop Sticky Sidebar (Left Column) */}
+          <aside className="hidden xl:block w-56 flex-shrink-0">
+            <div className="sticky top-24 max-h-[calc(100vh-8rem)] overflow-y-auto pr-2 scrollbar-thin">
+              <div className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-4 px-3">
+                {t('study.toc') || 'Mục lục'}
+              </div>
+              <nav className="relative border-l border-outline-variant/30 flex flex-col gap-1">
+                {tocItems.map(item => {
+                  const isActive = activeSection === item.id;
+                  const indentClass = item.level === 3 ? 'pl-6' : item.level === 4 ? 'pl-9' : 'pl-3';
+                  
+                  return (
+                    <button
+                      key={item.id}
+                      onClick={() => scrollTo(item.id)}
+                      className={`group flex items-center py-1.5 pr-2 -ml-[1px] border-l transition-all text-left cursor-pointer text-xs ${indentClass} ${
+                        isActive
+                          ? 'border-primary text-primary font-semibold'
+                          : 'border-transparent text-on-surface-variant hover:text-on-surface hover:border-outline-variant'
+                      }`}
+                    >
+                      <span className="truncate leading-relaxed">{item.text}</span>
+                    </button>
+                  );
+                })}
+              </nav>
+            </div>
+          </aside>
+
           {/* Content */}
           <div ref={contentRef} className="flex-1 min-w-0 space-y-10">
             {/* Overview */}
@@ -303,28 +346,26 @@ export default function StudyDetailPage() {
             </div>
           </div>
 
-          {/* TOC - Desktop Sticky Sidebar */}
-          <aside className="hidden lg:block w-60 flex-shrink-0">
+          {/* Quick Switch Sidebar (Right Column) */}
+          <aside className="hidden lg:block w-52 flex-shrink-0">
             <div className="sticky top-24 max-h-[calc(100vh-8rem)] overflow-y-auto pr-2 scrollbar-thin">
               <div className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-4 px-3">
-                {t('study.toc') || 'Mục lục'}
+                {t('study.other_materials') || 'Tài liệu khác'}
               </div>
               <nav className="relative border-l border-outline-variant/30 flex flex-col gap-1">
-                {tocItems.map(item => {
-                  const isActive = activeSection === item.id;
-                  const indentClass = item.level === 3 ? 'pl-6' : item.level === 4 ? 'pl-9' : 'pl-3';
-                  
+                {allMaterials.map(m => {
+                  const isCurrent = m.slug === slug;
                   return (
                     <button
-                      key={item.id}
-                      onClick={() => scrollTo(item.id)}
-                      className={`group flex items-center py-1.5 pr-2 -ml-[1px] border-l transition-all text-left cursor-pointer text-xs ${indentClass} ${
-                        isActive
+                      key={m._id}
+                      onClick={() => navigate(`/study/${m.slug}`)}
+                      className={`group flex items-center py-2 pr-2 -ml-[1px] border-l transition-all text-left cursor-pointer text-xs pl-3 ${
+                        isCurrent
                           ? 'border-primary text-primary font-semibold'
                           : 'border-transparent text-on-surface-variant hover:text-on-surface hover:border-outline-variant'
                       }`}
                     >
-                      <span className="truncate leading-relaxed">{item.text}</span>
+                      <span className="truncate leading-relaxed">{m.name}</span>
                     </button>
                   );
                 })}
