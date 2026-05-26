@@ -19,6 +19,8 @@ const CAT_COLORS: Record<string, string> = {
   DevOps: '#F472B6', Mobile: '#60A5FA', Other: '#A78BFA'
 };
 
+const CATEGORY_ORDER = ['Frontend', 'Backend', 'Database', 'DevOps', 'Mobile', 'Other'];
+
 export default function StudyDetailPage() {
   const { t } = useTranslation();
   const { slug } = useParams<{ slug: string }>();
@@ -28,10 +30,12 @@ export default function StudyDetailPage() {
   const [activeSection, setActiveSection] = useState('overview');
   const [highScore, setHighScore] = useState<number | null>(null);
   const [tocOpen, setTocOpen] = useState(false);
+  const [quickSwitchOpen, setQuickSwitchOpen] = useState(false);
   const contentRef = useRef<HTMLDivElement>(null);
   interface TOCItem { id: string; text: string; level: number; }
   const [tocItems, setTocItems] = useState<TOCItem[]>([]);
   const [allMaterials, setAllMaterials] = useState<StudyDetail[]>([]);
+  const [expandedCategories, setExpandedCategories] = useState<Set<string>>(new Set(['Frontend', 'Backend']));
 
   useEffect(() => {
     const fetchAllMaterials = async () => {
@@ -130,6 +134,24 @@ export default function StudyDetailPage() {
       setActiveSection(id);
       setTocOpen(false);
     }
+  };
+
+  const toggleCategory = (category: string) => {
+    const newExpanded = new Set(expandedCategories);
+    if (newExpanded.has(category)) {
+      newExpanded.delete(category);
+    } else {
+      newExpanded.add(category);
+    }
+    setExpandedCategories(newExpanded);
+  };
+
+  const getMaterialsByCategory = (): Record<string, StudyDetail[]> => {
+    const grouped: Record<string, StudyDetail[]> = {};
+    CATEGORY_ORDER.forEach(cat => {
+      grouped[cat] = allMaterials.filter(m => m.category === cat);
+    });
+    return grouped;
   };
 
   if (loading) return (
@@ -350,23 +372,52 @@ export default function StudyDetailPage() {
           <aside className="hidden lg:block w-52 flex-shrink-0">
             <div className="sticky top-24 max-h-[calc(100vh-8rem)] overflow-y-auto pr-2 scrollbar-thin">
               <div className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-4 px-3">
-                {t('study.other_materials') || 'Tài liệu khác'}
+                {t('study.other_materials') || 'Công nghệ khác'}
               </div>
               <nav className="relative border-l border-outline-variant/30 flex flex-col gap-1">
-                {allMaterials.map(m => {
-                  const isCurrent = m.slug === slug;
+                {CATEGORY_ORDER.map(category => {
+                  const items = getMaterialsByCategory()[category];
+                  if (!items || items.length === 0) return null;
+                  
+                  const isExpanded = expandedCategories.has(category);
+                  const catColor = CAT_COLORS[category] || '#818CF8';
+                  
                   return (
-                    <button
-                      key={m._id}
-                      onClick={() => navigate(`/study/${m.slug}`)}
-                      className={`group flex items-center py-2 pr-2 -ml-[1px] border-l transition-all text-left cursor-pointer text-xs pl-3 ${
-                        isCurrent
-                          ? 'border-primary text-primary font-semibold'
-                          : 'border-transparent text-on-surface-variant hover:text-on-surface hover:border-outline-variant'
-                      }`}
-                    >
-                      <span className="truncate leading-relaxed">{m.name}</span>
-                    </button>
+                    <div key={category}>
+                      <button
+                        onClick={() => toggleCategory(category)}
+                        className="w-full flex items-center gap-2 px-3 py-2 -ml-[1px] border-l border-transparent hover:border-outline-variant hover:bg-surface-container-low rounded transition-all text-left cursor-pointer text-xs font-semibold text-on-surface-variant"
+                      >
+                        <span className="material-symbols-outlined text-[14px]">
+                          {isExpanded ? 'expand_less' : 'expand_more'}
+                        </span>
+                        <span className="flex-1 truncate">{category}</span>
+                        <span className="text-[9px] bg-surface-container text-on-surface-variant px-1.5 py-0.5 rounded">
+                          {items.length}
+                        </span>
+                      </button>
+
+                      {isExpanded && (
+                        <div className="ml-2 border-l border-outline-variant/30 space-y-0.5">
+                          {items.map(m => {
+                            const isCurrent = m.slug === slug;
+                            return (
+                              <button
+                                key={m._id}
+                                onClick={() => navigate(`/study/${m.slug}`)}
+                                className={`w-full group flex items-center py-1.5 pr-2 -ml-[1px] border-l transition-all text-left cursor-pointer text-xs pl-3 ${
+                                  isCurrent
+                                    ? 'border-primary text-primary font-semibold'
+                                    : 'border-transparent text-on-surface-variant hover:text-on-surface hover:border-outline-variant'
+                                }`}
+                              >
+                                <span className="truncate leading-relaxed">{m.name}</span>
+                              </button>
+                            );
+                          })}
+                        </div>
+                      )}
+                    </div>
                   );
                 })}
               </nav>
@@ -382,6 +433,17 @@ export default function StudyDetailPage() {
           className="w-12 h-12 rounded-full bg-primary text-on-primary shadow-lg flex items-center justify-center cursor-pointer hover:bg-primary-dim transition-transform duration-200 active:scale-95"
         >
           <span className="material-symbols-outlined">{tocOpen ? 'close' : 'menu_book'}</span>
+        </button>
+      </div>
+
+      {/* Floating Quick Switch Button for Mobile */}
+      <div className="fixed bottom-6 left-6 md:hidden z-40">
+        <button
+          onClick={() => setQuickSwitchOpen(!quickSwitchOpen)}
+          className="w-12 h-12 rounded-full bg-amber-500 text-white shadow-lg flex items-center justify-center cursor-pointer hover:bg-amber-600 transition-transform duration-200 active:scale-95"
+          title={t('study.other_materials') || 'Công nghệ khác'}
+        >
+          <span className="material-symbols-outlined">{quickSwitchOpen ? 'close' : 'layers'}</span>
         </button>
       </div>
 
@@ -414,6 +476,72 @@ export default function StudyDetailPage() {
                   >
                     <span className="truncate leading-relaxed">{item.text}</span>
                   </button>
+                );
+              })}
+            </nav>
+          </div>
+        </div>
+      )}
+
+      {/* Mobile Quick Switch Drawer Overlay */}
+      {quickSwitchOpen && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 md:hidden" onClick={() => setQuickSwitchOpen(false)}>
+          <div
+            className="fixed left-0 top-0 bottom-0 w-72 bg-surface-container shadow-2xl p-6 flex flex-col animate-slide-in-left"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between mb-6">
+              <span className="text-sm font-bold uppercase tracking-wider text-on-surface">{t('study.other_materials') || 'Công nghệ khác'}</span>
+              <button onClick={() => setQuickSwitchOpen(false)} className="text-on-surface-variant hover:text-on-surface cursor-pointer">
+                <span className="material-symbols-outlined">close</span>
+              </button>
+            </div>
+            <nav className="flex-1 overflow-y-auto border-l border-outline-variant/30 flex flex-col gap-1 pr-2">
+              {CATEGORY_ORDER.map(category => {
+                const items = getMaterialsByCategory()[category];
+                if (!items || items.length === 0) return null;
+                
+                const isExpanded = expandedCategories.has(category);
+                
+                return (
+                  <div key={category}>
+                    <button
+                      onClick={() => toggleCategory(category)}
+                      className="w-full flex items-center gap-2 px-3 py-2 -ml-[1px] border-l border-transparent hover:border-outline-variant hover:bg-surface-container-low rounded transition-all text-left cursor-pointer text-xs font-semibold text-on-surface-variant"
+                    >
+                      <span className="material-symbols-outlined text-[14px]">
+                        {isExpanded ? 'expand_less' : 'expand_more'}
+                      </span>
+                      <span className="flex-1 truncate">{category}</span>
+                      <span className="text-[9px] bg-surface-container text-on-surface-variant px-1.5 py-0.5 rounded">
+                        {items.length}
+                      </span>
+                    </button>
+
+                    {isExpanded && (
+                      <div className="ml-2 border-l border-outline-variant/30 space-y-0.5">
+                        {items.map(m => {
+                          const isCurrent = m.slug === slug;
+                          return (
+                            <button
+                              key={m._id}
+                              onClick={() => {
+                                navigate(`/study/${m.slug}`);
+                                setQuickSwitchOpen(false);
+                              }}
+                              className={`w-full group flex items-center py-1.5 pr-2 -ml-[1px] border-l transition-all text-left cursor-pointer text-xs pl-3 ${
+                                isCurrent
+                                  ? 'border-primary text-primary font-semibold'
+                                  : 'border-transparent text-on-surface-variant hover:text-on-surface hover:border-outline-variant'
+                              }`}
+                            >
+                              <span className="truncate leading-relaxed">{m.name}</span>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
                 );
               })}
             </nav>
