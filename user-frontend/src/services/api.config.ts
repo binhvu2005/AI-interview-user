@@ -50,5 +50,14 @@ export const API_ENDPOINTS = {
   },
   JDS: {
     GET_ALL: `${API_BASE_URL}/jds`,
-  }
+  },
+  STUDY_MATERIALS: {
+    GET_ALL: `${API_BASE_URL}/study-materials`,
+    GET_ONE: (slug: string) => `${API_BASE_URL}/study-materials/${slug}`,
+  },
+  QUIZ: {
+    GET_QUESTIONS: `${API_BASE_URL}/quiz/questions`,
+    SUBMIT: `${API_BASE_URL}/quiz/submit`,
+    HIGH_SCORES: `${API_BASE_URL}/quiz/high-scores`,
+  },
 };

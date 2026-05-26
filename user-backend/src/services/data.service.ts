@@ -8,6 +8,6 @@ export const fetchSetupOptions = async () => {
   return { positions, levels };
 };
 
-export const fetchRandomQuestions = async (size: number = 5) => {
+export const fetchRandomQuestions = async (size: number = 10) => {
   return await Question.aggregate([{ $sample: { size } }]);
 };

@@ -195,6 +195,7 @@ const UserHeader = () => {
         <div className="flex gap-6 items-center ml-4">
           <a onClick={() => navigate('/dashboard')} className="text-on-surface-variant hover:text-on-surface transition-colors duration-200 cursor-pointer font-medium text-xs tracking-wide">{t('nav.dashboard')}</a>
           <a onClick={() => navigate('/preparation')} className="text-on-surface-variant hover:text-on-surface transition-colors duration-200 cursor-pointer font-medium text-xs tracking-wide">{t('nav.preparation')}</a>
+          <a onClick={() => navigate('/study')} className="text-on-surface-variant hover:text-on-surface transition-colors duration-200 cursor-pointer font-medium text-xs tracking-wide">{t('nav.study') || 'Ôn luyện'}</a>
           <a onClick={() => navigate('/forum')} className="text-on-surface-variant hover:text-on-surface transition-colors duration-200 cursor-pointer font-medium text-xs tracking-wide">{t('forum.title')}</a>
           <a onClick={() => navigate('/join')} className="text-on-surface-variant hover:text-on-surface transition-colors duration-200 cursor-pointer font-medium text-xs tracking-wide">{t('nav.watch') || 'Xem'}</a>
           <a onClick={() => navigate('/showcase')} className="text-on-surface-variant hover:text-on-surface transition-colors duration-200 cursor-pointer font-medium text-xs tracking-wide">{t('showcase.title')}</a>
@@ -377,6 +378,9 @@ const UserHeader = () => {
               </a>
               <a onClick={() => { navigate('/preparation'); setMobileMenuOpen(false); }} className={`flex items-center gap-4 py-4 px-4 rounded-2xl font-bold transition-all ${location.pathname === '/preparation' ? 'bg-primary text-on-primary shadow-lg shadow-primary/20' : 'text-on-surface hover:bg-surface-container-high'}`}>
                 <span className="material-symbols-outlined">rocket_launch</span> {t('nav.preparation')}
+              </a>
+              <a onClick={() => { navigate('/study'); setMobileMenuOpen(false); }} className={`flex items-center gap-4 py-4 px-4 rounded-2xl font-bold transition-all ${location.pathname.startsWith('/study') ? 'bg-primary text-on-primary shadow-lg shadow-primary/20' : 'text-on-surface hover:bg-surface-container-high'}`}>
+                <span className="material-symbols-outlined">menu_book</span> {t('nav.study') || 'Ôn luyện'}
               </a>
               <a onClick={() => { navigate('/forum'); setMobileMenuOpen(false); }} className={`flex items-center gap-4 py-4 px-4 rounded-2xl font-bold transition-all ${location.pathname.startsWith('/forum') ? 'bg-primary text-on-primary shadow-lg shadow-primary/20' : 'text-on-surface hover:bg-surface-container-high'}`}>
                 <span className="material-symbols-outlined">forum</span> {t('forum.title')}

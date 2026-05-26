@@ -29,6 +29,11 @@ import PrivacyPage from '../pages/Info/PrivacyPage';
 import TermsPage from '../pages/Info/TermsPage';
 import TestPage from '../pages/Test/TestPage';
 
+// Study pages
+import StudyListPage from '../pages/Study/StudyListPage';
+import StudyDetailPage from '../pages/Study/StudyDetailPage';
+import StudyQuizPage from '../pages/Study/StudyQuizPage';
+
 export const AppRoutes = [
   { path: '/', element: <Navigate to="/dashboard" replace /> },
   {
@@ -54,6 +59,9 @@ export const AppRoutes = [
       { path: '/showcase', element: <ShowcasePage /> },
       { path: '/showcase/:id', element: <ShowcaseDetailPage /> },
       { path: '/join', element: <JoinInterview /> },
+      { path: '/study', element: <StudyListPage /> },
+      { path: '/study/quiz', element: <StudyQuizPage /> },
+      { path: '/study/:slug', element: <StudyDetailPage /> },
     ]
   },
   {
