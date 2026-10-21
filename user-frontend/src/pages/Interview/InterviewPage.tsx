@@ -48,6 +48,8 @@ const InterviewPage = () => {
 
   // Anti-Cheat
   const [cheatCount, setCheatCount] = useState(0);
+  const cheatCountRef = useRef(0);
+  useEffect(() => { cheatCountRef.current = cheatCount; }, [cheatCount]);
   const [showCheatModal, setShowCheatModal] = useState(false);
 
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -357,11 +359,13 @@ const InterviewPage = () => {
         duration: parseInt(localStorage.getItem('interview_duration') || '15'),
         matchScore: parseInt(localStorage.getItem('last_match_score') || '0'),
         matchAnalysis: localStorage.getItem('last_match_analysis') || "",
-        messages,
+        // Read refs: endInterview also runs from the timer and from a setTimeout after the last answer,
+        // whose closures hold the state of an earlier render (missing the final answer and tab switches).
+        messages: messagesRef.current,
         cvData: localStorage.getItem('last_cv_content') || "",
         jdText: localStorage.getItem('last_jd_content') || "",
         lang: i18n.language,
-        cheatCount
+        cheatCount: cheatCountRef.current
       };
 
       const res = await fetchWithAuth(API_ENDPOINTS.INTERVIEWS.SAVE, {
