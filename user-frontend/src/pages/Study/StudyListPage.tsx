@@ -133,7 +133,15 @@ export default function StudyListPage() {
                   {/* Banner */}
                   <div className="relative h-40 overflow-hidden bg-surface-container-high">
                     {item.bannerImage ? (
-                      <img src={item.bannerImage} alt={item.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" />
+                      <img
+                        src={item.bannerImage}
+                        alt={item.name}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        loading="lazy"
+                        onError={(e) => {
+                          (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=1000';
+                        }}
+                      />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center">
                         <span className="material-symbols-outlined text-4xl text-on-surface-variant/20">menu_book</span>

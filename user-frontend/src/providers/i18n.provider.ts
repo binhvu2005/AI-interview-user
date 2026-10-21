@@ -23,16 +23,24 @@ const resources = {
         "mark_all_read": "Mark all as read",
         "no_notifications": "No notifications",
         "greeting": "Hi",
-        "logout": "Logout"
+        "logout": "Logout",
+        "cv_vault": "CV Match",
+        "setup": "Setup",
+        "results": "Results",
+        "search_placeholder": "Search role, skills..."
       },
       "sidebar": {
         "title": "Cognitive Sanctuary",
         "subtitle": "Peak Performance",
         "overview": "Overview",
         "interview_prep": "Interview Prep",
+        "study": "Study Center",
+        "cv_analysis": "CV Analysis",
         "talent_pool": "Talent Pool",
+        "results": "Results & Radar",
+        "settings": "Settings",
         "start_interview": "Start Interview",
-        "help": "Help",
+        "help": "Help & Docs",
         "logout": "Logout"
       },
       "setup": {
@@ -686,16 +694,24 @@ const resources = {
         "mark_all_read": "Đánh dấu đã đọc tất cả",
         "no_notifications": "Không có thông báo",
         "greeting": "Chào",
-        "logout": "Đăng xuất"
+        "logout": "Đăng xuất",
+        "cv_vault": "Đối chiếu CV",
+        "setup": "Thiết lập",
+        "results": "Kết quả",
+        "search_placeholder": "Tìm kiếm vai trò, kỹ năng..."
       },
       "sidebar": {
         "title": "Thánh địa Nhận thức",
         "subtitle": "Hiệu suất Tối đa",
         "overview": "Tổng quan",
         "interview_prep": "Luyện Phỏng vấn",
+        "study": "Trung tâm Ôn luyện",
+        "cv_analysis": "Hồ sơ CV",
         "talent_pool": "Kho Nhân tài",
+        "results": "Kết quả & Radar",
+        "settings": "Cài đặt",
         "start_interview": "Bắt đầu Phỏng vấn",
-        "help": "Trợ giúp",
+        "help": "Trợ giúp & Tài liệu",
         "logout": "Đăng xuất"
       },
       "setup": {

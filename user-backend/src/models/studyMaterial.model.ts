@@ -29,5 +29,10 @@ const studyMaterialSchema = new mongoose.Schema({
   order: { type: Number, default: 0 }
 }, { timestamps: true });
 
+// Index tối ưu: tăng tốc truy vấn danh sách tài liệu theo trạng thái + thứ tự, và tìm kiếm theo tên/tag
+studyMaterialSchema.index({ isPublished: 1, order: 1, createdAt: -1 });
+studyMaterialSchema.index({ slug: 1, isPublished: 1 });
+studyMaterialSchema.index({ category: 1, isPublished: 1 });
+
 export const StudyMaterial = mongoose.models.StudyMaterial || mongoose.model('StudyMaterial', studyMaterialSchema);
 export default StudyMaterial;

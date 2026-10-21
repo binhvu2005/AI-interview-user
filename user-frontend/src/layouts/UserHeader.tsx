@@ -1,15 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { API_ENDPOINTS } from '../services/api.config';
 import * as NotificationService from '../services/NotificationService';
 import { socketService } from '../services/socket.service';
 import type { AppNotification } from '../services/NotificationService';
 import { fetchWithAuth } from '../services/fetchClient';
+import { Badge } from '../components/base/Badge';
 
 const UserHeader = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const location = useLocation();
   const [userName, setUserName] = useState<string | null>(localStorage.getItem('userName'));
   const [userAvatar, setUserAvatar] = useState<string | null>(localStorage.getItem('userAvatar'));
   const [isVip, setIsVip] = useState<boolean>(localStorage.getItem('isVip') === 'true');
@@ -20,7 +22,7 @@ const UserHeader = () => {
   const [notiOpen, setNotiOpen] = useState(false);
   const [isDark, setIsDark] = useState<boolean>(() => {
     const theme = localStorage.getItem('theme');
-    return theme === 'dark' || (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches);
+    return theme !== 'light';
   });
 
   const toggleTheme = () => {
@@ -180,46 +182,61 @@ const UserHeader = () => {
   };
 
   return (
-    <nav className="fixed top-0 w-full z-50 bg-background/80 backdrop-blur-3xl text-on-surface font-sans shadow-[0_1px_0_0_rgba(255,255,255,0.03)] border-none flex justify-between items-center px-8 h-14 transition-all duration-300">
-      <div className="flex items-center gap-8">
-        <div className="flex items-center gap-2 cursor-pointer group" onClick={() => navigate('/')}>
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg bg-white/[0.04] border border-white/[0.08] flex items-center justify-center">
-              <span className="material-symbols-outlined text-primary text-[18px]">psychiatry</span>
-            </div>
-            <span className="text-sm font-semibold tracking-tight text-on-surface">
-              {t('app_name') || 'Obsidian AI'}
-            </span>
+    <nav className="fixed top-0 w-full z-50 bg-surface/90 backdrop-blur-2xl text-on-surface font-manrope border-b border-outline-variant flex justify-between items-center px-4 sm:px-8 h-16 shadow-xs transition-colors duration-200">
+      <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3 cursor-pointer group" onClick={() => navigate('/dashboard')}>
+          <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-primary-dim to-primary flex items-center justify-center text-white shadow-md shadow-primary/25 group-hover:scale-105 transition-transform duration-300">
+            <span className="material-symbols-outlined text-[18px]">psychiatry</span>
           </div>
-        </div>
-        <div className="flex gap-6 items-center ml-4">
-          <a onClick={() => navigate('/dashboard')} className="text-on-surface-variant hover:text-on-surface transition-colors duration-200 cursor-pointer font-medium text-xs tracking-wide">{t('nav.dashboard')}</a>
-          <a onClick={() => navigate('/preparation')} className="text-on-surface-variant hover:text-on-surface transition-colors duration-200 cursor-pointer font-medium text-xs tracking-wide">{t('nav.preparation')}</a>
-          <a onClick={() => navigate('/study')} className="text-on-surface-variant hover:text-on-surface transition-colors duration-200 cursor-pointer font-medium text-xs tracking-wide">{t('nav.study') || 'Ôn luyện'}</a>
-          <a onClick={() => navigate('/forum')} className="text-on-surface-variant hover:text-on-surface transition-colors duration-200 cursor-pointer font-medium text-xs tracking-wide">{t('forum.title')}</a>
-          <a onClick={() => navigate('/join')} className="text-on-surface-variant hover:text-on-surface transition-colors duration-200 cursor-pointer font-medium text-xs tracking-wide">{t('nav.watch') || 'Xem'}</a>
-          <a onClick={() => navigate('/showcase')} className="text-on-surface-variant hover:text-on-surface transition-colors duration-200 cursor-pointer font-medium text-xs tracking-wide">{t('showcase.title')}</a>
-          <a onClick={() => navigate('/upgrade')} className="bg-primary/10 text-primary px-3 py-1 rounded-lg text-[10px] font-bold tracking-widest border border-primary/20 hover:bg-primary hover:text-on-primary transition-all duration-200 flex items-center gap-1.5 group cursor-pointer">
-            <span className="material-symbols-outlined text-[14px]">workspace_premium</span>
-            {t('nav.upgrade')}
-          </a>
+          <span className="text-lg font-black tracking-tight text-on-surface font-headline">
+            Obsidian AI
+          </span>
         </div>
       </div>
-      <div className="flex items-center gap-2 sm:gap-4">
+
+      <div className="flex items-center gap-3 sm:gap-4">
+        {/* Search Input Bar */}
+        <div className="relative hidden lg:block">
+          <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-sm">search</span>
+          <input
+            className="bg-surface-container border border-outline-variant text-on-surface text-xs rounded-full pl-9 pr-4 py-1.5 focus:border-primary/50 focus:ring-1 focus:ring-primary/20 transition-all outline-none w-44 placeholder:text-on-surface-variant/50"
+            placeholder={t('nav.search_placeholder') || 'Tìm kiếm vai trò, kỹ năng...'}
+            type="text"
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                navigate(`/preparation?q=${encodeURIComponent((e.target as HTMLInputElement).value)}`);
+              }
+            }}
+          />
+        </div>
+
+        {/* Settings button */}
         <button
-          className="sm:hidden w-8 h-8 flex items-center justify-center text-on-surface-variant hover:text-on-surface hover:bg-surface-container rounded-lg transition-all focus:outline-none"
-          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          onClick={() => navigate('/settings')}
+          className="hidden sm:inline-flex text-on-surface-variant hover:text-on-surface transition-colors duration-200 px-2.5 py-1 text-xs font-semibold cursor-pointer"
         >
-          <span className="material-symbols-outlined text-[20px]">{mobileMenuOpen ? 'close' : 'menu'}</span>
+          {t('nav.settings') || 'Cài đặt'}
         </button>
-        
+
+        {/* Upgrade Glow Button */}
+        <button
+          onClick={() => navigate('/upgrade')}
+          className="bg-gradient-to-r from-primary-dim to-primary text-white font-bold px-3.5 py-1.5 rounded-lg text-xs hover:scale-[1.02] active:scale-95 transition-transform duration-200 shadow-sm cursor-pointer"
+        >
+          {t('nav.upgrade') || 'Nâng cấp'}
+        </button>
+
         {/* Quick Theme Toggle */}
         <button
           onClick={toggleTheme}
-          className="w-8 h-8 flex items-center justify-center rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all focus:outline-none"
+          className={`w-8 h-8 flex items-center justify-center rounded-lg transition-all focus:outline-none cursor-pointer ${
+            isDark
+              ? 'text-amber-400 hover:text-amber-300 hover:bg-amber-400/10'
+              : 'text-slate-700 hover:text-slate-900 hover:bg-slate-200/60'
+          }`}
           title={isDark ? "Switch to Light Mode" : "Switch to Dark Mode"}
         >
-          <span className="material-symbols-outlined text-[20px]">
+          <span className="material-symbols-outlined text-[18px]">
             {isDark ? 'light_mode' : 'dark_mode'}
           </span>
         </button>
@@ -299,18 +316,18 @@ const UserHeader = () => {
         </div>
 
         <div className="flex items-center gap-3 relative">
-          <div className="flex flex-col items-end mr-1 justify-center">
-            <span className="text-xs font-medium text-on-surface leading-tight max-w-[120px] truncate mb-0.5">
+          <div className="hidden sm:flex flex-col items-end mr-1 justify-center">
+            <span className="text-xs font-headline font-bold text-on-surface leading-tight max-w-[120px] truncate mb-1">
               {userName || 'User'}
             </span>
             {isVip ? (
-              <span className="text-[8px] uppercase tracking-widest badge-vip-animated px-1.5 py-0.5 rounded flex items-center gap-0.5 leading-none">
-                <span className="material-symbols-outlined text-[9px] material-symbols-fill">workspace_premium</span> VIP
-              </span>
+              <Badge variant="vip" size="sm" icon="workspace_premium">
+                VIP
+              </Badge>
             ) : (
-              <span className="text-[8px] uppercase tracking-widest badge-normal-animated px-1.5 py-0.5 rounded flex items-center leading-none">
+              <Badge variant="neutral" size="sm">
                 NORMAL
-              </span>
+              </Badge>
             )}
           </div>
           <button 

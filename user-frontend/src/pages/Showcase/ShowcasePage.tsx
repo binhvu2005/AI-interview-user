@@ -29,13 +29,35 @@ const ShowcasePage = () => {
     fetchShowcase();
   }, [selectedPosition, selectedLevel]);
 
+  const LEVEL_ORDER: Record<string, number> = {
+    'intern': 1, 'internship': 1, 'thực tập': 1,
+    'fresher': 2, 'mới tốt nghiệp': 2,
+    'junior': 3, 'nhân viên': 3,
+    'mid': 4, 'middle': 4, 'mid-level': 4, 'chuyên viên': 4,
+    'senior': 5, 'cao cấp': 5,
+    'lead': 6, 'tech lead': 6, 'team lead': 6,
+    'staff': 7, 'principal': 8, 'architect': 9,
+    'manager': 10, 'director': 11, 'executive': 12, 'vp': 13
+  };
+
+  const getLevelWeight = (name: string): number => {
+    const lower = (name || '').toLowerCase().trim();
+    for (const [key, weight] of Object.entries(LEVEL_ORDER)) {
+      if (lower.includes(key)) return weight;
+    }
+    return 50;
+  };
+
   const fetchSetupOptions = async () => {
     try {
       const res = await fetchWithAuth(API_ENDPOINTS.DATA.SETUP_OPTIONS);
       if (res.ok) {
         const data = await res.json();
         setPositions(data.positions || []);
-        setLevels(data.levels || []);
+        const sortedLevels = (data.levels || []).sort(
+          (a: string, b: string) => getLevelWeight(a) - getLevelWeight(b)
+        );
+        setLevels(sortedLevels);
       }
     } catch (err) {
       console.error('Failed to fetch setup options', err);

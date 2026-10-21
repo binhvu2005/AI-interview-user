@@ -58,10 +58,10 @@ const LoginPage = () => {
         body: JSON.stringify({ email, password })
       });
 
-      const data = await res.json();
+      const data = await res.json().catch(() => ({}));
 
       if (!res.ok) {
-        throw new Error(data.message || t('notifications.login_error'));
+        throw new Error(data.message || `Đăng nhập thất bại (${res.status})`);
       }
 
       toast.success(t('notifications.login_success'));

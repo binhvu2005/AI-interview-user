@@ -3,6 +3,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
+import compression from 'compression';
 import authRoutes from './routes/auth.routes';
 import aiRoutes from './routes/ai.routes';
 import dataRoutes from './routes/data.routes';
@@ -17,6 +18,12 @@ import quizRoutes from './routes/quiz.routes';
 dotenv.config();
 
 const app = express();
+
+// Trust proxy for express-rate-limit behind Nginx
+app.set('trust proxy', 1);
+
+// Nén dữ liệu gzip: giảm kích thước truyền tải 50-80%, tải nhanh hơn đáng kể
+app.use(compression());
 
 // Trust proxy for express-rate-limit behind Nginx
 app.set('trust proxy', 1);

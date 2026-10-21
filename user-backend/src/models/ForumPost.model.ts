@@ -47,4 +47,8 @@ const ForumPostSchema: Schema = new Schema({
   isHidden: { type: Boolean, default: false }
 });
 
+// Index tối ưu: tăng tốc lọc bài viết và sắp xếp theo ngày, lượt thích
+ForumPostSchema.index({ isHidden: 1, date: -1 });
+ForumPostSchema.index({ author: 1 });
+
 export default mongoose.model<IForumPost>('ForumPost', ForumPostSchema);

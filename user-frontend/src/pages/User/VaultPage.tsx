@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import toast from 'react-hot-toast';
 import { API_ENDPOINTS } from '../../services/api.config';
 import { fetchWithAuth } from '../../services/fetchClient';
+import { Button, Card } from '../../components/base';
 
 
 interface SavedCV {
@@ -111,14 +112,16 @@ const VaultPage = () => {
           <h1 className="text-3xl font-semibold text-on-surface tracking-tight mb-1.5">{t('vault_page.title')}</h1>
           <p className="text-sm text-on-surface-variant/70 font-medium">{t('vault_page.subtitle')}</p>
         </div>
-        <button 
+        <Button 
           onClick={handleAddClick}
-          disabled={uploading}
-          className="btn-primary px-5 py-2.5 text-xs tracking-wider flex items-center gap-2 shadow-sm"
+          loading={uploading}
+          variant="primary"
+          size="md"
+          icon="cloud_upload"
+          className="shadow-md shadow-primary/25"
         >
-          <span className="material-symbols-outlined text-[18px]">{uploading ? 'sync animate-spin' : 'cloud_upload'}</span>
           {uploading ? t('setup.analyzing') : t('vault_page.upload_btn')}
-        </button>
+        </Button>
         <input type="file" ref={fileInputRef} onChange={handleFileChange} accept=".pdf" className="hidden" />
       </header>
 

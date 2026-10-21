@@ -1,3 +1,11 @@
+import dotenv from 'dotenv';
+dotenv.config();
+
+// Đặt DNS server là Google (8.8.8.8) và Cloudflare (1.1.1.1)
+// vì DNS mặc định của router nhà không phân giải được bản ghi SRV mà MongoDB Atlas cần
+import dns from 'dns';
+dns.setServers(['8.8.8.8', '1.1.1.1']);
+
 import app from './app';
 import connectDB from './config/db';
 import http from 'http';

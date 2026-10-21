@@ -10,6 +10,7 @@ import {
   Radar, RadarChart, PolarGrid, 
   PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer 
 } from 'recharts';
+import { Button, Card, Badge } from '../../components/base';
 
 
 const ITEMS_PER_PAGE = 8;
@@ -417,22 +418,26 @@ const ResultsPage = () => {
             {interview.position} • {interview.level} • {new Date(interview.createdAt).toLocaleDateString()}
           </p>
         </div>
-        <div className="flex gap-3">
-          <button 
+        <div className="flex items-center gap-3">
+          <Button 
             onClick={handleShare} 
-            disabled={isSharing}
-            className={`px-4 py-2 rounded-lg text-xs font-semibold uppercase tracking-wider flex items-center gap-2 transition-all shadow-sm active:scale-[0.98] disabled:opacity-50 cursor-pointer ${
-              interview.isPublic 
-                ? 'bg-white/[0.02] text-on-surface border border-white/[0.08] hover:bg-white/[0.04]'
-                : 'bg-primary text-on-primary hover:bg-primary-dim'
-            }`}
+            loading={isSharing}
+            variant={interview.isPublic ? 'secondary' : 'primary'}
+            size="md"
+            icon={interview.isPublic ? 'visibility_off' : 'military_tech'}
+            iconPosition="left"
           >
-            {isSharing ? <span className="material-symbols-outlined animate-spin text-sm">progress_activity</span> : <span className="material-symbols-outlined text-sm">{interview.isPublic ? 'visibility_off' : 'military_tech'}</span>}
             {interview.isPublic ? (t('showcase.unshare') || 'Gỡ khỏi Showcase') : (t('showcase.share') || 'Chia sẻ lên Showcase')}
-          </button>
-          <button onClick={() => navigate('/preparation')} className="bg-white/[0.02] text-on-surface border border-white/[0.08] px-4 py-2 rounded-lg text-xs font-semibold uppercase tracking-wider hover:bg-white/[0.04] transition-all shadow-sm active:scale-[0.98] cursor-pointer">
+          </Button>
+          <Button 
+            onClick={() => navigate('/preparation')} 
+            variant="outline"
+            size="md"
+            icon="replay"
+            iconPosition="left"
+          >
             {t('results.retry')}
-          </button>
+          </Button>
         </div>
       </header>
 

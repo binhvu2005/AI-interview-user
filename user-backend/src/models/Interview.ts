@@ -34,4 +34,9 @@ const InterviewSchema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now }
 });
 
+// Index tối ưu: tăng tốc truy vấn lịch sử phỏng vấn của user, showcase công khai, và sắp xếp theo ngày
+InterviewSchema.index({ userId: 1, createdAt: -1 });
+InterviewSchema.index({ isPublic: 1, 'evaluation.totalScore': -1, createdAt: -1 });
+InterviewSchema.index({ userId: 1, createdAt: 1 }); // Cho heatmap aggregate
+
 export default mongoose.model('Interview', InterviewSchema);

@@ -4,6 +4,7 @@ import { useSearchParams } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { API_ENDPOINTS } from '../../services/api.config';
 import { fetchWithAuth } from '../../services/fetchClient';
+import { Button, Card, Badge } from '../../components/base';
 
 const UpgradePage = () => {
   const { t, i18n } = useTranslation();
@@ -294,45 +295,56 @@ const UpgradePage = () => {
         </div>
 
         {/* Plan 2: Premium VIP Card */}
-        <div className={`relative border rounded-xl p-8 flex flex-col shadow-md transition-all duration-500 overflow-hidden ${isVip ? 'border-amber-500/30 bg-white/[0.01]' : 'border-primary/25 bg-white/[0.01] hover:-translate-y-0.5'}`}>
-          <div className="absolute top-4 right-4 bg-primary/10 text-primary border border-primary/20 text-[8px] font-semibold px-2 py-0.5 rounded uppercase tracking-wider animate-pulse">
-            {isVip ? (isVi ? 'Đang dùng' : 'Active') : (isVi ? 'KHUYÊN DÙNG' : 'RECOMMENDED')}
+        <div className={`relative rounded-3xl p-8 flex flex-col transition-all duration-500 overflow-hidden ambient-shadow ${
+          isVip 
+            ? 'border-2 border-amber-500/40 bg-surface-container-low/90' 
+            : 'border border-primary/30 bg-surface-container-low/90 hover:-translate-y-1 hover:shadow-2xl hover:shadow-primary/10'
+        }`}>
+          <div className="absolute top-5 right-5">
+            <Badge variant="vip" icon="workspace_premium">
+              {isVip ? (isVi ? 'Đang dùng' : 'Active') : (isVi ? 'Khuyên dùng' : 'Recommended')}
+            </Badge>
           </div>
-          <div className="absolute top-0 left-0 w-full h-0.5 bg-gradient-to-r from-primary via-secondary to-primary"></div>
+          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary via-secondary to-primary"></div>
           
-          <div className="mb-6">
-            <h3 className={`text-lg font-bold mb-2 ${isVip ? 'text-amber-500' : 'text-primary'}`}>{isVi ? 'Gói Premium VIP' : 'Premium VIP'}</h3>
+          <div className="mb-6 mt-2">
+            <h3 className={`text-xl font-headline font-black mb-2 ${isVip ? 'text-amber-500' : 'text-primary'}`}>
+              {isVi ? 'Gói Premium VIP' : 'Premium VIP'}
+            </h3>
             <div className="flex items-baseline gap-1 mb-4">
               <span className="text-xs font-semibold text-on-surface-variant mr-1">{isVi ? 'Chỉ từ' : 'From only'}</span>
-              <span className="text-3xl font-bold text-on-surface">99.000 đ</span>
+              <span className="text-4xl font-headline font-black text-on-surface tracking-tight">99.000 đ</span>
             </div>
-            <p className="text-xs text-on-surface-variant leading-relaxed opacity-70">
+            <p className="text-xs text-on-surface-variant leading-relaxed opacity-80">
               {isVi ? 'Mở khóa toàn bộ sức mạnh của AI để phỏng vấn không giới hạn và nhận kết quả chi tiết nhất.' : 'Unlock the full power of AI to practice interviews with no limits and receive deep insights.'}
             </p>
           </div>
 
           <div className="space-y-4 mb-8 flex-1">
             {vipFeatures.map((f, i) => (
-              <div key={i} className="flex items-center gap-2.5 text-xs text-on-surface font-semibold">
-                <span className={`material-symbols-outlined text-[16px] ${isVip ? 'text-amber-500' : 'text-primary'}`}>check</span>
+              <div key={i} className="flex items-center gap-3 text-xs text-on-surface font-semibold">
+                <span className={`material-symbols-outlined text-[18px] ${isVip ? 'text-amber-500' : 'text-primary'}`}>check_circle</span>
                 {f}
               </div>
             ))}
           </div>
 
           {isVip ? (
-            <button disabled className="w-full py-2.5 rounded-lg bg-amber-500/10 text-amber-500 border border-amber-500/20 font-semibold text-xs uppercase tracking-wider flex items-center justify-center gap-1 opacity-85">
-              <span className="material-symbols-outlined text-[16px]">workspace_premium</span>
-              {isVi ? 'Gói hiện tại' : 'Current'}
-            </button>
+            <div className="w-full py-3 rounded-2xl bg-amber-500/10 text-amber-500 border border-amber-500/20 font-headline font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2">
+              <span className="material-symbols-outlined text-[18px]">workspace_premium</span>
+              {isVi ? 'Gói hiện tại' : 'Current Plan'}
+            </div>
           ) : (
-            <button 
+            <Button 
               onClick={() => setIsCheckoutModalOpen(true)}
-              disabled={processing}
-              className="w-full py-2.5 rounded-lg bg-white text-black hover:bg-neutral-200 font-semibold text-xs uppercase tracking-wider transition-all relative overflow-hidden active:scale-[0.98]"
+              loading={processing}
+              size="lg"
+              variant="primary"
+              icon="bolt"
+              className="w-full shadow-lg shadow-primary/25"
             >
               {isVi ? 'Nâng cấp VIP ngay' : 'Upgrade VIP Now'}
-            </button>
+            </Button>
           )}
         </div>
 

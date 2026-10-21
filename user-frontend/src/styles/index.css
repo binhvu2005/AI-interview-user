@@ -3,6 +3,8 @@
 
 @import "tailwindcss";
 
+@variant dark (&:where([class~="dark"], [class~="dark"] *));
+
 @theme {
   --color-error-container: var(--c-error-container);
   --color-inverse-on-surface: var(--c-inverse-on-surface);
@@ -56,119 +58,67 @@
   --color-tertiary-dim: var(--c-tertiary-dim);
   --color-on-surface: var(--c-on-surface);
 
-  --font-headline: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-headline: "Manrope", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   --font-body: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   --font-label: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
 :root {
-    /* LIGHT THEME VARIABLES - PREMIUM & CRISP (Vercel/Stripe style) */
-    --c-primary: #5145cd;
-    --c-primary-dim: #4338ca;
-    --c-primary-container: #eef2ff;
-    --c-on-primary-container: #312e81;
-    --c-background: #f8fafc;
-    --c-on-background: #0f172a;
-    --c-surface: #ffffff;
-    --c-on-surface: #0f172a;
-    --c-on-surface-variant: #64748b;
-    --c-surface-container-lowest: #ffffff;
-    --c-surface-container-low: #ffffff;
-    --c-surface-container: #f1f3f6;
-    --c-surface-container-high: #e5e7eb;
-    --c-surface-container-highest: #d1d5db;
-    --c-outline: #94a3b8;
-    --c-outline-variant: rgba(15, 23, 42, 0.06);
-    --c-tertiary: #d946ef;
-    --c-on-primary-fixed: #ffffff;
-    --c-surface-variant: #f3f4f6;
-    --c-error-container: #fee2e2;
-    --c-inverse-on-surface: #f9fafb;
-    --c-on-tertiary-container: #831843;
-    --c-surface-dim: #d1d5db;
-    --c-on-primary: #ffffff;
-    --c-on-error-container: #7f1d1d;
-    --c-on-error: #ffffff;
-    --c-on-tertiary: #ffffff;
-    --c-on-secondary-fixed: #1e3a8a;
-    --c-error-dim: #ef4444;
-    --c-secondary-dim: #3b82f6;
-    --c-surface-bright: #ffffff;
-    --c-on-tertiary-fixed: #4c0519;
-    --c-tertiary-container: #fce7f3;
-    --c-secondary: #2563eb;
-    --c-on-secondary: #ffffff;
-    --c-on-secondary-fixed-variant: #1d4ed8;
-    --c-primary-fixed-dim: #6366f1;
-    --c-error: #dc2626;
-    --c-on-primary-fixed-variant: #3730a3;
-    --c-inverse-primary: #a5b4fc;
-    --c-tertiary-fixed: #fbcfe8;
-    --c-inverse-surface: #1f2937;
-    --c-primary-fixed: #e0e7ff;
-    --c-secondary-fixed-dim: #93c5fd;
-    --c-surface-tint: #4f46e5;
-    --c-secondary-container: #dbeafe;
-    --c-on-secondary-container: #1e3a8a;
-    --c-secondary-fixed: #dbeafe;
-    --c-on-tertiary-fixed-variant: #9d174d;
-    --c-tertiary-fixed-dim: #f9a8d4;
-    --c-tertiary-dim: #ec4899;
-  }
+  /* LIGHT THEME VARIABLES - CLEAN, CRISP STRIPE/LINEAR STYLE */
+  --c-background: #f8fafc;
+  --c-on-background: #0f172a;
+  --c-surface: #ffffff;
+  --c-on-surface: #0f172a;
+  --c-on-surface-variant: #64748b;
+  --c-surface-container-lowest: #ffffff;
+  --c-surface-container-low: #ffffff;
+  --c-surface-container: #f1f5f9;
+  --c-surface-container-high: #e2e8f0;
+  --c-surface-container-highest: #cbd5e1;
+  --c-outline: #94a3b8;
+  --c-outline-variant: rgba(226, 232, 240, 0.9);
+  --c-primary: #5145cd;
+  --c-primary-dim: #4338ca;
+  --c-primary-container: #eef2ff;
+  --c-on-primary-container: #312e81;
+  --c-secondary: #2563eb;
+  --c-secondary-dim: #1d4ed8;
+  --c-tertiary: #d946ef;
+  --c-error: #dc2626;
+  --c-error-container: #fee2e2;
+  --c-on-primary: #ffffff;
+  --c-on-secondary: #ffffff;
+  --c-on-error: #ffffff;
+}
 
-  .dark {
-    color-scheme: dark;
-    /* DARK THEME VARIABLES - HIGH-END Oled/Slate SAAS */
-    --c-background: #070709;
-    --c-on-background: #f4f4f5;
-    --c-surface: #0e0e11;
-    --c-on-surface: #f4f4f5;
-    --c-on-surface-variant: #a1a1aa;
-    
-    --c-surface-container-lowest: #070709;
-    --c-surface-container-low: #0e0e11;
-    --c-surface-container: #141417;
-    --c-surface-container-high: #1c1c20;
-    --c-surface-container-highest: #27272a;
-    --c-surface-bright: #202024;
-    --c-surface-dim: #151518;
-    --c-surface-variant: #18181b;
-    
-    --c-outline: rgba(255, 255, 255, 0.15);
-    --c-outline-variant: rgba(255, 255, 255, 0.08);
-    
-    --c-primary: #818cf8;
-    --c-primary-dim: #6366f1;
-    --c-primary-container: rgba(99, 102, 241, 0.08);
-    --c-on-primary-container: #c7d2fe;
-    --c-primary-fixed: #e0e7ff;
-    --c-primary-fixed-dim: #818cf8;
-    
-    --c-secondary: #38bdf8;
-    --c-secondary-dim: #0ea5e9;
-    --c-secondary-container: rgba(56, 189, 248, 0.08);
-    --c-on-secondary-container: #bae6fd;
-    --c-secondary-fixed: #dbeafe;
-    --c-secondary-fixed-dim: #a9c4ff;
-    
-    --c-tertiary: #f472b6;
-    --c-tertiary-dim: #db2777;
-    --c-tertiary-container: rgba(244, 114, 182, 0.08);
-    --c-on-tertiary-container: #fbcfe8;
-    
-    --c-error: #fb7185;
-    --c-error-dim: #f43f5e;
-    --c-error-container: rgba(244, 63, 94, 0.08);
-    --c-on-error-container: #fecdd3;
-    
-    --c-on-primary: #070709;
-    --c-on-secondary: #070709;
-    --c-on-error: #070709;
-    --c-on-tertiary: #070709;
-    --c-inverse-surface: #f4f4f5;
-    --c-inverse-on-surface: #0e0e11;
-    --c-inverse-primary: #4f46e5;
-  }
+.dark {
+  color-scheme: dark;
+  /* DARK THEME VARIABLES - OBSIDIAN AI LUMINOUS SANCTUARY */
+  --c-background: #0e0e0f;
+  --c-on-background: #ffffff;
+  --c-surface: #131314;
+  --c-on-surface: #ffffff;
+  --c-on-surface-variant: #adaaab;
+  --c-surface-container-lowest: #000000;
+  --c-surface-container-low: #131314;
+  --c-surface-container: #1a191b;
+  --c-surface-container-high: #201f21;
+  --c-surface-container-highest: #262627;
+  --c-outline: #767576;
+  --c-outline-variant: rgba(72, 72, 73, 0.25);
+  --c-primary: #a3a6ff;
+  --c-primary-dim: #6063ee;
+  --c-primary-container: rgba(163, 166, 255, 0.12);
+  --c-on-primary-container: #e0e7ff;
+  --c-secondary: #699cff;
+  --c-secondary-dim: #3b82f6;
+  --c-tertiary: #ffa5d9;
+  --c-error: #ff6e84;
+  --c-error-container: rgba(255, 110, 132, 0.12);
+  --c-on-primary: #ffffff;
+  --c-on-secondary: #ffffff;
+  --c-on-error: #ffffff;
+}
 
 @layer base {
   .material-symbols-outlined {
@@ -535,4 +485,60 @@
 }
 .dark .form-input, .dark .form-select {
   background-color: var(--c-surface-container-low);
+}
+
+/* ========================================================
+   LUMINOUS SANCTUARY DESIGN SYSTEM UTILITIES
+   ======================================================== */
+.glass-panel {
+  background-color: var(--c-surface);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid var(--c-outline-variant);
+}
+
+.ambient-shadow {
+  box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.04), 0 0 25px -5px rgba(99, 102, 241, 0.04);
+}
+
+.ambient-shadow-lg {
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.07), 0 0 35px -5px rgba(99, 102, 241, 0.08);
+}
+
+.glow-primary {
+  box-shadow: 0 0 25px -2px rgba(99, 102, 241, 0.35);
+}
+
+.accent-ai-card {
+  position: relative;
+  border-left: 3px solid var(--c-primary);
+  background: linear-gradient(90deg, rgba(99, 102, 241, 0.03) 0%, transparent 100%);
+}
+
+@keyframes slideInFromRight {
+  from {
+    opacity: 0;
+    transform: translateX(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.animate-slide-in {
+  animation: slideInFromRight 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes tabProgress {
+  from {
+    width: 0%;
+  }
+  to {
+    width: 100%;
+  }
+}
+
+.animate-tab-progress {
+  animation: tabProgress 4.5s linear forwards;
 }
