@@ -10,13 +10,14 @@ export interface PromptBudget {
   jd: number;
   history: number;
   turn: number;
+  evalHistory: number;
 }
 
 // Character budgets per provider. Groq (free tier, TPM limit counts max_tokens) needs much
 // tighter limits than Gemini, and a VIP request that falls back to Groq must be rebuilt with the Groq budget.
 export const PROMPT_BUDGET: Record<'gemini' | 'groq', PromptBudget> = {
-  gemini: { cv: 6000, jd: 3000, history: 24000, turn: 4000 },
-  groq: { cv: 1200, jd: 600, history: 4500, turn: 500 },
+  gemini: { cv: 6000, jd: 3000, history: 24000, turn: 4000, evalHistory: 60000 },
+  groq: { cv: 1200, jd: 600, history: 4500, turn: 500, evalHistory: 9000 },
 };
 
 export const truncate = (text: string = '', max: number): string =>

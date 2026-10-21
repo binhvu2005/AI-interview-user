@@ -7,7 +7,7 @@ import { INTERVIEW_EVALUATION_SYSTEM_PROMPT, getEvaluationUserPrompt } from '../
 import { ChatTurn, PROMPT_BUDGET, PromptBudget, fitHistory, inlineField } from '../utils/prompt-format';
 import { getSeniority } from '../utils/seniority';
 import {
-  PlannedTopic, cleanHistory, finalizeChatResult, getInterviewStructure, planTurn,
+  PlannedTopic, cleanHistory, countMainQuestions, finalizeChatResult, getInterviewStructure, planTurn,
 } from '../utils/interview-flow';
 import { clamp, finalizeEvaluation, stringList } from '../utils/evaluation-score';
 
@@ -215,7 +215,12 @@ export const processInterviewChat = async (history: ChatTurn[], cvData: string, 
 export const evaluateInterview = async (history: ChatTurn[], cvData: string, jdText: string, matchScore: number, lang: string = 'vi', position: string = '', level: string = '', cheatCount: number = 0, isVip: boolean = false) => {
   const raw = await callAI(
     INTERVIEW_EVALUATION_SYSTEM_PROMPT(lang, position, level),
-    budget => getEvaluationUserPrompt(cleanHistory(history), cvData, jdText, matchScore, lang, budget),
+    budget => {
+      const turns = cleanHistory(history);
+      // fitHistory measures full turn length, so per-turn cuts only make the result smaller: never oversized.
+      const { turns: fitted, omitted } = fitHistory(turns, budget.evalHistory);
+      return getEvaluationUserPrompt(fitted, cvData, jdText, matchScore, lang, budget, omitted, omitted ? countMainQuestions(fitted) : countMainQuestions(turns));
+    },
     'Interview Evaluation',
     { temperature: 0.1, isVip, groqMaxTokens: 3500 },
   );

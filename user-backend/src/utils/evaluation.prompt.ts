@@ -72,11 +72,13 @@ export const getEvaluationUserPrompt = (
   matchScore: number,
   lang: string = 'vi',
   budget: { cv: number; jd: number; turn: number },
+  omittedTurns: number = 0,
+  mainQuestions: number = countMainQuestions(history),
 ) => `
 ### LANGUAGE: ${lang === 'vi' ? 'VIETNAMESE' : 'ENGLISH'}
 
 ### TRANSCRIPT
-<transcript>
+<transcript>${omittedTurns > 0 ? `\n[${omittedTurns} earlier turns omitted for length; grade only what is shown]` : ''}
 ${formatTranscript(history, budget.turn)}
 </transcript>
 
@@ -85,7 +87,7 @@ ${wrap('cv', truncate(cv, budget.cv))}
 ${wrap('jd', truncate(jd, budget.jd))}
 Initial CV-JD match score: ${Math.round(clamp(matchScore, 0, 100))}%
 ${history.some(m => m.role === 'ai' && m.questionType)
-  ? `Expected detailedFeedback items: ${1 + countMainQuestions(history)} (1 self-introduction + ${countMainQuestions(history)} main questions; type="probe" and type="clarify" turns are merged into their main question).`
+  ? `Expected detailedFeedback items: ${1 + mainQuestions} (1 self-introduction + ${mainQuestions} main questions; type="probe" and type="clarify" turns are merged into their main question${omittedTurns > 0 ? '; questions in omitted turns are left out' : ''}).`
   : ''}
 
 Audit this interview and return the JSON object described in the system prompt.
