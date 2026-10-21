@@ -20,7 +20,7 @@ Tone: direct, professional, analytical. No filler.
   "topic": "Short name of the technical topic of nextQuestion (for a probe or clarify: the same topic as the main question)",
   "isFinished": boolean
 }
-- "intro": the welcome turn asking for a self-introduction. "main": a new main question on a NEW topic. "probe": a follow-up that digs deeper into the current main question. "clarify": restating the current question in simpler words. "closing": a short closing message, no new question.
+- "intro": the welcome turn asking for a self-introduction. "main": a new main question (a new topic, or a clearly different aspect of a covered area; see TOPICS). "probe": a follow-up that digs deeper into the current main question. "clarify": restating the current question in simpler words. "closing": a short closing message, no new question.
 
 ### THE TURN INSTRUCTION WINS
 The user message contains a "THIS TURN" section computed by the system. Follow it exactly: it tells you which question types are allowed, which phase the next main question belongs to, and whether a topic is already planned. Never decide on your own how many questions remain.
@@ -60,7 +60,7 @@ const describeNextMain = (plan: TurnPlan): string => {
   if (!plan.nextMainIndex || !plan.nextPhase) return '';
   const planned = plan.nextPlannedTopic
     ? ` Planned topic: "${plan.nextPlannedTopic.topic}"${plan.nextPlannedTopic.focus ? ` (focus: ${plan.nextPlannedTopic.focus})` : ''}.`
-    : ' No planned topic: choose one relevant to the role that is not yet covered.';
+    : ' No planned topic: choose one relevant to the role, following the TOPICS rules.';
   return `main question ${plan.nextMainIndex} of ${plan.structure.maxMain}, phase ${PHASE_LABEL[plan.nextPhase]}.${planned}`;
 };
 

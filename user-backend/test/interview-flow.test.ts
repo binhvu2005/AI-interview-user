@@ -49,6 +49,13 @@ test('checkMainQuestion flags a debug question without code and a re-asked cover
 
   const early = planTurn([ai('intro'), user(), ai('main', 'RabbitMQ'), user()], s);
   assert.match(checkMainQuestion({ questionType: 'main', topic: 'rabbitmq ', nextQuestion: 'q' }, early) || '', /covered topic/);
+  // A planned topic that repeats a covered area (different aspect) is not a re-ask.
+  const plannedAgain = planTurn([ai('intro'), user(), ai('main', 'React'), user()], s,
+    [{ phase: 'theory', topic: 'React' }, { phase: 'theory', topic: 'React' }]);
+  assert.equal(checkMainQuestion({ questionType: 'main', topic: 'React', nextQuestion: 'q' }, plannedAgain), null);
+  // A clarification mislabelled as main is not replaced by the next main question.
+  const clarifying = planTurn([...fiveMains.slice(0, -1), user('Em chưa hiểu câu hỏi')], s);
+  assert.equal(checkMainQuestion({ questionType: 'main', topic: 'RabbitMQ', nextQuestion: 'q' }, clarifying), null);
 });
 
 test('intent: long answers containing "không biết" are answers, short admissions are not', () => {
