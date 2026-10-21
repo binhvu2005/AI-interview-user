@@ -73,8 +73,9 @@ export const getEvaluationUserPrompt = (
   lang: string = 'vi',
   budget: { cv: number; jd: number; turn: number },
   omittedTurns: number = 0,
-  mainQuestions: number = countMainQuestions(history),
-) => `
+) => {
+  const mainQuestions = countMainQuestions(history);
+  return `
 ### LANGUAGE: ${lang === 'vi' ? 'VIETNAMESE' : 'ENGLISH'}
 
 ### TRANSCRIPT
@@ -92,3 +93,4 @@ ${history.some(m => m.role === 'ai' && m.questionType)
 
 Audit this interview and return the JSON object described in the system prompt.
 `;
+};

@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {
   checkMainQuestion, detectCandidateIntent, finalizeChatResult, getInterviewStructure, getPhaseForMain, pickPlannedTopic, planTurn,
 } from '../src/utils/interview-flow';
-import { ChatTurn, escapeTags, fitHistory, formatTranscript, inlineField } from '../src/utils/prompt-format';
+import { ChatTurn, capTurn, escapeTags, fitHistory, formatTranscript, inlineField } from '../src/utils/prompt-format';
 import { getSeniority } from '../src/utils/seniority';
 
 const ai = (questionType?: string, topic?: string): ChatTurn => ({ role: 'ai', content: 'q', questionType, topic });
@@ -146,6 +146,18 @@ test('inlineField flattens client fields so they cannot open a new prompt sectio
   assert.ok(!out.includes('\n'));
   assert.ok(!out.includes('##'));
   assert.equal(inlineField('x'.repeat(500)).length, 80);
+});
+
+test('fitHistory can keep the self-introduction answer and size turns after the per-turn cut', () => {
+  const history: ChatTurn[] = [
+    { role: 'ai', content: 'welcome' }, { role: 'user', content: 'intro answer' },
+    ...Array.from({ length: 10 }, (_, i) => ({ role: i % 2 ? 'user' : 'ai', content: 'x'.repeat(1500) })),
+  ];
+  const raw = fitHistory(history, 3000, 2);
+  assert.equal(raw.turns[1].content, 'intro answer');
+  assert.ok(raw.omitted > 0);
+  const capped = fitHistory(history, 6000, 2, m => capTurn(m, 500).length + 40);
+  assert.equal(capped.omitted, 0);
 });
 
 test('fitHistory keeps the first turn and the most recent turns', () => {

@@ -4,10 +4,10 @@ import { CV_ANALYSIS_SYSTEM_PROMPT, getCVAnalysisUserPrompt } from '../utils/cv-
 import { INTERVIEW_SYSTEM_PROMPT, getInterviewQuestionsPrompt } from '../utils/interview.prompt';
 import { INTERVIEW_CHAT_SYSTEM_PROMPT, getInterviewChatUserPrompt } from '../utils/chat.prompt';
 import { INTERVIEW_EVALUATION_SYSTEM_PROMPT, getEvaluationUserPrompt } from '../utils/evaluation.prompt';
-import { ChatTurn, PROMPT_BUDGET, PromptBudget, fitHistory, inlineField } from '../utils/prompt-format';
+import { ChatTurn, PROMPT_BUDGET, PromptBudget, capTurn, fitHistory, inlineField } from '../utils/prompt-format';
 import { getSeniority } from '../utils/seniority';
 import {
-  PlannedTopic, checkMainQuestion, cleanHistory, countMainQuestions, finalizeChatResult, getInterviewStructure, planTurn,
+  PlannedTopic, checkMainQuestion, cleanHistory, finalizeChatResult, getInterviewStructure, planTurn,
 } from '../utils/interview-flow';
 import { clamp, finalizeEvaluation, stringList } from '../utils/evaluation-score';
 
@@ -226,10 +226,11 @@ export const evaluateInterview = async (history: ChatTurn[], cvData: string, jdT
   const raw = await callAI(
     INTERVIEW_EVALUATION_SYSTEM_PROMPT(lang, position, level),
     budget => {
-      const turns = cleanHistory(history);
-      // fitHistory measures full turn length, so per-turn cuts only make the result smaller: never oversized.
-      const { turns: fitted, omitted } = fitHistory(turns, budget.evalHistory);
-      return getEvaluationUserPrompt(fitted, cvData, jdText, matchScore, lang, budget, omitted, omitted ? countMainQuestions(fitted) : countMainQuestions(turns));
+      // Keep the welcome and the self-introduction answer (graded as the first item); size turns after the cut.
+      const { turns: fitted, omitted } = fitHistory(
+        cleanHistory(history), budget.evalHistory, 2, m => capTurn(m, budget.turn).length + 40,
+      );
+      return getEvaluationUserPrompt(fitted, cvData, jdText, matchScore, lang, budget, omitted);
     },
     'Interview Evaluation',
     { temperature: 0.1, isVip, groqMaxTokens: 3500 },

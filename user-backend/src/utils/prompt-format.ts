@@ -46,31 +46,41 @@ const roleLabel = (role: string) => (role === 'ai' ? 'interviewer' : 'candidate'
 
 const TURN_TYPES = ['intro', 'main', 'probe', 'clarify', 'closing'];
 
+// Interviewer turns with a code block are never cut: the debug snippet is what the answer is graded against.
+export const capTurn = (m: ChatTurn, maxPerTurn: number): string => {
+  const content = m.content || '';
+  return m.role === 'ai' && content.includes('```') ? content : truncate(content, maxPerTurn);
+};
+
 // Each turn is tagged with its real speaker, so a candidate typing "AI: ..." cannot forge an interviewer turn.
 // Interviewer turns also carry their question type so main questions and follow-ups can be told apart.
 export const formatTranscript = (history: ChatTurn[], maxPerTurn: number = Infinity): string =>
   history
     .map(m => {
       const type = m.role === 'ai' && m.questionType && TURN_TYPES.includes(m.questionType) ? ` type="${m.questionType}"` : '';
-      // Interviewer turns with a code block are never cut: the debug snippet is what the answer is graded against.
-      const limit = m.role === 'ai' && (m.content || '').includes('```') ? Infinity : maxPerTurn;
-      return `<turn speaker="${roleLabel(m.role)}"${type}>${escapeTags(truncate(m.content || '', limit))}</turn>`;
+      return `<turn speaker="${roleLabel(m.role)}"${type}>${escapeTags(capTurn(m, maxPerTurn))}</turn>`;
     })
     .join('\n');
 
-// Keep the first turn (intro context) and as many recent turns as fit in the budget.
-export const fitHistory = (history: ChatTurn[], maxChars: number): { turns: ChatTurn[]; omitted: number } => {
-  const size = (m: ChatTurn) => (m.content || '').length + 40;
+// Keep the first `keepHead` turns (welcome, and for the evaluation also the self-introduction answer) and
+// as many recent turns as fit. `size` must measure the text actually sent, i.e. after any per-turn cut.
+export const fitHistory = (
+  history: ChatTurn[],
+  maxChars: number,
+  keepHead: number = 1,
+  size: (m: ChatTurn) => number = m => (m.content || '').length + 40,
+): { turns: ChatTurn[]; omitted: number } => {
   const total = history.reduce((acc, m) => acc + size(m), 0);
-  if (total <= maxChars || history.length <= 2) return { turns: history, omitted: 0 };
+  if (total <= maxChars || history.length <= keepHead + 1) return { turns: history, omitted: 0 };
 
-  const [first, ...rest] = history;
-  let used = size(first);
+  const head = history.slice(0, keepHead);
+  const rest = history.slice(keepHead);
+  let used = head.reduce((acc, m) => acc + size(m), 0);
   const kept: ChatTurn[] = [];
   for (let i = rest.length - 1; i >= 0; i--) {
     if (used + size(rest[i]) > maxChars) break;
     used += size(rest[i]);
     kept.unshift(rest[i]);
   }
-  return { turns: [first, ...kept], omitted: rest.length - kept.length };
+  return { turns: [...head, ...kept], omitted: rest.length - kept.length };
 };
