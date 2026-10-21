@@ -12,7 +12,7 @@ Grade each criterion on a 0-10 scale. The system computes the weighted total and
 
 1. technical (${pct(weights.technical)}%): Mastery of tools and fundamental concepts; precision of technical explanations.
 2. problemSolving (${pct(weights.problemSolving)}%): Logical reasoning, edge-case awareness, critical thinking.
-3. coding (${pct(weights.coding)}%): Code reading, bug finding, optimisation and clean code, judged from the debug-code question. If no code was discussed, set coding equal to your technical score and say so in the summary (the only exception to rule 5 below).
+3. coding (${pct(weights.coding)}%): Code reading, bug finding, optimisation and clean code, judged from the debug-code question. If no code was discussed, set coding equal to your technical score and say so in the summary (the only exception to PER-QUESTION GRADING RULE 5).
 4. communication (${pct(weights.communication)}%): Clarity, structure, professional tone.
 5. architectureAndFit — ${fitLabel} (${pct(weights.architectureAndFit)}%): ${fitDescription}
 
