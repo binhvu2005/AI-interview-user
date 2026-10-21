@@ -34,6 +34,8 @@ const InterviewPage = () => {
   const hasInitialized = useRef(false);
 
   const [stream, setStream] = useState<MediaStream | null>(null);
+  // endInterview and the unmount cleanup run from closures of the first render, where `stream` is still null.
+  const streamRef = useRef<MediaStream | null>(null);
   const [isMuted, setIsMuted] = useState(false);
   const [isVideoOff, setIsVideoOff] = useState(false);
   const [isDark, setIsDark] = useState(true);
@@ -248,6 +250,7 @@ const InterviewPage = () => {
       try {
         if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
           const userStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+          streamRef.current = userStream;
           setStream(userStream);
           if (videoRef.current) videoRef.current.srcObject = userStream;
         } else {
@@ -264,7 +267,7 @@ const InterviewPage = () => {
 
     startMedia();
     return () => {
-      if (stream) stream.getTracks().forEach(t => t.stop());
+      streamRef.current?.getTracks().forEach(t => t.stop());
       window.speechSynthesis.cancel();
     };
   }, []);
@@ -346,7 +349,7 @@ const InterviewPage = () => {
       socket.emit('interview-ended', roomCode);
     }
 
-    if (stream) stream.getTracks().forEach(t => t.stop());
+    streamRef.current?.getTracks().forEach(t => t.stop());
     window.speechSynthesis.cancel();
 
     const loadingToast = toast.loading(t('interview.analyzing'));
