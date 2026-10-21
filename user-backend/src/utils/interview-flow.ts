@@ -64,8 +64,9 @@ const DONT_KNOW_ANYWHERE = [
   'không biết', 'chưa biết', 'không có kinh nghiệm', 'chưa có kinh nghiệm', "don't know", 'do not know',
   'no idea', 'no experience',
 ];
-// Words that are also ordinary technical vocabulary ("bỏ qua cache", "chịu tải"): only an admission
-// when the message starts with them.
+// Words that are also ordinary technical vocabulary ("bỏ qua cache", "chịu lỗi", "skip list"): only an
+// admission when a very short message starts with them.
+const PREFIX_MAX_LENGTH = 30;
 const DONT_KNOW_PREFIX = ['chịu', 'bỏ qua', 'skip', 'pass', 'không rõ', 'chưa từng', 'not sure'];
 
 // Keyword checks only apply to short messages: a long answer that says "không biết có nên dùng Redis
@@ -75,7 +76,7 @@ export const detectCandidateIntent = (message: string = ''): CandidateIntent => 
   if (!text) return 'dont_know';
   if (text.length <= 150 && CLARIFY_PHRASES.some(p => text.includes(p))) return 'clarify';
   if (text.length < 5) return 'dont_know';
-  if (text.length <= 80 && (DONT_KNOW_ANYWHERE.some(p => text.includes(p)) || DONT_KNOW_PREFIX.some(p => text.startsWith(p)))) {
+  if (text.length <= 80 && (DONT_KNOW_ANYWHERE.some(p => text.includes(p)) || (text.length <= PREFIX_MAX_LENGTH && DONT_KNOW_PREFIX.some(p => text.startsWith(p))))) {
     return 'dont_know';
   }
   return 'answer';
