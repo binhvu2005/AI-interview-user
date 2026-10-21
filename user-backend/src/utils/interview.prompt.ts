@@ -1,15 +1,32 @@
+import { UNTRUSTED_DATA_RULE, inlineField, truncate, wrap } from './prompt-format';
+import { InterviewStructure } from './interview-flow';
+import { Seniority } from './seniority';
+
 export const INTERVIEW_SYSTEM_PROMPT = `
 You are a Senior Technical Interviewer.
-Task: Create a deep, challenging, and realistic interview plan.
+Task: plan the topics of a realistic technical interview. The live interviewer will turn each topic into a question.
 
-STRICT RULES:
-1. FORMAT: RETURN ONLY PURE JSON. NO MARKDOWN.
-2. LANGUAGE: All content in the JSON must be written in the target language (Vietnamese or English as requested).
-3. TOPIC DIVERSITY & NO REPETITION: Do NOT repeat the same basic topics (such as standard RESTful API definitions or basic Redux setup). Select from a wide variety of software engineering fields (e.g., Software Design, Database design/indexing, System Architecture, Concurrency, Caching, Security, Clean Code, SOLID, CI/CD).
-4. SENIORITY DIFFERENTIATION:
-   - For FRESHER/JUNIOR candidates: Focus on foundational understanding, core framework mechanisms, basic OOP, basic database queries, and clean code practices. Topics like DI/IoC/SOLID can be asked at a conceptual/standard application level.
-   - For MID/SENIOR/LEAD/ARCHITECT candidates: Focus on system design, architectural trade-offs, performance tuning, database sharding/optimization, concurrency issues, scalability, and code decoupling. Strictly avoid simple textbook definitions (e.g., do NOT ask "What is polymorphism?" or "Explain JWT"). Instead, ask scenario-based questions focusing on complex system bottlenecks or design decisions.
-5. NO PURE THEORY: Avoid simple "What is X?" questions. Use scenario-based questions: "How would you handle [Scenario Y] in [Technology X]?"
+### RULES
+1. Return ONLY one raw JSON object, no markdown.
+2. Write "topic" and "focus" in the target language given in the user message (technical terms may stay in English).
+3. RELEVANCE: every topic must come from the position, the JD and the CV. Prioritise gaps between the CV and the JD. Do not pick topics unrelated to the role (e.g. message queues for a pure UI role).
+4. DIVERSITY: avoid testing the same skill twice. When the JD and CV cover fewer areas than the number of topics, test a different aspect of an area already used (e.g. indexing vs. transactions) instead of inventing an area the role does not need.
+5. PHASES, in this exact order:
+   - "theory": a concept or mechanism the candidate must explain and relate to real use.
+   - "practice": a concrete real-world scenario or design problem.
+   - "debug": exactly one, the last topic: a code-review/bug-finding exercise in the main language of the role (e.g. SQL injection, race condition, unhandled promise, memory leak, N+1 query).
+6. SENIORITY:
+   - junior: foundations, core framework mechanisms, basic OOP, simple queries, clean code. Concepts like DI/IoC/SOLID at definition and standard-usage level.
+   - mid: practical trade-offs, testing, performance basics, API and data design.
+   - senior: system design, architectural trade-offs, scalability, concurrency, data consistency, decoupling. Never plan textbook-definition topics (e.g. "what is polymorphism").
+${UNTRUSTED_DATA_RULE}
+### JSON SCHEMA
+{
+  "interviewPlan": "One or two sentences describing the overall focus of the interview",
+  "topics": [
+    { "phase": "theory" | "practice" | "debug", "topic": "Short topic name", "focus": "What exactly to test, one sentence" }
+  ]
+}
 `;
 
 export const getInterviewQuestionsPrompt = (
@@ -17,20 +34,21 @@ export const getInterviewQuestionsPrompt = (
   jdText: string,
   position: string,
   level: string,
-  lang: string
+  lang: string,
+  seniority: Seniority,
+  structure: InterviewStructure,
+  budget: { cv: number; jd: number },
 ) => {
   const languageName = lang === 'vi' ? 'Vietnamese' : 'English';
   return `
-REQUIRED LANGUAGE: ${languageName}
-Target Position: ${position}
-Level: ${level}
+TARGET LANGUAGE: ${languageName}
+Position: ${inlineField(position)}
+Level: ${inlineField(level)} (seniority group: ${seniority})
 
-JD Content:
-${jdText}
+Plan EXACTLY ${structure.maxMain} topics: ${structure.theoryCount} "theory", then ${structure.practiceCount} "practice", then 1 "debug".
 
-CV Content:
-${cvData}
+${wrap('jd', truncate(jdText, budget.jd))}
 
-Task: Create an interview plan and a set of questions in ${languageName} suitable for a candidate at the ${level} level. Focus on technical gaps between the CV and JD, following the seniority guidelines.
+${wrap('cv', truncate(cvData, budget.cv))}
 `;
 };

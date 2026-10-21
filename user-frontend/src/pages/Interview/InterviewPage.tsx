@@ -12,7 +12,19 @@ interface Message {
   role: 'ai' | 'user';
   content: string;
   timestamp: Date;
+  // Interviewer turn metadata the backend uses to track interview progress; 'system' marks transient errors.
+  questionType?: 'intro' | 'main' | 'probe' | 'clarify' | 'closing' | 'system';
+  topic?: string;
 }
+
+const getPlannedTopics = () => {
+  try {
+    const plan = JSON.parse(localStorage.getItem('current_interview_plan') || 'null');
+    return Array.isArray(plan?.topics) ? plan.topics : [];
+  } catch {
+    return [];
+  }
+};
 
 const InterviewPage = () => {
   const { t, i18n } = useTranslation();
@@ -22,6 +34,8 @@ const InterviewPage = () => {
   const hasInitialized = useRef(false);
 
   const [stream, setStream] = useState<MediaStream | null>(null);
+  // endInterview and the unmount cleanup run from closures of the first render, where `stream` is still null.
+  const streamRef = useRef<MediaStream | null>(null);
   const [isMuted, setIsMuted] = useState(false);
   const [isVideoOff, setIsVideoOff] = useState(false);
   const [isDark, setIsDark] = useState(true);
@@ -36,6 +50,8 @@ const InterviewPage = () => {
 
   // Anti-Cheat
   const [cheatCount, setCheatCount] = useState(0);
+  const cheatCountRef = useRef(0);
+  useEffect(() => { cheatCountRef.current = cheatCount; }, [cheatCount]);
   const [showCheatModal, setShowCheatModal] = useState(false);
 
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -234,6 +250,7 @@ const InterviewPage = () => {
       try {
         if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
           const userStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+          streamRef.current = userStream;
           setStream(userStream);
           if (videoRef.current) videoRef.current.srcObject = userStream;
         } else {
@@ -243,14 +260,14 @@ const InterviewPage = () => {
         toast.error(t('interview.camera_access_denied'));
       } finally {
         setTimeout(() => {
-          addMessage('ai', t('interview.welcome'));
+          addMessage('ai', t('interview.welcome'), { questionType: 'intro' });
         }, 1000);
       }
     };
 
     startMedia();
     return () => {
-      if (stream) stream.getTracks().forEach(t => t.stop());
+      streamRef.current?.getTracks().forEach(t => t.stop());
       window.speechSynthesis.cancel();
     };
   }, []);
@@ -259,8 +276,8 @@ const InterviewPage = () => {
     if (scrollRef.current) scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
   }, [messages]);
 
-  const addMessage = (role: 'ai' | 'user', content: string) => {
-    setMessages(prev => [...prev, { role, content, timestamp: new Date() }]);
+  const addMessage = (role: 'ai' | 'user', content: string, meta: Pick<Message, 'questionType' | 'topic'> = {}) => {
+    setMessages(prev => [...prev, { role, content, timestamp: new Date(), ...meta }]);
     if (role === 'ai') speak(content);
   };
 
@@ -280,7 +297,8 @@ const InterviewPage = () => {
         position: localStorage.getItem('interview_position') || "Software Engineer",
         level: localStorage.getItem('interview_level') || "Senior",
         lang: i18n.language,
-        duration: localStorage.getItem('interview_duration') || "15"
+        duration: localStorage.getItem('interview_duration') || "15",
+        plannedTopics: getPlannedTopics()
       };
 
       const res = await fetchWithAuth(API_ENDPOINTS.AI.CHAT, {
@@ -303,7 +321,7 @@ const InterviewPage = () => {
         }
 
         if (finalMessage) {
-          addMessage('ai', finalMessage);
+          addMessage('ai', finalMessage, { questionType: data.questionType, topic: data.topic });
         }
 
         if (data.isFinished) setTimeout(() => endInterview(), 3000);
@@ -313,7 +331,7 @@ const InterviewPage = () => {
     } catch (err: any) {
       console.error("Interview Send Message Error:", err);
       setTimeout(() => {
-        addMessage('ai', t('interview.error_busy'));
+        addMessage('ai', t('interview.error_busy'), { questionType: 'system' });
       }, 1000);
     } finally {
       setIsProcessing(false);
@@ -331,7 +349,7 @@ const InterviewPage = () => {
       socket.emit('interview-ended', roomCode);
     }
 
-    if (stream) stream.getTracks().forEach(t => t.stop());
+    streamRef.current?.getTracks().forEach(t => t.stop());
     window.speechSynthesis.cancel();
 
     const loadingToast = toast.loading(t('interview.analyzing'));
@@ -344,11 +362,13 @@ const InterviewPage = () => {
         duration: parseInt(localStorage.getItem('interview_duration') || '15'),
         matchScore: parseInt(localStorage.getItem('last_match_score') || '0'),
         matchAnalysis: localStorage.getItem('last_match_analysis') || "",
-        messages,
+        // Read refs: endInterview also runs from the timer and from a setTimeout after the last answer,
+        // whose closures hold the state of an earlier render (missing the final answer and tab switches).
+        messages: messagesRef.current,
         cvData: localStorage.getItem('last_cv_content') || "",
         jdText: localStorage.getItem('last_jd_content') || "",
         lang: i18n.language,
-        cheatCount
+        cheatCount: cheatCountRef.current
       };
 
       const res = await fetchWithAuth(API_ENDPOINTS.INTERVIEWS.SAVE, {

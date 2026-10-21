@@ -247,7 +247,8 @@ const PreparationPage = () => {
           jdText: jdText.trim(),
           position: selectedPosition,
           level: selectedLevel,
-          lang: i18n.language
+          lang: i18n.language,
+          duration: selectedDuration
         })
       });
 
