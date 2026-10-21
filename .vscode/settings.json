@@ -1,5 +1,6 @@
 {
   "java.compile.nullAnalysis.mode": "disabled",
   "css.lint.unknownAtRules": "ignore",
-  "css.lint.vendorPrefix": "ignore"
+  "css.lint.vendorPrefix": "ignore",
+  "vscode-edge-devtools.webhint": false
 }

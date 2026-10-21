@@ -142,8 +142,13 @@
 
   /* HIDE SCROLLBAR GLOBALLY ON ALL ELEMENTS */
   * {
-    scrollbar-width: none !important;
     -ms-overflow-style: none !important;
+  }
+
+  @supports (scrollbar-width: none) {
+    * {
+      scrollbar-width: none !important;
+    }
   }
 
   *::-webkit-scrollbar {
@@ -155,8 +160,13 @@
   .scrollbar-hidden {
     -ms-overflow-style: none;
     /* IE and Edge */
-    scrollbar-width: none;
-    /* Firefox */
+  }
+
+  @supports (scrollbar-width: none) {
+    .scrollbar-hidden {
+      scrollbar-width: none;
+      /* Firefox & Chrome 121+ */
+    }
   }
 
   .scrollbar-hidden::-webkit-scrollbar {
