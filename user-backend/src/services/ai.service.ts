@@ -129,7 +129,8 @@ const callAI = async (
       console.error(`[Groq] ${label} returned invalid JSON (attempt ${attempt}).`);
     } catch (err: any) {
       console.error(`[AI Service] ${label} FAILED (attempt ${attempt}):`, err.message);
-      if (attempt === 2) throw err;
+      // Retrying a rate limit or an oversized request at once only burns the TPM quota again.
+      if (attempt === 2 || err?.status === 413 || err?.status === 429) throw err;
     }
   }
   throw new Error(`${label}: AI returned invalid JSON`);
