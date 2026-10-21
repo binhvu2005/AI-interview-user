@@ -15,6 +15,8 @@ export interface AnalysisResult {
     shouldInterview: boolean;
     focusAreas: string[];
   };
+  // Compact CV summary reused by the interview prompts when the full CV does not fit.
+  candidateProfile?: string;
 }
 
 export interface Evaluation {

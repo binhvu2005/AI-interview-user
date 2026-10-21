@@ -27,6 +27,7 @@ export const API_ENDPOINTS = {
     GET_ALL: `${API_BASE_URL}/interviews`,
     GET_HEATMAP: `${API_BASE_URL}/interviews/stats/heatmap`,
     GET_ONE: (id: string) => `${API_BASE_URL}/interviews/${id}`,
+    SESSION_STATUS: (id: string) => `${API_BASE_URL}/interviews/session/${id}`,
   },
   DATA: {
     SETUP_OPTIONS: `${API_BASE_URL}/data/setup-options`,

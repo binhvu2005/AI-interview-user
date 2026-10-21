@@ -265,6 +265,7 @@ const PreparationPage = () => {
         localStorage.setItem('last_match_analysis', data.summary || '');
         localStorage.setItem('last_cv_content', cvData);
         localStorage.setItem('last_jd_content', jdText.trim());
+        localStorage.setItem('last_cv_profile', data.candidateProfile || '');
         toast.success(isVi ? 'Phân tích độ khớp hoàn tất!' : 'Analysis complete!');
 
         // Tự động cuộn xuống phần kết quả đánh giá
@@ -321,12 +322,16 @@ const PreparationPage = () => {
           level: selectedLevel,
           lang: i18n.language,
           duration: selectedDuration,
+          cvProfile: localStorage.getItem('last_cv_profile') || '',
+          matchScore: analysisResult.matchScore ?? 0,
+          matchAnalysis: analysisResult.summary || '',
         }),
       });
 
       if (res.ok) {
         const data = await res.json();
         localStorage.setItem('current_interview_plan', JSON.stringify(data));
+        localStorage.setItem('interview_session_id', data.sessionId);
         localStorage.setItem('interview_position', selectedPosition);
         localStorage.setItem('interview_level', selectedLevel);
         localStorage.setItem('interview_duration', selectedDuration);
@@ -351,63 +356,45 @@ const PreparationPage = () => {
     }
   };
 
-  // Quick Test (Thử nghiệm nhanh không tốn token AI)
-  const handleQuickTest = () => {
-    const mockAnalysis = {
-      matchScore: 85,
-      summary:
-        'Hồ sơ ứng viên có nền tảng tốt, kinh nghiệm phù hợp với các yêu cầu kỹ thuật trọng điểm trong bản mô tả công việc (JD).',
-      matchedSkills: ['React', 'TypeScript', 'Node.js', 'RESTful API'],
-      missingSkills: ['AWS', 'Docker', 'Kubernetes'],
-      strengths: [
-        'Kỹ năng lập trình Frontend vững chắc với React & TypeScript',
-        'Khả năng tư duy cấu trúc dự án và giao tiếp mạch lạc',
-      ],
-      weaknesses: [
-        'Kinh nghiệm triển khai hạ tầng đám mây và container hóa còn hạn chế',
-      ],
-      improvementSuggestions: [
-        'Bổ sung thêm các chứng chỉ hoặc dự án thực tế về DevOps/Cloud vào CV',
-      ],
-      experienceAnalysis: {
-        required: '3+ năm kinh nghiệm',
-        candidate: '2.5 năm kinh nghiệm thực tế',
-        gap: 'Thấp hơn một chút so với yêu cầu nhưng có dự án thực tế tốt để bù đắp.',
-      },
-      interviewRecommendation: {
-        shouldInterview: true,
-        focusAreas: ['Technical Architecture', 'Problem Solving'],
-      },
-    };
+  // Quick Test (dev build only): skips the CV analysis and the topic-planning call. The interview itself
+  // still uses the real AI and opens a real session, so it counts against the monthly quota like any other.
+  const handleQuickTest = async () => {
+    const mockCv = 'MOCK CV: Fullstack Developer với kinh nghiệm React, Node.js và TypeScript.';
+    setIsGenerating(true);
+    try {
+      const token = localStorage.getItem('token');
+      const res = await fetchWithAuth(API_ENDPOINTS.AI.GENERATE_QUESTIONS, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({
+          quickTest: true,
+          cvData: mockCv,
+          jdText: jdText.trim() || 'MOCK JD CONTENT',
+          position: selectedPosition || 'Software Engineer',
+          level: selectedLevel || 'Senior',
+          lang: i18n.language,
+          duration: selectedDuration,
+        }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.message || 'Quick test failed');
 
-    const mockPlan = {
-      interviewPlan: 'Mock Interview Plan',
-      technicalQuestions: [
-        isVi
-          ? 'Bạn hãy giới thiệu về dự án tâm đắc nhất mà bạn từng tham gia phát triển?'
-          : 'Can you describe your most proud project?',
-        isVi
-          ? 'Tại sao bạn lại chọn giải pháp kiến trúc này thay vì các lựa chọn khác?'
-          : 'Why did you choose this architecture over other alternatives?',
-        isVi
-          ? 'Bạn xử lý bài toán hiệu năng và tải cao trong hệ thống như thế nào?'
-          : 'How do you handle performance bottlenecks under high concurrency?',
-      ],
-    };
+      localStorage.setItem('current_interview_plan', JSON.stringify(data));
+      localStorage.setItem('interview_session_id', data.sessionId);
+      localStorage.setItem('last_cv_content', mockCv);
+      localStorage.setItem('last_jd_content', jdText.trim() || 'MOCK JD CONTENT');
+      localStorage.setItem('interview_position', selectedPosition || 'Software Engineer');
+      localStorage.setItem('interview_level', selectedLevel || 'Senior');
+      localStorage.setItem('interview_duration', selectedDuration);
+      localStorage.removeItem('spectator_room_code');
 
-    localStorage.setItem('last_cv_analysis', JSON.stringify(mockAnalysis));
-    localStorage.setItem('current_interview_plan', JSON.stringify(mockPlan));
-    localStorage.setItem(
-      'last_cv_content',
-      'MOCK CV: Fullstack Developer với kinh nghiệm React, Node.js và TypeScript.'
-    );
-    localStorage.setItem('last_jd_content', jdText.trim() || 'MOCK JD CONTENT');
-    localStorage.setItem('interview_position', selectedPosition || 'Software Engineer');
-    localStorage.setItem('interview_level', selectedLevel || 'Senior');
-    localStorage.setItem('interview_duration', selectedDuration);
-
-    toast.success(isVi ? 'Bắt đầu mô phỏng nhanh!' : 'Quick Test Started (No AI Tokens)');
-    navigate('/interview');
+      toast.success(isVi ? 'Bắt đầu mô phỏng nhanh!' : 'Quick Test Started');
+      navigate('/interview');
+    } catch (err: any) {
+      toast.error(err.message || 'Quick test failed');
+    } finally {
+      setIsGenerating(false);
+    }
   };
 
   return (
@@ -849,14 +836,20 @@ const PreparationPage = () => {
 
             {/* CỤM NÚT HÀNH ĐỘNG PHÂN TÍCH */}
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 pt-2">
-              <button
-                type="button"
-                onClick={handleQuickTest}
-                className="text-xs font-bold text-on-surface-variant hover:text-primary transition-colors flex items-center gap-1.5 cursor-pointer self-start sm:self-center"
-              >
-                <span className="material-symbols-outlined text-[16px]">bolt</span>
-                <span>{isVi ? 'Thử nghiệm nhanh (Không tốn token AI)' : 'Quick Test (Bypass AI)'}</span>
-              </button>
+              {/* Dev builds only: the backend also needs ALLOW_QUICK_TEST=true to skip the planning call. */}
+              {import.meta.env.DEV ? (
+                <button
+                  type="button"
+                  onClick={handleQuickTest}
+                  disabled={isGenerating}
+                  className="text-xs font-bold text-on-surface-variant hover:text-primary transition-colors flex items-center gap-1.5 cursor-pointer self-start sm:self-center disabled:opacity-50"
+                >
+                  <span className="material-symbols-outlined text-[16px]">bolt</span>
+                  <span>{isVi ? 'Thử nghiệm nhanh (dev, bỏ qua phân tích CV)' : 'Quick Test (dev, skips CV analysis)'}</span>
+                </button>
+              ) : (
+                <span />
+              )}
 
               <button
                 type="button"

@@ -18,14 +18,12 @@ interface Message {
   topic?: string;
 }
 
-const getPlannedTopics = () => {
-  try {
-    const plan = JSON.parse(localStorage.getItem('current_interview_plan') || 'null');
-    return Array.isArray(plan?.topics) ? plan.topics : [];
-  } catch {
-    return [];
-  }
-};
+// The backend keeps the transcript in this session; the page only sends the latest answer.
+const getSessionId = () => localStorage.getItem('interview_session_id');
+
+const EVALUATION_POLL_MS = 3000;
+// Grading runs several AI calls in the background and may wait out rate limits on the free tier.
+const EVALUATION_TIMEOUT_MS = 15 * 60 * 1000;
 
 const InterviewPage = () => {
   const { t, i18n } = useTranslation();
@@ -47,6 +45,9 @@ const InterviewPage = () => {
   const [userInput, setUserInput] = useState("");
   const [isRecording, setIsRecording] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
+  // The timer and the closing turn can both end the interview; only the first call submits it.
+  const endingRef = useRef(false);
+  const [evaluationFailed, setEvaluationFailed] = useState(false);
 
   // Countdown Timer
   const [timeLeft, setTimeLeft] = useState(parseInt(localStorage.getItem('interview_duration') || '15') * 60);
@@ -262,6 +263,12 @@ const InterviewPage = () => {
     if (hasInitialized.current) return;
     hasInitialized.current = true;
 
+    if (!getSessionId()) {
+      toast.error(isVi ? 'Không tìm thấy phiên phỏng vấn. Hãy bắt đầu lại từ trang chuẩn bị.' : 'No interview session found. Please start again from the preparation page.');
+      navigate('/preparation');
+      return;
+    }
+
     const startMedia = async () => {
       try {
         if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
@@ -299,7 +306,7 @@ const InterviewPage = () => {
   };
 
   const handleSendMessage = async () => {
-    if (!userInput.trim() || isProcessing) return;
+    if (!userInput.trim() || isProcessing || endingRef.current) return;
     const answer = userInput.trim();
     addMessage('user', answer);
     setUserInput("");
@@ -307,16 +314,7 @@ const InterviewPage = () => {
 
     try {
       const token = localStorage.getItem('token');
-      const payload = {
-        history: messages.concat({ role: 'user', content: answer, timestamp: new Date() }),
-        cvData: localStorage.getItem('last_cv_content') || "No CV Provided",
-        jdText: localStorage.getItem('last_jd_content') || "No JD Provided",
-        position: localStorage.getItem('interview_position') || "Software Engineer",
-        level: localStorage.getItem('interview_level') || "Senior",
-        lang: i18n.language,
-        duration: localStorage.getItem('interview_duration') || "15",
-        plannedTopics: getPlannedTopics()
-      };
+      const payload = { sessionId: getSessionId(), message: answer };
 
       const res = await fetchWithAuth(API_ENDPOINTS.AI.CHAT, {
         method: 'POST',
@@ -342,11 +340,20 @@ const InterviewPage = () => {
         }
 
         if (data.isFinished) setTimeout(() => endInterview(), 3000);
+      } else if (data?.interviewEnded) {
+        endInterview();
       } else {
         throw new Error(data?.message || "Server Error");
       }
     } catch (err: any) {
       console.error("Interview Send Message Error:", err);
+      // The server stores an answer only together with its reply, so the failed answer goes back into
+      // the input box to be sent again instead of staying in the chat as if it had been received.
+      setMessages(prev => {
+        const last = prev[prev.length - 1];
+        return last?.role === 'user' && last.content === answer ? prev.slice(0, -1) : prev;
+      });
+      setUserInput(current => current || answer);
       setTimeout(() => {
         addMessage('ai', t('interview.error_busy'), { questionType: 'system' });
       }, 1000);
@@ -358,7 +365,54 @@ const InterviewPage = () => {
   const startRecording = () => { if (recognitionRef.current) { setIsRecording(true); recognitionRef.current.start(); } };
   const stopRecording = () => { if (recognitionRef.current) { setIsRecording(false); recognitionRef.current.stop(); } };
 
+  const waitForEvaluation = async (sessionId: string): Promise<string> => {
+    const token = localStorage.getItem('token');
+    const deadline = Date.now() + EVALUATION_TIMEOUT_MS;
+    while (Date.now() < deadline) {
+      await new Promise(resolve => setTimeout(resolve, EVALUATION_POLL_MS));
+      const res = await fetchWithAuth(API_ENDPOINTS.INTERVIEWS.SESSION_STATUS(sessionId), {
+        headers: { 'Authorization': `Bearer ${token}` }
+      }).catch(() => null);
+      const data = res?.ok ? await res.json().catch(() => null) : null;
+      if (data?.status === 'completed' && data.interviewId) return data.interviewId;
+      if (data?.status === 'evaluation_failed') throw new Error('Evaluation failed');
+    }
+    throw new Error('Evaluation timed out');
+  };
+
+  // Safe to call again after a failure: the transcript is already stored server-side, only grading is retried.
+  const submitForEvaluation = async () => {
+    setEvaluationFailed(false);
+    const loadingToast = toast.loading(t('interview.analyzing'));
+
+    try {
+      const sessionId = getSessionId();
+      if (!sessionId) throw new Error('No interview session');
+      const token = localStorage.getItem('token');
+      const res = await fetchWithAuth(API_ENDPOINTS.INTERVIEWS.SAVE, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+        // Read the ref: endInterview also runs from the timer, whose closure holds an earlier render.
+        body: JSON.stringify({ sessionId, cheatCount: cheatCountRef.current })
+      });
+      const data = await res.json().catch(() => ({ message: "Error" }));
+      if (!res.ok) throw new Error(data.message || "Failed");
+
+      const interviewId = data.status === 'completed' ? data.interviewId : await waitForEvaluation(sessionId);
+      localStorage.removeItem('interview_session_id');
+      toast.success(t('results.congrats_title'), { id: loadingToast });
+      navigate(`/results/${interviewId}`);
+    } catch (err: any) {
+      console.error('Interview evaluation error:', err);
+      toast.error(isVi ? 'Chưa chấm điểm được. Bài phỏng vấn của bạn đã được lưu, hãy thử lại.' : 'Grading failed. Your interview is saved; please try again.', { id: loadingToast });
+      setEvaluationFailed(true);
+    }
+  };
+
   const endInterview = async () => {
+    if (endingRef.current) return;
+    endingRef.current = true;
+
     // Notify spectators first
     const socket = socketService.getSocket();
     const roomCode = localStorage.getItem('spectator_room_code');
@@ -370,46 +424,32 @@ const InterviewPage = () => {
     stopSpeech();
     setIsSpeaking(false);
 
-    const loadingToast = toast.loading(t('interview.analyzing'));
-
-    try {
-      const token = localStorage.getItem('token');
-      const payload = {
-        position: localStorage.getItem('interview_position') || "Software Engineer",
-        level: localStorage.getItem('interview_level') || "Senior",
-        duration: parseInt(localStorage.getItem('interview_duration') || '15'),
-        matchScore: parseInt(localStorage.getItem('last_match_score') || '0'),
-        matchAnalysis: localStorage.getItem('last_match_analysis') || "",
-        // Read refs: endInterview also runs from the timer and from a setTimeout after the last answer,
-        // whose closures hold the state of an earlier render (missing the final answer and tab switches).
-        messages: messagesRef.current,
-        cvData: localStorage.getItem('last_cv_content') || "",
-        jdText: localStorage.getItem('last_jd_content') || "",
-        lang: i18n.language,
-        cheatCount: cheatCountRef.current
-      };
-
-      const res = await fetchWithAuth(API_ENDPOINTS.INTERVIEWS.SAVE, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-        body: JSON.stringify(payload)
-      });
-
-      const data = await res.json().catch(() => ({ message: "Error" }));
-
-      if (res.ok) {
-        toast.success(t('results.congrats_title'), { id: loadingToast });
-        navigate(`/results/${data.interviewId}`);
-      } else {
-        throw new Error(data.message || "Failed");
-      }
-    } catch (err: any) {
-      toast.error(err.message, { id: loadingToast });
-    }
+    await submitForEvaluation();
   };
 
   return (
     <div className={`h-screen flex flex-col ${isDark ? 'dark' : ''} bg-background text-on-surface transition-all overflow-hidden font-sans`}>
+      {evaluationFailed && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+          <div className="max-w-sm w-full rounded-xl border border-outline-variant bg-surface p-6 text-center shadow-xl">
+            <span className="material-symbols-outlined text-3xl text-error">sync_problem</span>
+            <p className="mt-2 text-sm font-semibold text-on-surface">
+              {isVi ? 'Chưa chấm điểm được buổi phỏng vấn' : 'The interview could not be graded yet'}
+            </p>
+            <p className="mt-1 text-xs text-on-surface-variant">
+              {isVi ? 'Câu trả lời của bạn đã được lưu. Bấm Thử lại để chấm điểm.' : 'Your answers are saved. Press Retry to grade them.'}
+            </p>
+            <div className="mt-4 flex gap-2 justify-center">
+              <button type="button" onClick={submitForEvaluation} className="px-4 py-2 rounded-lg bg-primary text-white text-xs font-bold cursor-pointer">
+                {isVi ? 'Thử lại' : 'Retry'}
+              </button>
+              <button type="button" onClick={() => navigate('/')} className="px-4 py-2 rounded-lg border border-outline-variant text-xs font-semibold text-on-surface-variant cursor-pointer">
+                {isVi ? 'Về trang chủ' : 'Go home'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       {/* Header */}
       <nav className="h-14 px-6 border-b border-white/[0.05] flex justify-between items-center backdrop-blur-2xl shrink-0 z-50 bg-background/80">
         <div className="flex items-center gap-2.5 cursor-pointer" onClick={() => navigate('/')}>
