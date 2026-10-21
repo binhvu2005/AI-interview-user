@@ -53,6 +53,8 @@ test('malformed model values are clamped and sanitised', () => {
 test('extractJSON returns null for truncated or non-JSON output instead of echoing raw text', () => {
   assert.equal(extractJSON('{"feedback": "abc", "nextQuestion": "trunc'), null);
   assert.equal(extractJSON('Sorry, I cannot help'), null);
+  // Truncated output whose last complete piece is an inner object must not be accepted.
+  assert.equal(extractJSON('{"breakdown":{"technical":7},"detailedFeedback":[{"q":"Q1"},{"q":"Q2"},{"q":"Q3","sco'), null);
   assert.deepEqual(extractJSON('```json\n{"a":1}\n```'), { a: 1 });
   assert.deepEqual(extractJSON('Here: {"a":{"b":2}} done'), { a: { b: 2 } });
   // Code fences inside string values (the debug question) must survive.

@@ -31,21 +31,16 @@ export const extractJSON = (text: string): any => {
     return JSON.parse(cleaned);
   } catch (e) { }
 
-  const lastBrace = cleaned.lastIndexOf('}');
-  if (lastBrace === -1) return null;
-  let depth = 0;
-  for (let i = lastBrace; i >= 0; i--) {
-    if (cleaned[i] === '}') depth++;
-    if (cleaned[i] === '{') depth--;
-    if (depth === 0) {
-      try {
-        return JSON.parse(cleaned.substring(i, lastBrace + 1));
-      } catch (e) {
-        return null;
-      }
-    }
+  // Only the outermost object counts: on truncated output, the last complete inner object (e.g. one
+  // detailedFeedback item) must not be mistaken for the whole answer.
+  const first = cleaned.indexOf('{');
+  const last = cleaned.lastIndexOf('}');
+  if (first === -1 || last <= first) return null;
+  try {
+    return JSON.parse(cleaned.substring(first, last + 1));
+  } catch (e) {
+    return null;
   }
-  return null;
 };
 
 interface CallOptions {
@@ -80,6 +75,7 @@ const callGemini = async (systemPrompt: string, userPrompt: string, label: strin
   const data = await response.json();
   const content = data.candidates?.[0]?.content?.parts?.[0]?.text;
   if (!content) throw new Error('Gemini returned empty response content');
+  if (data.candidates?.[0]?.finishReason === 'MAX_TOKENS') throw new Error(`Gemini ${label} output truncated`);
   console.log(`[Gemini] ${label} RAW CONTENT:`, content);
   return content as string;
 };
@@ -101,7 +97,7 @@ const callGroq = async (systemPrompt: string, userPrompt: string, label: string,
   const choice = response.choices?.[0];
   const content = choice?.message?.content;
   if (!content) throw new Error('AI returned empty message');
-  if (choice?.finish_reason === 'length') console.warn(`[Groq] ${label} output hit max_tokens (${maxTokens}).`);
+  if (choice?.finish_reason === 'length') throw new Error(`${label}: output truncated at max_tokens (${maxTokens})`);
   console.log(`[Groq] ${label} RAW CONTENT:`, content);
   return content;
 };
@@ -223,5 +219,7 @@ export const evaluateInterview = async (history: ChatTurn[], cvData: string, jdT
     'Interview Evaluation',
     { temperature: 0.1, isVip, groqMaxTokens: 3500 },
   );
+  // Without a breakdown every criterion would default to 0 and the interview would be saved as REJECT.
+  if (!raw?.breakdown || typeof raw.breakdown !== 'object') throw new Error('Interview Evaluation: missing breakdown');
   return finalizeEvaluation(raw, getSeniority(level, position), cheatCount, lang);
 };
