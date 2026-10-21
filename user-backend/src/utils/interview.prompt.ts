@@ -10,7 +10,7 @@ Task: plan the topics of a realistic technical interview. The live interviewer w
 1. Return ONLY one raw JSON object, no markdown.
 2. Write "topic" and "focus" in the target language given in the user message (technical terms may stay in English).
 3. RELEVANCE: every topic must come from the position, the JD and the CV. Prioritise gaps between the CV and the JD. Do not pick topics unrelated to the role (e.g. message queues for a pure UI role).
-4. DIVERSITY: every topic tests a DIFFERENT technical skill. Never plan two topics in the same area (e.g. two database topics).
+4. DIVERSITY: avoid testing the same skill twice. When the JD and CV cover fewer areas than the number of topics, test a different aspect of an area already used (e.g. indexing vs. transactions) instead of inventing an area the role does not need.
 5. PHASES, in this exact order:
    - "theory": a concept or mechanism the candidate must explain and relate to real use.
    - "practice": a concrete real-world scenario or design problem.
