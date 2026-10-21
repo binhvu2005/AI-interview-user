@@ -67,6 +67,14 @@ const DONT_KNOW_ANYWHERE = [
 // Words that are also ordinary technical vocabulary ("bỏ qua cache", "chịu lỗi", "skip list"): only an
 // admission when a very short message starts with them.
 const PREFIX_MAX_LENGTH = 30;
+const PREFIX_MAX_EXTRA_WORDS = 2; // "chịu ạ", "bỏ qua câu này"
+
+const isPrefixAdmission = (text: string) => DONT_KNOW_PREFIX.some(p => {
+  if (!text.startsWith(p)) return false;
+  const rest = text.slice(p.length);
+  if (rest && !/^[\s.,!?…]/.test(rest)) return false; // "password", "passport"
+  return rest.trim().split(/\s+/).filter(Boolean).length <= PREFIX_MAX_EXTRA_WORDS;
+});
 const DONT_KNOW_PREFIX = ['chịu', 'bỏ qua', 'skip', 'pass', 'không rõ', 'chưa từng', 'not sure'];
 
 // Keyword checks only apply to short messages: a long answer that says "không biết có nên dùng Redis
@@ -76,7 +84,7 @@ export const detectCandidateIntent = (message: string = ''): CandidateIntent => 
   if (!text) return 'dont_know';
   if (text.length <= 150 && CLARIFY_PHRASES.some(p => text.includes(p))) return 'clarify';
   if (text.length < 5) return 'dont_know';
-  if (text.length <= 80 && (DONT_KNOW_ANYWHERE.some(p => text.includes(p)) || (text.length <= PREFIX_MAX_LENGTH && DONT_KNOW_PREFIX.some(p => text.startsWith(p))))) {
+  if (text.length <= 80 && (DONT_KNOW_ANYWHERE.some(p => text.includes(p)) || (text.length <= PREFIX_MAX_LENGTH && isPrefixAdmission(text)))) {
     return 'dont_know';
   }
   return 'answer';

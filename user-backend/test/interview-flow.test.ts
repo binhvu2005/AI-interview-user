@@ -60,6 +60,10 @@ test('intent: long answers containing "không biết" are answers, short admissi
   assert.equal(detectCandidateIntent('Tôi chịu trách nhiệm phần DB và tối ưu index'), 'answer');
   assert.equal(detectCandidateIntent('Skip list giúp Redis sorted set tìm kiếm O(log n)'), 'answer');
   assert.equal(detectCandidateIntent('Bỏ qua câu này'), 'dont_know');
+  assert.equal(detectCandidateIntent('Skip'), 'dont_know');
+  for (const answer of ['Chịu lỗi nhờ replica set', 'Skip list, O(log n)', 'Password hash bằng bcrypt', 'Passport.js + JWT', 'Không rõ ràng thì dùng enum']) {
+    assert.equal(detectCandidateIntent(answer), 'answer', answer);
+  }
   assert.equal(detectCandidateIntent('Em sẽ clarify requirement với PO trước khi thiết kế'), 'answer');
   assert.equal(
     detectCandidateIntent('Em không biết có nên dùng Redis hay không, nhưng với lượng đọc lớn em sẽ đặt cache-aside trước DB.'),
