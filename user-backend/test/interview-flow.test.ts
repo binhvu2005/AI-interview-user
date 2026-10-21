@@ -105,6 +105,13 @@ test('transcript: candidate cannot close a tag or forge an interviewer turn', ()
   assert.equal(escapeTags('for (let i = 0; i <= n; i++) <div/>'), 'for (let i = 0; i <= n; i++) <div/>');
 });
 
+test('transcript: per-turn cut skips interviewer turns that hold code', () => {
+  const code = 'Tìm lỗi:\n```js\n' + 'x();\n'.repeat(200) + '```';
+  const out = formatTranscript([{ role: 'ai', content: code }, { role: 'user', content: 'a'.repeat(1000) }], 100);
+  assert.ok(out.includes(code));
+  assert.ok(out.includes('[truncated]'));
+});
+
 test('fitHistory keeps the first turn and the most recent turns', () => {
   const history = Array.from({ length: 20 }, (_, i) => ({ role: i % 2 ? 'user' : 'ai', content: `${i}`.padEnd(100, '.') }));
   const { turns, omitted } = fitHistory(history, 700);

@@ -46,7 +46,9 @@ export const formatTranscript = (history: ChatTurn[], maxPerTurn: number = Infin
   history
     .map(m => {
       const type = m.role === 'ai' && m.questionType && TURN_TYPES.includes(m.questionType) ? ` type="${m.questionType}"` : '';
-      return `<turn speaker="${roleLabel(m.role)}"${type}>${escapeTags(truncate(m.content || '', maxPerTurn))}</turn>`;
+      // Interviewer turns with a code block are never cut: the debug snippet is what the answer is graded against.
+      const limit = m.role === 'ai' && (m.content || '').includes('```') ? Infinity : maxPerTurn;
+      return `<turn speaker="${roleLabel(m.role)}"${type}>${escapeTags(truncate(m.content || '', limit))}</turn>`;
     })
     .join('\n');
 

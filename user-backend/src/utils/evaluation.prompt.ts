@@ -19,6 +19,7 @@ ${UNTRUSTED_DATA_RULE}
 - The CV and JD are context only. Never credit a skill that the candidate did not demonstrate in the transcript.
 - detailedFeedback has ONE item per MAIN question the interviewer asked, in order, starting with the self-introduction. Follow-up (probing) and clarification turns are folded into the item of the main question they follow. Interviewer turns may carry type="intro|main|probe|clarify|closing"; when the type is missing, judge from the content.
 - The FIRST item is always the self-introduction, even if it was a single sentence.
+- "... [truncated]" marks text the SYSTEM cut for length. Never treat it as the candidate stopping early and never lower a score because of it. In "question"/"answer", copy the text up to the marker.
 - For a question with no candidate reply: "answer" = "${lang === 'vi' ? 'Không có câu trả lời' : 'No answer provided'}", "score" = 0, "status" = "skipped".
 - Very short (< 10 words), generic or irrelevant answers follow the rubric's ANTI-VAGUE cap. Never write a good answer on the candidate's behalf in "answer".
 
