@@ -578,3 +578,29 @@
 .animate-tab-progress {
   animation: tabProgress 4.5s linear forwards;
 }
+
+/* ========================================================
+   RESPONSIVE BREAKPOINT OVERRIDES FOR TAILWIND V4
+   Ensures breakpoint display utilities (sm:flex, md:flex, etc.)
+   consistently override base .hidden across all browsers (Edge, Chrome, Safari)
+   ======================================================== */
+@media (min-width: 640px) {
+  .sm\:flex { display: flex !important; }
+  .sm\:inline-flex { display: inline-flex !important; }
+  .sm\:block { display: block !important; }
+  .sm\:hidden { display: none !important; }
+}
+
+@media (min-width: 768px) {
+  .md\:flex { display: flex !important; }
+  .md\:inline-flex { display: inline-flex !important; }
+  .md\:block { display: block !important; }
+  .md\:hidden { display: none !important; }
+}
+
+@media (min-width: 1024px) {
+  .lg\:flex { display: flex !important; }
+  .lg\:inline-flex { display: inline-flex !important; }
+  .lg\:block { display: block !important; }
+  .lg\:hidden { display: none !important; }
+}

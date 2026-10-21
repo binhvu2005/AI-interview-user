@@ -182,19 +182,112 @@ const UserHeader = () => {
   };
 
   return (
-    <nav className="fixed top-0 w-full z-50 bg-surface/90 backdrop-blur-2xl text-on-surface font-manrope border-b border-outline-variant flex justify-between items-center px-4 sm:px-8 h-16 shadow-xs transition-colors duration-200">
-      <div className="flex items-center gap-4">
+    <>
+      <nav className="fixed top-0 w-full z-50 bg-surface/90 backdrop-blur-2xl text-on-surface font-manrope border-b border-outline-variant flex justify-between items-center px-4 sm:px-8 h-16 shadow-xs transition-colors duration-200">
+      <div className="flex items-center gap-4 lg:gap-6">
         <div className="flex items-center gap-3 cursor-pointer group" onClick={() => navigate('/dashboard')}>
           <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-primary-dim to-primary flex items-center justify-center text-white shadow-md shadow-primary/25 group-hover:scale-105 transition-transform duration-300">
             <span className="material-symbols-outlined text-[18px]">psychiatry</span>
           </div>
-          <span className="text-lg font-black tracking-tight text-on-surface font-headline">
+          <span className="text-lg font-black tracking-tight text-on-surface font-headline whitespace-nowrap">
             Obsidian AI
           </span>
         </div>
+
+        {/* Primary Desktop Navigation Links */}
+        <div className="hidden md:flex items-center gap-1 lg:gap-1.5">
+          <button
+            type="button"
+            onClick={() => navigate('/dashboard')}
+            className={`px-2.5 lg:px-3 py-1.5 rounded-xl text-xs font-bold transition-all duration-200 cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
+              location.pathname === '/dashboard'
+                ? 'bg-primary/10 text-primary shadow-xs'
+                : 'text-on-surface-variant hover:text-on-surface hover:bg-surface-container'
+            }`}
+          >
+            <span className="material-symbols-outlined text-[17px]">dashboard</span>
+            <span>{t('nav.dashboard') || 'Tổng quan'}</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => navigate('/preparation')}
+            className={`px-2.5 lg:px-3 py-1.5 rounded-xl text-xs font-bold transition-all duration-200 cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
+              location.pathname === '/preparation'
+                ? 'bg-primary/10 text-primary shadow-xs'
+                : 'text-on-surface-variant hover:text-on-surface hover:bg-surface-container'
+            }`}
+          >
+            <span className="material-symbols-outlined text-[17px]">rocket_launch</span>
+            <span>{t('nav.preparation') || 'Luyện phỏng vấn'}</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => navigate('/study')}
+            className={`px-2.5 lg:px-3 py-1.5 rounded-xl text-xs font-bold transition-all duration-200 cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
+              location.pathname.startsWith('/study')
+                ? 'bg-primary/10 text-primary shadow-xs'
+                : 'text-on-surface-variant hover:text-on-surface hover:bg-surface-container'
+            }`}
+          >
+            <span className="material-symbols-outlined text-[17px]">menu_book</span>
+            <span>{t('nav.study') || 'Ôn luyện'}</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => navigate('/forum')}
+            className={`px-2.5 lg:px-3 py-1.5 rounded-xl text-xs font-bold transition-all duration-200 cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
+              location.pathname.startsWith('/forum')
+                ? 'bg-primary/10 text-primary shadow-xs'
+                : 'text-on-surface-variant hover:text-on-surface hover:bg-surface-container'
+            }`}
+          >
+            <span className="material-symbols-outlined text-[17px]">forum</span>
+            <span>{t('forum.title') || 'Diễn đàn'}</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => navigate('/join')}
+            className={`px-2.5 lg:px-3 py-1.5 rounded-xl text-xs font-bold transition-all duration-200 cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
+              location.pathname === '/join' || location.pathname.startsWith('/watch')
+                ? 'bg-primary/10 text-primary shadow-xs'
+                : 'text-on-surface-variant hover:text-on-surface hover:bg-surface-container'
+            }`}
+          >
+            <span className="material-symbols-outlined text-[17px]">groups</span>
+            <span>{t('nav.watch') || 'Xem phỏng vấn'}</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => navigate('/showcase')}
+            className={`px-2.5 lg:px-3 py-1.5 rounded-xl text-xs font-bold transition-all duration-200 cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
+              location.pathname.startsWith('/showcase')
+                ? 'bg-primary/10 text-primary shadow-xs'
+                : 'text-on-surface-variant hover:text-on-surface hover:bg-surface-container'
+            }`}
+          >
+            <span className="material-symbols-outlined text-[17px]">military_tech</span>
+            <span>{t('showcase.title') || 'Kho nhân tài'}</span>
+          </button>
+        </div>
       </div>
 
-      <div className="flex items-center gap-3 sm:gap-4">
+      <div className="flex items-center gap-2 sm:gap-3 lg:gap-4">
+        {/* Mobile Hamburger Menu Toggle Button */}
+        <button
+          type="button"
+          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          className="md:hidden w-8 h-8 flex items-center justify-center text-on-surface-variant hover:text-on-surface hover:bg-surface-container rounded-lg transition-colors cursor-pointer"
+          aria-label="Toggle navigation menu"
+        >
+          <span className="material-symbols-outlined text-[20px]">
+            {mobileMenuOpen ? 'close' : 'menu'}
+          </span>
+        </button>
         {/* Search Input Bar */}
         <div className="relative hidden lg:block">
           <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-sm">search</span>
@@ -375,49 +468,115 @@ const UserHeader = () => {
         </div>
       </div>
 
-      {/* Mobile Menu Drawer (Left Side) */}
-      {mobileMenuOpen && (
-        <>
-          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[60] sm:hidden" onClick={() => setMobileMenuOpen(false)}></div>
-          <div className="fixed top-0 left-0 w-[280px] h-full bg-surface-container-low border-r border-outline-variant/15 flex flex-col p-6 z-[70] sm:hidden animate-in slide-in-from-left duration-300">
-            <div className="flex items-center gap-3 mb-10 pb-6 border-b border-outline-variant/10">
-              <div className="w-10 h-10 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center">
-                <span className="material-symbols-outlined text-primary">psychiatry</span>
+    </nav>
+
+    {/* Mobile Menu Drawer (Left Side) */}
+    {mobileMenuOpen && (
+      <div className="fixed inset-0 z-[100] md:hidden">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setMobileMenuOpen(false)}></div>
+        <div className="fixed top-0 left-0 w-[290px] h-full bg-surface border-r border-outline-variant flex flex-col p-6 shadow-2xl animate-in slide-in-from-left duration-300 z-10">
+          <div className="flex items-center justify-between gap-3 mb-8 pb-5 border-b border-outline-variant">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary">
+                <span className="material-symbols-outlined text-[22px]">psychiatry</span>
               </div>
-              <span className="text-xl font-black tracking-tighter text-on-surface">
+              <span className="text-xl font-black tracking-tight text-on-surface font-headline">
                 {t('app_name') || 'Obsidian AI'}
               </span>
             </div>
-
-            <div className="flex flex-col gap-1">
-              <a onClick={() => { navigate('/dashboard'); setMobileMenuOpen(false); }} className={`flex items-center gap-4 py-4 px-4 rounded-2xl font-bold transition-all ${location.pathname === '/dashboard' ? 'bg-primary text-on-primary shadow-lg shadow-primary/20' : 'text-on-surface hover:bg-surface-container-high'}`}>
-                <span className="material-symbols-outlined">dashboard</span> {t('nav.dashboard')}
-              </a>
-              <a onClick={() => { navigate('/preparation'); setMobileMenuOpen(false); }} className={`flex items-center gap-4 py-4 px-4 rounded-2xl font-bold transition-all ${location.pathname === '/preparation' ? 'bg-primary text-on-primary shadow-lg shadow-primary/20' : 'text-on-surface hover:bg-surface-container-high'}`}>
-                <span className="material-symbols-outlined">rocket_launch</span> {t('nav.preparation')}
-              </a>
-              <a onClick={() => { navigate('/study'); setMobileMenuOpen(false); }} className={`flex items-center gap-4 py-4 px-4 rounded-2xl font-bold transition-all ${location.pathname.startsWith('/study') ? 'bg-primary text-on-primary shadow-lg shadow-primary/20' : 'text-on-surface hover:bg-surface-container-high'}`}>
-                <span className="material-symbols-outlined">menu_book</span> {t('nav.study') || 'Ôn luyện'}
-              </a>
-              <a onClick={() => { navigate('/forum'); setMobileMenuOpen(false); }} className={`flex items-center gap-4 py-4 px-4 rounded-2xl font-bold transition-all ${location.pathname.startsWith('/forum') ? 'bg-primary text-on-primary shadow-lg shadow-primary/20' : 'text-on-surface hover:bg-surface-container-high'}`}>
-                <span className="material-symbols-outlined">forum</span> {t('forum.title')}
-              </a>
-              <a onClick={() => { navigate('/showcase'); setMobileMenuOpen(false); }} className={`flex items-center gap-4 py-4 px-4 rounded-2xl font-bold transition-all ${location.pathname === '/showcase' ? 'bg-primary text-on-primary shadow-lg shadow-primary/20' : 'text-on-surface hover:bg-surface-container-high'}`}>
-                <span className="material-symbols-outlined">military_tech</span> {t('showcase.title')}
-              </a>
-            </div>
-
-            <div className="mt-auto pt-6 border-t border-outline-variant/10">
-              <a onClick={() => { navigate('/upgrade'); setMobileMenuOpen(false); }} className="flex items-center gap-3 py-5 px-4 bg-primary/10 text-primary rounded-2xl font-black uppercase tracking-widest text-[11px] border border-primary/20">
-                <span className="material-symbols-outlined text-[20px]">workspace_premium</span>
-                {t('nav.upgrade')}
-              </a>
-            </div>
+            <button
+              type="button"
+              onClick={() => setMobileMenuOpen(false)}
+              className="w-8 h-8 rounded-lg flex items-center justify-center text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors cursor-pointer"
+              aria-label="Close menu"
+            >
+              <span className="material-symbols-outlined text-[20px]">close</span>
+            </button>
           </div>
-        </>
-      )}
-    </nav>
-  );
+
+          <div className="flex flex-col gap-1.5 flex-1 overflow-y-auto">
+            <button
+              type="button"
+              onClick={() => { navigate('/dashboard'); setMobileMenuOpen(false); }}
+              className={`flex items-center gap-3.5 py-3 px-4 rounded-xl font-bold transition-all text-left text-sm cursor-pointer ${
+                location.pathname === '/dashboard' ? 'bg-primary text-on-primary shadow-md shadow-primary/25' : 'text-on-surface hover:bg-surface-container'
+              }`}
+            >
+              <span className="material-symbols-outlined text-[20px]">dashboard</span>
+              <span>{t('nav.dashboard') || 'Tổng quan'}</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => { navigate('/preparation'); setMobileMenuOpen(false); }}
+              className={`flex items-center gap-3.5 py-3 px-4 rounded-xl font-bold transition-all text-left text-sm cursor-pointer ${
+                location.pathname === '/preparation' ? 'bg-primary text-on-primary shadow-md shadow-primary/25' : 'text-on-surface hover:bg-surface-container'
+              }`}
+            >
+              <span className="material-symbols-outlined text-[20px]">rocket_launch</span>
+              <span>{t('nav.preparation') || 'Luyện phỏng vấn'}</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => { navigate('/study'); setMobileMenuOpen(false); }}
+              className={`flex items-center gap-3.5 py-3 px-4 rounded-xl font-bold transition-all text-left text-sm cursor-pointer ${
+                location.pathname.startsWith('/study') ? 'bg-primary text-on-primary shadow-md shadow-primary/25' : 'text-on-surface hover:bg-surface-container'
+              }`}
+            >
+              <span className="material-symbols-outlined text-[20px]">menu_book</span>
+              <span>{t('nav.study') || 'Ôn luyện'}</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => { navigate('/forum'); setMobileMenuOpen(false); }}
+              className={`flex items-center gap-3.5 py-3 px-4 rounded-xl font-bold transition-all text-left text-sm cursor-pointer ${
+                location.pathname.startsWith('/forum') ? 'bg-primary text-on-primary shadow-md shadow-primary/25' : 'text-on-surface hover:bg-surface-container'
+              }`}
+            >
+              <span className="material-symbols-outlined text-[20px]">forum</span>
+              <span>{t('forum.title') || 'Diễn đàn'}</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => { navigate('/join'); setMobileMenuOpen(false); }}
+              className={`flex items-center gap-3.5 py-3 px-4 rounded-xl font-bold transition-all text-left text-sm cursor-pointer ${
+                location.pathname === '/join' || location.pathname.startsWith('/watch') ? 'bg-primary text-on-primary shadow-md shadow-primary/25' : 'text-on-surface hover:bg-surface-container'
+              }`}
+            >
+              <span className="material-symbols-outlined text-[20px]">groups</span>
+              <span>{t('nav.watch') || 'Xem phỏng vấn'}</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => { navigate('/showcase'); setMobileMenuOpen(false); }}
+              className={`flex items-center gap-3.5 py-3 px-4 rounded-xl font-bold transition-all text-left text-sm cursor-pointer ${
+                location.pathname.startsWith('/showcase') ? 'bg-primary text-on-primary shadow-md shadow-primary/25' : 'text-on-surface hover:bg-surface-container'
+              }`}
+            >
+              <span className="material-symbols-outlined text-[20px]">military_tech</span>
+              <span>{t('showcase.title') || 'Kho nhân tài'}</span>
+            </button>
+          </div>
+
+          <div className="mt-auto pt-6 border-t border-outline-variant">
+            <button
+              type="button"
+              onClick={() => { navigate('/upgrade'); setMobileMenuOpen(false); }}
+              className="w-full flex items-center justify-center gap-2.5 py-3.5 px-4 bg-gradient-to-r from-primary to-primary-dim text-white rounded-xl font-extrabold uppercase tracking-wider text-xs shadow-md shadow-primary/20 cursor-pointer"
+            >
+              <span className="material-symbols-outlined text-[18px]">workspace_premium</span>
+              <span>{t('nav.upgrade') || 'Nâng cấp'}</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    )}
+  </>
+);
 };
 
 export default UserHeader;
