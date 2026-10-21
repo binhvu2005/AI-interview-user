@@ -5,7 +5,7 @@ import * as AuthService from '../services/auth.service';
 import * as CVService from '../services/cv.service';
 import { User } from '../models/user.model';
 import { Otp } from '../models/otp.model';
-import Interview from '../models/Interview';
+import { FREE_INTERVIEWS_PER_MONTH, countInterviewsThisMonth } from '../utils/interview-quota';
 import * as EmailService from '../services/email.service';
 import { OAuth2Client } from 'google-auth-library';
 import { checkAndUpdateVipStatus } from '../utils/vip';
@@ -103,15 +103,8 @@ export const getMe = async (req: AuthRequest, res: Response) => {
     // Calculate remaining free interviews for non-VIP
     let freeInterviewsLeft = 0;
     if (!user.isVip) {
-      const startOfMonth = new Date();
-      startOfMonth.setDate(1);
-      startOfMonth.setHours(0, 0, 0, 0);
-
-      const interviewCount = await Interview.countDocuments({
-        userId: user._id,
-        createdAt: { $gte: startOfMonth }
-      });
-      freeInterviewsLeft = Math.max(0, 3 - interviewCount);
+      const interviewCount = await countInterviewsThisMonth(user._id);
+      freeInterviewsLeft = Math.max(0, FREE_INTERVIEWS_PER_MONTH - interviewCount);
     } else {
       freeInterviewsLeft = 99999; // VIP has unlimited
     }

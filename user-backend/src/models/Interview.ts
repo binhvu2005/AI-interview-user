@@ -2,6 +2,8 @@ import mongoose from 'mongoose';
 
 const InterviewSchema = new mongoose.Schema({
   userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+  // Session the transcript was recorded in; absent on interviews saved before sessions existed.
+  sessionId: { type: mongoose.Schema.Types.ObjectId, ref: 'InterviewSession' },
   position: { type: String, required: true },
   level: { type: String, required: true },
   duration: { type: Number, required: true },

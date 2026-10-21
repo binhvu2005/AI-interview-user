@@ -12,14 +12,20 @@ Tone: direct, professional, analytical. No filler.
 - Return ONLY one raw JSON object, no markdown around it, no text before or after it.
 - Inside JSON strings, escape newlines as \\n. A code snippet goes inside "nextQuestion" as a fenced block (\`\`\`language ... \`\`\`).
 
-### JSON SCHEMA
+### JSON SCHEMA (keep the keys in this order: judge the answer first, then write)
 {
+  "answerAssessment": {
+    "intent": "answer" | "clarify" | "dont_know",
+    "score": number (0-10, how well the last message answers the question on the table; 0 on the first turn),
+    "missing": "The most important point the answer missed, at most 15 words. Empty string if nothing is missing."
+  },
   "feedback": "Feedback on the candidate's last answer, at most 40 words. Empty string on the first turn.",
   "nextQuestion": "Your next message to the candidate.",
   "questionType": "intro" | "main" | "probe" | "clarify" | "closing",
   "topic": "Short name of the technical topic of nextQuestion (for a probe or clarify: the same topic as the main question)",
   "isFinished": boolean
 }
+- answerAssessment.intent: "clarify" when the candidate asks you to explain or repeat the question; "dont_know" when they say they do not know, ask to skip, or give nothing gradable; otherwise "answer" (a short answer such as "O(1)" or "GET" is still an answer).
 - "intro": the welcome turn asking for a self-introduction. "main": a new main question (a new topic, or a clearly different aspect of a covered area; see TOPICS). "probe": a follow-up that digs deeper into the current main question. "clarify": restating the current question in simpler words. "closing": a short closing message, no new question.
 
 ### THE TURN INSTRUCTION WINS
@@ -31,15 +37,16 @@ The user message contains a "THIS TURN" section computed by the system. Follow i
 - Never repeat an explanation or an opening sentence you already used in an earlier turn.
 
 ### HOW TO JUDGE THE LAST ANSWER (when the turn allows a probe)
-- Strong (8-10/10): no probe; do what THIS TURN says for the non-probe case (next main question, or the closing message).
-- Partial or vague (4-7/10): ask ONE probe on the weakest point.
-- Weak (0-3/10) or "don't know": no probe; explain briefly in feedback, then do what THIS TURN says for the non-probe case.
+- Strong (score 8-10): no probe; do what THIS TURN says for the non-probe case (next main question, or the closing message).
+- Partial or vague (score 4-7): ask ONE probe on the point in answerAssessment.missing.
+- Weak (score 0-3) or intent "dont_know": no probe; explain the missed point briefly in feedback, then do what THIS TURN says for the non-probe case.
 
 ### QUESTION STYLE BY PHASE AND SENIORITY
 - THEORY, junior: ask (1) what the concept is, (2) what it is used for and how it works, (3) whether they applied it in a real project and how. One focused question in 2-3 sentences.
 - THEORY, mid/senior: no textbook definitions. Ask when and why they would choose the concept over an alternative, its trade-offs and limits, and how they applied it in a real project.
 - PRACTICE: a concrete real-world scenario in 2-4 sentences with numbers where useful (users, requests per second, data size), scaled to the seniority. Ask how they would design or solve it and what trade-offs they would make. No abstract business storytelling.
-- DEBUG: a short code snippet (8-20 lines) in the main language of the role containing one real bug, performance issue or security flaw. Ask the candidate to find it, explain why it is wrong and how to fix it. Do not reveal the bug.
+- DEBUG: a short code snippet (8-20 lines) in the main language of the role containing one real bug, performance issue or security flaw. Ask the candidate to find it, explain why it is wrong and how to fix it. Do not reveal the bug. The snippet MUST be a fenced code block inside "nextQuestion". Shape example (write your own snippet for the role, in the session language):
+  "nextQuestion": "The function below should return every user, but callers sometimes get an empty list.\\n\`\`\`js\\nasync function loadUsers(ids) {\\n  const users = [];\\n  ids.forEach(async (id) => {\\n    users.push(await db.users.findById(id));\\n  });\\n  return users;\\n}\\n\`\`\`\\nFind the bug, explain why it happens and how you would fix it."
 
 ### TOPICS
 - Pick topics relevant to the position, the JD and the CV. A frontend role gets frontend topics, a data role gets data topics.
@@ -64,7 +71,10 @@ const describeNextMain = (plan: TurnPlan): string => {
   return `main question ${plan.nextMainIndex} of ${plan.structure.maxMain}, phase ${PHASE_LABEL[plan.nextPhase]}.${planned}`;
 };
 
-export const buildTurnInstruction = (plan: TurnPlan, isFirstTurn: boolean): string => {
+// The keyword check in the code only catches clear-cut requests; the model judges the rest itself.
+const CLARIFY_IF_ASKED = `- If answerAssessment.intent is "clarify" (the candidate asked you to explain or repeat the question): do NOT change the topic; give a short hint in "feedback" (under 30 words), restate the same question more simply in "nextQuestion", questionType = "clarify", isFinished = false.`;
+
+export const buildTurnInstruction =(plan: TurnPlan, isFirstTurn: boolean): string => {
   if (isFirstTurn) {
     return `- This is the first turn. Introduce yourself as Obsidian AI, welcome the candidate and ask for a BRIEF self-introduction (under 2 minutes). No technical question yet.
 - questionType = "intro", isFinished = false.`;
@@ -79,8 +89,9 @@ export const buildTurnInstruction = (plan: TurnPlan, isFirstTurn: boolean): stri
   if (plan.inFinalStage) {
     const probe = plan.canProbe
       ? `- If the answer to the debug question is partial or vague, you MAY ask ONE probe on it (questionType = "probe", isFinished = false).\n- Otherwise`
-      : '-';
+      : '- Otherwise';
     return `- The final (debug code) question has already been asked and answered. Do NOT ask any new main question.
+${CLARIFY_IF_ASKED}
 ${probe} give feedback on the answer, then a short closing message thanking the candidate in "nextQuestion" (questionType = "closing", isFinished = true).`;
   }
 
@@ -98,12 +109,12 @@ ${probe} give feedback on the answer, then a short closing message thanking the 
 - questionType = "main", isFinished = false.`;
   }
 
-  if (!plan.canProbe) {
-    return `- Probing is NOT allowed this turn (probe limit reached).
-- Ask ${next} (questionType = "main").
-- isFinished = false.`;
-  }
-  return `- Allowed: ONE probe on the current main question (questionType = "probe") if the answer was partial or vague (${plan.probesSinceLastMain} of ${MAX_PROBES_PER_MAIN} probes already used on it).
+  const probe = plan.canProbe
+    ? `- If the answer was partial or vague, you MAY ask ONE probe on the current main question (questionType = "probe"; ${plan.probesSinceLastMain} of ${MAX_PROBES_PER_MAIN} probes already used on it).`
+    : '- Probing is NOT allowed this turn (probe limit reached).';
+  return `${CLARIFY_IF_ASKED}
+- If answerAssessment.intent is "dont_know": no probe; in "feedback", explain the missed point correctly in under 40 words, then ask the next main question below.
+${probe}
 - Otherwise ask ${next} (questionType = "main").
 - isFinished = false.`;
 };
@@ -140,7 +151,7 @@ ${wrap('cv', truncate(params.cvData, params.budget.cv))}
 
 ### TRANSCRIPT
 <transcript>${omitted}
-${formatTranscript(history)}
+${formatTranscript(history, Infinity, true)}
 </transcript>
 
 ### THIS TURN (follow exactly)

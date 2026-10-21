@@ -1,4 +1,4 @@
-import { UNTRUSTED_DATA_RULE, inlineField, truncate, wrap } from './prompt-format';
+import { UNTRUSTED_DATA_RULE, compactCV, inlineField, truncate, wrap } from './prompt-format';
 
 export const CV_ANALYSIS_SYSTEM_PROMPT = `
 You are a SENIOR TECHNICAL ARCHITECT and EXPERT RECRUITER.
@@ -14,7 +14,8 @@ ${UNTRUSTED_DATA_RULE}
 - matchedSkills: skills required or preferred by the JD that the CV explicitly shows.
 - missingSkills: skills the JD requires that the CV does not show.
 - experienceAnalysis.required: only what the JD actually states. If the JD gives no number of years, say the JD does not specify one; never assume a range.
-- If the CV is empty or unreadable, say so in summary, grade every score part 0 and set shouldInterview to false.
+- If the CV is empty or unreadable, say so in summary, grade every score part 0 and set coreSkillMissing to true.
+- "... [truncated]" at the end of <cv> or <jd> means the SYSTEM cut the rest for length; the candidate did not stop there. A JD skill absent from the visible part of a cut CV may be in the cut part: do not list it in missingSkills and do not lower a score for it unless the visible CV already shows the candidate's full skills list. Say in summary that only part of the CV was analysed.
 
 ### MATCH SCORE (0-100)
 Grade three parts in "scoreParts"; the system adds them up into matchScore:
@@ -26,8 +27,9 @@ Do not anchor on round or default numbers; grade each part from the evidence.
 ### OUTPUT RULES
 - summary: 8-10 analytical sentences covering stack alignment, project complexity and seniority fit.
 - Every list has 0 to 5 items. Fewer items is correct when the CV/JD do not support more. Never pad with generic items.
-- shouldInterview: true when the three parts add up to at least 50 and no required core skill is entirely missing.
+- coreSkillMissing: true only when a skill the JD names as a core requirement is entirely absent from the CV. Do not add up the scores yourself; the system decides whether to recommend an interview.
 - focusAreas: up to 5 topics the interview should probe, taken from the gaps and the JD.
+- candidateProfile: a compact factual profile of the CV that later interview prompts reuse instead of the full CV. At most 120 words, plain text, in the TARGET LANGUAGE: skills and tools, total years of experience, recent roles, and up to 3 key projects with their stack. Facts from <cv> only.
 - Return ONLY one raw JSON object, no markdown.
 
 ### JSON SCHEMA
@@ -45,9 +47,10 @@ Do not anchor on round or default numbers; grade each part from the evidence.
     "gap": "Analysis of the gap"
   },
   "interviewRecommendation": {
-    "shouldInterview": boolean,
+    "coreSkillMissing": boolean,
     "focusAreas": ["string"]
-  }
+  },
+  "candidateProfile": "string"
 }
 `;
 
@@ -57,14 +60,14 @@ export function getCVAnalysisUserPrompt(
   pos: string,
   level: string,
   lang: string,
-  budget: { cv: number; jd: number },
+  budget: { analysisCv: number; jd: number },
 ): string {
   const languageName = lang === 'vi' ? 'Vietnamese' : 'English';
   return `
 Analyze this application for ${inlineField(pos)} (${inlineField(level)}).
 TARGET LANGUAGE: ${languageName}
 
-${wrap('cv', truncate(cv, budget.cv))}
+${wrap('cv', truncate(compactCV(cv), budget.analysisCv))}
 
 ${wrap('jd', truncate(jd, budget.jd))}
 `;

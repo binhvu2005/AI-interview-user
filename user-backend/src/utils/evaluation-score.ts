@@ -65,7 +65,14 @@ export const decide = (totalScore: number, technical: number): Decision => {
   return 'REJECT';
 };
 
-export const getCheatPenalty = (cheatCount: number) => {
+export const INTERVIEW_RECOMMENDATION_THRESHOLD = 50;
+
+// Computed from the same matchScore the UI shows, so "42% match" can never sit next to "should interview".
+// The model only reports whether a core skill is missing; it does not add up scores.
+export const shouldRecommendInterview = (matchScore: number, coreSkillMissing: unknown): boolean =>
+  matchScore >= INTERVIEW_RECOMMENDATION_THRESHOLD && coreSkillMissing !== true;
+
+export const getCheatPenalty =(cheatCount: number) => {
   const tabSwitches = Math.max(0, Math.floor(Number(cheatCount) || 0));
   const flagged = tabSwitches >= CHEAT_FLAG_THRESHOLD;
   const penalty = flagged ? Math.min(MAX_CHEAT_PENALTY, tabSwitches * PENALTY_PER_SWITCH) : 0;

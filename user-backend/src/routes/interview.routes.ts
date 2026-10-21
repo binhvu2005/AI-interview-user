@@ -8,6 +8,7 @@ router.post('/save', authMiddleware, InterviewController.saveAndEvaluateIntervie
 router.get('/showcase', InterviewController.getShowcaseInterviews); // Showcase route
 router.get('/', authMiddleware, InterviewController.getUserInterviews);
 router.get('/stats/heatmap', authMiddleware, InterviewController.getHeatmapData);
+router.get('/session/:id', authMiddleware, InterviewController.getSessionStatus);
 router.patch('/:id/share', authMiddleware, InterviewController.toggleShareInterview); // Share route
 router.get('/:id', authMiddleware, InterviewController.getInterviewResult);
 

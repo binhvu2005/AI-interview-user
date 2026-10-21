@@ -2,6 +2,7 @@ import { Response } from 'express';
 import mongoose from 'mongoose';
 import { AuthRequest } from '../middlewares/auth.middleware';
 import Interview from '../models/Interview';
+import InterviewSession from '../models/InterviewSession';
 import { User } from '../models/user.model';
 import { checkAndUpdateVipStatus } from '../utils/vip';
 import * as AIService from '../services/ai.service';
@@ -9,104 +10,136 @@ import * as EmailService from '../services/email.service';
 import { createNotification } from '../services/notification.service';
 import { NotificationType } from '../models/Notification.model';
 
-export const saveAndEvaluateInterview = async (req: AuthRequest, res: Response) => {
+// An evaluation still marked running after this long died with the process; it may be started again.
+const EVALUATION_STALE_MS = 10 * 60 * 1000;
+
+const noAnswerEvaluation = (lang: string) => {
+  const vi = lang === 'vi';
+  const noData = vi ? "Không có dữ liệu" : "No data";
+  return {
+    totalScore: 0,
+    decision: "REJECT",
+    breakdown: { technical: 0, problemSolving: 0, coding: 0, communication: 0, architectureAndFit: 0 },
+    summary: vi ? "Ứng viên đã kết thúc phỏng vấn sớm mà không có bất kỳ tương tác nào." : "The candidate ended the interview early without any interaction.",
+    pros: [noData, noData, noData, noData, noData],
+    cons: [vi ? "Từ bỏ phỏng vấn" : "Abandoned interview", noData, noData, noData, noData],
+    improvements: [vi ? "Cần hoàn thành bài phỏng vấn để hệ thống có thể đánh giá" : "Need to complete the interview for evaluation", noData, noData, noData, noData],
+    detailedFeedback: []
+  };
+};
+
+// The result page shows the transcript as the candidate saw it: feedback, then the next question.
+const displayMessages = (messages: any[]) =>
+  messages
+    .filter(m => m.role === 'user' || m.content || m.feedback)
+    .map(m => ({
+      role: m.role,
+      content: m.role === 'ai' && m.feedback ? [m.feedback, m.content].filter(Boolean).join('\n\n') : m.content,
+      timestamp: m.timestamp,
+    }));
+
+const runEvaluation = async (session: any) => {
   try {
-    const { 
-      position, 
-      level, 
-      duration, 
-      matchScore, 
-      matchAnalysis, 
-      messages,
-      cvData,
-      jdText,
-      lang,
-      cheatCount
-    } = req.body;
+    const user = await User.findById(session.userId);
+    const isVip = user ? await checkAndUpdateVipStatus(user) : false;
+    const messages = session.messages.map((m: any) => m.toObject());
 
-    const userId = req.user?.id;
-    if (!userId) return res.status(401).json({ message: 'Unauthorized' });
+    console.log(`[Evaluation] Session ${session._id}: starting AI analysis...`);
+    const evaluation = await AIService.evaluateInterview(messages, {
+      cvData: session.cvData, cvProfile: session.cvProfile, jdText: session.jdText, position: session.position,
+      level: session.level, lang: session.lang, isVip, duration: session.duration, matchScore: session.matchScore,
+    }, session.cheatCount) ?? noAnswerEvaluation(session.lang);
 
-    const dbUser = await User.findById(userId);
-    const isVip = dbUser ? await checkAndUpdateVipStatus(dbUser) : false;
-
-    // 1. Get AI Evaluation
-    console.log('[Evaluation] Starting AI analysis...');
-    const userMessages = messages.filter((m: any) => m.role === 'user');
-    let evaluation;
-    
-    if (userMessages.length === 0) {
-      console.log('[Evaluation] No user messages found, skipping AI evaluation to prevent hallucination.');
-      evaluation = {
-        totalScore: 0,
-        decision: "REJECT",
-        breakdown: { technical: 0, problemSolving: 0, coding: 0, communication: 0, architectureAndFit: 0 },
-        summary: lang === 'vi' ? "Ứng viên đã kết thúc phỏng vấn sớm mà không có bất kỳ tương tác nào." : "The candidate ended the interview early without any interaction.",
-        pros: [lang === 'vi' ? "Không có dữ liệu" : "No data", lang === 'vi' ? "Không có dữ liệu" : "No data", lang === 'vi' ? "Không có dữ liệu" : "No data", lang === 'vi' ? "Không có dữ liệu" : "No data", lang === 'vi' ? "Không có dữ liệu" : "No data"],
-        cons: [lang === 'vi' ? "Từ bỏ phỏng vấn" : "Abandoned interview", lang === 'vi' ? "Không có dữ liệu" : "No data", lang === 'vi' ? "Không có dữ liệu" : "No data", lang === 'vi' ? "Không có dữ liệu" : "No data", lang === 'vi' ? "Không có dữ liệu" : "No data"],
-        improvements: [lang === 'vi' ? "Cần hoàn thành bài phỏng vấn để hệ thống có thể đánh giá" : "Need to complete the interview for evaluation", lang === 'vi' ? "Không có dữ liệu" : "No data", lang === 'vi' ? "Không có dữ liệu" : "No data", lang === 'vi' ? "Không có dữ liệu" : "No data", lang === 'vi' ? "Không có dữ liệu" : "No data"],
-        detailedFeedback: []
-      };
-    } else {
-      const parsedCheatCount = parseInt(cheatCount) || 0;
-      evaluation = await AIService.evaluateInterview(messages, cvData, jdText, matchScore, lang || 'vi', position, level, parsedCheatCount, isVip);
+    // A stale run restarted by the client may race the original one; only one Interview per session.
+    let interview = await Interview.findOne({ sessionId: session._id });
+    if (!interview) {
+      interview = await Interview.create({
+        userId: session.userId,
+        sessionId: session._id,
+        position: session.position,
+        level: session.level,
+        duration: session.duration,
+        matchScore: session.matchScore,
+        matchAnalysis: session.matchAnalysis,
+        messages: displayMessages(messages),
+        evaluation,
+      });
     }
+    await InterviewSession.updateOne({ _id: session._id }, { $set: { status: 'completed', interviewId: interview._id, evaluationError: null } });
 
-    // 2. Validate and Clean Data
-    const sanitizedMatchScore = isNaN(parseInt(matchScore)) ? 0 : parseInt(matchScore);
-    const sanitizedDuration = isNaN(parseInt(duration)) ? 15 : parseInt(duration);
-
-    // 3. Create Interview Document
-    const newInterview = new Interview({
-      userId,
-      position,
-      level,
-      duration: sanitizedDuration,
-      matchScore: sanitizedMatchScore,
-      matchAnalysis,
-      messages,
-      evaluation
-    });
-
-    console.log('[Evaluation] Saving interview to database...');
-    await newInterview.save();
-
-    // Gửi email kết quả
-    const user = await User.findById(userId);
     if (user && user.email && user.isVip && user.emailNotifications) {
-      EmailService.sendInterviewResult(
-        user.email,
-        user.fullName || 'Ứng viên',
-        position,
-        evaluation
-      ).catch(err => console.error('Error sending email:', err));
+      EmailService.sendInterviewResult(user.email, user.fullName || 'Ứng viên', session.position, evaluation)
+        .catch(err => console.error('Error sending email:', err));
     }
-    
-    // Notify user of completion
     await createNotification({
-      recipient: userId,
+      recipient: session.userId,
       type: NotificationType.INTERVIEW_COMPLETE,
-      title: lang === 'vi' ? 'Phỏng vấn hoàn tất' : 'Interview Completed',
-      message: lang === 'vi' ? `Kết quả phỏng vấn vị trí ${position} đã có sẵn.` : `Interview result for ${position} is now available.`,
-      link: `/results/${newInterview._id}`
-    });
-
-    res.status(201).json({
-      message: 'Interview saved and evaluated successfully',
-      interviewId: newInterview._id,
-      evaluation: newInterview.evaluation
-    });
+      title: session.lang === 'vi' ? 'Phỏng vấn hoàn tất' : 'Interview Completed',
+      message: session.lang === 'vi' ? `Kết quả phỏng vấn vị trí ${session.position} đã có sẵn.` : `Interview result for ${session.position} is now available.`,
+      link: `/results/${interview._id}`
+    }).catch(err => console.error('Error creating notification:', err));
+    return interview;
   } catch (err: any) {
-    console.error('[Evaluation Error Detailed]:', {
-      message: err.message,
-      stack: err.stack,
-      body: req.body ? 'Present' : 'Missing'
-    });
-    res.status(500).json({ 
-      message: 'Failed to evaluate or save interview', 
-      error: err.message,
-      details: process.env.NODE_ENV === 'development' ? err.stack : undefined
-    });
+    console.error(`[Evaluation] Session ${session._id} failed:`, err.message);
+    await InterviewSession.updateOne({ _id: session._id }, { $set: { status: 'evaluation_failed', evaluationError: String(err.message).slice(0, 300) } });
+    throw err;
+  }
+};
+
+// Ends the interview and grades the transcript stored in the session; the client only names the session.
+// The transcript is already saved, so a failed evaluation is retried by calling this again.
+export const saveAndEvaluateInterview = async (req: AuthRequest, res: Response) => {
+  const userId = req.user?.id;
+  if (!userId) return res.status(401).json({ message: 'Unauthorized' });
+  const { sessionId } = req.body;
+  if (!sessionId) return res.status(400).json({ message: 'sessionId is required' });
+  // Tab switches are detected in the browser, so this stays client-reported; it can only go up.
+  const reportedSwitches = Math.max(0, Math.floor(Number(req.body.cheatCount) || 0));
+
+  let session: any;
+  try {
+    session = await InterviewSession.findOneAndUpdate(
+      {
+        _id: sessionId,
+        userId,
+        $or: [
+          { status: { $in: ['in_progress', 'evaluation_failed'] } },
+          { status: 'evaluating', evaluationStartedAt: { $lt: new Date(Date.now() - EVALUATION_STALE_MS) } },
+        ],
+      },
+      {
+        $set: { status: 'evaluating', chatClosed: true, evaluationStartedAt: new Date(), evaluationError: null },
+        $max: { cheatCount: reportedSwitches },
+      },
+      { returnDocument: 'after' },
+    );
+  } catch {
+    return res.status(400).json({ message: 'Invalid session' });
+  }
+
+  if (!session) {
+    const existing = await InterviewSession.findOne({ _id: sessionId, userId }).select('status interviewId');
+    if (!existing) return res.status(404).json({ message: 'Interview session not found' });
+    if (existing.status === 'completed') return res.status(200).json({ status: 'completed', interviewId: existing.interviewId });
+    return res.status(202).json({ status: existing.status, sessionId });
+  }
+
+  // Grading takes several AI calls (and may wait out rate limits), so it runs after the response;
+  // the client polls the session status.
+  runEvaluation(session).catch(() => {});
+  return res.status(202).json({ status: 'evaluating', sessionId: session._id });
+};
+
+export const getSessionStatus = async (req: AuthRequest, res: Response) => {
+  try {
+    const session = await InterviewSession.findOne({ _id: req.params.id, userId: req.user?.id })
+      .select('status interviewId evaluationStartedAt');
+    if (!session) return res.status(404).json({ message: 'Interview session not found' });
+    const stale = session.status === 'evaluating'
+      && (!session.evaluationStartedAt || session.evaluationStartedAt.getTime() < Date.now() - EVALUATION_STALE_MS);
+    res.json({ status: stale ? 'evaluation_failed' : session.status, interviewId: session.interviewId });
+  } catch {
+    res.status(400).json({ message: 'Invalid session' });
   }
 };
 

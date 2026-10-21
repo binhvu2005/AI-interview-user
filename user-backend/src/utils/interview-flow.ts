@@ -59,35 +59,40 @@ const CLARIFY_PHRASES = [
   'rephrase the question',
 ];
 
-// Unambiguous admissions, matched anywhere in a short message.
-const DONT_KNOW_ANYWHERE = [
-  'không biết', 'chưa biết', 'không có kinh nghiệm', 'chưa có kinh nghiệm', "don't know", 'do not know',
-  'no idea', 'no experience',
+// A message is an admission only when, after dropping filler words, nothing but one of these phrases is
+// left. Matching a phrase anywhere misread real answers: "pass by value", "skip list", "O(1)", or
+// "Dùng ArrayList vì không biết trước số phần tử". Anything less clear-cut is left to the model, which
+// classifies the answer itself in answerAssessment.
+const ADMISSIONS = [
+  'không biết', 'chưa biết', 'không rõ', 'chưa rõ', 'không nhớ', 'chưa nhớ', 'quên rồi', 'chịu', 'bó tay',
+  'bỏ qua', 'qua câu khác', 'không có kinh nghiệm', 'chưa có kinh nghiệm', 'chưa từng làm', 'chưa làm bao giờ',
+  'chưa tìm hiểu', 'skip', 'pass', 'next', "don't know", 'dont know', 'do not know', 'no idea', 'not sure',
+  'no experience', "haven't used it", 'never used it', 'i give up',
 ];
-// Words that are also ordinary technical vocabulary ("bỏ qua cache", "chịu lỗi", "skip list"): only an
-// admission when a very short message starts with them.
-const PREFIX_MAX_LENGTH = 30;
-const PREFIX_MAX_EXTRA_WORDS = 2; // "chịu ạ", "bỏ qua câu này"
+const FILLER_WORDS = new Set([
+  'em', 'anh', 'chị', 'mình', 'tôi', 'tớ', 'dạ', 'vâng', 'ạ', 'à', 'ạh', 'ơi', 'thì', 'là', 'thật', 'sự', 'lắm', 'quá',
+  'xin', 'lỗi', 'câu', 'này', 'cái', 'phần', 'đó', 'ấy', 'nha', 'nhé', 'hic', 'huhu', 'hmm', 'ừm', 'ờ', 'uh', 'um',
+  'i', "i'm", 'im', 'am', 'sorry', 'honestly', 'really', 'just', 'this', 'that', 'one', 'question', 'the', 'please',
+  'actually', 'well', 'ok', 'okay',
+]);
 
-const isPrefixAdmission = (text: string) => DONT_KNOW_PREFIX.some(p => {
-  if (!text.startsWith(p)) return false;
-  const rest = text.slice(p.length);
-  if (rest && !/^[\s.,!?…]/.test(rest)) return false; // "password", "passport"
-  return rest.trim().split(/\s+/).filter(Boolean).length <= PREFIX_MAX_EXTRA_WORDS;
-});
-const DONT_KNOW_PREFIX = ['chịu', 'bỏ qua', 'skip', 'pass', 'không rõ', 'chưa từng', 'not sure'];
+const normalizeWords = (text: string): string =>
+  text
+    .toLowerCase()
+    .replace(/[’`]/g, "'")
+    .replace(/[^\p{L}\p{N}'\s]+/gu, ' ')
+    .split(/\s+/)
+    .filter(w => w && !FILLER_WORDS.has(w))
+    .join(' ');
 
-// Keyword checks only apply to short messages: a long answer that says "không biết có nên dùng Redis
-// không, nhưng..." is a real answer, not an admission.
 export const detectCandidateIntent = (message: string = ''): CandidateIntent => {
   const text = message.trim().toLowerCase();
-  if (!text) return 'dont_know';
+  // No letter or digit at all ("", "...", "?"): nothing to grade.
+  if (!/[\p{L}\p{N}]/u.test(text)) return 'dont_know';
   if (text.length <= 150 && CLARIFY_PHRASES.some(p => text.includes(p))) return 'clarify';
-  if (text.length < 5) return 'dont_know';
-  if (text.length <= 80 && (DONT_KNOW_ANYWHERE.some(p => text.includes(p)) || (text.length <= PREFIX_MAX_LENGTH && isPrefixAdmission(text)))) {
-    return 'dont_know';
-  }
-  return 'answer';
+  if (text.length > 80) return 'answer';
+  const core = normalizeWords(text);
+  return core === '' || ADMISSIONS.includes(core) ? 'dont_know' : 'answer';
 };
 
 // Interviewer turns the client tagged as transient (e.g. "AI is busy" errors) are not part of the interview.
@@ -158,10 +163,20 @@ export const planTurn = (
 
 const sameTopic = (a: string, b: string) => a.trim().toLowerCase() === b.trim().toLowerCase();
 
+const INTENTS: CandidateIntent[] = ['answer', 'clarify', 'dont_know'];
+
+// The keyword check only catches clear-cut messages; for everything else the model's own reading of the
+// answer (answerAssessment.intent) decides.
+export const resolveIntent = (raw: any, plan: TurnPlan): CandidateIntent => {
+  if (plan.intent !== 'answer') return plan.intent;
+  const modelIntent = raw?.answerAssessment?.intent;
+  return INTENTS.includes(modelIntent) ? modelIntent : 'answer';
+};
+
 // Small models sometimes ignore the turn instruction: they re-ask a covered topic or skip the code snippet
 // of the debug question. Returns a correction to send back to the model, or null when the reply is usable.
 export const checkMainQuestion = (raw: any, plan: TurnPlan): string | null => {
-  if (raw?.questionType !== 'main' || !plan.nextPhase || plan.intent === 'clarify') return null;
+  if (raw?.questionType !== 'main' || !plan.nextPhase || resolveIntent(raw, plan) === 'clarify') return null;
   const question = typeof raw?.nextQuestion === 'string' ? raw.nextQuestion : '';
   if (plan.nextPhase === 'debug' && !question.includes('```')) {
     return 'Your previous reply was the DEBUG CODE main question but contained no code. Ask it again with a fenced code snippet (8-20 lines) containing one real bug.';
@@ -187,10 +202,13 @@ export interface ChatResult {
 export const finalizeChatResult = (raw: any, plan: TurnPlan, isFirstTurn: boolean): ChatResult => {
   let questionType: QuestionType = VALID_TYPES.includes(raw?.questionType) ? raw.questionType : 'main';
   if (isFirstTurn) questionType = 'intro';
-  if (!plan.canProbe && questionType === 'probe' && plan.intent !== 'clarify') questionType = 'main';
+  // Only a main question already on the table can be clarified.
+  const clarifying = !isFirstTurn && plan.mainAsked > 0 && (questionType === 'clarify' || resolveIntent(raw, plan) === 'clarify');
+  if (questionType === 'clarify' && !clarifying) questionType = 'main';
+  if (!plan.canProbe && questionType === 'probe' && !clarifying) questionType = 'main';
 
   const modelWantsToStop = raw?.isFinished === true || questionType === 'closing' || questionType === 'main';
-  const isFinished = plan.forceFinish || (plan.inFinalStage && plan.intent !== 'clarify' && modelWantsToStop);
+  const isFinished = plan.forceFinish || (plan.inFinalStage && !clarifying && modelWantsToStop);
   // A question the candidate can no longer answer must not be shown as the interview closes.
   const dropQuestion = isFinished && questionType !== 'closing';
   if (isFinished) questionType = 'closing';
@@ -202,4 +220,41 @@ export const finalizeChatResult = (raw: any, plan: TurnPlan, isFirstTurn: boolea
     questionType,
     topic: typeof raw?.topic === 'string' ? raw.topic : '',
   };
+};
+
+export interface GradedSegment {
+  kind: 'intro' | 'main';
+  turns: ChatTurn[];
+}
+
+// One item per main question (with its probes and clarifications) plus the self-introduction, in order.
+// A question with no candidate reply is left out: it is the question the timer cut off, and grading it 0
+// would punish the time limit rather than the answer.
+export const segmentTranscript = (history: ChatTurn[]): GradedSegment[] => {
+  const turns = cleanHistory(history);
+  const tagged = isTagged(turns);
+  const segments: GradedSegment[] = [];
+  let seenAi = false;
+
+  for (const m of turns) {
+    if (m.role === 'ai') {
+      // Legacy clients send no tags: the first interviewer turn is the welcome, every later one a main question.
+      const type = tagged ? m.questionType : seenAi ? 'main' : 'intro';
+      seenAi = true;
+      if (type === 'closing') continue;
+      if (type === 'intro' || type === 'main' || segments.length === 0) {
+        segments.push({ kind: type === 'intro' ? 'intro' : 'main', turns: [m] });
+        continue;
+      }
+    }
+    segments[segments.length - 1]?.turns.push(m);
+  }
+
+  return segments
+    .map(s => {
+      const kept = [...s.turns];
+      while (kept.length && kept[kept.length - 1].role === 'ai') kept.pop();
+      return { ...s, turns: kept };
+    })
+    .filter(s => s.turns.some(t => t.role === 'user'));
 };
