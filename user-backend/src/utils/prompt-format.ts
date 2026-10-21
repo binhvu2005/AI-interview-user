@@ -22,9 +22,11 @@ export const PROMPT_BUDGET: Record<'gemini' | 'groq', PromptBudget> = {
 export const truncate = (text: string = '', max: number): string =>
   text.length > max ? `${text.substring(0, max)}... [truncated]` : text;
 
-// Untrusted text (CV, JD, candidate answers) goes inside XML-like tags. Neutralise any tag the
-// text itself contains so a candidate cannot close the block and smuggle instructions after it.
-export const escapeTags = (text: string = ''): string => text.replace(/</g, '‹').replace(/>/g, '›');
+// Untrusted text (CV, JD, candidate answers) goes inside XML-like tags. Neutralise only our own wrapper
+// tags so a candidate cannot close the block and smuggle instructions after it; any other "<" stays
+// intact because code snippets (`i <= n`, JSX) must reach the model unchanged.
+const WRAPPER_TAG = /<(\/?)(cv|jd|transcript|turn)\b/gi;
+export const escapeTags = (text: string = ''): string => text.replace(WRAPPER_TAG, '‹$1$2');
 
 export const wrap = (tag: string, text: string = ''): string => `<${tag}>\n${escapeTags(text)}\n</${tag}>`;
 
