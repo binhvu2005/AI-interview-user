@@ -99,6 +99,14 @@ const countProbesSinceLastMain = (history: ChatTurn[]): number => {
   return probes;
 };
 
+// Look topics up by phase and rank inside that phase: the planner may return fewer topics than asked,
+// and a positional lookup would then hand the debug topic to a practice question.
+export const pickPlannedTopic = (topics: PlannedTopic[], index: number, s: InterviewStructure): PlannedTopic | null => {
+  const phase = getPhaseForMain(index, s);
+  const rank = phase === 'theory' ? index - 1 : phase === 'practice' ? index - 1 - s.theoryCount : 0;
+  return topics.filter(t => t.phase === phase)[rank] || null;
+};
+
 export const planTurn = (
   history: ChatTurn[],
   structure: InterviewStructure,
@@ -125,7 +133,7 @@ export const planTurn = (
     currentPhase: mainAsked > 0 ? getPhaseForMain(mainAsked, structure) : null,
     nextMainIndex,
     nextPhase: nextMainIndex ? getPhaseForMain(nextMainIndex, structure) : null,
-    nextPlannedTopic: nextMainIndex ? plannedTopics[nextMainIndex - 1] || null : null,
+    nextPlannedTopic: nextMainIndex ? pickPlannedTopic(plannedTopics, nextMainIndex, structure) : null,
     canProbe: mainAsked > 0 && intent === 'answer' && probesSinceLastMain < MAX_PROBES_PER_MAIN,
     inFinalStage,
     forceFinish: aiCount >= structure.maxMain * 3 + 2,

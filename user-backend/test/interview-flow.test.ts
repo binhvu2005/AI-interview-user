@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import {
-  detectCandidateIntent, finalizeChatResult, getInterviewStructure, getPhaseForMain, planTurn,
+  detectCandidateIntent, finalizeChatResult, getInterviewStructure, getPhaseForMain, pickPlannedTopic, planTurn,
 } from '../src/utils/interview-flow';
 import { ChatTurn, escapeTags, fitHistory, formatTranscript } from '../src/utils/prompt-format';
 import { getSeniority } from '../src/utils/seniority';
@@ -26,6 +26,17 @@ test('structure: 15 min = 6 main questions, 30 min = 9, capped at 15', () => {
 test('phase order: theory, then practice, last one is debug', () => {
   const s = getInterviewStructure('15', 'junior');
   assert.deepEqual([1, 2, 3, 4, 5, 6].map(i => getPhaseForMain(i, s)), ['theory', 'theory', 'theory', 'practice', 'practice', 'debug']);
+});
+
+test('planned topics are matched by phase, not position, when the planner returns too few', () => {
+  const s = getInterviewStructure('15', 'junior'); // 3 theory, 2 practice, 1 debug
+  const topics = [
+    { phase: 'theory' as const, topic: 'T1' }, { phase: 'theory' as const, topic: 'T2' }, { phase: 'theory' as const, topic: 'T3' },
+    { phase: 'practice' as const, topic: 'P1' }, { phase: 'debug' as const, topic: 'D' },
+  ];
+  assert.equal(pickPlannedTopic(topics, 4, s)?.topic, 'P1');
+  assert.equal(pickPlannedTopic(topics, 5, s), null);
+  assert.equal(pickPlannedTopic(topics, 6, s)?.topic, 'D');
 });
 
 test('intent: long answers containing "không biết" are answers, short admissions are not', () => {
