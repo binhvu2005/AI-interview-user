@@ -1,12 +1,13 @@
 import { getRubricWeights } from './evaluation-score';
 import { getSeniority } from './seniority';
+import { inlineField } from './prompt-format';
 
 export const SCORING_RUBRIC = (position: string, level: string) => {
   const { weights, fitLabel, fitDescription } = getRubricWeights(getSeniority(level, position));
   const pct = (w: number) => Math.round(w * 100);
 
   return `
-### SCORING RUBRIC (FOR: ${level} ${position})
+### SCORING RUBRIC (FOR: ${inlineField(level)} ${inlineField(position)})
 Grade each criterion on a 0-10 scale. The system computes the weighted total and the hiring decision from your breakdown, so grade each criterion independently and honestly.
 
 1. technical (${pct(weights.technical)}%): Mastery of tools and fundamental concepts; precision of technical explanations.

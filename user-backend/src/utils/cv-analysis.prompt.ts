@@ -1,4 +1,4 @@
-import { UNTRUSTED_DATA_RULE, truncate, wrap } from './prompt-format';
+import { UNTRUSTED_DATA_RULE, inlineField, truncate, wrap } from './prompt-format';
 
 export const CV_ANALYSIS_SYSTEM_PROMPT = `
 You are a SENIOR TECHNICAL ARCHITECT and EXPERT RECRUITER.
@@ -61,7 +61,7 @@ export function getCVAnalysisUserPrompt(
 ): string {
   const languageName = lang === 'vi' ? 'Vietnamese' : 'English';
   return `
-Analyze this application for ${pos} (${level}).
+Analyze this application for ${inlineField(pos)} (${inlineField(level)}).
 TARGET LANGUAGE: ${languageName}
 
 ${wrap('cv', truncate(cv, budget.cv))}

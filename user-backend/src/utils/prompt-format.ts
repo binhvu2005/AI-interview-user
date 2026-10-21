@@ -28,6 +28,11 @@ export const truncate = (text: string = '', max: number): string =>
 const WRAPPER_TAG = /<(\/?)(cv|jd|transcript|turn)\b/gi;
 export const escapeTags = (text: string = ''): string => text.replace(WRAPPER_TAG, '‹$1$2');
 
+// Client-sent short fields (position, level, topic names) are interpolated outside the tags, so they are
+// flattened to one capped line: a newline could otherwise start a fake "### SECTION" of instructions.
+export const inlineField = (text: unknown, max: number = 80): string =>
+  escapeTags(String(text ?? '')).replace(/[\r\n]+/g, ' ').replace(/#{2,}/g, '#').trim().slice(0, max);
+
 export const wrap = (tag: string, text: string = ''): string => `<${tag}>\n${escapeTags(text)}\n</${tag}>`;
 
 export const UNTRUSTED_DATA_RULE = `

@@ -1,5 +1,6 @@
 import { SCORING_RUBRIC } from './scoring-rubric.prompt';
 import { ChatTurn, UNTRUSTED_DATA_RULE, formatTranscript, truncate, wrap } from './prompt-format';
+import { clamp } from './evaluation-score';
 import { countMainQuestions } from './interview-flow';
 
 export const INTERVIEW_EVALUATION_SYSTEM_PROMPT = (lang: string, position: string, level: string) => {
@@ -82,7 +83,7 @@ ${formatTranscript(history, budget.turn)}
 ### CONTEXT
 ${wrap('cv', truncate(cv, budget.cv))}
 ${wrap('jd', truncate(jd, budget.jd))}
-Initial CV-JD match score: ${matchScore}%
+Initial CV-JD match score: ${Math.round(clamp(matchScore, 0, 100))}%
 ${history.some(m => m.role === 'ai' && m.questionType)
   ? `Expected detailedFeedback items: ${1 + countMainQuestions(history)} (1 self-introduction + ${countMainQuestions(history)} main questions; type="probe" and type="clarify" turns are merged into their main question).`
   : ''}

@@ -1,4 +1,4 @@
-import { UNTRUSTED_DATA_RULE, truncate, wrap } from './prompt-format';
+import { UNTRUSTED_DATA_RULE, inlineField, truncate, wrap } from './prompt-format';
 import { InterviewStructure } from './interview-flow';
 import { Seniority } from './seniority';
 
@@ -42,8 +42,8 @@ export const getInterviewQuestionsPrompt = (
   const languageName = lang === 'vi' ? 'Vietnamese' : 'English';
   return `
 TARGET LANGUAGE: ${languageName}
-Position: ${position}
-Level: ${level} (seniority group: ${seniority})
+Position: ${inlineField(position)}
+Level: ${inlineField(level)} (seniority group: ${seniority})
 
 Plan EXACTLY ${structure.maxMain} topics: ${structure.theoryCount} "theory", then ${structure.practiceCount} "practice", then 1 "debug".
 

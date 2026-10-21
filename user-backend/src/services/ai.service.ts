@@ -4,7 +4,7 @@ import { CV_ANALYSIS_SYSTEM_PROMPT, getCVAnalysisUserPrompt } from '../utils/cv-
 import { INTERVIEW_SYSTEM_PROMPT, getInterviewQuestionsPrompt } from '../utils/interview.prompt';
 import { INTERVIEW_CHAT_SYSTEM_PROMPT, getInterviewChatUserPrompt } from '../utils/chat.prompt';
 import { INTERVIEW_EVALUATION_SYSTEM_PROMPT, getEvaluationUserPrompt } from '../utils/evaluation.prompt';
-import { ChatTurn, PROMPT_BUDGET, PromptBudget, fitHistory } from '../utils/prompt-format';
+import { ChatTurn, PROMPT_BUDGET, PromptBudget, fitHistory, inlineField } from '../utils/prompt-format';
 import { getSeniority } from '../utils/seniority';
 import {
   PlannedTopic, cleanHistory, finalizeChatResult, getInterviewStructure, planTurn,
@@ -172,7 +172,7 @@ export const normalizePlannedTopics = (topics: any): PlannedTopic[] =>
     ? topics
       .filter(t => t && typeof t.topic === 'string' && t.topic.trim() && PHASES.includes(t.phase))
       .slice(0, 15)
-      .map(t => ({ phase: t.phase, topic: t.topic.trim(), focus: typeof t.focus === 'string' ? t.focus : undefined }))
+      .map(t => ({ phase: t.phase, topic: inlineField(t.topic), focus: typeof t.focus === 'string' ? inlineField(t.focus, 200) : undefined }))
     : [];
 
 export const generateInterviewQuestions = async (cvData: string, jdText: string, position: string, level: string, lang: string = 'vi', duration: string = '15', isVip: boolean = false) => {

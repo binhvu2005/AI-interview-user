@@ -1,4 +1,4 @@
-import { ChatTurn, UNTRUSTED_DATA_RULE, formatTranscript, truncate, wrap } from './prompt-format';
+import { ChatTurn, UNTRUSTED_DATA_RULE, formatTranscript, inlineField, truncate, wrap } from './prompt-format';
 import { MAX_PROBES_PER_MAIN, Phase, TurnPlan } from './interview-flow';
 import { Seniority } from './seniority';
 
@@ -123,13 +123,13 @@ export const getInterviewChatUserPrompt = (params: {
 }) => {
   const { history, omittedTurns, plan } = params;
   const languageName = params.lang === 'vi' ? 'Vietnamese' : 'English';
-  const covered = plan.coveredTopics.length ? plan.coveredTopics.join('; ') : 'none recorded';
+  const covered = plan.coveredTopics.length ? plan.coveredTopics.map(t => inlineField(t)).join('; ') : 'none recorded';
   const omitted = omittedTurns > 0 ? `\n[${omittedTurns} earlier turns omitted for length]` : '';
 
   return `
 ### SESSION
 - LANGUAGE: ${languageName}
-- POSITION: ${params.position} (${params.level}, seniority group: ${params.seniority})
+- POSITION: ${inlineField(params.position)} (${inlineField(params.level)}, seniority group: ${params.seniority})
 - STRUCTURE: ${plan.structure.maxMain} main questions (${plan.structure.theoryCount} theory, ${plan.structure.practiceCount} practice, 1 debug)
 - MAIN QUESTIONS ASKED SO FAR: ${plan.mainAsked}
 - TOPICS ALREADY COVERED: ${covered}
