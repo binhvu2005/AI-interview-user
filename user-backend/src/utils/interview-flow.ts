@@ -55,13 +55,18 @@ export const getPhaseForMain = (index: number, s: InterviewStructure): Phase => 
 const CLARIFY_PHRASES = [
   'chưa rõ câu hỏi', 'chưa hiểu câu hỏi', 'chưa rõ ý', 'chưa hiểu ý', 'giải thích thêm câu hỏi',
   'giải thích lại câu hỏi', 'làm rõ câu hỏi', 'nói rõ hơn', 'hỏi lại được không', 'nhắc lại câu hỏi',
-  'clarify', 'explain the question', "don't understand the question", 'what do you mean', 'rephrase',
+  'clarify the question', 'explain the question', "don't understand the question", 'what do you mean',
+  'rephrase the question',
 ];
 
-const DONT_KNOW_PHRASES = [
-  'không biết', 'chưa biết', 'không rõ', 'không có kinh nghiệm', 'chưa có kinh nghiệm', 'chưa từng',
-  'chịu', 'bỏ qua', "don't know", 'do not know', 'not sure', 'no idea', 'no experience', 'skip',
+// Unambiguous admissions, matched anywhere in a short message.
+const DONT_KNOW_ANYWHERE = [
+  'không biết', 'chưa biết', 'không có kinh nghiệm', 'chưa có kinh nghiệm', "don't know", 'do not know',
+  'no idea', 'no experience',
 ];
+// Words that are also ordinary technical vocabulary ("bỏ qua cache", "chịu tải"): only an admission
+// when the message starts with them.
+const DONT_KNOW_PREFIX = ['chịu', 'bỏ qua', 'skip', 'pass', 'không rõ', 'chưa từng', 'not sure'];
 
 // Keyword checks only apply to short messages: a long answer that says "không biết có nên dùng Redis
 // không, nhưng..." is a real answer, not an admission.
@@ -70,7 +75,9 @@ export const detectCandidateIntent = (message: string = ''): CandidateIntent => 
   if (!text) return 'dont_know';
   if (text.length <= 150 && CLARIFY_PHRASES.some(p => text.includes(p))) return 'clarify';
   if (text.length < 5) return 'dont_know';
-  if (text.length <= 80 && DONT_KNOW_PHRASES.some(p => text.includes(p))) return 'dont_know';
+  if (text.length <= 80 && (DONT_KNOW_ANYWHERE.some(p => text.includes(p)) || DONT_KNOW_PREFIX.some(p => text.startsWith(p)))) {
+    return 'dont_know';
+  }
   return 'answer';
 };
 

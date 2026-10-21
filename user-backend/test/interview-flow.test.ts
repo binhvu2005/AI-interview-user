@@ -43,6 +43,10 @@ test('intent: long answers containing "không biết" are answers, short admissi
   assert.equal(detectCandidateIntent('Em không biết ạ'), 'dont_know');
   assert.equal(detectCandidateIntent('ok'), 'dont_know');
   assert.equal(detectCandidateIntent('Em chưa hiểu câu hỏi lắm'), 'clarify');
+  assert.equal(detectCandidateIntent('Chịu ạ'), 'dont_know');
+  assert.equal(detectCandidateIntent('Cache miss thì bỏ qua cache, đọc thẳng DB rồi ghi lại'), 'answer');
+  assert.equal(detectCandidateIntent('Tôi chịu trách nhiệm phần DB và tối ưu index'), 'answer');
+  assert.equal(detectCandidateIntent('Em sẽ clarify requirement với PO trước khi thiết kế'), 'answer');
   assert.equal(
     detectCandidateIntent('Em không biết có nên dùng Redis hay không, nhưng với lượng đọc lớn em sẽ đặt cache-aside trước DB.'),
     'answer',
