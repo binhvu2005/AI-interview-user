@@ -297,28 +297,52 @@
 
   /* Rich Text Content Styling */
   .rich-text-content p {
-    @apply mb-4 last:mb-0;
+    margin-bottom: 1rem;
+  }
+  .rich-text-content p:last-child {
+    margin-bottom: 0;
   }
   .rich-text-content ul {
-    @apply list-disc pl-6 mb-4;
+    list-style-type: disc;
+    padding-left: 1.5rem;
+    margin-bottom: 1rem;
   }
   .rich-text-content ol {
-    @apply list-decimal pl-6 mb-4;
+    list-style-type: decimal;
+    padding-left: 1.5rem;
+    margin-bottom: 1rem;
   }
   .rich-text-content h1 {
-    @apply text-2xl font-bold mb-4;
+    font-size: 1.5rem;
+    line-height: 2rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
   }
   .rich-text-content h2 {
-    @apply text-xl font-bold mb-3;
+    font-size: 1.25rem;
+    line-height: 1.75rem;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
   }
   .rich-text-content h3 {
-    @apply text-lg font-bold mb-2;
+    font-size: 1.125rem;
+    line-height: 1.75rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
   }
   .rich-text-content blockquote {
-    @apply border-l-4 border-primary/30 pl-4 italic mb-4;
+    border-left-width: 4px;
+    border-color: rgba(99, 102, 241, 0.3);
+    padding-left: 1rem;
+    font-style: italic;
+    margin-bottom: 1rem;
   }
   .rich-text-content pre {
-    @apply bg-surface-container-high p-4 rounded-xl overflow-x-auto mb-4;
+    background-color: var(--c-surface-container-high);
+    padding: 1rem;
+    border-radius: 0.75rem;
+    overflow-x: auto;
+    margin-bottom: 1rem;
   }
 }
 
@@ -357,6 +381,7 @@
   background-size: 300% auto;
   animation: shimmer 8s linear infinite;
   -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
@@ -406,6 +431,7 @@
   background-image: 
     linear-gradient(to right, var(--c-outline-variant) 1px, transparent 1px),
     linear-gradient(to bottom, var(--c-outline-variant) 1px, transparent 1px);
+  -webkit-mask-image: radial-gradient(ellipse at center, black 40%, transparent 80%);
   mask-image: radial-gradient(ellipse at center, black 40%, transparent 80%);
   opacity: 0.75;
   pointer-events: none;
@@ -492,8 +518,8 @@
    ======================================================== */
 .glass-panel {
   background-color: var(--c-surface);
-  backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
+  backdrop-filter: blur(24px);
   border: 1px solid var(--c-outline-variant);
 }
 

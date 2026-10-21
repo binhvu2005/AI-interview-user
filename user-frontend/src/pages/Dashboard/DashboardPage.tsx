@@ -272,7 +272,7 @@ export const DashboardPage = () => {
                             <span>{isVi ? 'Bạn (Ứng viên Senior)' : 'You (Candidate)'}</span>
                           </div>
                           <Badge variant="success" size="sm">
-                            Confidence 96%
+                            {isVi ? 'Độ tin cậy 96%' : 'Confidence 96%'}
                           </Badge>
                         </div>
                         <p className="text-xs text-on-surface leading-relaxed">
@@ -285,15 +285,21 @@ export const DashboardPage = () => {
                       {/* Thanh điểm số tức thì */}
                       <div className="grid grid-cols-3 gap-3 pt-2">
                         <div className="p-3 rounded-2xl bg-surface-container-high/40 border border-outline-variant/10 text-center">
-                          <span className="text-[10px] text-on-surface-variant uppercase tracking-wider block font-semibold">Tư Duy Kỹ Thuật</span>
+                          <span className="text-[10px] text-on-surface-variant uppercase tracking-wider block font-semibold">
+                            {isVi ? 'Tư Duy Kỹ Thuật' : 'Technical Thinking'}
+                          </span>
                           <span className="text-lg font-black font-headline text-primary">9.5/10</span>
                         </div>
                         <div className="p-3 rounded-2xl bg-surface-container-high/40 border border-outline-variant/10 text-center">
-                          <span className="text-[10px] text-on-surface-variant uppercase tracking-wider block font-semibold">Giao Tiếp STAR</span>
+                          <span className="text-[10px] text-on-surface-variant uppercase tracking-wider block font-semibold">
+                            {isVi ? 'Giao Tiếp STAR' : 'STAR Communication'}
+                          </span>
                           <span className="text-lg font-black font-headline text-secondary">9.2/10</span>
                         </div>
                         <div className="p-3 rounded-2xl bg-surface-container-high/40 border border-outline-variant/10 text-center">
-                          <span className="text-[10px] text-on-surface-variant uppercase tracking-wider block font-semibold">Tổng Điểm Khớp</span>
+                          <span className="text-[10px] text-on-surface-variant uppercase tracking-wider block font-semibold">
+                            {isVi ? 'Tổng Điểm Khớp' : 'Match Score'}
+                          </span>
                           <span className="text-lg font-black font-headline text-emerald-400">94%</span>
                         </div>
                       </div>
@@ -307,16 +313,22 @@ export const DashboardPage = () => {
                           </div>
                           <div>
                             <h4 className="text-xs font-headline font-bold text-on-surface">Senior_Software_Engineer_CV.pdf</h4>
-                            <p className="text-[10px] text-on-surface-variant">Parsed 14 Skills • 4 Work Experiences</p>
+                            <p className="text-[10px] text-on-surface-variant">
+                              {isVi ? 'Đã lọc 14 Kỹ năng • 4 Kinh nghiệm' : 'Parsed 14 Skills • 4 Work Experiences'}
+                            </p>
                           </div>
                         </div>
-                        <Badge variant="vip" size="sm">Matched</Badge>
+                        <Badge variant="vip" size="sm">{isVi ? 'Đã khớp' : 'Matched'}</Badge>
                       </div>
 
                       <div className="space-y-2">
                         <div className="flex justify-between text-xs font-semibold">
-                          <span className="text-on-surface-variant">Độ tương thích JD mục tiêu:</span>
-                          <span className="text-primary font-bold">88% (Rất cao)</span>
+                          <span className="text-on-surface-variant">
+                            {isVi ? 'Độ tương thích JD mục tiêu:' : 'Target JD Alignment:'}
+                          </span>
+                          <span className="text-primary font-bold">
+                            {isVi ? '88% (Rất cao)' : '88% (Very High)'}
+                          </span>
                         </div>
                         <div className="w-full h-2 rounded-full bg-surface-container-high overflow-hidden">
                           <div className="h-full bg-gradient-to-r from-primary to-secondary rounded-full w-[88%]" />
@@ -327,24 +339,36 @@ export const DashboardPage = () => {
                         <span className="px-2.5 py-1 rounded-lg bg-emerald-500/10 text-emerald-400 text-[11px] font-semibold border border-emerald-500/20">✓ React & TypeScript</span>
                         <span className="px-2.5 py-1 rounded-lg bg-emerald-500/10 text-emerald-400 text-[11px] font-semibold border border-emerald-500/20">✓ Distributed Architecture</span>
                         <span className="px-2.5 py-1 rounded-lg bg-emerald-500/10 text-emerald-400 text-[11px] font-semibold border border-emerald-500/20">✓ Docker & K8s</span>
-                        <span className="px-2.5 py-1 rounded-lg bg-amber-500/10 text-amber-400 text-[11px] font-semibold border border-amber-500/20">! Cần thêm AWS CDK</span>
+                        <span className="px-2.5 py-1 rounded-lg bg-amber-500/10 text-amber-400 text-[11px] font-semibold border border-amber-500/20">
+                          {isVi ? '! Cần thêm AWS CDK' : '! Add AWS CDK'}
+                        </span>
                       </div>
                     </div>
                   ) : (
                     <div className="space-y-3">
                       <div className="p-4 rounded-2xl accent-ai-card border-y border-r border-outline-variant/10">
-                        <h4 className="text-xs font-headline font-bold text-primary mb-1 uppercase tracking-wider">AI Insight Chuyên Sâu</h4>
+                        <h4 className="text-xs font-headline font-bold text-primary mb-1 uppercase tracking-wider">
+                          {isVi ? 'AI Insight Chuyên Sâu' : 'Deep AI Telemetry'}
+                        </h4>
                         <p className="text-xs text-on-surface leading-relaxed">
-                          “Ứng viên thể hiện khả năng phản xạ kiến trúc rất vững vàng. Cần đào sâu hơn các câu hỏi liên quan đến tính sẵn sàng cao (High Availability) để bứt phá band lương cao nhất.”
+                          {isVi
+                            ? '“Ứng viên thể hiện khả năng phản xạ kiến trúc rất vững vàng. Cần đào sâu hơn các câu hỏi liên quan đến tính sẵn sàng cao (High Availability) để bứt phá band lương cao nhất.”'
+                            : '“Candidate exhibits strong architectural reflexes. Further exploration of High Availability principles is advised to reach top-band compensation.”'}
                         </p>
                       </div>
                       <div className="grid grid-cols-2 gap-3">
                         <div className="p-3 rounded-2xl bg-surface-container-high/40 border border-outline-variant/10">
-                          <span className="text-[10px] text-on-surface-variant uppercase font-semibold block">Tốc độ phản xạ</span>
-                          <span className="text-sm font-bold text-on-surface">1.2 giây (Tự nhiên)</span>
+                          <span className="text-[10px] text-on-surface-variant uppercase font-semibold block">
+                            {isVi ? 'Tốc độ phản xạ' : 'Response Latency'}
+                          </span>
+                          <span className="text-sm font-bold text-on-surface">
+                            {isVi ? '1.2 giây (Tự nhiên)' : '1.2s (Natural)'}
+                          </span>
                         </div>
                         <div className="p-3 rounded-2xl bg-surface-container-high/40 border border-outline-variant/10">
-                          <span className="text-[10px] text-on-surface-variant uppercase font-semibold block">Chỉ số tự tin</span>
+                          <span className="text-[10px] text-on-surface-variant uppercase font-semibold block">
+                            {isVi ? 'Chỉ số tự tin' : 'Confidence Index'}
+                          </span>
                           <span className="text-sm font-bold text-emerald-400">96 / 100</span>
                         </div>
                       </div>
@@ -377,7 +401,7 @@ export const DashboardPage = () => {
             BENTO GRID: 4 TÍNH NĂNG CỐT LÕI
             ======================================================== */}
         <div className="mb-12 text-center max-w-2xl mx-auto space-y-3">
-          <Badge variant="primary" size="md">CÔNG NGHỆ ĐỘT PHÁ</Badge>
+          <Badge variant="primary" size="md">{isVi ? 'CÔNG NGHỆ ĐỘT PHÁ' : 'BREAKTHROUGH TECHNOLOGY'}</Badge>
           <h2 className="text-3xl sm:text-4xl font-black font-headline text-on-surface tracking-tight">
             {isVi ? 'Được chế tác để tối ưu hóa sự nghiệp' : 'Precision Engineering for Your Career'}
           </h2>

@@ -1008,19 +1008,23 @@ const PreparationPage = () => {
                     </h5>
                     <div className="space-y-3">
                       <div className="flex justify-between text-xs pb-2 border-b border-outline-variant">
-                        <span className="text-on-surface-variant font-medium">Yêu cầu từ JD:</span>
+                        <span className="text-on-surface-variant font-medium">
+                          {isVi ? 'Yêu cầu từ JD:' : 'JD Requirement:'}
+                        </span>
                         <span className="font-bold text-on-surface">
                           {analysisResult?.experienceAnalysis?.required || 'N/A'}
                         </span>
                       </div>
                       <div className="flex justify-between text-xs pb-2 border-b border-outline-variant">
-                        <span className="text-on-surface-variant font-medium">Ứng viên hiện có:</span>
+                        <span className="text-on-surface-variant font-medium">
+                          {isVi ? 'Ứng viên hiện có:' : 'Candidate Profile:'}
+                        </span>
                         <span className="font-bold text-primary">
                           {analysisResult?.experienceAnalysis?.candidate || 'N/A'}
                         </span>
                       </div>
                       <p className="text-xs text-on-surface-variant pt-1 leading-relaxed">
-                        {analysisResult?.experienceAnalysis?.gap || 'Không phát hiện khoảng cách đáng kể.'}
+                        {analysisResult?.experienceAnalysis?.gap || (isVi ? 'Không phát hiện khoảng cách đáng kể.' : 'No significant gap detected.')}
                       </p>
                     </div>
                   </div>
@@ -1098,8 +1102,24 @@ const PreparationPage = () => {
 
       {/* Spectator Modal (Hỗ trợ cả Light & Dark) */}
       {showInviteModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-md animate-in fade-in duration-300">
-          <div className="bg-surface border border-outline-variant rounded-3xl p-8 max-w-md w-full shadow-2xl relative text-center">
+        <div
+          onClick={() => setShowInviteModal(false)}
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-md animate-in fade-in duration-300 cursor-pointer"
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="bg-surface border border-outline-variant rounded-3xl p-8 max-w-md w-full shadow-2xl relative text-center cursor-default animate-in zoom-in-95 duration-200"
+          >
+            {/* Nút X đóng modal để người dùng quay lại đọc phân tích */}
+            <button
+              type="button"
+              onClick={() => setShowInviteModal(false)}
+              className="absolute top-4 right-4 w-8 h-8 rounded-full bg-surface-container hover:bg-surface-container-high text-on-surface-variant hover:text-on-surface flex items-center justify-center transition-colors cursor-pointer border border-outline-variant shadow-xs"
+              title={isVi ? 'Đóng lại để đọc phân tích' : 'Close to read analysis'}
+            >
+              <span className="material-symbols-outlined text-[18px]">close</span>
+            </button>
+
             <div className="w-14 h-14 mx-auto bg-primary/10 border border-primary/25 text-primary rounded-2xl flex items-center justify-center mb-5">
               <span className="material-symbols-outlined text-2xl animate-pulse">groups</span>
             </div>
@@ -1142,16 +1162,17 @@ const PreparationPage = () => {
               )}
             </div>
 
-            <div className="flex flex-col gap-3">
+            <div className="flex flex-col gap-2.5">
               <button
                 type="button"
                 onClick={() => {
                   toast.success(t('spectator.modal_success') || 'Phòng đã sẵn sàng!');
                   navigate('/interview');
                 }}
-                className="w-full py-3.5 bg-gradient-to-r from-primary to-primary-dim text-white font-extrabold text-xs uppercase tracking-wider rounded-xl shadow-md shadow-primary/20 cursor-pointer hover:opacity-95 active:scale-98 transition-all"
+                className="w-full py-3.5 bg-gradient-to-r from-primary to-primary-dim text-white font-extrabold text-xs uppercase tracking-wider rounded-xl shadow-md shadow-primary/20 cursor-pointer hover:opacity-95 active:scale-98 transition-all flex items-center justify-center gap-2"
               >
-                {t('spectator.btn_start_share') || (isVi ? 'Bắt đầu & Chia sẻ phòng' : 'Launch Session with Evaluator')}
+                <span className="material-symbols-outlined text-[16px]">share</span>
+                <span>{t('spectator.btn_start_share') || (isVi ? 'Bắt đầu & Chia sẻ phòng' : 'Launch Session with Evaluator')}</span>
               </button>
               <button
                 type="button"
@@ -1159,9 +1180,18 @@ const PreparationPage = () => {
                   localStorage.removeItem('spectator_room_code');
                   navigate('/interview');
                 }}
-                className="w-full py-2.5 text-xs text-on-surface-variant hover:text-on-surface uppercase tracking-wider cursor-pointer font-semibold"
+                className="w-full py-2.5 text-xs text-on-surface-variant hover:text-on-surface hover:bg-surface-container rounded-xl uppercase tracking-wider cursor-pointer font-semibold transition-colors flex items-center justify-center gap-2"
               >
-                {t('spectator.btn_private') || (isVi ? 'Phỏng vấn riêng tư (Không chia sẻ)' : 'Private Session')}
+                <span className="material-symbols-outlined text-[16px]">lock</span>
+                <span>{t('spectator.btn_private') || (isVi ? 'Phỏng vấn riêng tư (Không chia sẻ)' : 'Private Session')}</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setShowInviteModal(false)}
+                className="w-full py-2.5 text-xs text-primary hover:text-primary-dim hover:bg-primary/5 rounded-xl uppercase tracking-wider cursor-pointer font-bold transition-colors flex items-center justify-center gap-1.5 mt-1 border border-primary/20"
+              >
+                <span className="material-symbols-outlined text-[16px]">visibility</span>
+                <span>{isVi ? 'Đóng để xem chi tiết phân tích' : 'Close to read analysis'}</span>
               </button>
             </div>
           </div>
