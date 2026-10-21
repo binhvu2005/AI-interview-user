@@ -12,7 +12,19 @@ interface Message {
   role: 'ai' | 'user';
   content: string;
   timestamp: Date;
+  // Interviewer turn metadata the backend uses to track interview progress; 'system' marks transient errors.
+  questionType?: 'intro' | 'main' | 'probe' | 'clarify' | 'closing' | 'system';
+  topic?: string;
 }
+
+const getPlannedTopics = () => {
+  try {
+    const plan = JSON.parse(localStorage.getItem('current_interview_plan') || 'null');
+    return Array.isArray(plan?.topics) ? plan.topics : [];
+  } catch {
+    return [];
+  }
+};
 
 const InterviewPage = () => {
   const { t, i18n } = useTranslation();
@@ -243,7 +255,7 @@ const InterviewPage = () => {
         toast.error(t('interview.camera_access_denied'));
       } finally {
         setTimeout(() => {
-          addMessage('ai', t('interview.welcome'));
+          addMessage('ai', t('interview.welcome'), { questionType: 'intro' });
         }, 1000);
       }
     };
@@ -259,8 +271,8 @@ const InterviewPage = () => {
     if (scrollRef.current) scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
   }, [messages]);
 
-  const addMessage = (role: 'ai' | 'user', content: string) => {
-    setMessages(prev => [...prev, { role, content, timestamp: new Date() }]);
+  const addMessage = (role: 'ai' | 'user', content: string, meta: Pick<Message, 'questionType' | 'topic'> = {}) => {
+    setMessages(prev => [...prev, { role, content, timestamp: new Date(), ...meta }]);
     if (role === 'ai') speak(content);
   };
 
@@ -280,7 +292,8 @@ const InterviewPage = () => {
         position: localStorage.getItem('interview_position') || "Software Engineer",
         level: localStorage.getItem('interview_level') || "Senior",
         lang: i18n.language,
-        duration: localStorage.getItem('interview_duration') || "15"
+        duration: localStorage.getItem('interview_duration') || "15",
+        plannedTopics: getPlannedTopics()
       };
 
       const res = await fetchWithAuth(API_ENDPOINTS.AI.CHAT, {
@@ -303,7 +316,7 @@ const InterviewPage = () => {
         }
 
         if (finalMessage) {
-          addMessage('ai', finalMessage);
+          addMessage('ai', finalMessage, { questionType: data.questionType, topic: data.topic });
         }
 
         if (data.isFinished) setTimeout(() => endInterview(), 3000);
@@ -313,7 +326,7 @@ const InterviewPage = () => {
     } catch (err: any) {
       console.error("Interview Send Message Error:", err);
       setTimeout(() => {
-        addMessage('ai', t('interview.error_busy'));
+        addMessage('ai', t('interview.error_busy'), { questionType: 'system' });
       }, 1000);
     } finally {
       setIsProcessing(false);

@@ -16,6 +16,19 @@ const InterviewSchema = new mongoose.Schema({
 
   evaluation: {
     totalScore: { type: Number },
+    decision: { type: String },
+    breakdown: {
+      technical: { type: Number },
+      problemSolving: { type: Number },
+      coding: { type: Number },
+      communication: { type: Number },
+      architectureAndFit: { type: Number }
+    },
+    integrity: {
+      tabSwitches: { type: Number },
+      flagged: { type: Boolean },
+      penalty: { type: Number }
+    },
     summary: { type: String },
     pros: [{ type: String }],
     cons: [{ type: String }],

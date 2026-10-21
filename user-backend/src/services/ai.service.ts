@@ -2,314 +2,226 @@ import OpenAI from 'openai';
 import dotenv from 'dotenv';
 import { CV_ANALYSIS_SYSTEM_PROMPT, getCVAnalysisUserPrompt } from '../utils/cv-analysis.prompt';
 import { INTERVIEW_SYSTEM_PROMPT, getInterviewQuestionsPrompt } from '../utils/interview.prompt';
-import { INTERVIEW_CHAT_SYSTEM_PROMPT } from '../utils/chat.prompt';
+import { INTERVIEW_CHAT_SYSTEM_PROMPT, getInterviewChatUserPrompt } from '../utils/chat.prompt';
 import { INTERVIEW_EVALUATION_SYSTEM_PROMPT, getEvaluationUserPrompt } from '../utils/evaluation.prompt';
+import { ChatTurn, PROMPT_BUDGET, PromptBudget, fitHistory } from '../utils/prompt-format';
+import { getSeniority } from '../utils/seniority';
+import {
+  PlannedTopic, cleanHistory, finalizeChatResult, getInterviewStructure, planTurn,
+} from '../utils/interview-flow';
+import { clamp, finalizeEvaluation, stringList } from '../utils/evaluation-score';
 
 dotenv.config();
+
+// llama-3.1-8b-instant was retired by Groq (404); override with GROQ_MODEL when the catalogue changes again.
+const GROQ_MODEL = process.env.GROQ_MODEL || 'openai/gpt-oss-20b';
 
 const groq = new OpenAI({
   apiKey: process.env.GROQ_API_KEY || '',
   baseURL: 'https://api.groq.com/openai/v1',
 });
 
-const extractJSON = (text: string): any => {
+// Returns the parsed object, or null when the text holds no valid JSON object. Callers must not
+// treat raw model text as a valid answer: that used to surface broken JSON to the candidate.
+export const extractJSON = (text: string): any => {
+  if (!text) return null;
+  // Strip only an outer ```json fence: fences inside string values (debug code snippets) must survive.
+  const cleaned = text.trim().replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '').trim();
   try {
-    if (!text) return null;
-    let cleaned = text.replace(/```json/g, '').replace(/```/g, '').trim();
-    const lastBrace = cleaned.lastIndexOf('}');
-    if (lastBrace !== -1) {
-      let firstBrace = -1;
-      let depth = 0;
-      for (let i = lastBrace; i >= 0; i--) {
-        if (cleaned[i] === '}') depth++;
-        if (cleaned[i] === '{') depth--;
-        if (depth === 0) { firstBrace = i; break; }
-      }
-      if (firstBrace !== -1) {
-        const potentialJSON = cleaned.substring(firstBrace, lastBrace + 1);
-        try {
-          const parsed = JSON.parse(potentialJSON);
-          Object.keys(parsed).forEach(key => {
-            if (typeof parsed[key] === 'string' && /^\d+$/.test(parsed[key])) parsed[key] = Number(parsed[key]);
-            if (typeof parsed[key] === 'number' && isNaN(parsed[key])) parsed[key] = 0;
-          });
-          return parsed;
-        } catch (e) { }
-      }
-    }
-    const matchScoreMatch = text.match(/matchScore["\s:]+(\d+)/i) || text.match(/score["\s:]+(\d+)/i);
-    const isFinishedMatch = text.match(/isFinished["\s:]+(true|false)/i);
-    return {
-      matchScore: matchScoreMatch ? parseInt(matchScoreMatch[1]) : 0,
-      totalScore: matchScoreMatch ? parseInt(matchScoreMatch[1]) : 0,
-      summary: text.substring(0, 2000),
-      isFinished: isFinishedMatch ? isFinishedMatch[1] === 'true' : false,
-      feedback: "",
-      nextQuestion: text.substring(0, 2000)
-    };
-  } catch (err) {
-    return { matchScore: 0, summary: "Error processing AI response", isFinished: false, feedback: "Lỗi hệ thống", nextQuestion: "Vui lòng thử lại" };
-  }
-};
+    return JSON.parse(cleaned);
+  } catch (e) { }
 
-const callAI = async (systemPrompt: string, userPrompt: string, label: string, temperature: number = 0.1, isVip: boolean = false): Promise<any> => {
-  try {
-    if (isVip && process.env.GEMINI_API_KEY) {
+  const lastBrace = cleaned.lastIndexOf('}');
+  if (lastBrace === -1) return null;
+  let depth = 0;
+  for (let i = lastBrace; i >= 0; i--) {
+    if (cleaned[i] === '}') depth++;
+    if (cleaned[i] === '{') depth--;
+    if (depth === 0) {
       try {
-        console.log(`[Gemini] Calling: ${label} (VIP: ${isVip})...`);
-        const apiKey = process.env.GEMINI_API_KEY;
-        // Use gemini-3-flash-preview for VIP tasks to bypass gemini-2.5-flash rate limits
-        const modelName = 'gemini-3-flash-preview';
-        const url = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${apiKey}`;
-
-        const payload = {
-          contents: [
-            {
-              role: 'user',
-              parts: [{ text: userPrompt }]
-            }
-          ],
-          systemInstruction: {
-            parts: [{ text: systemPrompt }]
-          },
-          generationConfig: {
-            temperature: temperature,
-            responseMimeType: 'application/json'
-          }
-        };
-
-        const response = await fetch(url, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
-        });
-
-        if (!response.ok) {
-          const errorText = await response.text();
-          throw new Error(`Gemini API Error: ${response.status} - ${errorText}`);
-        }
-
-        const data = await response.json();
-        const content = data.candidates?.[0]?.content?.parts?.[0]?.text;
-        if (!content) throw new Error('Gemini returned empty response content');
-
-        console.log(`[Gemini] ${label} RAW CONTENT:`, content);
-        return extractJSON(content);
-      } catch (geminiErr: any) {
-        console.error(`[Gemini] ${label} FAILED, falling back to Groq. Error:`, geminiErr.message);
-        // Let it fall through to Groq
+        return JSON.parse(cleaned.substring(i, lastBrace + 1));
+      } catch (e) {
+        return null;
       }
     }
-
-    // Fallback to Groq for normal users or when Gemini fails
-    console.log(`[Groq] Calling: ${label} (VIP: ${isVip} - Fallback)...`);
-    const model = 'llama-3.1-8b-instant';
-    
-    let finalUserPrompt = userPrompt;
-    // Groq llama-3.1-8b-instant has a tight 6000 TPM limit. Optimize prompt size to prevent 413 errors.
-    const maxCharLimit = 10000;
-    if (systemPrompt.length + finalUserPrompt.length > maxCharLimit) {
-      console.log(`[Groq] Prompt length (${systemPrompt.length + finalUserPrompt.length}) exceeds safety limit. Optimizing...`);
-      
-      // 1. Truncate CV in the prompt to 1000 characters
-      finalUserPrompt = finalUserPrompt.replace(/- CV: ([\s\S]*?)(?=\n-|\n\n|###)/g, (match, p1) => {
-        return `- CV: ${p1.substring(0, 1000)}... [Truncated for Groq] `;
-      });
-
-      // 2. Truncate JD in the prompt to 500 characters
-      finalUserPrompt = finalUserPrompt.replace(/- JD: ([\s\S]*?)(?=\n-|\n\n|###)/g, (match, p1) => {
-        return `- JD: ${p1.substring(0, 500)}... [Truncated for Groq] `;
-      });
-
-      // 3. If still too long, keep only the recent history
-      if (systemPrompt.length + finalUserPrompt.length > maxCharLimit) {
-        const historyIndex = finalUserPrompt.indexOf('### HISTORY');
-        if (historyIndex !== -1) {
-          const beforeHistory = finalUserPrompt.substring(0, historyIndex);
-          const historyAndAfter = finalUserPrompt.substring(historyIndex);
-          // Keep only last 3500 chars of history to stay within limit
-          const truncatedHistory = historyAndAfter.substring(0, 12) + "\n...[Older history removed for space]...\n" + historyAndAfter.substring(historyAndAfter.length - 3500);
-          finalUserPrompt = beforeHistory + truncatedHistory;
-        }
-      }
-      console.log(`[Groq] Optimized prompt length: ${systemPrompt.length + finalUserPrompt.length}`);
-    }
-
-    const response = await groq.chat.completions.create({
-      model: model,
-      messages: [
-        { role: 'system', content: systemPrompt },
-        { role: 'user', content: finalUserPrompt }
-      ],
-      response_format: { type: 'json_object' },
-      temperature: temperature,
-      max_tokens: 3000,
-    });
-
-    const content = response.choices?.[0]?.message?.content;
-    if (!content) throw new Error('AI returned empty message');
-
-    console.log(`[Groq] ${label} RAW CONTENT:`, content);
-    return extractJSON(content);
-  } catch (err: any) {
-    console.error(`[AI Service] ${label} FAILED:`, err.message);
-    throw err;
   }
+  return null;
 };
 
-const truncateCV = (cvData: string) => {
-  if (cvData && cvData.length > 6000) {
-    return cvData.substring(0, 6000) + "... [Truncated]";
+interface CallOptions {
+  temperature?: number;
+  isVip?: boolean;
+  // Groq output cap (includes the model's reasoning tokens); kept modest because Groq's TPM limit counts max_tokens against the request.
+  groqMaxTokens?: number;
+}
+
+const callGemini = async (systemPrompt: string, userPrompt: string, label: string, temperature: number) => {
+  console.log(`[Gemini] Calling: ${label}...`);
+  const apiKey = process.env.GEMINI_API_KEY;
+  // Use gemini-3-flash-preview for VIP tasks to bypass gemini-2.5-flash rate limits
+  const modelName = 'gemini-3-flash-preview';
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${apiKey}`;
+
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      contents: [{ role: 'user', parts: [{ text: userPrompt }] }],
+      systemInstruction: { parts: [{ text: systemPrompt }] },
+      generationConfig: { temperature, responseMimeType: 'application/json', maxOutputTokens: 8192 },
+    }),
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(`Gemini API Error: ${response.status} - ${errorText}`);
   }
-  return cvData;
+
+  const data = await response.json();
+  const content = data.candidates?.[0]?.content?.parts?.[0]?.text;
+  if (!content) throw new Error('Gemini returned empty response content');
+  console.log(`[Gemini] ${label} RAW CONTENT:`, content);
+  return content as string;
+};
+
+const callGroq = async (systemPrompt: string, userPrompt: string, label: string, temperature: number, maxTokens: number) => {
+  console.log(`[Groq] Calling: ${label} (prompt chars: ${systemPrompt.length + userPrompt.length})...`);
+  const response = await groq.chat.completions.create({
+    model: GROQ_MODEL,
+    messages: [
+      { role: 'system', content: systemPrompt },
+      { role: 'user', content: userPrompt },
+    ],
+    response_format: { type: 'json_object' },
+    temperature,
+    max_tokens: maxTokens,
+    ...(GROQ_MODEL.startsWith('openai/gpt-oss') ? { reasoning_effort: 'low' as const } : {}),
+  });
+
+  const choice = response.choices?.[0];
+  const content = choice?.message?.content;
+  if (!content) throw new Error('AI returned empty message');
+  if (choice?.finish_reason === 'length') console.warn(`[Groq] ${label} output hit max_tokens (${maxTokens}).`);
+  console.log(`[Groq] ${label} RAW CONTENT:`, content);
+  return content;
+};
+
+// The user prompt is built per provider so a VIP request that falls back to Groq is rebuilt with the
+// Groq budget instead of being sent oversized (413).
+const callAI = async (
+  systemPrompt: string,
+  buildUserPrompt: (budget: PromptBudget) => string,
+  label: string,
+  { temperature = 0.1, isVip = false, groqMaxTokens = 2000 }: CallOptions = {},
+): Promise<any> => {
+  if (isVip && process.env.GEMINI_API_KEY) {
+    try {
+      const parsed = extractJSON(await callGemini(systemPrompt, buildUserPrompt(PROMPT_BUDGET.gemini), label, temperature));
+      if (parsed) return parsed;
+      console.error(`[Gemini] ${label} returned invalid JSON, falling back to Groq.`);
+    } catch (geminiErr: any) {
+      console.error(`[Gemini] ${label} FAILED, falling back to Groq. Error:`, geminiErr.message);
+    }
+  }
+
+  const userPrompt = buildUserPrompt(PROMPT_BUDGET.groq);
+  // One retry: small models occasionally emit malformed JSON even in json_object mode.
+  for (let attempt = 1; attempt <= 2; attempt++) {
+    try {
+      const parsed = extractJSON(await callGroq(systemPrompt, userPrompt, label, temperature, groqMaxTokens));
+      if (parsed) return parsed;
+      console.error(`[Groq] ${label} returned invalid JSON (attempt ${attempt}).`);
+    } catch (err: any) {
+      console.error(`[AI Service] ${label} FAILED (attempt ${attempt}):`, err.message);
+      if (attempt === 2) throw err;
+    }
+  }
+  throw new Error(`${label}: AI returned invalid JSON`);
 };
 
 export const analyzeCVJDMatch = async (cvData: string, jdText: string, position: string, level: string, lang: string = 'vi', isVip: boolean = false) => {
-  const truncatedCV = truncateCV(cvData);
-  const userPrompt = getCVAnalysisUserPrompt(truncatedCV, jdText, position, level, lang);
-  const result = await callAI(CV_ANALYSIS_SYSTEM_PROMPT, userPrompt, 'CV Analysis', 0.1, isVip);
+  const result = await callAI(
+    CV_ANALYSIS_SYSTEM_PROMPT,
+    budget => getCVAnalysisUserPrompt(cvData, jdText, position, level, lang, budget),
+    'CV Analysis',
+    { temperature: 0.1, isVip, groqMaxTokens: 2200 },
+  );
 
-  // Ensure CV analysis defaults
+  const parts = result.scoreParts;
+  const matchScore = parts
+    ? Math.round(clamp(parts.skills, 0, 50) + clamp(parts.experience, 0, 25) + clamp(parts.seniority, 0, 25))
+    : Math.round(clamp(result.matchScore, 0, 100));
+
   return {
-    matchScore: result.matchScore ?? 0,
+    matchScore,
     summary: result.summary ?? (lang === 'vi' ? "Phân tích đang được cập nhật..." : "Analysis is being updated..."),
-    matchedSkills: result.matchedSkills ?? [],
-    missingSkills: result.missingSkills ?? [],
-    strengths: result.strengths ?? [],
-    weaknesses: result.weaknesses ?? [],
-    improvementSuggestions: result.improvementSuggestions ?? [],
+    matchedSkills: stringList(result.matchedSkills),
+    missingSkills: stringList(result.missingSkills),
+    strengths: stringList(result.strengths),
+    weaknesses: stringList(result.weaknesses),
+    improvementSuggestions: stringList(result.improvementSuggestions),
     experienceAnalysis: result.experienceAnalysis ?? { required: "N/A", candidate: "N/A", gap: "N/A" },
-    interviewRecommendation: result.interviewRecommendation ?? { shouldInterview: false, focusAreas: [] }
+    interviewRecommendation: {
+      shouldInterview: result.interviewRecommendation?.shouldInterview === true,
+      focusAreas: stringList(result.interviewRecommendation?.focusAreas),
+    },
   };
 };
 
-export const generateInterviewQuestions = async (cvData: string, jdText: string, position: string, level: string, lang: string = 'vi', isVip: boolean = false) => {
-  const truncatedCV = truncateCV(cvData);
-  const userPrompt = getInterviewQuestionsPrompt(truncatedCV, jdText, position, level, lang);
-  return await callAI(INTERVIEW_SYSTEM_PROMPT, userPrompt, 'Interview Questions', 0.1, isVip);
+const PHASES = ['theory', 'practice', 'debug'];
+
+// Keeps only well-formed topics; the chat falls back to free topic choice for any missing slot.
+export const normalizePlannedTopics = (topics: any): PlannedTopic[] =>
+  Array.isArray(topics)
+    ? topics
+      .filter(t => t && typeof t.topic === 'string' && t.topic.trim() && PHASES.includes(t.phase))
+      .slice(0, 15)
+      .map(t => ({ phase: t.phase, topic: t.topic.trim(), focus: typeof t.focus === 'string' ? t.focus : undefined }))
+    : [];
+
+export const generateInterviewQuestions = async (cvData: string, jdText: string, position: string, level: string, lang: string = 'vi', duration: string = '15', isVip: boolean = false) => {
+  const seniority = getSeniority(level, position);
+  const structure = getInterviewStructure(duration, seniority);
+  const result = await callAI(
+    INTERVIEW_SYSTEM_PROMPT,
+    budget => getInterviewQuestionsPrompt(cvData, jdText, position, level, lang, seniority, structure, budget),
+    'Interview Questions',
+    { temperature: 0.4, isVip, groqMaxTokens: 1800 },
+  );
+  return {
+    interviewPlan: typeof result.interviewPlan === 'string' ? result.interviewPlan : '',
+    topics: normalizePlannedTopics(result.topics),
+  };
 };
 
-export const processInterviewChat = async (history: any[], cvData: string, jdText: string, position: string, level: string, lang: string = 'vi', duration: string = '15', isVip: boolean = false) => {
-  const languageName = lang === 'vi' ? 'Vietnamese' : 'English';
+export const processInterviewChat = async (history: ChatTurn[], cvData: string, jdText: string, position: string, level: string, lang: string = 'vi', duration: string = '15', isVip: boolean = false, plannedTopics: any = []) => {
+  const seniority = getSeniority(level, position);
+  const structure = getInterviewStructure(duration, seniority);
+  const turns = cleanHistory(history);
+  const plan = planTurn(turns, structure, normalizePlannedTopics(plannedTopics));
+  const isFirstTurn = !turns.some(m => m.role === 'ai');
 
-  // Use the entire conversation history so the AI has 100% full memory of all previous questions and topics.
-  // This is critical for accurate phase progression and anti-looping rules.
-  const fullHistory = history;
-
-  // Check for "không biết" in the latest user response
-  const lastUserMessage = [...history].reverse().find(m => m.role === 'user')?.content?.toLowerCase() || "";
-  
-  const isCandidateAskingClarification = 
-    lastUserMessage.includes("chưa rõ câu hỏi") ||
-    lastUserMessage.includes("chưa hiểu câu hỏi") ||
-    lastUserMessage.includes("chưa rõ ý") ||
-    lastUserMessage.includes("chưa hiểu ý") ||
-    lastUserMessage.includes("giải thích thêm") ||
-    lastUserMessage.includes("giải thích lại") ||
-    lastUserMessage.includes("làm rõ câu hỏi") ||
-    lastUserMessage.includes("giải thích rõ") ||
-    lastUserMessage.includes("hỏi lại") ||
-    lastUserMessage.includes("clarify") ||
-    lastUserMessage.includes("explain the question") ||
-    lastUserMessage.includes("don't understand the question") ||
-    lastUserMessage.includes("what do you mean");
-
-  const isCandidateStruggling = !isCandidateAskingClarification && (
-    lastUserMessage === "không" ||
-    lastUserMessage.includes("không biết") ||
-    lastUserMessage.includes("chưa rõ") ||
-    lastUserMessage.includes("không có kinh nghiệm") ||
-    lastUserMessage.includes("don't know") ||
-    lastUserMessage.includes("not sure") ||
-    (lastUserMessage.length < 5 && lastUserMessage.length > 0)
+  const raw = await callAI(
+    INTERVIEW_CHAT_SYSTEM_PROMPT,
+    budget => {
+      const { turns: fitted, omitted } = fitHistory(turns, budget.history);
+      return getInterviewChatUserPrompt({
+        history: fitted, omittedTurns: omitted, cvData, jdText, position, level, seniority, lang, plan, isFirstTurn, budget,
+      });
+    },
+    'Interview Chat',
+    { temperature: 0.6, isVip, groqMaxTokens: 1500 },
   );
 
-  const aiMessages = history.filter(m => m.role === 'ai');
-  const currentTurn = aiMessages.length; // Total AI messages (including probes)
-  const mins = parseInt(duration);
-  const maxTechQuestions = mins <= 15 ? 6 : Math.min(15, 6 + Math.floor((mins - 15) / 5));
-
-  const isSeniorOrAbove = 
-    level.toLowerCase().includes('senior') || 
-    level.toLowerCase().includes('lead') || 
-    level.toLowerCase().includes('architect') || 
-    level.toLowerCase().includes('chuyên gia') || 
-    level.toLowerCase().includes('trưởng nhóm') || 
-    level.toLowerCase().includes('quản lý') ||
-    level.toLowerCase().includes('manager');
-
-  const theoryRatio = isSeniorOrAbove ? 0.3 : 0.6;
-  const theoryCount = Math.ceil((maxTechQuestions - 1) * theoryRatio);
-  const practiceCount = maxTechQuestions - 1 - theoryCount;
-
-  let steeringInstruction = "";
-  if (currentTurn === 0) {
-    steeringInstruction = "PHASE: INTRO. Introduce Obsidian AI, welcome the candidate and ask for a BRIEF self-introduction (under 2 minutes).";
-  } else if (isCandidateAskingClarification) {
-    steeringInstruction = `
-    CRITICAL INSTRUCTION: The candidate explicitly asked for clarification, explanation, or rephrasing of your question.
-    ACTION REQUIRED:
-    1. DO NOT change the topic. DO NOT move to a new topic.
-    2. In the 'feedback' JSON field, politely and briefly explain or clarify the question/scenario in simpler terms or provide a helpful hint/context (under 30 words).
-    3. In the 'nextQuestion' JSON field, rephrase or restate the exact same question/scenario clearly, encouraging them to try answering it.
-    `;
-  } else if (isCandidateStruggling) {
-    steeringInstruction = `
-    CRITICAL INSTRUCTION: The candidate explicitly stated they DO NOT KNOW or provided a very poor/short answer. 
-    ACTION REQUIRED: 
-    1. DO NOT ask a probing question. DO NOT linger on this topic.
-    2. In the 'feedback' JSON field, provide a short correct answer (< 15 words) for the EXACT topic you asked about in your LATEST message. 
-       - ANTI-LOOP RULE: You MUST NOT repeat the same explanation or start with the same words as your previous messages. If you already explained a topic (e.g., JWT) in a previous turn, DO NOT explain it again.
-    3. In the 'nextQuestion' JSON field, IMMEDIATELY ask a COMPLETELY NEW MAIN QUESTION testing a DIFFERENT TECHNICAL SKILL. 
-       - EXTREMELY IMPORTANT: You MUST change the core technical topic (e.g., if previous was Database, switch to Security, CI/CD, API Design, or Algorithms). DO NOT just change the business scenario.
-    `;
-  } else {
-    steeringInstruction = `
-    ACTION REQUIRED:
-    - If their previous answer was Excellent (>7/10), DO NOT probe. Ask a NEW MAIN QUESTION.
-    - If their previous answer was Vague/Mediocre (4-7/10), you may ask ONE PROBING QUESTION to test depth.
-    - Keep in mind the dynamic phase progression: first ${theoryCount} Theory questions, then ${practiceCount} Practice questions, and finally exactly 1 Debug Code question. Move towards the next phase when appropriate.
-    `;
-  }
-
-  const userPrompt = `
-### CONTEXT
-- POSITION: ${position} (${level})
-- DURATION: ${duration} mins
-- TOTAL AI MESSAGES SO FAR: ${currentTurn}
-- TARGET STRUCTURE: ${maxTechQuestions} MAIN questions (${theoryCount} Theory, ${practiceCount} Practice, 1 Debug)
-- JD: ${jdText.substring(0, 1000)}
-- CV: ${cvData.substring(0, 3000)}
-
-### SESSION PHASE PROGRESSION (STRICTLY FOLLOW THIS)
-You must ask exactly ${maxTechQuestions} MAIN technical questions in total. Count the number of DISTINCT MAIN TECHNICAL TOPICS you have introduced so far (do not count the welcome/intro turn):
-- WELCOME PHASE (0 topics): Ask for a brief self-introduction.
-- THEORY PHASE (when you have introduced 0 to ${theoryCount - 1} distinct technical topics so far): Ask a simple theoretical question (Main Question 1 to ${theoryCount}).
-- PRACTICE PHASE (when you have introduced ${theoryCount} to ${theoryCount + practiceCount - 1} distinct technical topics so far): Ask a complex, high-scale system design scenario (Main Question ${theoryCount + 1} to ${theoryCount + practiceCount}).
-- DEBUG CODE PHASE (when you have introduced exactly ${maxTechQuestions - 1} distinct technical topics so far): Present a buggy block of code (Main Question ${maxTechQuestions} / Final Question). Once the candidate fully responds (including follow-up probing), set isFinished: true.
-
-### HISTORY
-${fullHistory.map(m => `${m.role.toUpperCase()}: ${m.content}`).join('\n')}
-
-### TASK
-Respond in ${languageName}. 
-
-${steeringInstruction}
-
-STRICT RULES:
-- Every MAIN question MUST follow "Theory + Practice + Mindset" (Scenario-based). It MUST be a detailed, multi-sentence scenario. DO NOT ask short 1-sentence questions!
-- NO HALLUCINATION: If candidate says "don't know", do NOT assume they have that experience.
-- NO SOCIAL FILLER & NO PRAISE: Absolutely NO generic praise like "Tôi đánh giá cao", "Tuyệt vời", "Rất tốt", "I appreciate". Be direct.
-- ANTI-LOOP MECHANISM: Do NOT repeat the exact same technical topic. If you just asked about Database Design, DO NOT ask about Database Design again even if you change the app type (like C-commerce to Social Network). Switch to a completely different technical skill (e.g., Security, Caching, API Design, Deployment). DO NOT repeat your own phrases.
-
-If you estimate you have asked ${maxTechQuestions} MAIN questions (ignoring probes/intro), set isFinished: true. If currentTurn >= ${maxTechQuestions * 3 + 2}, force isFinished: true to prevent infinite loops.
-`;
-
-
-  return await callAI(INTERVIEW_CHAT_SYSTEM_PROMPT, userPrompt, 'Interview Chat', 0.6, isVip);
+  return finalizeChatResult(raw, plan, isFirstTurn);
 };
 
-export const evaluateInterview = async (history: any[], cvData: string, jdText: string, matchScore: number, lang: string = 'vi', position: string = '', level: string = '', cheatCount: number = 0, isVip: boolean = false) => {
-  const userPrompt = getEvaluationUserPrompt(history, cvData, jdText, matchScore, lang);
-  return await callAI(INTERVIEW_EVALUATION_SYSTEM_PROMPT(lang, position, level, cheatCount), userPrompt, 'Interview Evaluation', 0.1, isVip);
+export const evaluateInterview = async (history: ChatTurn[], cvData: string, jdText: string, matchScore: number, lang: string = 'vi', position: string = '', level: string = '', cheatCount: number = 0, isVip: boolean = false) => {
+  const raw = await callAI(
+    INTERVIEW_EVALUATION_SYSTEM_PROMPT(lang, position, level),
+    budget => getEvaluationUserPrompt(cleanHistory(history), cvData, jdText, matchScore, lang, budget),
+    'Interview Evaluation',
+    { temperature: 0.1, isVip, groqMaxTokens: 3500 },
+  );
+  return finalizeEvaluation(raw, getSeniority(level, position), cheatCount, lang);
 };
