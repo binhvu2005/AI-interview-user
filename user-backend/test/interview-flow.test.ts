@@ -77,6 +77,11 @@ test('finish: asking the debug question does not end the interview; answering it
   assert.equal(afterDebug.inFinalStage, true);
   assert.equal(finalizeChatResult({ questionType: 'probe' }, afterDebug, false).isFinished, false);
   assert.equal(finalizeChatResult({ questionType: 'closing', isFinished: true }, afterDebug, false).isFinished, true);
+  // A new main question after the debug answer ends the interview without showing that question.
+  const strayMain = finalizeChatResult({ questionType: 'main', nextQuestion: 'Câu mới?', feedback: 'ok' }, afterDebug, false);
+  assert.equal(strayMain.isFinished, true);
+  assert.equal(strayMain.nextQuestion, '');
+  assert.equal(strayMain.feedback, 'ok');
 });
 
 test('finish: hard cap ends runaway interviews', () => {

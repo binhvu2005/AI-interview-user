@@ -149,11 +149,13 @@ export const finalizeChatResult = (raw: any, plan: TurnPlan, isFirstTurn: boolea
 
   const modelWantsToStop = raw?.isFinished === true || questionType === 'closing' || questionType === 'main';
   const isFinished = plan.forceFinish || (plan.inFinalStage && plan.intent !== 'clarify' && modelWantsToStop);
+  // A question the candidate can no longer answer must not be shown as the interview closes.
+  const dropQuestion = isFinished && questionType !== 'closing';
   if (isFinished) questionType = 'closing';
 
   return {
     feedback: typeof raw?.feedback === 'string' ? raw.feedback : '',
-    nextQuestion: typeof raw?.nextQuestion === 'string' ? raw.nextQuestion : '',
+    nextQuestion: !dropQuestion && typeof raw?.nextQuestion === 'string' ? raw.nextQuestion : '',
     isFinished,
     questionType,
     topic: typeof raw?.topic === 'string' ? raw.topic : '',
