@@ -7,7 +7,7 @@ import { INTERVIEW_EVALUATION_SYSTEM_PROMPT, getEvaluationUserPrompt } from '../
 import { ChatTurn, PROMPT_BUDGET, PromptBudget, fitHistory, inlineField } from '../utils/prompt-format';
 import { getSeniority } from '../utils/seniority';
 import {
-  PlannedTopic, cleanHistory, countMainQuestions, finalizeChatResult, getInterviewStructure, planTurn,
+  PlannedTopic, checkMainQuestion, cleanHistory, countMainQuestions, finalizeChatResult, getInterviewStructure, planTurn,
 } from '../utils/interview-flow';
 import { clamp, finalizeEvaluation, stringList } from '../utils/evaluation-score';
 
@@ -198,17 +198,26 @@ export const processInterviewChat = async (history: ChatTurn[], cvData: string, 
   const plan = planTurn(turns, structure, normalizePlannedTopics(plannedTopics));
   const isFirstTurn = !turns.some(m => m.role === 'ai');
 
-  const raw = await callAI(
+  const ask = (correction?: string) => callAI(
     INTERVIEW_CHAT_SYSTEM_PROMPT,
     budget => {
       const { turns: fitted, omitted } = fitHistory(turns, budget.history);
       return getInterviewChatUserPrompt({
-        history: fitted, omittedTurns: omitted, cvData, jdText, position, level, seniority, lang, plan, isFirstTurn, budget,
+        history: fitted, omittedTurns: omitted, cvData, jdText, position, level, seniority, lang, plan, isFirstTurn, budget, correction,
       });
     },
     'Interview Chat',
     { temperature: 0.6, isVip, groqMaxTokens: 1500 },
   );
+
+  let raw = await ask();
+  // One corrective retry at most; if it is still off, keep the first reply rather than fail the turn.
+  const correction = checkMainQuestion(raw, plan);
+  if (correction) {
+    console.warn(`[Interview Chat] retrying: ${correction}`);
+    const retried = await ask(correction).catch(() => null);
+    if (retried && !checkMainQuestion(retried, plan)) raw = retried;
+  }
 
   return finalizeChatResult(raw, plan, isFirstTurn);
 };

@@ -120,6 +120,7 @@ export const getInterviewChatUserPrompt = (params: {
   plan: TurnPlan;
   isFirstTurn: boolean;
   budget: { cv: number; jd: number };
+  correction?: string;
 }) => {
   const { history, omittedTurns, plan } = params;
   const languageName = params.lang === 'vi' ? 'Vietnamese' : 'English';
@@ -143,7 +144,7 @@ ${formatTranscript(history)}
 </transcript>
 
 ### THIS TURN (follow exactly)
-${buildTurnInstruction(plan, params.isFirstTurn)}
+${buildTurnInstruction(plan, params.isFirstTurn)}${params.correction ? `\n- CORRECTION: ${params.correction}` : ''}
 - Respond in ${languageName}.
 `;
 };

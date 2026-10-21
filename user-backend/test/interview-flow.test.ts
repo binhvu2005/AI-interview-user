@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import {
-  detectCandidateIntent, finalizeChatResult, getInterviewStructure, getPhaseForMain, pickPlannedTopic, planTurn,
+  checkMainQuestion, detectCandidateIntent, finalizeChatResult, getInterviewStructure, getPhaseForMain, pickPlannedTopic, planTurn,
 } from '../src/utils/interview-flow';
 import { ChatTurn, escapeTags, fitHistory, formatTranscript, inlineField } from '../src/utils/prompt-format';
 import { getSeniority } from '../src/utils/seniority';
@@ -37,6 +37,18 @@ test('planned topics are matched by phase, not position, when the planner return
   assert.equal(pickPlannedTopic(topics, 4, s)?.topic, 'P1');
   assert.equal(pickPlannedTopic(topics, 5, s), null);
   assert.equal(pickPlannedTopic(topics, 6, s)?.topic, 'D');
+});
+
+test('checkMainQuestion flags a debug question without code and a re-asked covered topic', () => {
+  const s = getInterviewStructure('15', 'mid');
+  const fiveMains = [ai('intro'), user(), ...['A', 'B', 'C', 'D', 'RabbitMQ'].map(t => [ai('main', t), user()]).flat()];
+  const plan = planTurn(fiveMains, s);
+  assert.match(checkMainQuestion({ questionType: 'main', topic: 'Async', nextQuestion: 'Tìm lỗi trong hàm fetch.' }, plan) || '', /no code/);
+  assert.equal(checkMainQuestion({ questionType: 'main', topic: 'Async', nextQuestion: 'Tìm lỗi:\n```js\nx()\n```' }, plan), null);
+  assert.equal(checkMainQuestion({ questionType: 'probe', nextQuestion: 'thêm?' }, plan), null);
+
+  const early = planTurn([ai('intro'), user(), ai('main', 'RabbitMQ'), user()], s);
+  assert.match(checkMainQuestion({ questionType: 'main', topic: 'rabbitmq ', nextQuestion: 'q' }, early) || '', /covered topic/);
 });
 
 test('intent: long answers containing "không biết" are answers, short admissions are not', () => {

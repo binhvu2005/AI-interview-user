@@ -148,6 +148,23 @@ export const planTurn = (
   };
 };
 
+const sameTopic = (a: string, b: string) => a.trim().toLowerCase() === b.trim().toLowerCase();
+
+// Small models sometimes ignore the turn instruction: they re-ask a covered topic or skip the code snippet
+// of the debug question. Returns a correction to send back to the model, or null when the reply is usable.
+export const checkMainQuestion = (raw: any, plan: TurnPlan): string | null => {
+  if (raw?.questionType !== 'main' || !plan.nextPhase) return null;
+  const question = typeof raw?.nextQuestion === 'string' ? raw.nextQuestion : '';
+  if (plan.nextPhase === 'debug' && !question.includes('```')) {
+    return 'Your previous reply was the DEBUG CODE main question but contained no code. Ask it again with a fenced code snippet (8-20 lines) containing one real bug.';
+  }
+  const topic = typeof raw?.topic === 'string' ? raw.topic : '';
+  if (topic && plan.coveredTopics.some(t => sameTopic(t, topic))) {
+    return `Your previous reply re-asked the covered topic "${topic}". Ask the required main question on a different topic.`;
+  }
+  return null;
+};
+
 export interface ChatResult {
   feedback: string;
   nextQuestion: string;
