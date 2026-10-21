@@ -6,6 +6,7 @@ import { toast } from 'react-hot-toast';
 import { fetchWithAuth } from '../../services/fetchClient';
 import Peer from 'simple-peer';
 import { socketService } from '../../services/socket.service';
+import { speakNatural, stopSpeech } from '../../utils/speech.helper';
 
 
 interface Message {
@@ -39,6 +40,8 @@ const InterviewPage = () => {
   const [isMuted, setIsMuted] = useState(false);
   const [isVideoOff, setIsVideoOff] = useState(false);
   const [isDark, setIsDark] = useState(true);
+  const [isVoiceMuted, setIsVoiceMuted] = useState(() => localStorage.getItem('ai_voice_muted') === 'true');
+  const [isSpeaking, setIsSpeaking] = useState(false);
 
   const [messages, setMessages] = useState<Message[]>([]);
   const [userInput, setUserInput] = useState("");
@@ -177,15 +180,28 @@ const InterviewPage = () => {
   };
 
   const speak = (text: string) => {
-    if (!window.speechSynthesis) return;
-    window.speechSynthesis.cancel();
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = isVi ? 'vi-VN' : 'en-US';
-    utterance.rate = 1.15;
-    const voices = window.speechSynthesis.getVoices();
-    const selectedVoice = voices.find(v => v.lang.startsWith(isVi ? 'vi' : 'en') && (v.name.includes('Google') || v.name.includes('Online') || v.name.includes('Natural')));
-    if (selectedVoice) utterance.voice = selectedVoice;
-    window.speechSynthesis.speak(utterance);
+    if (isVoiceMuted) return;
+    speakNatural(text, {
+      isVi,
+      onStart: () => setIsSpeaking(true),
+      onEnd: () => setIsSpeaking(false),
+      onError: () => setIsSpeaking(false),
+    });
+  };
+
+  const toggleVoiceMute = () => {
+    setIsVoiceMuted(prev => {
+      const next = !prev;
+      localStorage.setItem('ai_voice_muted', String(next));
+      if (next) {
+        stopSpeech();
+        setIsSpeaking(false);
+        toast.success(isVi ? 'Đã tắt giọng đọc AI' : 'AI voice muted', { icon: '🔇' });
+      } else {
+        toast.success(isVi ? 'Đã bật giọng đọc AI' : 'AI voice enabled', { icon: '🔊' });
+      }
+      return next;
+    });
   };
 
   // Timer Effect
@@ -268,7 +284,8 @@ const InterviewPage = () => {
     startMedia();
     return () => {
       streamRef.current?.getTracks().forEach(t => t.stop());
-      window.speechSynthesis.cancel();
+      stopSpeech();
+      setIsSpeaking(false);
     };
   }, []);
 
@@ -350,7 +367,8 @@ const InterviewPage = () => {
     }
 
     streamRef.current?.getTracks().forEach(t => t.stop());
-    window.speechSynthesis.cancel();
+    stopSpeech();
+    setIsSpeaking(false);
 
     const loadingToast = toast.loading(t('interview.analyzing'));
 
@@ -404,6 +422,24 @@ const InterviewPage = () => {
           <div className={`px-3 py-1 rounded-full font-mono text-xs font-semibold border ${timeLeft < 60 ? 'bg-error/10 border-error/30 text-error animate-pulse' : 'bg-white/[0.02] border-white/[0.08] text-on-surface-variant'}`}>
             {formatTime(timeLeft)}
           </div>
+          <button 
+            onClick={toggleVoiceMute} 
+            title={isVoiceMuted ? (isVi ? 'Bật giọng đọc AI' : 'Enable AI Voice') : (isVi ? 'Tắt giọng đọc AI' : 'Mute AI Voice')} 
+            className={`h-8 px-2.5 rounded-lg flex items-center gap-1.5 transition-all border cursor-pointer ${
+              isVoiceMuted 
+                ? 'border-white/[0.08] text-on-surface-variant/40 hover:bg-white/[0.04]' 
+                : isSpeaking 
+                  ? 'border-primary/50 bg-primary/10 text-primary shadow-sm animate-pulse' 
+                  : 'border-white/[0.08] text-on-surface-variant hover:bg-white/[0.04]'
+            }`}
+          >
+            <span className="material-symbols-outlined text-base">
+              {isVoiceMuted ? 'volume_off' : isSpeaking ? 'record_voice_over' : 'volume_up'}
+            </span>
+            <span className="text-[11px] font-medium hidden sm:inline">
+              {isVoiceMuted ? (isVi ? 'Tắt tiếng' : 'Muted') : isSpeaking ? (isVi ? 'Đang đọc...' : 'Speaking...') : (isVi ? 'Giọng AI' : 'AI Voice')}
+            </span>
+          </button>
           <button onClick={() => setIsDark(!isDark)} className="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-white/[0.04] transition-colors border border-white/[0.08] text-on-surface-variant cursor-pointer">
             <span className="material-symbols-outlined text-lg">{isDark ? 'light_mode' : 'dark_mode'}</span>
           </button>
@@ -418,7 +454,27 @@ const InterviewPage = () => {
             {messages.map((msg, idx) => (
               <div key={idx} className={`flex ${msg.role === 'ai' ? 'justify-start' : 'justify-end'} animate-in fade-in slide-in-from-bottom-2`}>
                 <div className={`max-w-[80%] p-4 rounded-xl border ${msg.role === 'ai' ? 'bg-surface-container-low/50 text-on-surface rounded-tl-sm border-outline-variant/60 shadow-sm' : 'bg-surface text-on-surface rounded-tr-sm border-outline-variant shadow-sm'}`}>
-                  <p className={`text-[9px] font-semibold mb-1 uppercase tracking-widest ${msg.role === 'ai' ? 'text-primary/90' : 'text-on-surface-variant/80'}`}>{msg.role === 'ai' ? 'Obsidian AI' : (isVi ? 'BẠN' : 'YOU')}</p>
+                  <div className="flex items-center justify-between gap-2 mb-1">
+                    <p className={`text-[9px] font-semibold uppercase tracking-widest ${msg.role === 'ai' ? 'text-primary/90' : 'text-on-surface-variant/80'}`}>{msg.role === 'ai' ? 'Obsidian AI' : (isVi ? 'BẠN' : 'YOU')}</p>
+                    {msg.role === 'ai' && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          speakNatural(msg.content, {
+                            isVi,
+                            onStart: () => setIsSpeaking(true),
+                            onEnd: () => setIsSpeaking(false),
+                            onError: () => setIsSpeaking(false),
+                          });
+                        }}
+                        title={isVi ? "Nghe lại câu hỏi này" : "Replay this question"}
+                        className="p-1 rounded hover:bg-primary/10 text-on-surface-variant hover:text-primary transition-colors cursor-pointer flex items-center gap-1 text-[10px]"
+                      >
+                        <span className="material-symbols-outlined text-xs">volume_up</span>
+                        <span className="text-[10px] hidden sm:inline">{isVi ? 'Nghe lại' : 'Replay'}</span>
+                      </button>
+                    )}
+                  </div>
                   <p className="text-xs md:text-sm leading-relaxed whitespace-pre-line">{msg.content}</p>
                 </div>
               </div>
