@@ -1,5 +1,5 @@
 import { ChatTurn, UNTRUSTED_DATA_RULE, formatTranscript, truncate, wrap } from './prompt-format';
-import { Phase, TurnPlan } from './interview-flow';
+import { MAX_PROBES_PER_MAIN, Phase, TurnPlan } from './interview-flow';
 import { Seniority } from './seniority';
 
 // Static rules only. Everything that depends on the session (language, counts, current phase,
@@ -98,10 +98,12 @@ ${probe} give feedback on the answer, then a short closing message thanking the 
 - questionType = "main", isFinished = false.`;
   }
 
-  const probe = plan.canProbe
-    ? `- Allowed: ONE probe on the current main question (questionType = "probe") if the answer was partial or vague (${plan.probesSinceLastMain} of 2 probes already used on it).`
-    : '- Probing is NOT allowed this turn (probe limit reached).';
-  return `${probe}
+  if (!plan.canProbe) {
+    return `- Probing is NOT allowed this turn (probe limit reached).
+- Ask ${next} (questionType = "main").
+- isFinished = false.`;
+  }
+  return `- Allowed: ONE probe on the current main question (questionType = "probe") if the answer was partial or vague (${plan.probesSinceLastMain} of ${MAX_PROBES_PER_MAIN} probes already used on it).
 - Otherwise ask ${next} (questionType = "main").
 - isFinished = false.`;
 };
