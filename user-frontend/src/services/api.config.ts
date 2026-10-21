@@ -18,6 +18,7 @@ export const API_ENDPOINTS = {
     UPGRADE_VIP: `${API_BASE_URL}/auth/upgrade-vip`,
   },
   AI: {
+    EXTRACT_CV: `${API_BASE_URL}/ai/extract-cv`,
     ANALYZE_CV: `${API_BASE_URL}/ai/analyze-cv`,
     GENERATE_QUESTIONS: `${API_BASE_URL}/ai/generate-questions`,
     CHAT: `${API_BASE_URL}/ai/chat`,

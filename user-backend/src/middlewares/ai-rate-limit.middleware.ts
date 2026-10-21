@@ -15,4 +15,6 @@ const perUser = (windowMs: number, limit: number, message: string) => rateLimit(
 // A live answer takes the candidate well over 10 seconds to write.
 export const chatLimiter = perUser(60 * 1000, 6, 'Too many interview messages, please slow down.');
 export const analyzeLimiter = perUser(60 * 60 * 1000, 15, 'Too many CV analyses this hour, please try again later.');
+// No AI call, but PDF parsing is CPU work on the API process.
+export const extractLimiter = perUser(60 * 60 * 1000, 30, 'Too many CV uploads this hour, please try again later.');
 export const planLimiter = perUser(60 * 60 * 1000, 10, 'Too many interviews started this hour, please try again later.');

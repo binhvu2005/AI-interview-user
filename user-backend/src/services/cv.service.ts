@@ -1,6 +1,16 @@
 import * as pdfParse from 'pdf-parse';
 import { User } from '../models/user.model';
 
+// Shared by the vault upload and the one-off extraction used before a CV analysis: reading a PDF as
+// text in the browser yields binary bytes, never the CV's words.
+export const extractCVText = async (file: Express.Multer.File): Promise<string> => {
+  if (file.mimetype !== 'application/pdf') return file.buffer.toString('utf-8');
+  // pdf-parse v1 exports a function directly: module.exports = function(dataBuffer, options)
+  const parseFn = (pdfParse as any).default || pdfParse;
+  const data = await parseFn(file.buffer);
+  return data.text || '';
+};
+
 export const processAndSaveCV = async (userId: string, file: Express.Multer.File | undefined, customName?: string) => {
   const user = await User.findById(userId);
   if (!user) throw new Error('User not found');
@@ -13,19 +23,12 @@ export const processAndSaveCV = async (userId: string, file: Express.Multer.File
     console.log('Processing file:', file.originalname, 'Mime:', file.mimetype);
     fileName = file.originalname;
     pdfData = file.buffer.toString('base64');
-    if (file.mimetype === 'application/pdf') {
-      try {
-        // pdf-parse v1 exports a function directly: module.exports = function(dataBuffer, options)
-        const parseFn = (pdfParse as any).default || pdfParse;
-        const data = await parseFn(file.buffer);
-        content = data.text;
-        console.log('PDF parsed successfully, text length:', content.length);
-      } catch (pdfErr: any) {
-        console.error('PDF Parse Error:', pdfErr.message);
-        throw new Error('Could not parse PDF file: ' + pdfErr.message);
-      }
-    } else {
-      content = file.buffer.toString('utf-8');
+    try {
+      content = await extractCVText(file);
+      console.log('CV parsed successfully, text length:', content.length);
+    } catch (pdfErr: any) {
+      console.error('PDF Parse Error:', pdfErr.message);
+      throw new Error('Could not parse PDF file: ' + pdfErr.message);
     }
   }
 

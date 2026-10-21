@@ -199,22 +199,43 @@ const PreparationPage = () => {
     });
   };
 
-  const getCVData = async () => {
+  // Text already extracted from the uploaded file, so starting the interview does not upload it again.
+  const extractedCvRef = useRef<{ file: File; text: string } | null>(null);
+
+  // The browser cannot read a PDF's text: FileReader returns its binary bytes. The backend extracts it.
+  const extractUploadedCV = async (file: File): Promise<string> => {
+    if (extractedCvRef.current?.file === file) return extractedCvRef.current.text;
+    const isPdf = file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf');
+    let text: string;
+    if (isPdf) {
+      const form = new FormData();
+      form.append('file', file);
+      const res = await fetchWithAuth(API_ENDPOINTS.AI.EXTRACT_CV, { method: 'POST', body: form });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.message || (isVi ? 'Không đọc được file CV' : 'Could not read the CV file'));
+      text = data.text;
+    } else {
+      text = (await readFileAsText(file)).trim();
+    }
+    extractedCvRef.current = { file, text };
+    return text;
+  };
+
+  // Throws with a message for the user instead of sending the AI a placeholder: a placeholder only
+  // produced an analysis saying the CV could not be read.
+  const getCVData = async (): Promise<string> => {
     let cvData = '';
     if (cvMode === 'upload' && cvFile) {
-      try {
-        const content = await readFileAsText(cvFile);
-        if (content.includes('\u0000') || content.length < 10) {
-          cvData = `[PDF File: ${cvFile.name}] - Content extraction restricted. Please analyze based on the role and JD.`;
-        } else {
-          cvData = content;
-        }
-      } catch {
-        cvData = `CV file: ${cvFile.name} (Content could not be read)`;
-      }
+      cvData = await extractUploadedCV(cvFile);
     } else if (cvMode === 'vault') {
-      const selectedCV = savedCVs.find((c) => c.id === selectedCVId);
-      cvData = selectedCV?.content || `CV: ${selectedCV?.name || 'Unknown'}`;
+      cvData = (savedCVs.find((c) => c.id === selectedCVId)?.content || '').trim();
+    }
+    if (cvData.length < 50) {
+      throw new Error(
+        isVi
+          ? 'CV này không có nội dung chữ đọc được (có thể là PDF dạng ảnh/scan). Hãy tải lên PDF xuất từ Word/Google Docs.'
+          : 'This CV has no readable text (it may be a scanned or image PDF). Please upload a PDF exported from Word/Google Docs.'
+      );
     }
     return cvData;
   };

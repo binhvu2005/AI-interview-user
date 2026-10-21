@@ -1,6 +1,7 @@
 import { Response } from 'express';
 import { AuthRequest } from '../middlewares/auth.middleware';
 import * as AIService from '../services/ai.service';
+import * as CVService from '../services/cv.service';
 import { User } from '../models/user.model';
 import InterviewSession from '../models/InterviewSession';
 import { checkAndUpdateVipStatus } from '../utils/vip';
@@ -27,6 +28,27 @@ const langOf = (value: unknown) => (typeof value === 'string' && value.startsWit
 const getVip = async (userId?: string) => {
   const user = await User.findById(userId);
   return user ? await checkAndUpdateVipStatus(user) : false;
+};
+
+// Below this the PDF has no text layer (a scan or a photo): analysing it would only produce
+// "the CV cannot be read" while still spending an AI call.
+const MIN_CV_TEXT_CHARS = 50;
+
+// Turns an uploaded CV file into text without saving it. The browser cannot read a PDF's text itself.
+export const extractCV = async (req: AuthRequest, res: Response) => {
+  if (!req.file) return res.status(400).json({ message: 'No CV file uploaded' });
+  try {
+    const content = (await CVService.extractCVText(req.file)).trim();
+    if (content.length < MIN_CV_TEXT_CHARS) {
+      return res.status(422).json({
+        message: 'Không đọc được chữ trong CV (có thể là PDF dạng ảnh/scan). Hãy dùng PDF xuất từ Word/Google Docs hoặc lưu CV vào Vault dưới dạng văn bản.',
+      });
+    }
+    res.json({ text: content.slice(0, MAX_CV_CHARS) });
+  } catch (err: any) {
+    console.error('CV extraction error:', err.message);
+    res.status(422).json({ message: 'Không đọc được file PDF này. Hãy thử xuất lại CV sang PDF rồi tải lên.' });
+  }
 };
 
 // Phase 1: CV-JD Matching Analysis
